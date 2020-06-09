@@ -1,0 +1,81 @@
+
+# Header links
+main:
+  - title: "Tags"
+    url: /tags/
+
+
+# Default sidebar links
+default:
+  - title: "Home"
+    url: "/"
+
+    
+#  - title: "Product Areas"
+#    children:
+#      - title: "API Management"
+#        url: "/apim/"
+#      - title: "App Service - Diagnostics"
+#        url: "/diagnostics/"
+#      - title: "App Service - Certs and Domains"
+#        url: "/certsdomains/"
+#      - title: "App Service - Deployment, CI/CD, Slots"
+#        url: "/deployment/"
+
+
+
+  - title: "Reference"
+    children:
+      - title: Documentation
+        url: "https://docs.microsoft.com/azure/app-service/"
+      - title: "Linux FAQ"
+        url: "https://github.com/Azure/app-service-linux-docs"
+      - title: "Windows Containers Wiki"
+        url: "https://aka.ms/appservicewindowscontainerwiki"
+  - title: "More"
+    children: 
+      - title: "Azure Blog"
+        url: "https://azure.microsoft.com/blog/"
+      - title: "Azure Updates"
+        url: "https://azure.microsoft.com/updates/"
+#  - title: "Archives"
+#    children:
+#      - title: "2020"
+#        url: "/2020"
+#      - title: "2019"
+#        url: "/2019"
+#      - title: "2018"
+#        url: "/2018"
+#      - title: "2017"
+#        url: "/2017"
+#      - title: "2016"
+#        url: "/2016"
+#      - title: "All posts"
+#        url: "/posts/"
+
+# Java team page sidebar
+java:
+  - title: "FooBar"
+    children:
+      - title: "Link 1"
+        url: "/"
+      - title: "Link 2"
+        url: "/"
+      - title: "Link 3"
+        url: "/"
+      - title: "Link 4"
+        url: "/"
+      - title: "Link 5"
+        url: "/"
+  - title: "FizzBuzz"
+    children:
+      - title: "Link 1"
+        url: "/"
+      - title: "Link 2"
+        url: "/"
+      - title: "Link 3"
+        url: "/"
+      - title: "Link 4"
+        url: "/"
+      - title: "Link 5"
+        url: "/"  

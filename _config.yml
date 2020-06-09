@@ -1,0 +1,140 @@
+
+title: Japan PaaS Support Team Blog
+#email: none
+description: >- 
+  Hello! We're Japan Azure Japan PaaS Support Team and provide usuful infromtion. Any Feedback is welcome.
+baseurl: "/blog" 
+url: "https://github.com/jpazpaas" 
+github_username:  jpazpaas
+
+minimal_mistakes_skin: "dark"
+search: true
+
+# Build settings
+markdown: kramdown
+remote_theme: mmistakes/minimal-mistakes
+# Outputting
+#permalink: /:categories/:title/
+permalink: /:year/:month/:day/:title:output_ext
+paginate: 5 # amount of posts to show
+paginate_path: /page:num/
+timezone: Asia/Tokyo # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+include:
+  - _pages
+
+# Exclude from processing.
+# The following items will not be processed, by default. Create a custom list
+# to override the default setting.
+# exclude:
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules
+#   - vendor/bundle/
+#   - vendor/cache/
+#   - vendor/gems/
+#   - vendor/ruby/
+
+# Outputting
+permalink: /:year/:month/:day/:title:output_ext
+# paginate: 5 # amount of posts to show
+# paginate_path: /page:num/
+timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+pagination:
+  enabled: true
+  permalink: /page:num/
+  per_page: 5
+  trail: 
+    before: 2
+    after: 2
+
+# Config for Jekyll archives
+jekyll-archives:
+  enabled: all
+  layouts:
+    year:  archive-year
+    month: archive-month
+    day:   archive-day
+  permalinks:
+    year:  '/:year/'
+    month: '/:year/:month/'
+    day:   '/:year/:month/:day/'
+
+# HTML Compression
+# - http://jch.penibelst.de/
+compress_html:
+  clippings: all
+  ignore:
+    envs: development
+
+
+# Plugins (previously gems:)
+plugins:
+  - jekyll-paginate-v2
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+  - jekyll-include-cache
+
+# mimic GitHub Pages with --safe
+whitelist:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+  - jekyll-include-cache
+
+author:
+  name   : "Japan Azure PaaS Support Team"
+  avatar : "/assets/images/bio-photo.jpg"
+  #bio    : "Japan Azure PaaS Support Team"
+  links:
+    - label: "Website"
+      icon: "fas fa-fw fa-link"
+      url: "https://jpazpaas.github.io/blog/"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/jpazpaas/blog/"
+
+footer:
+  links:
+    - label: "Website"
+      icon: "fas fa-fw fa-link"
+      url: "https://jpazpaas.github.io/blog/"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/jpazpaas/blog/"
+
+# Defaults
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      classes : wide
+      # author_profile: true
+      read_time: true
+      comments: false
+      share: true
+      related: true
+      sidebar:
+        nav: "default"
+
+
+
+
+
+
+
+
+
+#category_archive:
+#  type: liquid
+#  path: /categories/
+#tag_archive:
+#  type: liquid
+ # path: /tags/
