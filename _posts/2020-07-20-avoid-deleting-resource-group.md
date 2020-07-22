@@ -55,14 +55,10 @@ Azure では、予期せぬ変更を防ぐために、対象リソースをロ�
 
 # 参考ドキュメント
 
-- ※1
-<Azure リソースの意図しない削除について><br>
-https://jpaztech.github.io/blog/vm/resource-delete/ <br>
-抜粋）Storage Account （の特定の SKU）に限り、Azure 基盤側から復旧を行うことが可能な場合があります。具体的には GRS と RA-GRS （セカンダリリージョンへの地理冗長が組まれている SKU） が前提となります。
+- ※1 [Azure リソースの意図しない削除について](https://jpaztech.github.io/blog/vm/resource-delete/) <br>
+    抜粋）Storage Account （の特定の SKU）に限り、Azure 基盤側から復旧を行うことが可能な場合があります。具体的には GRS と RA-GRS （セカンダリリージョンへの地理冗長が組まれている SKU） が前提となります。
 
-- ※2
-<リソースのロックによる予期せぬ変更の防止><br>
-https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/management/lock-resources
+- ※2 [リソースのロックによる予期せぬ変更の防止](https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/management/lock-resources)
 
 
 <br>
