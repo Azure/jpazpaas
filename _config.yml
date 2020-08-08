@@ -12,12 +12,13 @@ search: true
 
 # Build settings
 markdown: kramdown
-remote_theme: mmistakes/minimal-mistakes
+theme                  : "minimal-mistakes-jekyll"
+#remote_theme: mmistakes/minimal-mistakes
 # Outputting
 #permalink: /:categories/:title/
 permalink: /:year/:month/:day/:title:output_ext
-paginate: 5 # amount of posts to show
-paginate_path: /page:num/
+#paginate: 5 # amount of posts to show
+#paginate_path: /page:num/
 timezone: Asia/Tokyo # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 include:
@@ -79,7 +80,7 @@ plugins:
 
 # mimic GitHub Pages with --safe
 whitelist:
-  - jekyll-paginate
+  - jekyll-paginate-v2
   - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
