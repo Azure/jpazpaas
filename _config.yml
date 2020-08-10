@@ -211,23 +211,13 @@ sass:
 # Outputting
 permalink: /:year/:month/:day/:title:output_ext # /:categories/:title/
 
-#paginate: 5 # amount of posts to show
-#paginate_path: /page:num/
+paginate: 5 # amount of posts to show
+paginate_path: /page:num/
 timezone: Asia/Tokyo # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-
-# Config for Jekyll paginate-v2
-pagination:
-  enabled: true
-  permalink: /page:num/
-  per_page: 5
-  trail: 
-    before: 2
-    after: 2
-
 
 # Plugins (previously gems:)
 plugins:
-  - jekyll-paginate-v2
+  - jekyll-paginate
   - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
@@ -236,7 +226,7 @@ plugins:
 
 # mimic GitHub Pages with --safe
 whitelist:
-  - jekyll-paginate-v2
+  - jekyll-paginate
   - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
