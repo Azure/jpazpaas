@@ -7,75 +7,54 @@ main:
 
 # Default sidebar links
 default:
-  - title: "Home"
-    url: "/"
-
-    
-#  - title: "Product Areas"
-#    children:
-#      - title: "API Management"
-#        url: "/apim/"
-#      - title: "App Service - Diagnostics"
-#        url: "/diagnostics/"
-#      - title: "App Service - Certs and Domains"
-#        url: "/certsdomains/"
-#      - title: "App Service - Deployment, CI/CD, Slots"
-#        url: "/deployment/"
-
-
-
-  - title: "Reference"
+  - title: "製品ドキュメントへのリンク"
     children:
-      - title: Documentation
-        url: "https://docs.microsoft.com/azure/app-service/"
-      - title: "Linux FAQ"
-        url: "https://github.com/Azure/app-service-linux-docs"
-      - title: "Windows Containers Wiki"
-        url: "https://aka.ms/appservicewindowscontainerwiki"
-  - title: "More"
+      - title: "App Service"
+        url: "https://docs.microsoft.com/ja-jp/azure/app-service/"
+      - title: "App Service on Linux"
+        url: "https://docs.microsoft.com/ja-jp/azure/app-service/containers/"
+      - title: "Functions"
+        url: "https://docs.microsoft.com/ja-jp/azure/azure-functions/"
+      - title: "Spring Cloud"
+        url: "https://docs.microsoft.com/ja-jp/azure/spring-cloud/"
+      - title: "Event Hubs"
+        url: "https://docs.microsoft.com/ja-jp/azure/event-hubs/"
+      - title: "Service Fabric"
+        url: "https://docs.microsoft.com/ja-jp/azure/service-fabric/"
+      - title: "Service Bus"
+        url: "https://docs.microsoft.com/ja-jp/azure/service-bus-messaging/"
+      - title: "Policy"
+        url: "https://docs.microsoft.com/ja-jp/azure/governance/policy/"
+      - title: "API Management"
+        url: "https://docs.microsoft.com/ja-jp/azure/api-management/"
+      - title: "Batch"
+        url: "https://docs.microsoft.com/ja-jp/azure/batch/"
+      - title: "Media Services"
+        url: "https://docs.microsoft.com/ja-jp/azure/media-services/latest/"
+
+  - title: "開発部門による公開情報"
+    children: 
+      - title: "App Service Team Blog"
+        url: "https://azure.github.io/AppService/"
+
+  - title: "Azure の更新情報"
     children: 
       - title: "Azure Blog"
         url: "https://azure.microsoft.com/blog/"
       - title: "Azure Updates"
         url: "https://azure.microsoft.com/updates/"
-#  - title: "Archives"
-#    children:
-#      - title: "2020"
-#        url: "/2020"
-#      - title: "2019"
-#        url: "/2019"
-#      - title: "2018"
-#        url: "/2018"
-#      - title: "2017"
-#        url: "/2017"
-#      - title: "2016"
-#        url: "/2016"
-#      - title: "All posts"
-#        url: "/posts/"
-
-# Java team page sidebar
-java:
-  - title: "FooBar"
-    children:
-      - title: "Link 1"
-        url: "/"
-      - title: "Link 2"
-        url: "/"
-      - title: "Link 3"
-        url: "/"
-      - title: "Link 4"
-        url: "/"
-      - title: "Link 5"
-        url: "/"
-  - title: "FizzBuzz"
-    children:
-      - title: "Link 1"
-        url: "/"
-      - title: "Link 2"
-        url: "/"
-      - title: "Link 3"
-        url: "/"
-      - title: "Link 4"
-        url: "/"
-      - title: "Link 5"
-        url: "/"  
+      - title: "App Service Announcements"
+        url: "https://github.com/Azure/app-service-announcements"
+  
+  - title: "Azure のサポート"
+    children: 
+      - title: "Azure の状態"
+        url: "https://status.azure.com/ja-jp/status"
+      - title: "サポート プランの比較"
+        url: "https://azure.microsoft.com/ja-jp/support/plans/"
+      - title: "ケースの重要度と応答時間"
+        url: "https://azure.microsoft.com/ja-jp/support/plans/response/"
+      - title: ""
+        url: ""
+  
+   
