@@ -37,7 +37,7 @@ Developer レベルでは、SLA が提供されていません。1 ユニット�
 
 - ※2 [API Management の価格](https://azure.microsoft.com/ja-jp/pricing/details/api-management)
 
-    ![2020-06-03-apim-downtime-pricing.png]({{site.baseurl}}/media/2020-06-03-apim-downtime-pricing.png)
+    ![2020-06-03-apim-downtime-pricing.png]({{site.baseurl}}/media/2020/06/2020-06-03-apim-downtime-pricing.png)
 
 <br>
 <br>
