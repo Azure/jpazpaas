@@ -31,15 +31,15 @@ Azure では、予期せぬ変更を防ぐために、対象リソースをロ�
 
 ロック機能は、リソース、リソースグループ、またはサブスクリプションレベルで設定することが可能です。まずは、ロックを設定する対象の [ロック] ブレードをクリックします。今回は、リソースグループに対してロックを設定していきます。
 
-![image.png]({{site.baseurl}}/media/2020-07-20-select-lock-blade.png)
+![image.png]({{site.baseurl}}/media/2020/07/2020-07-20-select-lock-blade.png)
 
 「+ 追加」をクリックし、必要な項目を入力し、ロックを追加します。今回は「削除ロック」を追加します。
 
-![image.png]({{site.baseurl}}/media/2020-07-20-add-lock.png)
+![image.png]({{site.baseurl}}/media/2020/07/2020-07-20-add-lock.png)
 
 以上でロックの設定は完了です。実際に、ロックを設定したリソースグループを削除しようとすると、以下のようにエラーが発生し、削除できない状況となります。
 
-![image.png]({{site.baseurl}}/media/2020-07-20-unable-to-delete-rg.png)
+![image.png]({{site.baseurl}}/media/2020/07/2020-07-20-unable-to-delete-rg.png)
 
 ## ロック機能を利用する際の考慮事項
 
