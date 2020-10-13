@@ -1,5 +1,5 @@
 ---
-title: "Azure Policyの評価結果のログがアクティビティログが出力されなくなった。"
+title: "Azure Policyの評価結果のログがアクティビティログに出力されなくなった。"
 author_name: "Kentaro Katahira"
 tags:
     - Policy
