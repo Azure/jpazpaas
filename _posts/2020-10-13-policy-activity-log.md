@@ -11,7 +11,8 @@ tags:
 2020年6月下旬以降日次でのAzure Policy 評価結果については、アクティビティログに出力されなくなりました。
 ただし、リソースをアップデートする際（新規作成も含む）に、その操作がポリシーに準拠しない操作の場合だけ、アクティビティログに出力されます。
 <br>
-#　変更以前と同等の結果を取得するためには
+
+# 変更以前と同等の結果を取得するためには
 代替策として、PowerShellなどのコマンドラインツールでAzure Plicyの評価結果を取得することが可能です。以下にGet-AzPolicyStateコマンドレットを使用し、対象のポリシー定義に対して非準拠のSubscriptionId、ResourceGroup、ResourceIdをCSVファイルに吐き出すサンプルコマンドを記載しました。参考情報としてご活用ください。
 <br>
 ## サンプルコマンド ※1) ※2)
@@ -27,6 +28,7 @@ tags:
 `>>Select-AzSubscription -SubscriptionId $_.SubscriptionId`<br>
 `>>Get-AzPolicyState  -Filter "PolicyDefinitionName eq 'ポリシー定義名' and ComplianceState eq 'NonCompliant'" |Select ResourceGroup, ComplianceState, ResourceId,SubscriptionId|Export-Csv -Path policystate_$_.SubscriptionId.csv -Encoding UTF8 -NoTypeInformation`<br>
 `>>}`<br>
+
 # 参考ドキュメント
 
 [Get-AzPolicyStateコマンドレット](https://docs.microsoft.com/en-us/powershell/module/az.policyinsights/get-azpolicystate?view=azps-4.7.0)<br>
