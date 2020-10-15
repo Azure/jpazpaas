@@ -16,7 +16,7 @@ Azure Tools では、Cloud Service 環境上の各種ログ、および構成情
 - デプロイ構成情報
 
 英文のみのご提供となりますが、AzureTools の詳細については以下のページがございますのでご参考ください。<br>
-[AzureTools - The Diagnostic Utility used by the Windows Azure Developer Support Team](http://blogs.msdn.com/b/kwill/archive/2013/08/26/azuretools-the-diagnostic-utility-used-by-the-windows-azure-developer-support-team.aspx)
+[AzureTools - The Diagnostic Utility used by the Windows Azure Developer Support Team](https://docs.microsoft.com/ja-jp/archive/blogs/kwill/azuretools-the-diagnostic-utility-used-by-the-windows-azure-developer-support-team)
 
 # リモートデスクトップ接続の設定
 
