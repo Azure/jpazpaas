@@ -144,7 +144,7 @@ REST API [Api Management Service - Create Or Update](https://docs.microsoft.com/
 
 ### PATCH操作で `properties.customProperties` のプロパティを全て指定しない場合、省略した値が規定値にリセットされます
 例えば以下のように暗号スイートを無効化するようにプロパティを構成した場合、PUT の操作によって、HTTP2 や Triple DES の設定が規定値に戻ってしまいます。  
-したがって、手順 3 の ⅲ で示したように、`properties.customProperties` の全てのプロパティを含めるようにリクエストボディを構成するようご留意いただければと思います。
+したがって、手順 3 の 3 で示したように、`properties.customProperties` の全てのプロパティを含めるようにリクエストボディを構成するようご留意いただければと思います。
 
 以下の例だと、未指定のプロパティが規定値に戻ってしまいます。
 ```json
