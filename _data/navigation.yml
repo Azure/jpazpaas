@@ -23,6 +23,14 @@ default:
         url: "https://docs.microsoft.com/ja-jp/azure/service-fabric/"
       - title: "Service Bus"
         url: "https://docs.microsoft.com/ja-jp/azure/service-bus-messaging/"
+      - title: "Event Hubs"
+        url: "https://docs.microsoft.com/ja-jp/azure/event-hubs/"
+      - title: "Event Grid"
+        url: "https://docs.microsoft.com/ja-jp/azure/event-grid/"
+      - title: "Notification Hubs"
+        url: "https://docs.microsoft.com/ja-jp/azure/notification-hubs/"
+      - title: "Cognitive Search"
+        url: "https://docs.microsoft.com/ja-jp/azure/search/"
       - title: "Policy"
         url: "https://docs.microsoft.com/ja-jp/azure/governance/policy/"
       - title: "API Management"
@@ -36,6 +44,8 @@ default:
     children: 
       - title: "App Service Team Blog"
         url: "https://azure.github.io/AppService/"
+      - title: "Messaging on Azure"
+        url: "https://techcommunity.microsoft.com/t5/messaging-on-azure/bg-p/MessagingonAzureBlog"
 
   - title: "Azure の更新情報"
     children: 
