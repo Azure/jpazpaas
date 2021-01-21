@@ -44,6 +44,8 @@ default:
     children: 
       - title: "App Service Team Blog"
         url: "https://azure.github.io/AppService/"
+      - title: "Azure OSS Developer Support"
+        url: "https://azureossd.github.io/"
       - title: "Messaging on Azure"
         url: "https://techcommunity.microsoft.com/t5/messaging-on-azure/bg-p/MessagingonAzureBlog"
 
