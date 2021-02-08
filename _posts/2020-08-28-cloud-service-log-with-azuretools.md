@@ -50,7 +50,7 @@ md c:\tools; Import-Module bitstransfer; Start-BitsTransfer http://dsazure.blob.
 2. Utils タブの “Auto Gather Logs” のリンクをクリックします。
   ![image.png]({{site.baseurl}}/media/2020/08/2020-08-28-azuretools1.png)
 3. ウィザードを進めると、ログの収集がスタートし、zip ファイルが作成されます。作成された zip ファイルの場所がエクスプローラーで開きます。ログをご提供いただく場合は、その zip ファイルをお寄せください。
-  ![image.png]({{site.baseurl}}/media/2020/08/2020-08-28-azuretools1.png)
+  ![image.png]({{site.baseurl}}/media/2020/08/2020-08-28-azuretools2.png)
 
 <br>
 <br>
