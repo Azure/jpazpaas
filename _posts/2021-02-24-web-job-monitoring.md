@@ -9,8 +9,7 @@ tags:
 
 Web ジョブ とは Web Apps の一部の機能として提供しており、スクリプト、プログラムファイルをアップロードを行い、継続的もしくはある時間に起動するといったタイマートリガーとしてタスクを実行することができます。しかしながら、Web ジョブ の機能のみで、タスク全体の処理が動作していないといった異常を検知することができません。
 
-<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-0-webjob.png" width="30%">
-
+<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-0-webjob.png" width="64px"> <br />
 [Azure App Service で Web ジョブを使用してバックグラウンド タスクを実行する](https://docs.microsoft.com/ja-jp/azure/app-service/webjobs-create)
 
 Web ジョブ のタスクの監視を実施するために、Kudu から提供している Web ジョブ API と Application Insighst を組み合わせることにより、簡単に Web ジョブ の監視環境を構築することができます。今回の監視監視は、Azure プラットフォーム側で完結をしているため、監視に必要なアプリケーションの実装を行う必要はなく、監視アプリケーション自体の管理の手間が無くなるため、有用な一例としてご紹介いたします。
@@ -126,7 +125,7 @@ Azure Portal の Application Insights 左ブレードメニューの `可用性`
 <br>
 <br>
 
-2020 年 2 月 24 日時点の内容となります。<br>
+2021 年 2 月 24 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>

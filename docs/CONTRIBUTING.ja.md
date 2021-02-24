@@ -19,7 +19,7 @@ plugin:jemoji 関係
 ```bundle install --jobs=4```
 
 ## jekyll server 起動
-```bundle exec  jekyll serve --trace```
+```bundle exec  jekyll serve --trace --incremental```
 
 
 # 記事を書く人向け
