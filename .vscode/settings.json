@@ -1,0 +1,4 @@
+{
+  "textlint.configPath": ".textlintrc",
+  "textlint.targetPath": "_posts/*.md",
+}
