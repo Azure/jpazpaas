@@ -1,0 +1,85 @@
+---
+title: "Azure PowerShell サンプルについて"
+author_name: Kataoka
+tags:
+    - MigratedArticle
+    - Azure PowerShell
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-powershell-サンプルについて">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 8 月 21 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。Azure CIE サポートの片岡です。
+  <br/>
+  本ブログの更新が滞っていまして、申し訳ございません。
+  <br/>
+  本日のブログは簡単な内容となりますが、主に PaaS エリアの Azure サービスを操作するための PowerShell スクリプトのサンプル情報について、ご紹介させていただきます。
+ </p>
+ <p>
+  私ども Azure サポート チームには、日頃より「○○ の設定をしたい」、「□□ という情報を取得したい」といったお問い合わせが寄せられています。
+  <br/>
+  Azure リソースを操作する方法としては、Azure PowerShell を利用する方法が比較的簡易ではありますが、一方で「どんなスクリプトを書いたらいいかがわからない」といったご意見をいただくこともあります。
+  <br/>
+  そのため、Azure CIE ブログ (主に PaaS および開発者のみなさま用の記事を記載したブログ) では、Azure PowerShell のサンプルを随時アップロードし、少しでも Azure PowerShell をご利用いただきやすいよう各種情報をご提供することにいたしました！
+ </p>
+ <p>
+  前提としまして、以下のようなドキュメントに記載の方法にて、Azure PowerShell をインストールください。
+ </p>
+ <p>
+ </p>
+ <p>
+  Install and configure Azure PowerShell
+  <br/>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps?view=azurermps-4.2.0">
+   https://docs.microsoft.com/ja-jp/powershell/azure/install-azurerm-ps?view=azurermps-4.2.0
+  </a>
+ </p>
+ <p>
+  Other installation methods
+  <br/>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/powershell/azure/other-install?view=azurermps-4.2.0">
+   https://docs.microsoft.com/ja-jp/powershell/azure/other-install?view=azurermps-4.2.0
+  </a>
+ </p>
+ <p>
+  Installer のリンク
+  <br/>
+  <a data-linktype="external" href="https://github.com/Azure/azure-powershell/releases/download/v4.3.1-August2017/azure-powershell.4.3.1.msi">
+   https://github.com/Azure/azure-powershell/releases/download/v4.3.1-August2017/azure-powershell.4.3.1.msi
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure PowerShell のインストールが完了しましたら、以下の Github から PowerShell のサンプル スクリプトをダウンロードいただき、.ps1 形式のファイルとして保存をした上で、早速お手元の環境にインストールした Azure PowerShell で実行してみてください！
+ </p>
+ <p>
+ </p>
+ <p>
+  jpcie/Samples/PowerShell
+  <br/>
+  <a data-linktype="external" href="https://github.com/jpcie/Samples/tree/master/Samples/PowerShell">
+   https://github.com/jpcie/Samples/tree/master/Samples/PowerShell
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure PowerShell は、基本的には "Add-AzureRmAccount" コマンドを利用してログオン後に、各種コマンドを実行しますが、上記のサンプルは、基本的にはそのまま実行することで動作するよう実装しております。
+ </p>
+ <p>
+  ※ 注意
+  <br/>
+  上記の Github に公開している各種 PowerShell スクリプトは、あくまでもサンプル スクリプトとなります。
+  <br/>
+  業務環境で実行をした際に何らかの問題が発生した場合でも、一切の責任を負うことはできかねますので、何卒ご了承賜りますようお願い申し上げます。
+ </p>
+ <p>
+  それでは、また次回お会いしましょう！
+ </p>
+ <!-- </content> -->
+</main>

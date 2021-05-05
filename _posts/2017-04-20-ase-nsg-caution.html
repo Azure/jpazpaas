@@ -1,0 +1,237 @@
+---
+title: "App Service 環境でネットワークセキュリティグループ (NSG) を利用する際の注意点"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/app-service-環境でネットワークセキュリティグループ-nsg-を">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 4 月 20 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは
+ </p>
+ <p>
+  Azure CIE サポートの村山です。
+ </p>
+ <p>
+  今回は、最近様々なサービスの裏側で利用され始めている
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service-web/app-service-app-service-environment-intro">
+   App Service Environment
+  </a>
+  (以下 ASE) にてネットワークセキュリティ機能を利用する際の注意点についてご紹介します。
+ </p>
+ <p>
+  ASE は普段他社様と環境を共有している通常の App Service とは異なり、お客様専用のApp Service の環境を作成することができます。
+ </p>
+ <p>
+  加えて、ASE はご利用者様の仮想ネットワーク上の、サブネット内にデプロイするため、仮想ネットワークのセキュリティ機能を利用して受信と送信のネットワークを制御することも可能です。
+ </p>
+ <p>
+  また、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service-web/app-service-environment-with-internal-load-balancer">
+   内部ロードバランサーを含む ASE
+  </a>
+  を利用することで、仮想ネットワーク内からプライベート接続を行うこともできるので、セキュリティ要件が厳しいシステムを構築する際に利用されることが度々ございます。
+ </p>
+ <p>
+  下記では、このネットワークのセキュリティ機能をご利用の際ので注意点について説明します。
+ </p>
+ <p>
+ </p>
+ <p>
+  2017/10/31 時点
+ </p>
+ <hr/>
+ <p>
+  現在では、ASE を新規作成すると、NSG が一緒に作成されます。
+ </p>
+ <p>
+  このため、手作業で全部作る必要がなくなり、より便利になっています。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h4 id="ase-でネットワークのセキュリティ機能を利用する">
+  <strong>
+   ASE でネットワークのセキュリティ機能を利用する
+  </strong>
+ </h4>
+ <hr/>
+ <p>
+  ASE では、ASE リソースがデプロイされた仮想ネットワークに対し、ネットワークセキュリティグループ (以下 NSG) をバインドすることで、サブネット内にデプロイされた ASE のインスタンスに対して、受信と送信トラフィックの制御を行うことが可能です。
+ </p>
+ <p>
+  NSG については、以下のドキュメントに詳細が記載されています。
+ </p>
+ <p>
+  ネットワーク セキュリティ グループを使用したネットワーク トラフィック フローの制御
+  <br/>
+  <a data-linktype="external" href="https://docs.microsoft.com/ja-jp/azure/virtual-network/virtual-networks-nsg">
+   https://docs.microsoft.com/ja-jp/azure/virtual-network/virtual-networks-nsg
+  </a>
+ </p>
+ <p>
+  NSG を作成後、Azure ポータルでは下記のような画面が表示され、受信/送信セキュリティ規則に、許可/拒否したいルールを利用者が追加します。
+ </p>
+ <p>
+  そして、作成した NSG を、ASE リソースがデプロイされた仮想ネットワークにバインドすると、NSG 内で設定された規則にもとづいて、ASE のインスタンスに対する通信が、許可・ブロックされます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="3" data-linktype="external" src="/blog/media/2017/04/313.png"/>
+ </p>
+ <p>
+  図1: ネットワークセキュリティグループの画面
+ </p>
+ <p>
+ </p>
+ <h4 id="ase-で-nsg-を設定する際の注意点">
+  <strong>
+   ASE で NSG を設定する際の注意点
+  </strong>
+ </h4>
+ <hr/>
+ <p>
+  NSG を利用して不要なポートへの通信制御が可能ですが、その前提として、ASE が正常に動作するためにあらかじめ必要な通信を許可しておく必要があります。
+ </p>
+ <p>
+  これは、リソースの正常性確認 (ヘルスチェック) などを目的として、ASE が Azure データ センター、および ASE を構成する各インスタンス間で、定期的な通信を行っているためです。
+ </p>
+ <p>
+  下記ドキュメントにてそれぞれ詳細がございます。
+ </p>
+ <p>
+  App Service 環境への受信トラフィックを制御する方法
+  <br/>
+  <a data-linktype="external" href="https://docs.microsoft.com/ja-jp/azure/app-service-web/app-service-app-service-environment-control-inbound-traffic">
+   https://docs.microsoft.com/ja-jp/azure/app-service-web/app-service-app-service-environment-control-inbound-traffic
+  </a>
+ </p>
+ <p>
+  ExpressRoute を使用した App Service 環境のネットワーク構成の詳細
+  <br/>
+  <a data-linktype="external" href="https://docs.microsoft.com/ja-jp/azure/app-service-web/app-service-app-service-environment-network-configuration-expressroute#required-network-connectivity">
+   https://docs.microsoft.com/ja-jp/azure/app-service-web/app-service-app-service-environment-network-configuration-expressroute#required-network-connectivity
+  </a>
+  <br/>
+  ※ Express Route の記載がありますが、Express Route を利用しない場合でも同様です。
+ </p>
+ <p>
+  しばしば、システム構築上のセキュリティ要件から、上記のドキュメント内に記載された必要な通信以外の受信/送信トラフィックを可能な限り遮断したいとご要望いただくことがあります。
+ </p>
+ <p>
+  その要件を満たすために、例えば下記の画像のように必要なポート (454/455 ポート) 以外の既定の規則をすべて拒否するといったルールを設定してしまい、ASE が正常に動作をしなくなってしまったというお問い合わせを頂戴します。
+ </p>
+ <p>
+  ※ NSG では、優先度の数値が小さい順にルールが実行されますので、高優先度のルールは数値が低くなるよう設定します。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="4" data-linktype="external" src="/blog/media/2017/04/49.png"/>
+ </p>
+ <p>
+  図2: 過度に強力なセキュリティ規則を設定した場合
+ </p>
+ <p>
+ </p>
+ <p>
+  これは、既定の受信セキュリティ規則を拒否したために、ASE インスタンス間、また Azure データセンターからの正常性確認のための通信が途絶えてしまうことが原因です。
+ </p>
+ <p>
+  上記のドキュメントに明記はされておりませんが、記載されているポート番号以外にも、ASE が正常に動作するためには、併せて以下の 2 つの通信を許可しておく必要があります。
+ </p>
+ <p>
+  ・ サブネット内のインバウンド・アウトバウンドの通信
+  <br/>
+  ・ Azure Load Balancer からのインバウンド通信
+ </p>
+ <p>
+  そのため、上記の “Deny_all” のルールを取り除く、もしくはそのルールより前に、サブネット内の通信および Azure Load Balancer からの通信を許可するルールを追加することで、ASE が正常に動作します。
+ </p>
+ <p>
+  例えば、"Deny_all" を利用して既定の規則を禁止するようなセキュリティ規則を追加する場合、受信セキュリティ規則を以下のように設定することで、ASE が正常に動作します。
+ </p>
+ <p>
+  ※ あくまで例となりますので、送信セキュリティ規則も含め、ご要件に合わせて変更していただくようお願いします。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="5" data-linktype="external" src="/blog/media/2017/04/56.png"/>
+ </p>
+ <p>
+  図3: NSG の設定例
+ </p>
+ <p>
+  ご参考までに、以下でそれぞれの通信の役割をご説明します。
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   サブネット内のインバウンド・アウトバウンドの通信の許可
+  </strong>
+  <br/>
+  ASE は、サブネット内でデプロイされたインスタンス間で通信を行っております。このため、ASE のインスタンス間の通信を許可する必要があります。
+ </p>
+ <p>
+  例として、サブネット内の通信を許可する設定例は下記画像の通りとなります。ご要件に合わせてこれらの規則を現在ご利用の NSG に追加してください。
+ </p>
+ <p>
+  ※ 192.168.250.0/24 は手元の環境の ASE がデプロイされたサブネットのアドレス空間です。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="asesubnet" data-linktype="external" src="/blog/media/2017/04/asesubnet.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   Azure Load Balancer からのインバウンド通信の許可
+  </strong>
+  <br/>
+  Azure Load Balancer からの通信を遮断すると、Azure 基盤側で行っておりますサービスの正常性チェックや PaaS インスタンスのハートビートが行われず、ASE が正常に動作しなくなります。
+  <br/>
+  IP アドレス 168.63.129.16 について
+  <br/>
+  <a data-linktype="external" href="https://blogs.technet.microsoft.com/jpaztech/2016/04/01/about-168-63-129-16/">
+   https://blogs.technet.microsoft.com/jpaztech/2016/04/01/about-168-63-129-16/
+  </a>
+ </p>
+ <p>
+  このため、ASE が正常に動作するためには、Azure Load Balancer からのインバウンド通信を許可する必要があります。
+ </p>
+ <p>
+  下記の資料では、NSG の詳細が説明されておりますので、ご利用をご検討のお客様はこちらの資料もご確認ください。
+ </p>
+ <p>
+  ネットワーク セキュリティ グループを使用したネットワーク トラフィック フローの制御
+  <br/>
+  <a data-linktype="external" href="https://docs.microsoft.com/ja-jp/azure/virtual-network/virtual-networks-nsg">
+   https://docs.microsoft.com/ja-jp/azure/virtual-network/virtual-networks-nsg
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  今回は、ASE でネットワークセキュリティグループを利用する際の注意点に関してご紹介しましたが、いかがでしょうか。
+ </p>
+ <p>
+  お客様のセキュリティ要件によっては実は ASE があまり適していない場合も考えられますので、検証やご検討を十分行ってからご利用ください。
+ </p>
+ <p>
+  それでは、また！
+ </p>
+ <!-- </content> -->
+</main>

@@ -1,0 +1,440 @@
+---
+title: "[Advent Calendar 2017 Day15] Azure Web Apps お役立ち PowerShell スクリプトいろいろ"
+author_name: "Toru Itagaki"
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/advent-calendar-2017-day15-azure-web-apps-お役立ち-powershell-スクリプトいろいろ">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 12 月 15 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+ </p>
+ <p>
+  こちらの記事は、Qiita に掲載した Microsoft Azure Tech Advent Calendar 2017 の企画に基づき、執筆した内容となります。
+  <br/>
+  カレンダーに掲載された記事の一覧は、
+  <a data-linktype="external" href="https://qiita.com/advent-calendar/2017/microsoft-azure-tech">
+   こちら
+  </a>
+  よりご確認ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  こんにちは。Azure サポートの板垣です。
+ </p>
+ <p>
+  今回は、Azure Web Apps の管理 API 呼び出しを行う、PowerShell スクリプトのサンプルをご紹介します。
+  <br/>
+  情報採取やトラブルシューティングのために実行する他、Azure Functions や Web Jobs でスクリプトを実行することで、自動運用を実現するようなこともできます。是非ともご参考ください。
+ </p>
+ <p>
+  # Azure PowerShell のインストール方法につきましては、
+  <a data-linktype="external" href="https://blogs.technet.microsoft.com/jpaztech/2017/05/02/azure-powershell-3-8-0-install/">
+   Azure PowerShell 最新版のインストール手順
+  </a>
+  もご参考ください。
+ </p>
+ <p>
+ </p>
+ <hr/>
+ <h2 id="api-の認証方法">
+  API の認証方法
+ </h2>
+ <p>
+  PowerShell を使って Azure Web Apps を管理する方法として、Azure PowerShell を使う方法と、Azure Web Apps の管理サービスである Kudu サイト (https://.scm.azurewebsites.net) で提供される API を使用する方法があります。
+ </p>
+ <h4 id="azure-power-shell">
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/powershell/azure/overview">
+   Azure Power Shell
+  </a>
+ </h4>
+ <h4 id="kudu-rest-api">
+  Kudu REST API
+ </h4>
+ <h4 id="rest-api-process-threads-list-and-minidump-gcdump-diagsession">
+  <a data-linktype="external" href="https://github.com/projectkudu/kudu/wiki/REST-API">
+   REST API
+  </a>
+  <a data-linktype="external" href="https://github.com/projectkudu/kudu/wiki/WebJobs-API">
+  </a>
+  <a data-linktype="external" href="https://github.com/projectkudu/kudu/wiki/Process-Threads-list-and-minidump-gcdump-diagsession">
+   Process Threads list and minidump gcdump diagsession
+  </a>
+ </h4>
+ <p>
+  今回ご紹介するサンプルスクリプトでは、Azure PowerShell と Kudu REST API を組み合わせて使用しますが、それぞれで認証方法が異なりますので、まずはその点をご案内します。
+ </p>
+ <h3 id="azure-powershell-の認証">
+  Azure PowerShell の認証
+ </h3>
+ <p>
+  Azure PowerShell を使用するために、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/powershell/azure/authenticate-azureps">
+   Azure PowerShell でのログイン
+  </a>
+  が必要です。
+  <br/>
+  対話形式でスクリプトを実行する場合、
+  <code>
+   Login-AzureRmAccount
+  </code>
+  と入力すると、Azure の資格情報の入力を求めるダイアログ ボックスが表示されます。
+  <br/>
+  運用フェーズでの利用では、サービス プリンシパルを使用した非対話形式の方法が適切な場合がありますが、その方法については本稿では割愛します。
+ </p>
+ <h3 id="kudu-rest-api-の認証">
+  Kudu REST API の認証
+ </h3>
+ <p>
+  Kudu REST API は、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/app-service-deployment-credentials">
+   Azure Web Apps のデプロイ資格情報
+  </a>
+  による基本認証で認証されます。
+  <br/>
+  以下は、基本認証情報を Authorization ヘッダーに設定するサンプルです。
+ </p>
+ <h4 id="基本認証情報を設定する">
+  [基本認証情報を設定する]
+ </h4>
+ <p>
+  [powershell]
+  <br/>
+  $username = "&lt;username&gt;"
+  <br/>
+  $password = "&lt;password&gt;"
+  <br/>
+  $base64AuthInfo = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $username, $password)))
+  <br/>
+  $authHeader = @{Authorization=("Basic {0}" -f $base64AuthInfo)}
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+ </p>
+ <p>
+  また、デプロイ資格情報は Web Apps のリソース情報から取得することもできます。
+ </p>
+ <h4 id="デプロイ資格情報を取得する">
+  [デプロイ資格情報を取得する]
+ </h4>
+ <p>
+  [powershell]
+  <br/>
+  $webAppName = "&lt;webAppName&gt;"
+  <br/>
+  $resourceGroupName = "&lt;resourceGroupName&gt;"
+  <br/>
+  $resource = Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceType Microsoft.Web/sites/config -ResourceName "$webAppName/publishingcredentials" -Action list -ApiVersion 2016-08-01 -Force
+  <br/>
+  $username = $resource.properties.publishingUserName
+  <br/>
+  $password = $resource.properties.publishingPassword
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+ </p>
+ <h2 id="特定のインスタンスを管理する">
+  特定のインスタンスを管理する
+ </h2>
+ <p>
+  Azure Web Apps を複数インスタンスでホストしている際に、トラブルシューティング等のために、特定のインスタンスに対して管理を実行したい場合があります。
+  <br/>
+  通常、複数インスタンスでホストされている場合、要求はラウンドロビンでロードバランシングされ、任意のインスタンスによって要求が処理されます。しかし、ARRAffinity クッキー (通常はセッション アフィニティの目的で使用されます) に、アクセスしたいインスタンスの ID を設定することで、特定のインスタンスに狙ってアクセスすることができます。
+ </p>
+ <p>
+  以下は、Web App で使用中のインスタンス ID を取得するサンプルです。
+ </p>
+ <h4 id="インスタンス-id-を取得する">
+  [インスタンス ID を取得する]
+ </h4>
+ <p>
+  [powershell]
+  <br/>
+  $webAppName = "&lt;webAppName&gt;"
+  <br/>
+  $resourceGroupName = "&lt;resourceGroupName&gt;"
+  <br/>
+  $instances = Get-AzureRmResource -ResourceGroupName $resourceGroupName -ResourceType Microsoft.Web/sites/instances -ResourceName $webAppName -ApiVersion 2016-08-01
+  <br/>
+  $instanceIds = @()
+  <br/>
+  foreach($instance in $instances)
+  <br/>
+  {
+  <br/>
+  $instanceIds += $instance.Name
+  <br/>
+  }
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+  実行すると、
+  <code>
+   $instanceIds
+  </code>
+  として以下のような結果を取得することができます。
+ </p>
+ <pre><code> a4951240a2a973f8aa3fb4a433eabf17c8d5b37bb6f444edb7d6e21bd160d35e
+abd1db53c6d9f913fdd9aa2b9362933ec2770d5b2e294178637a5b55a95b0667
+2dcf59fa789311a8e661bb55bb9eb5a641d4657871dba8575dead3011e293b1a
+</code></pre>
+ <p>
+  続いて、そのインスタンス ID を ARRAffinity クッキーに設定するサンプルです。このクッキーを設定して要求を発行することで、特定のインスタンスに狙ってアクセスすることができます。
+ </p>
+ <h4 id="arraffinity-クッキーを設定する">
+  [ARRAffinity クッキーを設定する]
+ </h4>
+ <p>
+  [powershell]
+  <br/>
+  $instanceId = "a4951240a2a973f8aa3fb4a433eabf17c8d5b37bb6f444edb7d6e21bd160d35e"
+  <br/>
+  $kuduUrl = "https://&lt;webAppName&gt;.scm.azurewebsites.net"
+  <br/>
+  $cookieSession = New-Object -TypeName Microsoft.PowerShell.Commands.WebRequestSession
+  <br/>
+  $myCookie = New-Object -TypeName System.Net.Cookie
+  <br/>
+  $myCookie.Name = "ARRAffinity"
+  <br/>
+  $myCookie.Value = $instanceId
+  <br/>
+  $cookieSession.Cookies.Add($kuduUrl, $myCookie)
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+ </p>
+ <h2 id="サンプル-スクリプト">
+  サンプル スクリプト
+ </h2>
+ <p>
+  それでは、ここまでのご案内を踏まえまして、Web Apps の管理に役立つサンプル スクリプトをご紹介します。
+  <br/>
+  以降のサンプルでは、前述の方法で基本認証情報を設定した
+  <code>
+   $authHeader
+  </code>
+  と、ARRAffinity クッキーを設定した
+  <code>
+   $cookieSession
+  </code>
+  を使用しています。
+ </p>
+ <h4 id="プロセスをシャットダウンする">
+  [プロセスをシャットダウンする]
+ </h4>
+ <p>
+  [powershell]
+  <br/>
+  $kuduUrl = "https://&lt;webAppName&gt;.scm.azurewebsites.net"
+  <br/>
+  $endpoint = $kuduUrl + "/api/processes/-1"
+  <br/>
+  Invoke-RestMethod -Headers $authHeader -WebSession $cookieSession -Uri $endpoint -Method Delete
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+  特定インスタンスのみでアプリケーションの再起動が必要になる場合、一旦ワーカー プロセスをシャットダウンすることで、次回アクセス時に再起動されます。
+  <br/>
+  このサンプルでは、アプリケーションのメイン プロセスのみをシャットダウンします。
+ </p>
+ <p>
+ </p>
+ <h4 id="プロセス-メモリ-ダンプを取得する">
+  [プロセス メモリ ダンプを取得する]
+ </h4>
+ <p>
+  [powershell]
+  <br/>
+  $kuduUrl = "https://&lt;webAppName&gt;.scm.azurewebsites.net"
+  <br/>
+  $dumpCount = 3
+  <br/>
+  $dumpInterval = 10000
+  <br/>
+  for ($i = 0; $i -lt $dumpCount; $i++)
+  <br/>
+  {
+  <br/>
+  $outfile = "C:\Diagnostics\" + (Get-Date).ToString("yyyyMMddHHmmss") + ".zip"
+  <br/>
+  Invoke-RestMethod -Headers $authHeader -WebSession $cookieSession -Uri "$kuduUrl/api/processes/-1/dump?dumpType=2&amp;amp&amp;format=zip" -Method Get -OutFile $outfile
+  <br/>
+  Start-Sleep -m $dumpInterval
+  <br/>
+  }
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+  アプリケーションがハングアップする場合等に、プロセス メモリ ダンプを取得して解析することが調査方法として有効である場合があります。
+  <br/>
+  このサンプルでは、10 秒間隔で 3 回、プロセス メモリ ダンプを取得し、ローカル環境の C:\Diagnostics に保存します。
+  <br/>
+  取得したプロセス メモリ ダンプは、
+  <a data-linktype="external" href="https://www.microsoft.com/en-us/download/details.aspx?id=49924">
+   Debug Diagnostic Tool
+  </a>
+  等で解析することができます。
+ </p>
+ <p>
+ </p>
+ <h4 id="コンピューター名を取得する">
+  [コンピューター名を取得する]
+ </h4>
+ <p>
+  [powershell]
+  <br/>
+  $kuduUrl = "https://&lt;webAppName&gt;.scm.azurewebsites.net"
+  <br/>
+  $endpoint = $kuduUrl + "/api/processes/-1"
+  <br/>
+  $result = Invoke-RestMethod -Headers $authHeader -WebSession $cookieSession -Uri $endpoint -Method Get
+  <br/>
+  $computerName = $result.environment_variables.COMPUTERNAME;
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+  Azure ポータル上のインスタンス表示では、インスタンス ID ではなく、"RD000D3A5019EF" というように仮想マシンのコンピューター名で表示される場合があります。
+  <br/>
+  このサンプルの方法で、インスタンス上の環境変数から、コンピューター名を取得することができます。
+ </p>
+ <p>
+ </p>
+ <h2 id="まとめ">
+  まとめ
+ </h2>
+ <p>
+  最後に、それぞれを組み合わせたサンプルを作成してみます。
+  <br/>
+  このサンプルでは、各インスタンスのヘルスチェックを実行し、HTTP 200 応答が得られなかった場合にプロセス メモリ ダンプを取得しています。
+ </p>
+ <p>
+  [powershell]
+  <br/>
+  $webAppName = "&lt;webAppName&gt;"
+  <br/>
+  $resourceGroupName = "&lt;resourceGroupName&gt;"
+  <br/>
+  $siteUrl = "https://$webAppName.azurewebsites.net"
+  <br/>
+  $kuduUrl = "https://$webAppName.scm.azurewebsites.net"
+  <br/>
+  $dumpCount = 3
+  <br/>
+  $dumpInterval = 10000
+ </p>
+ <p>
+  # Azure PowerShell ログイン
+  <br/>
+  Login-AzureRmAccount
+ </p>
+ <p>
+  # デプロイ資格情報を取得する
+  <br/>
+  $resource = Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceType Microsoft.Web/sites/config -ResourceName "$webAppName/publishingcredentials" -Action list -ApiVersion 2016-08-01 -Force
+  <br/>
+  $username = $resource.properties.publishingUserName
+  <br/>
+  $password = $resource.properties.publishingPassword
+ </p>
+ <p>
+  # 基本認証情報を設定する
+  <br/>
+  $base64AuthInfo = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $username, $password)))
+  <br/>
+  $authHeader = @{Authorization=("Basic {0}" -f $base64AuthInfo)}
+ </p>
+ <p>
+  # インスタンス一覧を取得する
+  <br/>
+  $instances = Get-AzureRmResource -ResourceGroupName $resourceGroupName -ResourceType Microsoft.Web/sites/instances -ResourceName $webAppName -ApiVersion 2016-08-01
+ </p>
+ <p>
+  # 各インスタンスに対して処理を実行する
+  <br/>
+  foreach($instance in $instances)
+  <br/>
+  {
+  <br/>
+  # ARRAffinity クッキーを設定する
+  <br/>
+  $cookieSession = New-Object -TypeName Microsoft.PowerShell.Commands.WebRequestSession
+  <br/>
+  $myCookie = New-Object -TypeName System.Net.Cookie
+  <br/>
+  $myCookie.Name = "ARRAffinity"
+  <br/>
+  $myCookie.Value = $instance.Name
+  <br/>
+  $cookieSession.Cookies.Add($kuduUrl, $myCookie)
+ </p>
+ <p>
+  # ヘルスチェックを実行する
+  <br/>
+  $result = Invoke-WebRequest -WebSession $cookieSession -Uri $siteUrl -Method Get
+ </p>
+ <p>
+  if ($result.StatusCode -eq 200)
+  <br/>
+  {
+  <br/>
+  # 応答が HTTP 200 の場合
+  <br/>
+  echo "$($instance.Name) is Healthy"
+  <br/>
+  } else {
+  <br/>
+  # 応答が HTTP 200 以外の場合
+  <br/>
+  echo "$($instance.Name) is Unhealthy"
+ </p>
+ <p>
+  # プロセス メモリ ダンプを取得する
+  <br/>
+  for ($i = 0; $i -lt $dumpCount; $i++)
+  <br/>
+  {
+  <br/>
+  $outfile = "C:\Diagnostics\" + (Get-Date).ToString("yyyyMMddHHmmss") + ".zip"
+  <br/>
+  Invoke-RestMethod -Headers $authHeader -WebSession $cookieSession -Uri "$kuduUrl/api/processes/-1/dump?dumpType=2&amp;amp&amp;format=zip" -Method Get -OutFile $outfile
+  <br/>
+  Start-Sleep -m $dumpInterval
+  <br/>
+  }
+  <br/>
+  }
+  <br/>
+  }
+ </p>
+ <p>
+  [/powershell]
+ </p>
+ <p>
+ </p>
+ <hr/>
+ <p>
+ </p>
+ <p>
+  以上、今回は Kudu REST API の一部を使用したサンプルでしたが、組み合わせることで運用時のトラブルシューティング自動化にもご利用いただけるのではないかと思います。
+  <br/>
+  また、認証情報の設定方法、特定のインスタンスにアクセスする方法を流用して、今回ご紹介していないその他の API も活用することができます。
+  <br/>
+  今後も便利なスクリプトがありましたら、本ブログでご紹介していきたいと思います。
+ </p>
+ <!-- </content> -->
+</main>

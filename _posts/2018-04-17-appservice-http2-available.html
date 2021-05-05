@@ -1,0 +1,253 @@
+---
+title: "HTTP/2 が Azure App Service でサポートされます"
+author_name: "Japan Azure CIE Support Team"
+tags:
+    - MigratedArticle
+    - Function App
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/http2-が-azure-app-service-でサポートされます">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 4 月 17 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  このポストは、2018 年 4 月 13 日に投稿された
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/appserviceteam/2018/04/13/announcing-http2-support-in-azure-app-service/">
+   Announcing HTTP/2 support in Azure App Service
+  </a>
+  の翻訳です。
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure App Service チームは、App ServiceでホストされているすべてのアプリケーションのHTTP/2 プロトコルのサポートのグローバル展開を発表します。 HTTP/2 は
+  <a data-linktype="external" href="https://feedback.azure.com/forums/169385-web-apps/suggestions/9552936-enable-http-2-on-azure-web-apps">
+   最も多かったカスタマー リクエスト
+  </a>
+  であり、私たちはサポートを提供することに興奮しています！
+ </p>
+ <p>
+ </p>
+ <h2 id="http2とは何ですか">
+  <strong>
+   HTTP/2とは何ですか？
+  </strong>
+ </h2>
+ <p>
+  HTTP/2は、TCP の接続で HTTP セマンティクス フローを再検討したものであり、現在 Windows 10 と Windows Server 2016 でサポートされています。HTTP/2 は、20年近く使用された HTTP / 1.1 のメジャーアップグレードであり、 Webサーバ上の待ち時間と接続負荷を軽減します。
+ </p>
+ <p>
+ </p>
+ <p>
+  HTTP/1.1 の主な利点は、並行して複数の要求を連続して処理するために、複数の接続を使用することでした。 HTTP/2 では、永続的な一つの接続を使用して複数の要求を同時に処理できます。 このプロセスでは、HTTP/2 には、ネットワーク上の HTTP の効率を向上させるいくつかの追加機能が導入されています。
+ </p>
+ <h2 id="section">
+ </h2>
+ <h2 id="複数のリクエストに対する-1-つの接続">
+  <strong>
+   複数のリクエストに対する 1 つの接続
+  </strong>
+ </h2>
+ <p>
+  すべての TCP 接続は、セットアップのために往復が必要です。暗号化を使用している場合、TLS ハンドシェイクにはさらに 1〜2 回の往復が必要です。これは、最初の応答の最初のバイトが送信される前に全ての接続で発生します。新しい接続を設定する代わりに既存の接続を再利用することによって、このオーバーヘッドを多くの要求で共有することができます。 HTTP/2 は、新しい接続が確立されている間の待機する、もしくは既存の接続がアイドル状態になるまで待機する必要性を大幅に減らします。単一の接続が多数の要求の間で多重化されているため、他の要求が完了するのを待つことなく、要求をすぐに送信できます。
+ </p>
+ <p>
+ </p>
+ <h2 id="hpack-によるヘッダー圧縮">
+  <strong>
+   HPACK によるヘッダー圧縮
+  </strong>
+ </h2>
+ <p>
+  HTTP は、何年もの間データの圧縮をサポートしています。ただし、ヘッダは圧縮されていないテキストとして送信され、要求間には多くの冗長性があります。（最も長いヘッダーの多くは、リクエストごとに同じ値で送信されます）HTTP/2 では、HTTP ヘッダーの圧縮方式であるHPACKが導入され、要求間の冗長性が低減されています。
+ </p>
+ <p>
+ </p>
+ <p>
+  要求がより小さくなるので、圧縮は多重化にも役立ちます。これにより、TCPフロー制御ウィンドウは小さい一方、クライアントは接続上の最初のパケットで多くの要求を行うことができます。
+ </p>
+ <p>
+ </p>
+ <h4 id="http--1xとの主な違いは何ですか">
+  <strong>
+   HTTP / 1.xとの主な違いは何ですか？
+  </strong>
+ </h4>
+ <p>
+ </p>
+ <ul>
+  <li>
+   HTTP/2はバイナリです
+  </li>
+  <li>
+   順序付けされ、ブロックされるのではなく、完全に多重化されています
+  </li>
+  <li>
+   1つの接続で並列性を実現することができます
+  </li>
+  <li>
+   1つの TCP/IP 接続を保持しています
+  </li>
+  <li>
+   ヘッダー圧縮を使用してオーバーヘッドを削減します
+  </li>
+ </ul>
+ <p>
+ </p>
+ <h2 id="app-service-ユーザはどのようなアクションを取る必要がありますか">
+  <strong>
+   App Service ユーザはどのようなアクションを取る必要がありますか？
+  </strong>
+ </h2>
+ <p>
+  <a data-linktype="external" href="https://portal.azure.com/">
+   Azure Portal
+  </a>
+  の機能を使用できるようにする UI がすぐに提供される予定ですが、今のところは単純な設定変更を行う必要があります！ HTTP/2 は、すべての顧客に対して既定で無効になっていますが、サイトにオプトインして HTTP/2 を適用する場合は、次の手順を実行します。
+ </p>
+ <p>
+ </p>
+ <p>
+  次のいずれかの手順を使用して Azure リソースエクスプローラー を参照します。(
+  <a data-linktype="external" href="https://resources.azure.com/">
+   https://resources.azure.com/
+  </a>
+  )
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure Portal で、App Service のメニューで「リソースエクスプローラー」を選択します。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2018/03/1.png"/>
+ </p>
+ <p>
+  次に、[移動]を選択します。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2018/03/2.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  または、リソースエクスプローラー（
+  <a data-linktype="external" href="https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fresources.azure.com%2F&amp;data=02%7C01%7Ckemura%40microsoft.com%7Cea468ce1da904cb6624d08d5a3fa0467%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C1%7C636595216574302635&amp;sdata=%2B5qgriOO5VJn6F712q6IKUBgjFKRiaQEQQvZUkgzKWs%3D&amp;reserved=0">
+   https://resources.azure.com/
+  </a>
+  ）に直接アクセスしてください。
+ </p>
+ <p>
+  Azure Portal から利用する利点は、ブラウザがリクエストされたアプリの設定に自動的に移動することです。
+ </p>
+ <p>
+  リソースエクスプローラー に直接アクセスする場合は、次のパスを使用してツリー階層をサイトにドリル ダウンします。
+ </p>
+ <p>
+  サブスクリプション &gt; リソースグループ &gt; サイト名 &gt; プロバイダー &gt; Microsoft.Web &gt; サイト &gt; サイト名 &gt; config &gt; web
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2018/03/3-206x300.png"/>
+ </p>
+ <p>
+  ページの一番上が、 "read/write" モードになっていることを確認してください：
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2018/03/4.png"/>
+ </p>
+ <p>
+  編集を選択してください：
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2018/03/select-edit.png"/>
+ </p>
+ <p>
+  HTTP/2のパラメータを検索してください：
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2018/03/6-300x34.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  'false'の代わりに '
+  <strong>
+   true
+  </strong>
+  'と入力します。
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2018/03/7-300x32.png"/>
+ </p>
+ <p>
+  上部にある「PUT」を選択します。
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2018/03/8-300x60.png"/>
+ </p>
+ <p>
+  設定完了です！
+ </p>
+ <p>
+ </p>
+ <ul>
+  <li>
+   Appサービス環境とAzure National Clouds での HTTP/2 のサポートはすぐに開始されます。
+  </li>
+ </ul>
+ <p>
+ </p>
+ <h2 id="http--2ブラウザのサポートにはsslが必要">
+  HTTP / 2ブラウザのサポートにはSSLが必要
+ </h2>
+ <p>
+  最新のブラウザでは、SSL  経由の HTTP/2 プロトコルのみをサポートしており、非 SSL トラフィックは引き続き HTTP/1.1 を使用しています。 App Serviceを使用すると、SSL を使用して簡単に稼動させることができます。
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/web-sites-purchase-ssl-web-site">
+   アプリに新しいSSL証明書を設定する方法
+  </a>
+  、または
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/Azure/app-service/app-service-web-tutorial-custom-ssl">
+   既存のSSL証明書をアプリにバインドする方法
+  </a>
+  を確認してください。 Appサービスは、* .azurewebsites.net ドメインにバインドされた共通のワイルドカードSSL証明書を使用して、すべてのアプリに対してデフォルトのSSL機能を提供しています。どんなアプローチの場合も、最新のブラウザで HTTP/2 のメリットを享受するためには、アプリをSSL上で実行する必要があります。
+ </p>
+ <p>
+ </p>
+ <h2 id="問題が発生したらどうなりますか">
+  問題が発生したらどうなりますか？
+ </h2>
+ <p>
+  HTTP / 2の更新に起因すると思われる問題が見つかった場合は、次の方法で警告できます。
+ </p>
+ <p>
+ </p>
+ <ul>
+  <li>
+   開発者フォーラムで質問する：
+   <a data-linktype="external" href="https://social.msdn.microsoft.com/Forums/azure/en-US/home?forum=windowsazurewebsitespreview">
+    MSDN
+   </a>
+   または
+   <a data-linktype="external" href="https://stackoverflow.com/questions/tagged/azure-web-app-service">
+    Stack Overflow
+   </a>
+  </li>
+  <li>
+   <a data-linktype="external" href="https://portal.azure.com/">
+    サポート チケット
+   </a>
+   を開く
+  </li>
+ </ul>
+ <!-- </content> -->
+</main>

@@ -1,0 +1,311 @@
+---
+title: "[Advent Calendar 2017 Day1] Durable Functions ことはじめ"
+author_name: Imamura
+tags:
+    - MigratedArticle
+    - Function App
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/advent-calendar-2017-day1-durable-functions-ことはじめ">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 12 月 1 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+ </p>
+ <p>
+  こちらの記事は、Qiita に掲載した Microsoft Azure Tech Advent Calendar 2017 の企画に基づき、執筆した内容となります。
+  <br/>
+  カレンダーに掲載された記事の一覧は、
+  <a data-linktype="external" href="https://qiita.com/advent-calendar/2017/microsoft-azure-tech">
+   こちら
+  </a>
+  よりご確認ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  こんにちは。Azure CIE サポート 今村 です。
+  <br/>
+  今回は、Azure Functions のプレビュー機能である Durable Functions について、まだあまり日本語の記事が多くないと思いましたので、2017 年のアドベント カレンダーの題材としてご紹介ができればと思います。
+ </p>
+ <p>
+  Durable Functions は、既存の関数を組み合わせて、長時間動作する関数をデプロイしたり、あるいは状態を持たせた関数を作成することができる機能です。
+  <br/>
+  これまでの関数では、キュー ストレージ等外部サービスを利用することで、擬似的に状態をもたせたり、関数の間をチェーンしていましたが、Durable Functions を利用することで、このような仕組みをワンストップで実現することができるようになります。
+ </p>
+ <p>
+ </p>
+ <h3 id="1-durable-task-framework-について">
+  1. Durable Task Framework について
+ </h3>
+ <hr/>
+ <p>
+  Durable Functions は、旧来よりオープンソースで開発が行われていた Durable Task Framework という技術を Functions に適用した機能となります。Durable Task Framework は、もともとトランザクションの処理をソースコード側でコントロールすることを目的として、作られたフレームワークです。
+ </p>
+ <p>
+ </p>
+ <p>
+  "Problem Statement" :
+  <br/>
+  <a data-linktype="external" href="https://github.com/Azure/durabletask/wiki#problem-statement">
+   https://github.com/Azure/durabletask/wiki#problem-statement
+  </a>
+ </p>
+ <p>
+  上記の記事の引用となりますが、例えば以下のようなシナリオを考えます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   (1) A というデータベースから、デビットによる出金処理を行う。
+  </strong>
+  <br/>
+  <strong>
+   (2) もし (1) が成功したら、B というデータベースに入金処理を行う。
+  </strong>
+  <br/>
+  <strong>
+   (3) (2) が失敗した場合、一定の回数、(2) を繰り返す。一定回数失敗した場合、(1) の処理の消込を行う。
+  </strong>
+ </p>
+ <p>
+ </p>
+ <p>
+  これまでは、このようなビジネスロジックを実現するワークフローを構築するのに、MSDTC といった分散トランザクションの仕組みを利用していましたが、データベースやテーブルのロック処理は、クラウド上でデータベースをスケールさせるのに、ボトルネックとなりやすい処理でした。
+  <br/>
+  また、クラウド上のデータベース自体が、分散トランザクションをサポートしていない場合があるという問題もありました。
+ </p>
+ <p>
+ </p>
+ <p>
+  そのため、よりシンプルに C# のコードの中で、このようなロジックを書くためのフレームワークが開発され、Durable Task Framework と名付けられました。
+ </p>
+ <p>
+  上記のワークフローを見ても分かる通り、Durable Task Framework は Azure Functions と非常に相性の良いサービスです。
+  <br/>
+  そのため、Durable Functions として統合した形で、機能をリリースすることになりました。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h3 id="2-hello-durable-functions-">
+  2. Hello Durable Functions !
+ </h3>
+ <hr/>
+ <p>
+  以前は Durable Functions を利用するには、Visual Studio 2017 からプリコンパイルした関数をデプロイするなど、一筋縄ではいかない部分が多くありました。
+  <br/>
+  Azure Functions では、動作基盤となるランタイムで新たに Ver 2.0 の開発を進めており、こちらのバージョンのランタイムを利用することで、Azure ポータルからより簡単に Durable Functions を試すことが可能となりました。
+  <br/>
+  試しに Hello World 相当の実装を試してみたいと思います。
+  <br/>
+  （なお、Ver 2.0 のランタイムに関しては、Durable Functions と同様に 2017 年 12 月 1 日現在でプレビューの機能となります。）
+ </p>
+ <p>
+ </p>
+ <p>
+  ランタイムを変更するため、まずは Function App リソースの「Function App の設定」を開き、ランタイム バージョンを beta にします。
+  <br/>
+  変更には少々時間を要する場合がありますので、beta に変わるまで待機します。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_choose_beta_runtime.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  次に関数を作成します。
+  <br/>
+  シナリオで Durable Functions を選択すると、Durable Functions のテンプレートが表示されますので、まずは orchestrator を選択しましょう。
+  <br/>
+  最初に Durable Functions の関数を作成する際には、拡張機能のインストールを求められる場合がありますが、こちらも Azure ポータルから実施することが可能です。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_choose_durable_template.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  作成すると、すでに既定の内容で run.csx が構成されています。
+  <br/>
+  ここで重要な内容が、
+  <em>
+   DurableOrchestrationContext.CallActivityAsync
+  </em>
+  メソッドです。
+  <br/>
+  このメソッドは、第一引数に関数名を、第二引数には関数へ引き渡すパラメータを指定します。
+  <br/>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_default_run_csx.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  orchestrator では既定で Hello という関数が想定されているため、サンプルにしたがい、Hello という関数を、Durable Functions の Activity として追加します。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_hello_activity.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  こちらは 10,000 ミリ秒 Sleep するコードを追加して保存しておきます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_hello_run_csx.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  最後に、orchestrator を呼び出すための HTTP トリガーの関数を追加します。
+  <br/>
+  これもテンプレートから作成が可能です。
+  <br/>
+  こちらは特に内容を変更する必要はありません。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_http_trigger.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  作成された関数のバインドを見ると、入力に Orchestration Client と呼ばれるバインドが追加されていることが特徴的です。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_bind.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  実装内容は既定でこちらが入力されています。
+  <br/>
+  この
+  <em>
+   DurableOrchestrationClient.StartNewAsync
+  </em>
+  というメソッドにて、Orchestrator の実行を開始しています。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_http_trigger_run_csx.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  つまり、入力バインドとして登録されている Orchestration Client が、StartNewAsync メソッドにより Orchestrator を呼び出し、さらに Orchestrator が個々の Activity (関数) を呼び出すような仕組みになることが分かります。
+  <br/>
+  Orchestration Client は、HTTP トリガーの関数の入力バインドとして登録されているものになるため、実際のトリガーは HTTP 以外、例えばキュー トリガーやタイマー トリガーでも実行が可能です。
+ </p>
+ <p>
+  これで Hello World 相当の Durable Functions が完成しました。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h3 id="3-durable-functions-を実行する">
+  3. Durable Functions を実行する
+ </h3>
+ <hr/>
+ <p>
+  それでは、Durable Functions を実行してみましょう。
+  <br/>
+  今回はテンプレートから HTTP トリガーの関数をセットアップしましたので、呼び出す URL をコピーしておきます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_get_url.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  {functionName} には、Orchestrator となっている関数の名称が入ります。
+  <br/>
+  この URL に対して、POST メソッドで HTTP 要求を発行すると、以下のようなレスポンスが返却されます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_execute_http_trigger.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  このレスポンスの statusQueryGetUri に含まれる URL に対して、GET リクエストを送信すると、関数の実行状況が返却されます。
+  <br/>
+  以下の例は、関数が完了した際の実行結果です。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_get_result.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <h3 id="4-本当に-durable-なのか">
+  4. 本当に "Durable" なのか？
+ </h3>
+ <hr/>
+ <p>
+  今回、Hello という関数には 10,000 ミリ秒の Sleep を入れていますが、仮に各 Hello 関数の実行途中、例えば "Hello Seattle!" の実行途中で、何らかの起因により Function App が再起動されたらどうなるのでしょう？
+  <br/>
+  検証のため、関数の実行途中で Function App を再起動させてみます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_reboot_functions.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  再起動させたあと、関数の実行状況を確認します。
+  <br/>
+  再起動中は少し繋がらない時間もありましたが、Running の状態が続いていることが分かります。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_running_durable_functions.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  しばらく時間をおいてから再び実行状況を確認すると、無事に Completed となったことが分かります。
+  <br/>
+  そのため、再起動の後も関数が問題なく実行できたことが確認できました。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day1-durable-functions-ことはじめ.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1005_complete_after_reboot.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Durable Functions は、このような関数のチェーンの他に、様々なデザイン パターンが考えられますが、まずはことはじめとして、Hello World 相当の関数を試してみました。
+  <br/>
+  ご興味を持たれた方は、プレビューでの提供とはなりますが、ぜひ試してみてはいかがでしょうか。
+ </p>
+ <!-- </content> -->
+</main>

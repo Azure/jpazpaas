@@ -1,0 +1,96 @@
+---
+title: "ILB (内部ロードバランサー) 利用時には VIP スワップは利用できない"
+author_name: "Toshinao Onodera"
+tags:
+    - MigratedArticle
+    - Cloud Services
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/ilb-内部ロードバランサー-利用時には-vip-スワップは">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2016 年 10 月 26 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんばんは。CIE サポート 小野寺です。
+  <br/>
+  Cloud Service を仮想ネットワーク環境下でご利用いただく際、負荷分散や、冗長性確保の構成を構築するために、Internal Load Blancer をご利用いただくことになるかと思います。そのときの注意点についてお知らせいたします。
+ </p>
+ <p>
+ </p>
+ <hr/>
+ <p>
+  実は Cloud Service に対して Internal Load Balancer (以降 ILB) を利用するように設定を行っていた場合、 VIP スワップの機能をご利用いただくことはできません。
+  <br/>
+  例えば Powershell で VIP スワップを行っていただいた場合には下記のメッセージにより VIP スワップが失敗することとなります。
+ </p>
+ <p>
+  <em>
+   BadRequest: The deployment &lt;デプロイ ID&gt; in hosted service &lt;クラウドサービス名&gt; contains an internal load balancer. VIP swaps are not supported if any deployment contains an internal load balancer
+  </em>
+  <a href="ilb-内部ロードバランサー-利用時には-vip-スワップは.html">
+   <img alt="C484C368-D570-48CC-8348-DA4AEC377831" data-linktype="external" src="/blog/media/2016/10/C484C368-D570-48CC-8348-DA4AEC377831.png"/>
+  </a>
+ </p>
+ <p>
+  このように、ILB を利用いただいている場合に VIP スワップが利用できないため、更新前環境を維持しつつ、サービスのダウンタイムなく本番環境のモジュールの切り替えを行う必要がある場合には、あらかじめ環境面で工夫いただく必要がございます。一つの案となりますが、以下のような方法が考えられます。
+ </p>
+ <h3 id="section">
+ </h3>
+ <p>
+ </p>
+ <h4 id="代替案-dns-の-a-レコードを変更し本番とステージングの環境の切り替えを行う">
+  代替案) DNS の A レコードを変更し、本番とステージングの環境の切り替えを行う
+ </h4>
+ <p>
+  以下のような環境があったとします。
+ </p>
+ <p>
+  <img alt="A46459A1-E546-4C0B-B5A4-0080C3FCB0CE" data-linktype="external" src="/blog/media/2016/10/A46459A1-E546-4C0B-B5A4-0080C3FCB0CE.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  この環境に対して新しいモジュールを展開するとします。このとき、CloudService A のステージング環境を
+  <br/>
+  利用しても、VIP スワップの機能は使えません。そのため、 ILB (10.0.0.21) に対してユーザーがアクセスをする際には
+  <a data-linktype="external" href="http://www.contoso.com">
+   www.contoso.com
+  </a>
+  を利用するように DNS を構成します。
+ </p>
+ <p>
+  <img alt="1960D208-DE0B-421C-9817-F26FF5DAAAAA" data-linktype="external" src="/blog/media/2016/10/1960D208-DE0B-421C-9817-F26FF5DAAAAA.png"/>
+ </p>
+ <p>
+  新しいモジュールをデプロイした環境を上記のクラウドサービスとは別に作成します。
+ </p>
+ <p>
+  <img alt="A820AD62-83A5-4B85-BB4E-BDD5762622A6" data-linktype="external" src="/blog/media/2016/10/A820AD62-83A5-4B85-BB4E-BDD5762622A6.png"/>
+ </p>
+ <p>
+  最新モジュールのテスト完了後、本番環境を最新モジュールのクラウドサービスに切り替える際には、DNS の設定を変更し、www.contoso.com でアクセスしたときに 10.0.0.31 の ILB に向くようにします。
+ </p>
+ <p>
+  <img alt="E103B05C-9BAA-4FAF-B1C6-7E14E8BC7BEE" data-linktype="external" src="/blog/media/2016/10/E103B05C-9BAA-4FAF-B1C6-7E14E8BC7BEE.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  このようにすることで、VIP スワップと同等の操作を実施することが可能となります。
+ </p>
+ <p>
+  あらかじめ上記制約を考慮の上、環境構築ならびに運用設計を行っていただけますと幸いです。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  本情報の内容 (添付文書、リンク先などを含む) は、作成日時点でのものであり、予告なく変更される場合があります。
+ </p>
+ <!-- </content> -->
+</main>

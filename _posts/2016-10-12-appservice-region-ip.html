@@ -1,0 +1,196 @@
+---
+title: "Azure App Service の リージョンとスタンプ、IP アドレスについて"
+author_name: Sawada
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-app-service-の-リージョンとスタンプ、ip-アドレスについ">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2016 年 10 月 12 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。CIE サポート 澤田です。
+  <br/>
+  今回は Azure App Service の IP アドレスについて、説明します。
+ </p>
+ <p>
+ </p>
+ <hr/>
+ <p>
+  Azure App Service は任意のプラットフォーム、任意のデバイスを対象とした Web アプリとモバイル アプリを作成することができ、Web Apps、Mobile Apps、Logic Apps、API Apps を総称して App Service と言います。
+  <br/>
+  これらはいずれも同じアーキテクチャーに基づいています。
+ </p>
+ <p>
+ </p>
+ <p>
+  例えば、サポートには以下のようなご質問やご要望をいただくことがあります。
+ </p>
+ <ul>
+  <li>
+   <h4 id="web-apps-で-azure-sql-database-と連携する際にsql-database-のホワイトリストに登録する-ip-アドレス-web-apps-の-ip-アドレス-はサイトごとに異なるのかまた変動する可能性があるのか">
+    Web Apps で Azure SQL Database と連携する際に、SQL Database のホワイトリストに登録する IP アドレス (Web Apps の IP アドレス) はサイトごとに異なるのか、また、変動する可能性があるのか。
+   </h4>
+  </li>
+  <li>
+   <h4 id="waf-を使用して-azure-web-apps-への-http-要求を-ip-アドレスを使用してルーティングしたいサイト固有の-ip-アドレスを知りたい">
+    WAF を使用して Azure Web Apps への HTTP 要求を IP アドレスを使用してルーティングしたい。サイト固有の IP アドレスを知りたい。
+   </h4>
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  Azure SQL Database では接続のセキュリティにより、ファイアウォール ルールで明示的にホワイト リストに登録されていない IP アドレスからの接続試行を拒否します。
+  <br/>
+  したがって、Azure SQL Database への接続を許可するためには、クライアント コンピューターまたはアプリケーション (ここでは Web Apps) のパブリック IP アドレス (アウトバウンドの IP アドレス) を知っておく必要があります。
+ </p>
+ <h6 id="-azure-sql-database-は現時点では-azure-の仮想ネットワークに配置することはできずインターネットからのアクセスのみを許可しています">
+  ※ Azure SQL Database は、現時点では Azure の仮想ネットワークに配置することはできず、インターネットからのアクセスのみを許可しています。
+ </h6>
+ <p>
+ </p>
+ <p>
+  また、2 つ目のご質問、ご要望については、「複数のサイトをホストしている Azure App Service において、パブリック IP アドレス (インバウンドの IP アドレス) を使用してサイトへの要求を正しくルーティングすることはできのか。すなわち、IP アドレスによって、HTTP 要求を行っているサイトの一意性が認識できるのか。」という点を理解する必要があります。
+ </p>
+ <h6 id="-本投稿ではapp-service-環境や-ip-ssl-については触れません">
+  ※ 本投稿では、App Service 環境や IP SSL については触れません。
+ </h6>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h4 id="1リージョンとスタンプ-スケールユニット">
+  <strong>
+   1. リージョンとスタンプ (スケールユニット)
+  </strong>
+ </h4>
+ <h4 id="2インバウンド-ip-アドレスとアウトバウンド-ip-アドレス">
+  <strong>
+   2. インバウンド IP アドレスとアウトバウンド IP アドレス
+  </strong>
+ </h4>
+ <p>
+ </p>
+ <h3 id="1-リージョンとスタンプ-スケールユニット">
+  1. リージョンとスタンプ (スケールユニット)
+ </h3>
+ <p>
+  App Service プランを新規に作成する際、地域 (リージョン) を選択し、どこのデータセンターを利用するかを選択します。
+  <br/>
+  各リージョンには 1 つ以上のスタンプ (App Service を構成する各ロールインスタンスをホストする、ゲストOS の集合体) があり、App Service は指定したリージョン内のいずれかのスタンプ (スケールユニット) にデプロイされます。
+ </p>
+ <p>
+  <img alt="9E696E66-A468-4AA5-A5AE-48E317D22ABA" data-linktype="external" src="/blog/media/2016/10/9E696E66-A468-4AA5-A5AE-48E317D22ABA.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  App Service プランがどのスタンプに作成されたかは、(1) Azure ポータルで FTP ホスト名を確認する (2) コマンドプロンプトで nslookup.exe を実行する方法があります。
+ </p>
+ <p>
+  <img alt="3333ECFA-27FD-4F0B-B1B5-B631D71C4591" data-linktype="external" src="/blog/media/2016/10/3333ECFA-27FD-4F0B-B1B5-B631D71C4591.png"/>
+  <img alt="15874EA7-3307-4458-99A0-3422D6891495" data-linktype="external" src="/blog/media/2016/10/15874EA7-3307-4458-99A0-3422D6891495.png"/>
+ </p>
+ <p>
+  ホスト名にある waws-prod-ty1-005 というのがスタンプ名になります。 上述の通り、各リージョンには 1 つ以上のスタンプがありますが、ユーザーは App Service をどのスタンプに作成するかを選択することはできません。
+  <br/>
+  また、一度作成したサイトは、別のスタンプに作られている App Service プランにサイトを作り直す、ということをしない限り、サイトのデプロイ先であるスタンプが変更されることはありません。
+ </p>
+ <h3 id="section">
+ </h3>
+ <p>
+ </p>
+ <h3 id="2インバウンド-ip-アドレスとアウトバウンド-ip-アドレス-1">
+  2. インバウンド IP アドレスとアウトバウンド IP アドレス
+ </h3>
+ <p>
+  nslookup.exe を実行した際に表示された 13.71.149.151 という IP アドレスは、waws-prod-ty1-005 のインバウンドの IP アドレスになります。
+  <br/>
+  つまり、Azure App Service のインバウンドの IP アドレスはスタンプの IP アドレス、ということが言えます。
+ </p>
+ <p>
+  上述の通り、作成したサイトが稼働するインスタンス (Web Worker インスタンス) 自体は、メンテナンス等により変更されますが、デプロイ先のスタンプは変更されないため、サイトのインバウンドの IP アドレスも変更されることはありません。
+  <br/>
+  インバウンドの IP アドレス (サイトがデプロイされているスタンプのインバウンドの IP アドレス) は、Azure ポータル – 任意のサイト – [カスタム ドメイン] を選択し、外部 IP アドレスに表示される IP アドレスからも確認できます。
+ </p>
+ <p>
+  <img alt="42FB8E17-1554-4B77-94E3-DDBFC0BB6DDC" data-linktype="external" src="/blog/media/2016/10/42FB8E17-1554-4B77-94E3-DDBFC0BB6DDC.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  一方、アウトバウンドの IP アドレスも、サイトが稼働するインスタンス (Web Worker インスタンス) 自体の IP アドレスではなく、スタンプのアウトバウンドの IP アドレス、となります。
+  <br/>
+  アウトバウンドの IP アドレス (サイトがデプロイされているスタンプのアウトバウンドの IP アドレス) は、Azure ポータル - 任意のサイト – [プロパティ] を選択し、送信 IP アドレスに表示される 4 つの IP アドレスになります。
+ </p>
+ <p>
+  <img alt="0A4AB16C-7AE4-4A6F-8C4F-D4E2D1699E91" data-linktype="external" src="/blog/media/2016/10/0A4AB16C-7AE4-4A6F-8C4F-D4E2D1699E91.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  「
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/jpcie/?p=155">
+   App Service プランの動作について
+  </a>
+  」で説明されているように、同じ App Service プランに関連付けられたアプリケーションは、同じインスタンス上で動作するため、同じ App Service プランのサイトは同じインバウンド、アウトバウンドのパブリック IP アドレスが割り当てられている、ということになります。
+  <br/>
+  更には、他ユーザーの同じスタンプにデプロイされたサイトも同じインバウンド、アウトバウンドのパブリック IP アドレスが割り当てられている、ということにもなります。
+ </p>
+ <p>
+  <img alt="DBA765BF-B3BE-45CE-AA62-D810A90F8283" data-linktype="external" src="/blog/media/2016/10/DBA765BF-B3BE-45CE-AA62-D810A90F8283.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  以上の点から、最初のご質問、ご要望の答えはおわかりになりましたでしょうか？
+ </p>
+ <p>
+ </p>
+ <ul>
+  <li>
+   <h4 id="web-apps-で-azure-sql-database-と連携する際にsql-database-のホワイトリストに登録する-ip-アドレス-web-apps-の-ip-アドレス-はサイトごとに異なるのかまた変動する可能性があるのか-1">
+    Web Apps で Azure SQL Database と連携する際に、SQL Database のホワイトリストに登録する IP アドレス (Web Apps の IP アドレス) はサイトごとに異なるのか、また、変動する可能性があるのか。
+   </h4>
+   <p>
+    Azure App Service のサイトのアウトバウンドの IP アドレスは、App Service プランがデプロイされたスタンプで共通の IP アドレスになり、サイトごとに固有のものではありません。
+    <br/>
+    通常サイトを再起動、停止開始するといったお客様の運用上の作業において、スタンプの IP アドレスが変更されることはありません。また、プラットフォームの定期メンテナンスで変更されることもありません。
+   </p>
+  </li>
+  <li>
+   <h4 id="waf-を使用して-azure-web-apps-への-http-要求を-ip-アドレスを使用してルーティングしたいサイト固有の-ip-アドレスを知りたい-1">
+    WAF を使用して Azure Web Apps への HTTP 要求を IP アドレスを使用してルーティングしたい。サイト固有の IP アドレスを知りたい。
+   </h4>
+   <p>
+    同じ App Service プランに関連付けられたアプリケーションは、同じインスタンス上で動作するため、Azure App Service では 1 インスタンス (Web Worker インスタンス) で複数のサイトをホストする可能性があります。
+    <br/>
+    同じインスタンス上に複数のサイトがホストされている場合、ある HTTP 要求がいずれのサイトに対する HTTP 要求であるかを判断するために、IP アドレス、TCP ポート、もしくは、ホストヘッダーのいずれかが一意である必要があります。
+    <br/>
+    更に、Azure App Service ではサイト固有の一意のパブリック IP アドレスは割り当てられていません。
+    <br/>
+    したがって、Azure App Service では、IP アドレスや TCP ポートに一意性はないため、ホストヘッダー (サイト名、または、カスタム ドメインを構成している場合はドメイン名) を使用して HTTP 要求のルーティングをする必要があります。
+   </p>
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  それでは、また！
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  本情報の内容 (添付文書、リンク先などを含む) は、作成日時点でのものであり、予告なく変更される場合があります。
+ </p>
+ <!-- </content> -->
+</main>

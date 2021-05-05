@@ -1,0 +1,151 @@
+---
+title: "クラウドサービスで接続元 IP 制限を行う方法について"
+author_name: "Toshinao Onodera"
+tags:
+    - MigratedArticle
+    - Cloud Services
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/クラウドサービスで接続元-ip-制限を行う方法につ">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 4 月 6 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。CIE サポート小野寺です。
+ </p>
+ <p>
+  クラウドサービスはインターネットに公開されているエンドポイントです。そのため、デフォルトでは不特定多数の利用者様からのアクセスが可能となっています。
+ </p>
+ <p>
+  しかしながら、公開するサービスによっては、特定の IP アドレスのみ公開を許可するケースも少なからず存在します。
+  <br/>
+  このようなアクセス制御を実施する場合にはいくつかの方法が考えられますが、ここでは Endpoint の Access Control List を利用した制御についてご案内します。
+ </p>
+ <p>
+ </p>
+ <h3 id="endpoint-の-access-control-list-acl-を利用する">
+  Endpoint の Access Control List (ACL) を利用する。
+ </h3>
+ <p>
+  クラウドサービスでは、ServiceDefinition.csdef ファイルにサービスにアクセス可能なポートを指定することができます。
+  <br/>
+  この各ポートに対して、ServiceConfiguration.cscfg ファイルでアクセス可能な IP の範囲を指定することが可能です。
+  <br/>
+  今回はその手順について、順を追ってみてみましょう。(英語版の UI となります。ご容赦ください。)
+ </p>
+ <p>
+ </p>
+ <p>
+  開発環境：
+  <br/>
+  Visual Studio 2015 Enterprise (Update 3)
+  <br/>
+  Azure SDK 2.9 (ACL の機能を利用するためには 2.3 以降が必要となります。)
+ </p>
+ <p>
+ </p>
+ <p>
+  1. Visual Studio を管理者モードで起動します。
+ </p>
+ <p>
+ </p>
+ <p>
+  2. Start Page の [New Project] から新規プロジェクトの作成を行います。
+ </p>
+ <p>
+  <img alt="920efec9-c321-4992-b432-019d4c85ae60" data-linktype="external" src="/blog/media/2017/04/920EFEC9-C321-4992-B432-019D4C85AE60.png"/>
+ </p>
+ <p>
+  3. 左ツリーより [Cloud] を選択、 [Azure Cloud Service] のテンプレートを選択、右下 [OK] をクリックします。
+ </p>
+ <p>
+  <img alt="1498a4c2-56cf-406f-8489-d7d436599a3f" data-linktype="external" src="/blog/media/2017/04/1498A4C2-56CF-406F-8489-D7D436599A3F.png"/>
+ </p>
+ <p>
+  4. 作成する Role のテンプレート選択画面が出てきますので、 ASP.NET Web Role をWebRole1 として追加し、 [OK] を押下します。
+ </p>
+ <p>
+  <img alt="1cb8eb9c-341c-4108-89f5-de33a1041716" data-linktype="external" src="/blog/media/2017/04/1CB8EB9C-341C-4108-89F5-DE33A1041716.png"/>
+ </p>
+ <p>
+  5. ASP.NET プロジェクトのテンプレート選択が表示されますので、ここでは MVC を選択し、 [OK] を押下します。
+ </p>
+ <p>
+  <img alt="d592b87d-e2f0-4866-aadd-e69524899569" data-linktype="external" src="/blog/media/2017/04/D592B87D-E2F0-4866-AADD-E69524899569.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  6. プロジェクトの作成が完了しますので、 [Solution Explorer] から ServiceDefinition.csdef をクリックします。
+ </p>
+ <p>
+ </p>
+ <p>
+  7. サービスにアクセス可能なポートが図のように記載されています。
+ </p>
+ <p>
+  初期では Endpoint1 という名称で 80 番ポートが外部からのアクセス可能なポートとして設定されています。
+  <br/>
+  <img alt="f09d756c-e797-4950-96bb-42b1e318716f" data-linktype="external" src="/blog/media/2017/04/F09D756C-E797-4950-96BB-42B1E318716F.png"/>
+ </p>
+ <p>
+  8. 今度は [Solution Explorer] から ServiceConfiguration.Cloud.cscfg をクリックします。
+ </p>
+ <p>
+ </p>
+ <p>
+  9. ACL の設定を追加していきます。今回は以下のように設定を追加しました。
+ </p>
+ <p>
+  <img alt="362980ce-e49e-4c94-b79d-d796aadab812" data-linktype="external" src="/blog/media/2017/04/362980CE-E49E-4C94-B79D-D796AADAB812.png"/>
+ </p>
+ <p>
+  上記の設定では、私の利用している IP アドレスからのアクセスを許可し、それ以外の IP アドレスからのアクセスは拒否する設定となっています。
+  <br/>
+  (私の環境は 131.107.0.112 でアクセスを行っています。)
+  <br/>
+  ACL の設定は order の数値が小さいほど優先度の高い設定値となります。ここではまず order 200 の設定により、すべての
+  <br/>
+  IP アドレスからの接続をいったん拒否としています。その後 order 100 の設定で、131.107.0.112 からのアクセスだけ許可しています。
+  <br/>
+  (アドレスの指定には CIDR フォーマットを利用いただく必要がありますので、ご承知おき下さい。)
+ </p>
+ <p>
+ </p>
+ <p>
+  では実際に作成したソリューションをクラウドサービス (acltestsample.cloudapp.net) に発行し、アクセスをしてみます。
+ </p>
+ <p>
+ </p>
+ <p>
+  A. 私の端末からアクセスした場合
+  <br/>
+  アクセスできました。
+  <br/>
+  <img alt="879e54cd-5bf6-4127-adbd-5f2e7129e86b" data-linktype="external" src="/blog/media/2017/04/879E54CD-5BF6-4127-ADBD-5F2E7129E86B.png"/>
+ </p>
+ <p>
+  B. Azure 上の仮想マシンからアクセスした場合。
+  <br/>
+  アクセスできませんでした。
+  <br/>
+  <img alt="682b025c-bac4-4186-b9fd-296524b96af6" data-linktype="external" src="/blog/media/2017/04/682B025C-BAC4-4186-B9FD-296524B96AF6.png"/>
+  Network Monitor でパケットを確認してみると、クラウドサービスに対して Syn パケットを送っていますが、応答がクラウドサービスから帰ってこないため、接続の確立ができなかったことがわかります。
+  <br/>
+  <img alt="9c187bcb-4749-4916-836f-831543f17857" data-linktype="external" src="/blog/media/2017/04/9C187BCB-4749-4916-836F-831543F17857.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  上記のように、ACL を設定することで、特定の端末からのみのアクセスを許可するといった制御がクラウドサービスでも実現することができます。お役に立ちましたら幸いです。
+ </p>
+ <p>
+ </p>
+ <p>
+  <br/>
+  本情報の内容 (添付文書、リンク先などを含む) は、作成日時点でのものであり、予告なく変更される場合があります。
+ </p>
+ <!-- </content> -->
+</main>

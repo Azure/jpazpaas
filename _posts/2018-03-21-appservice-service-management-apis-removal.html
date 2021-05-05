@@ -1,0 +1,223 @@
+---
+title: "Azure App Service の Service Management APIs が廃止されます"
+author_name: "Japan Azure CIE Support Team"
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-app-service-の-service-management-apis-が廃止されます">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 3 月 21 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  このポストは、2018 年 3 月 12 日に投稿された
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/appserviceteam/2018/03/12/deprecating-service-management-apis-support-for-azure-app-services/">
+   Deprecating Service Management APIs support for Azure App Services
+  </a>
+  の翻訳です。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a data-linktype="external" href="https://channel9.msdn.com/Events/Build/2014/2-607">
+   Build 2014
+  </a>
+  にて、Azureは、呼ばれるリソース管理用の RESTful API である
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-group-overview">
+   Azure  Resource Manager
+  </a>
+  と新しい
+  <a data-linktype="external" href="https://portal.azure.com/">
+   Azure Portal
+  </a>
+  を発表しました。
+  <a data-linktype="external" href="https://azure.microsoft.com/en-us/services/app-service/">
+   Azure App Service
+  </a>
+  が Azure Resource Manager のサポートを実装して以来、すでに数年がたっています。ポータルや、REST API 、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/azure/#pivot=sdkstools">
+   その他の SDK やクライアント ツール
+  </a>
+  を通してApp Service のリソースを管理や自動化をする場合や、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-group-template-deploy">
+   デプロイ用のテンプレート
+  </a>
+  を使用してリソースをデプロイを行う際には、すでにAzure Resource Manager が利用されております。 一方、従来のAzure Service Management API を利用して自動化のためのスクリプトが構築されている場合は、このアナウンスが影響します。
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure App Service のリソース管理は、Azure Resource Managerを介してのみサポートされるようになります。 Azure Service Management のサポートは
+  <strong>
+   2018
+  </strong>
+  <strong>
+   年
+  </strong>
+  <strong>
+   6
+  </strong>
+  <strong>
+   月
+  </strong>
+  <strong>
+   30
+  </strong>
+  <strong>
+   日に廃止されます
+  </strong>
+  。 Service Management の API は古く、現代のクラウドにはあまり適していません。 Service Management API を利用したままでは、優れた開発者エクスペリエンスが提供できず、 プレーン スケールの操作もできなくなります。 現在Service Management APIを使用しているお客様は、Resource Managerに移行してください。 Azure Resource Managerには、堅牢な導入モデル、ロールベースのアクセス、既存の機能や新しい機能のAPIサポートなど、サービス管理に比べて多くの利点があります。 詳細については、
+  <a data-linktype="external" href="https://blogs.technet.microsoft.com/meamcs/2016/12/22/difference-between-azure-service-manager-and-azure-resource-manager/">
+   Azure Service ManagerとAzure Resource Managerの違い
+  </a>
+  を参照してください。
+ </p>
+ <p>
+ </p>
+ <h5 id="認証">
+  <strong>
+   認証
+  </strong>
+ </h5>
+ <p>
+ </p>
+ <p>
+  Service Management では、Azure Active Directoryまたは管理証明書を使用した認証がサポートされています。 リソースマネージャの認証は、Azure Active Directoryアプリケーションと対話型ユーザーアクセスを中心に構築されています。 詳細については、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-manager-api-authentication">
+   Resource Manager API Authentication
+  </a>
+  を参照してください。 オートメーションで管理用の証明書を使用する必要がある場合は、
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/tomholl/2015/06/18/authenticating-to-azure-resource-manager-using-aad-and-certificates/">
+   Authenticating to Azure Resource Manager using AAD and certificates
+  </a>
+  を使用して自動化することができます。
+ </p>
+ <p>
+ </p>
+ <h5 id="リソースのデプロイメント">
+  <strong>
+   リソースのデプロイメント
+  </strong>
+ </h5>
+ <p>
+ </p>
+ <p>
+  リソースマネージャには、宣言的なリソース記述を持つ堅牢なデプロイメントエンジンがあります。 両者のリソース デプロイメントの違いを理解するには、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-manager-deployment-model">
+   Resource Manager Deployment Model
+  </a>
+  を参照してください。 リソースマネージャは、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/resource-manager-create-first-template">
+   デプロイ用のテンプレート
+  </a>
+  によるリソースのデプロイをサポートします。 また、Microsoft 2. Azure SDK for .NET 2.9以降、Visual Studioを使用したリソースの展開もサポートされています。 詳細については、Visual Studioを使用したリソースとコードの展開を参照してください。
+ </p>
+ <p>
+ </p>
+ <h5 id="api-の呼び出し">
+  <strong>
+   API の呼び出し
+  </strong>
+ </h5>
+ <p>
+ </p>
+ <p>
+  Resource Manager REST APIを直接コーディングする場合は、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/rest/api/appservice/">
+   Azure App Service REST API
+  </a>
+  のドキュメントを参照してください。
+  <a data-linktype="external" href="https://github.com/projectkudu/ARMClient">
+   ARMClient
+  </a>
+  と
+  <a data-linktype="external" href="https://resources.azure.com/">
+   Azure Resource Explorer
+  </a>
+  は、App Service Resource Manager API がどのようになっているのか調べるための素晴らしいツールです。 ARMClientの詳細については、
+  <a data-linktype="external" href="http://blog.davidebbo.com/2015/01/azure-resource-manager-client.html">
+   ARMClient: a command line tool for the Azure API
+  </a>
+  を参照してください。
+ </p>
+ <p>
+ </p>
+ <h5 id="sdkとツール">
+  <strong>
+   SDKとツール
+  </strong>
+ </h5>
+ <p>
+ </p>
+ <p>
+  Resource Managerは、SDK やツールを多数の言語、フレームワーク、プラットフォームで提供します。 これらには、.NET、Node、Java、Ruby、Python、Go、PowerShell、Azure CLIが含まれますが、これだけではありません。 詳細なドキュメント、チュートリアル、サンプルが
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/#pivot=sdkstools">
+   ここ
+  </a>
+  にあります。
+ </p>
+ <p>
+ </p>
+ <h5 id="appサービスリソースメトリック">
+  <strong>
+   Appサービスリソースメトリック
+  </strong>
+ </h5>
+ <p>
+ </p>
+ <p>
+  自動化のためのスクリプトなどが App Service Resource Metrics API  を使用していた場合は、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/monitoring-and-diagnostics/monitoring-overview-metrics">
+   Azure Resource Manager Monitoring  API
+  </a>
+  に切り替えることをお勧めします。 App Service 固有のメトリックAPIは引き続き提供していますが、間もなくその API を廃止にする予定です。 Resource Manager Monitoring API は、Azure 内の任意のサービス上の任意のリソースでメトリックとやりとりする共通的な方法です。 詳細については、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/monitoring-and-diagnostics/monitoring-supported-metrics">
+   Azure Monitor でサポートされているメトリック
+  </a>
+  を参照してください。
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   2018
+  </strong>
+  <strong>
+   年
+  </strong>
+  <strong>
+   6
+  </strong>
+  <strong>
+   月
+  </strong>
+  <strong>
+   30
+  </strong>
+  <strong>
+   日
+  </strong>
+  より前に、すべての自動化ツールとデプロイメントツールを新しいAPIを使用するように移行すれば、サービスの中断を防ぎ、やAzure Resource Manager の優れたデプロイメントと管理機能の恩恵を受けるようにしましょう。
+ </p>
+ <p>
+ </p>
+ <p>
+  補足:
+ </p>
+ <hr/>
+ <p>
+  Service Management API を利用している例としては、Azure Service Management PowerShell Module 内のコマンドレットが挙げられます。
+ </p>
+ <p>
+  Get-AzureWebsite など、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/powershell/module/azure/get-azurewebsite?view=azuresmps-4.0.0">
+   こちら
+  </a>
+  に記載されております Web Apps に関連するコマンドレットは利用できなくなる可能性がございますのでご注意ください。
+ </p>
+ <!-- </content> -->
+</main>

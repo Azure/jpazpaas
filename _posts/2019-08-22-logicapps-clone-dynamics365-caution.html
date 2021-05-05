@@ -1,0 +1,72 @@
+---
+title: "Dynamics 365 の環境をコピーするとLogic Apps の設定もコピーされる"
+author_name: "Osamu Shimizu"
+tags:
+    - MigratedArticle
+    - Logic Apps
+    - Dynamics 365
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://social.msdn.microsoft.com/Forums/ja-JP/d2fb3e5e-59e3-493e-bd9d-6bda04209838/dynamics-365-12398298722265912434124671250012540123771242712392logic?forum=Jpcie">旧 MSDN フォーラム Japan Azure PaaS Support Team</a> からのコピーとなります。<br />
+記載されている内容は 2019 年 8 月 22 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<div class="messageContent">
+ <div class="container">
+  <div class="body">
+   こんにちは。
+   <br/>
+   Azure PaaS Support Teamの清水です。今回はLogic AppsとDynamics 365に関する動作についてご紹介致します。
+   <br/>
+   <br/>
+   [問題]
+   <br/>
+   Logic Apps のトリガーが設定されているDynamics 365の環境をコピーした場合、コピー先の環境にもトリガー情報がコピーされるため、意図しない形でLogic Appsが動作する場合があります。
+   <br/>
+   <br/>
+   [原因]
+   <br/>
+   Logic Apps のトリガーをDynamics の環境に設定した場合、内部的に紐づきをさせるための情報が保存されます。
+   <br/>
+   そしてDynamics側にてトリガーの条件に合致するイベントが発生した場合、上記の情報を基にLogic Appsが呼ばれることになります。
+   <br/>
+   <br/>
+   しかしながら、Dynamicsの環境をコピーし別の環境を作成した場合、上記の情報を含みコピーが行われるため、
+   <br/>
+   コピーした環境において何かしらのイベント（データの更新など）が発生した場合においても、同じLogic Appsが呼び出される場合があります。
+   <br/>
+   この動作は現時点では想定された動作になります。
+   <br/>
+   <br/>
+   [対処方法]
+   <br/>
+   該当のLogic Appsの無効化・有効化を行うことで、Logic Appsとの紐づきを示す情報を再作成することが可能です。
+   <br/>
+   こちらの情報は内部情報となるため、ユーザー側から確認できませんが、もしDynamicsとLogic Appsを連携させている場合には、ご留意頂けますと幸いです。
+   <br/>
+   <br/>
+  </div>
+  <input id="d2fb3e5e-59e3-493e-bd9d-6bda04209838_attachments" type="hidden" value="">
+  </input>
+ </div>
+ <div>
+  <ul class="history">
+   <li>
+    <span class="type">
+     編集済み
+    </span>
+    <a class="author" href="https://social.msdn.microsoft.com:443/profile/jpcie?type=forum&amp;referrer=https://social.msdn.microsoft.com/Forums/ja-JP/d2fb3e5e-59e3-493e-bd9d-6bda04209838/dynamics-365-logic-apps-?forum=Jpcie" rel="nofollow" title="JPCIE について">
+     <span>
+      JPCIE
+     </span>
+     <abbr class="affil">
+      Microsoft employee, Owner
+     </abbr>
+    </a>
+    <span class="date">
+     2019年8月22日 2:42
+    </span>
+   </li>
+  </ul>
+ </div>
+</div>

@@ -1,0 +1,165 @@
+---
+title: "アラートルールの推奨設定"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - Monitor
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/アラートルールの推奨設定">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2016 年 12 月 19 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure CIE サポートの村山です。
+ </p>
+ <p>
+ </p>
+ <p>
+  今日は、最近流行りの Azure メトリックを利用した監視方法の注意点に関してご案内します。
+ </p>
+ <p>
+  Azure メトリックではテレメトリを利用して、各リソースのパフォーマンスや、正常性を確認することができます。
+ </p>
+ <p>
+  Microsoft Azure のメトリックの概要
+ </p>
+ <p>
+  <a data-linktype="external" href="https://docs.microsoft.com/ja-jp/azure/monitoring-and-diagnostics/monitoring-overview-metrics">
+   https://docs.microsoft.com/ja-jp/azure/monitoring-and-diagnostics/monitoring-overview-metrics
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure Web Appsの場合、CPU や メモリなどを監視して、高負荷がかかった場合には、スケールアウトやスケールアップを行い、アクセスの増加に対応することもできます。
+ </p>
+ <p>
+  また、HTTP 500 エラーなどを監視して、アラートを設定することで、内部で何か問題が発生した際にその通知をメールで受け取ることが可能になります。
+ </p>
+ <p>
+ </p>
+ <p>
+  <s>
+   このアラートルールですが、下記画像のように、最短で ”直近 5 分間“ から “直近 6 時間” まで設定することが可能です。
+  </s>
+  <s>
+   しかしながら、この “直近 5 分間” は場合によってはうまく通知が送られないことがあります。
+  </s>
+ </p>
+ <p>
+  2018 年現在では、直近 5 分間でも動作することが確認されております。(2018/01/30 現在)
+ </p>
+ <p>
+ </p>
+ <p>
+  一番安定して動作する中で最短の時間は “直近 15 分間” であるため、確実にアラートを受け取りたい場合は、”
+  <strong>
+   直近 15 分間
+  </strong>
+  ” の設定をご利用ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="blog2" data-linktype="external" src="/blog/media/2016/12/blog2.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  また、特に Web App に関しては、アーキテクチャの仕組み上、エラーの種類によってはメトリックで検知されない場合がございます。
+ </p>
+ <p>
+  具体的には、Web App の Front End インスタンス (Application Request Routing で Web Worker インスタンスに要求をルーティングするロール インスタンス) や Web Worker のカーネルドライバーである HTTP.SYS でハンドルされた場合には、Web Worker のユーザーモード プロセスまで HTTP 要求が到達しないため、HTTP ステータス コードを基にしたメトリックでは検知されません。
+ </p>
+ <p>
+  例えば、以下のようなシナリオでは HTTP エラーが検知されないため、今後 Web Apps の運用を検討されている方は、十分にご注意ください。
+ </p>
+ <p>
+ </p>
+ <ol>
+  <li>
+   <strong>
+    Front End が応答を返す場合
+   </strong>
+  </li>
+  <li>
+   <strong>
+    Web Worker のカーネルモード ドライバーである HTTP.SYS が応答を返す場合
+   </strong>
+  </li>
+  <li>
+   <strong>
+    Kudu サイトに対する処理
+   </strong>
+  </li>
+ </ol>
+ <p>
+ </p>
+ <p>
+  <strong>
+   Front End が応答を返す場合
+  </strong>
+ </p>
+ <ul>
+  <li>
+   クライアント証明書の認証が失敗した場合: Front Endでは証明書が提示されているかどうかに関してチェックを行います。
+  </li>
+  <li>
+   Web Worker 上でのアプリケーションの実行に時間がかかりFront End 側でFront End の Application Request Routingタイムアウトしてエラーを返す場合: Front End のタイムアウトに比べ Web Worker 上のアプリケーションのタイムアウト設定が長い場合が該当します。
+  </li>
+  <li>
+   Azure プラットフォーム上の負荷上昇等が発生した際に、プラットフォーム全体が負荷上昇状態を防ぐ場合: この際、Web Worker への要求を一時的に制御する場合がございます。
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  <strong>
+   Web Worker のカーネルモード ドライバーである HTTP.SYS が応答を返す場合
+  </strong>
+ </p>
+ <ul>
+  <li>
+   Azure Web Apps 側でのアプリケーションや Web.config での設定ミス
+  </li>
+  <li>
+   Free プランでの上限にあたった
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  <strong>
+   Kudu サイトに対する処理
+  </strong>
+ </p>
+ <ul>
+  <li>
+   Kudu サイトにアクセスする際の認証が失敗した場合
+  </li>
+  <li>
+   Web Job の実行結果や、エラーが発生した場合
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  それでは、また！
+ </p>
+ <p>
+ </p>
+ <p>
+  本情報の内容 (添付文書、リンク先などを含む) は、作成日時点でのものであり、予告なく変更される場合があります。
+ </p>
+ <!-- </content> -->
+</main>

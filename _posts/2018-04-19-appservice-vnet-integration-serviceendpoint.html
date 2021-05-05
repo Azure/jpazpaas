@@ -1,0 +1,100 @@
+---
+title: "Azure App Service の VNET 統合とサービス エンドポイント"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - Function App
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-app-service-の-vnet-統合とサービス-エンドポイント">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 4 月 19 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。Azure Dev サポートの村山です。
+ </p>
+ <p>
+ </p>
+ <p>
+  今日は App Service の VNET 統合とサービス エンドポイントの連携についてお話します。
+ </p>
+ <p>
+ </p>
+ <p>
+  仮想ネットワークの
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/virtual-network/virtual-network-service-endpoints-overview">
+   サービス エンドポイント
+  </a>
+  と呼ばれる機能を利用すると、 Azure SQL Database や、Azure Storage Account へのアクセスを仮想ネットワーク内からのみに限定することが可能です。
+ </p>
+ <p>
+ </p>
+ <p>
+  最近この機能と、Azure App Service の VNET 統合の機能を組み合わせて、Azure App Service から仮想ネットワーク経由で、Azure SQL Database や、Azure Storage Account へアクセスできるかというお問い合わせをいただきます。
+ </p>
+ <p>
+ </p>
+ <p>
+  残念ですが、Azure App Service と VNET 統合の機能を組み合わせて、プライベートに Azure SQL Database や Azure Storage Account へ接続することはできません。
+ </p>
+ <p>
+  ※ Web Apps だけではなく、App Service Plan 上にホストされたFunction App や、API App の場合も同様です。
+ </p>
+ <p>
+ </p>
+ <p>
+  一方、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/environment/intro">
+   App Service Environment
+  </a>
+  (以下 ASE) であれば、サービス エンドポイントが有効化された Azure  SQL Database や、Azure Storage Account へアクセスすることができます。
+ </p>
+ <p>
+ </p>
+ <p>
+  下記画像は、Azure SQL Database でサービスエンドポイントを有効化した例になります。
+ </p>
+ <p>
+  ASE に関しては、
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/jpcie/?p=1677">
+   以前の記事
+  </a>
+  で紹介しておりますので、こちらもご覧ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="azure-app-service-の-vnet-統合とサービス-エンドポイント.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/04/92.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  なお、ASE とオンプレミスのネットワーク間で VPN や ExpressRoute を利用している場合、インターネットへ向かうトラフィックを VPN や仮想アプライアンスにリダイレクトさせて、 "強制トンネリング" と呼ばれる構成を取るお客様もいらっしゃいます。
+ </p>
+ <p>
+ </p>
+ <p>
+  そのシナリオの場合は、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/environment/forced-tunnel-support#configure-your-ase-with-service-endpoints">
+   こちらのドキュメント
+  </a>
+  にてサービスエンドポイントを設定する方法が紹介されています。
+ </p>
+ <p>
+ </p>
+ <p>
+  セキュリティ要件が厳しい案件の場合には、ASE の利用をご検討ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  ※ 記事の内容は予告なく変更される場合がございますのでご了承ください。
+ </p>
+ <!-- </content> -->
+</main>

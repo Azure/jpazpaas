@@ -1,0 +1,300 @@
+---
+title: "[Advent Calendar 2017 Day3] Web Apps - Linux への対応"
+author_name: Imamura
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/advent-calendar-2017-day3-web-apps-linux-への対応">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 12 月 3 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+ </p>
+ <p>
+  こちらの記事は、Qiita に掲載した Microsoft Azure Tech Advent Calendar 2017 の企画に基づき、執筆した内容となります。
+  <br/>
+  カレンダーに掲載された記事の一覧は、
+  <a data-linktype="external" href="https://qiita.com/advent-calendar/2017/microsoft-azure-tech">
+   こちら
+  </a>
+  よりご確認ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  こんにちは。Azure CIE サポート 今村 です。
+  <br/>
+  今回は、2017 年より強化された Web Apps のコンテナ対応、および Linux 対応について、アドベント カレンダー 3 日目の記事としてまとめてみました。
+ </p>
+ <p>
+ </p>
+ <h3 id="1-従来の-app-service">
+  1. 従来の App Service
+ </h3>
+ <hr/>
+ <p>
+  これまでの App Service は、その基盤にて Windows Server と IIS を利用し、「サンドボックス」と呼ばれる環境の中にアプリケーションを配置していました。
+ </p>
+ <p>
+  App Service におけるアーキテクチャに関しては、弊社開発部門の Yochay および Stefan が書いた MSDN マガジンの以下の記事に、詳細が記載されています。
+  <br/>
+  "Azure - Inside the Azure App Service Architecture" :
+  <a data-linktype="external" href="https://msdn.microsoft.com/en-us/magazine/mt793270.aspx">
+   https://msdn.microsoft.com/en-us/magazine/mt793270.aspx
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  なかでも、Linux をベースとした Web Apps においては、Web Worker と呼ばれるインスタンス群が、従来の Web Apps とは大きく異なっています。
+  <br/>
+  Web Worker は、ユーザーがデプロイしたアプリケーションを動作させるためのインスタンスで、App Service プランよりスケール アウト/スケール インを行う際には、この Web Worker と呼ばれるインスタンスが増減しています。
+  <br/>
+  Web Apps のコンテナ対応、ならびに Linux プラットフォームへの対応にあたっては、Web Worker と呼ばれるインスタンス群を Linux OS にて動作させ、さらにそのうえで Docker エンジンを動かすことで、サービスを実現しています。
+ </p>
+ <p>
+ </p>
+ <p>
+  また、既定の Docker イメージを利用して様々な言語のアプリケーションが配置可能な App Service on Linux というサービスと、ユーザーが独自にビルドした Docker イメージをデプロイ出来る Web App for Containers というサービスに分かれています。
+  <br/>
+  次項よりそれぞれのサービスを見ていきたいと思います。
+ </p>
+ <p>
+ </p>
+ <h3 id="2-app-service-on-linux">
+  2. App Service on Linux
+ </h3>
+ <hr/>
+ <p>
+  Linux プラットフォームに対応したことで、Web App の作成の際に、Azure ポータルでは新たに OS の種類を選択するオプションが追加されました。
+  <br/>
+  ここで Linux OS を選択すると、App Service on Linux としてデプロイが行われます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_os_choice.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  2017 年 12 月 3 日現在では、Node.js、PHP、.NET Core、Ruby の 4 種類の言語が、バージョンごとに選択可能となっています。
+  <br/>
+  これらのランタイム スタックは、いずれも Docker イメージとなっており、Azure ポータルで言語を選択すると、docker run コマンドによりイメージからコンテナが起動される仕組みとなっています。
+  <br/>
+  また、これらの Docker イメージは Dockerfile とともに、下記の通り Docker Hub 上に公開されています。
+ </p>
+ <p>
+  "Azure App Service" :
+  <br/>
+  <a data-linktype="external" href="https://hub.docker.com/u/appsvc/">
+   https://hub.docker.com/u/appsvc/
+  </a>
+ </p>
+ <p>
+  後述する Web App for Containers を利用して、独自にビルドした Docker イメージをデプロイする場合、これらのリポジトリをフォークしたうえで Dockerfile の作成に取り掛かると、より分かりやすいかもしれません。
+ </p>
+ <p>
+ </p>
+ <p>
+  次に、高度なツール (Kudu) はどのように Windows OS の場合と異なっているか見てみます。
+  <br/>
+  Debug console を見てみると、Bash と SSH という 2 通りの選択肢があることが分かります。
+  <br/>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_bash_debug_console.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  ここで注意すべきなのが、
+  <strong>
+   Bash を選択した場合、Kudu 自体のファイル システムにアクセスする動作となる
+  </strong>
+  点です。
+  <br/>
+  実は、上述した Docker Hub でも Kudu というリポジトリがあったとおり、Kudu も Docker エンジン上で機能するコンテナとして配置されており、Bash はこの Kudu コンテナに対するアクセスになります。
+ </p>
+ <p>
+  この Bash コンソールへのアクセスは、内部で実行されている docker コマンドの動作をトラブルシュートする際に有用です。
+  <br/>
+  例えば docker pull や docker run といったコマンドの実行ログは、下記のように /home/LogFiles ディレクトリの配下に配置されます。
+  <br/>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_docker_log.png"/>
+  </a>
+ </p>
+ <p>
+  そのため、実際に Node.js や PHP アプリケーションが動作しているコンテナにアクセスするには、SSH コンソールの方を利用します。
+ </p>
+ <p>
+ </p>
+ <p>
+  ランタイム スタックを切り替えて、言語ごとに動作しているミドルウェアを SSH コンソールから確認してみると、それぞれが異なる仕組みで動作していることが分かります。
+ </p>
+ <p>
+  例えば、PHP のランタイム スタックで ps コマンドを実行してプロセスの一覧を確認すると、Web サーバーおよびアプリケーション サーバーとして Apache2 が動作しています。
+  <br/>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_php_ps.png"/>
+  </a>
+ </p>
+ <p>
+  一方で  Node.js では、node が直に HTTP の要求をリッスンしているため、下記のようなプロセスが動いている形になります。
+  <br/>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_node_ps.png"/>
+  </a>
+ </p>
+ <p>
+  Windows OS をベースとした Web Apps では、HTTP の要求はすべて IIS を介在させる形となっていましたが、
+  <strong>
+   App Service on Linux では、言語ごとにミドルウェアが全く異なった内容で、アプリケーションを動作させている
+  </strong>
+  点が大きな違いであると言えます。
+ </p>
+ <p>
+ </p>
+ <p>
+  また、Web ブラウザを経由した SSH コンソールを利用して、アプリケーションが動作するコンテナにアクセスはできますが、
+  <strong>
+   SSH コンソールから何らかの設定変更や、コンポーネントのインストールを行うことは推奨されません。
+  </strong>
+  <br/>
+  これは、/home ディレクトリ以外のファイルは、App Service on Linux が再起動されるたびに初期化されるためです。
+  <br/>
+  App Service on Linux を再起動すると、docker run コマンドが実行され、Docker イメージからコンテナが再構成されるため、マウントされている /home ディレクトリ以外に保存した内容は、既定の内容に置き換えられます。
+ </p>
+ <p>
+  そのため、例えば PHP のランタイム スタックで Apache2 の設定を変更するために、apache2.conf を書き換えて保存したとしても、その設定内容を恒久的に反映させることはできません。
+  <br/>
+  .htaccess など、/home ディレクトリに配置できるような方法で、設定変更を行う必要がありますので、注意が必要です。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h3 id="3-web-app-for-containers">
+  3. Web App for Containers
+ </h3>
+ <hr/>
+ <p>
+  Web App for Containers は、App Service on Linux とは異なり、独自に作成した Docker イメージをデプロイできる点が大きな特徴です。
+  <br/>
+  新たな Web App リソースを追加する際に、"Web App for Containers" と入力して検索を行うと、サービスが表示されます。
+  <br/>
+  （2017 年 12 月 3 日現在、日本語環境の Azure ポータルにて "Web App on Linux" と表示される場合がありますが、"Web App on Linux" をそのままご選択ください。）
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_choose_containers.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  作成画面を見ると、App Service on Linux のときとは異なり、Docker Hub や Azure Container Registry 等に存在する、Docker イメージを指定する方式に変わっていることが分かります。
+  <br/>
+  例えば、Docker Hub の Public リポジトリより WordPress をデプロイする場合は、wordpress と入力して作成を行います。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_create_containers.png"/>
+  </a>
+ </p>
+ <p>
+  ここで選択した Docker イメージは、Azure ポータルの Docker コンテナのメニューより、あとから切り替えることも可能です。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_change_container_image.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  WordPress の作成後、アクセスしてみると分かりますが、App Service on Linux の場合と比較して、Web App for Containers にアクセスしてもすぐには WordPress が立ち上がっていないことが確認できます。
+  <br/>
+  この理由は、Kudu の Bash コンソールより、docker ログを確認すると分かります。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_docker_pull.png"/>
+  </a>
+ </p>
+ <p>
+  <strong>
+   Web App for Containers の場合、App Service on Linux の場合と比較して、docker pull コマンドが実行され、イメージをダウンロードする動作となっている
+  </strong>
+  ことが確認できます。
+  <br/>
+  ここでは 13:12:22 から 13:12:58 までのおよそ 30 秒間、docker pull コマンドに時間を要していたことになります。
+  <br/>
+  そのため、重い Docker イメージを利用する場合は注意が必要です。
+ </p>
+ <p>
+ </p>
+ <p>
+  また、App Service on Linux の場合と異なり、SSH コンソールへ繋がらないことも分かります。
+  <br/>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_ssh_refused.png"/>
+  </a>
+ </p>
+ <p>
+  <strong>
+   カスタムの Docker イメージにて SSH 接続を行う場合、Dockerfile の中でいくつかの設定を含める必要があります。
+  </strong>
+  <br/>
+  例えば、root アカウントのパスワードを "Docker!" にするといった変更が必要となり、そのため多くの Docker Hub 上のイメージは、Kudu から SSH 接続ができません。
+  <br/>
+  SSH をセットアップする手順の詳細は、下記よりご確認ください。
+ </p>
+ <p>
+  "カスタム Docker イメージでの SSH サポート" :
+  <br/>
+  <a data-linktype="external" href="https://docs.microsoft.com/ja-jp/azure/app-service/containers/app-service-linux-ssh-support#ssh-support-with-custom-docker-images">
+   https://docs.microsoft.com/ja-jp/azure/app-service/containers/app-service-linux-ssh-support#ssh-support-with-custom-docker-images
+  </a>
+ </p>
+ <p>
+  一方で App Service on Linux では、SSH コンソールを提供するために、ランタイム スタックの中で SSH のセットアップが含まれています。
+ </p>
+ <p>
+ </p>
+ <p>
+  また、
+  <strong>
+   Web App for Containers の場合、再起動が行われた際には /home 以下のディレクトリも、docker run コマンドの実行直後の状態に戻る設定が、デフォルトとなっています。
+  </strong>
+  <br/>
+  この状態は、Web Worker として利用されているインスタンスが個別に /home 以下のディレクトリを保持しており、インスタンス間で、マウントしたディレクトリを共有していない状態であることを意味します。
+  <br/>
+  この場合、ネットワーク経由でマウントした領域を利用しないため、I/O が高速に行えるというメリットはありますが、インスタンス間で共有したいファイルがある場合、この既定の設定では要望を満たせないことになります。
+ </p>
+ <p>
+  ディレクトリのマウントは、Web Apps の「アプリケーション設定」のメニューより有効・無効が切り替えられるようになっているため、マウントが必要な場合は "WEBSITES_ENABLE_APP_SERVICE_STORAGE" の値を "true" に設定してください。
+  <br/>
+  既定では下記のように false が入力されています。
+  <br/>
+  <a href="advent-calendar-2017-day3-web-apps-linux-への対応.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/11/1165_application_settings.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  このように、App Service では、今後も Linux への対応を拡充していきます。
+  <br/>
+  もちろん、これまで提供してきた Windows 版も同様にご利用いただけますので、配置するアプリケーションの要件や用途に応じて、プラットフォームをご検討ください。
+ </p>
+ <!-- </content> -->
+</main>

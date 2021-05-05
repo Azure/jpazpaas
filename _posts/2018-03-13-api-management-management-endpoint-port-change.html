@@ -1,0 +1,58 @@
+---
+title: "[API Management] 2018年6月1日に管理エンドポイントのポートが変更されます"
+author_name: "Japan Azure CIE Support Team"
+tags:
+    - MigratedArticle
+    - API Management
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/api-management-2018年6月1日に管理エンドポイントのポートが変">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 3 月 13 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  このポストは、2018年2月28日に投稿された
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/apimanagement/2018/02/28/upcoming-change-to-management-endpoint-port-on-june-1/">
+   Upcoming change to management endpoint port on June 1
+  </a>
+  の翻訳です。
+ </p>
+ <p>
+ </p>
+ <p>
+  もし仮想ネットワーク上に API Management サービスインスタンスを展開していましたら、下記ご確認ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure Portal および PowerShell 用の管理エンドポイント向けのポートを 443 ポートから 3443 ポートに変更します。(こちらの
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/api-management/api-management-using-with-vnet#a-namenetwork-configuration-issues-acommon-network-configuration-issues">
+   ページ
+  </a>
+  または下記の表をご覧ください。) 今回の変更はお客様が受信管理トラフィックを分離したり、受信管理トラフィックを制御できるようにするために実施されます。6月1日に、今まで管理エンドポイントで使っていた 443 ポートの利用を停止します。
+  <strong>
+   よって、6月1日以降も引き続き確実にサービスをご利用いただくために、NSG の受信ルールにおいて、3443 ポートへのアクセスを許可してください。
+  </strong>
+ </p>
+ <p>
+  ご質問や懸念点等がありましたら
+  <a data-linktype="external" href="https://social.msdn.microsoft.com/forums/azure/ja-jp/home?forum=azureapimgmt&amp;forum=azureapimgmt">
+   API Management forum
+  </a>
+  または
+  <a data-linktype="external" href="https://stackoverflow.com/questions/tagged/azure-api-management">
+   Stack Overflow
+  </a>
+  を通じてご連絡ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="api-management-2018年6月1日に管理エンドポイントのポートが変.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/03/Capture18.png"/>
+  </a>
+ </p>
+ <!-- </content> -->
+</main>

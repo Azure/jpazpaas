@@ -1,0 +1,361 @@
+---
+title: "[Advent Calendar 2017 Day11] App Service Environment って何ですか ?"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - App Service
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/advent-calendar-2017-day11-app-service-environment-って何ですか-？">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 12 月 13 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こちらの記事は、Qiita に掲載した Microsoft Azure Tech Advent Calendar 2017 の企画に基づき、執筆した内容となります。
+  <br/>
+  カレンダーに掲載された記事の一覧は、
+  <a data-linktype="external" href="https://qiita.com/advent-calendar/2017/microsoft-azure-tech">
+   こちら
+  </a>
+  よりご確認ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  こんにちは。Azure Dev サポートの村山です。
+ </p>
+ <p>
+  本日は、App Service Environment (以下 ASE) と呼ばれるサービスについて簡単に説明したいと思います。
+ </p>
+ <p>
+  App Service Environment や、App Service Plan、App Service など、弊社 Microsoft Azureサービス内で似通った単語がありますが、この記事では、App Service Environment (App Service 環境と訳されることもある) に関してお話をしたいと思います。
+ </p>
+ <p>
+  App Service Plan と App Service の違いやその概念に関しては、
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/jpcie/?p=155">
+   別の記事
+  </a>
+  でご案内してますので、そちらをご確認ください。
+ </p>
+ <p>
+ </p>
+ <h2 id="app-service-environment-ase-って">
+  App Service Environment (ASE) って？
+ </h2>
+ <hr/>
+ <p>
+  通常のAzure App Service とは異なり、お客様の専用の App Service の環境が利用できるサービスとなります。
+ </p>
+ <p>
+  通常 App Service Plan はスケール ユニットと呼ばれる単位ごとに App Service の環境が構成されており、このスケール ユニットは、それぞれが異なる役割を持つインスタンスで構成されています。
+ </p>
+ <p>
+  詳しくは
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/jpcie/?p=1165">
+   Web Apps on Linux についての記事
+  </a>
+  内で紹介されていた、弊社開発部門の Yochay および Stefan が書いた
+  <a data-linktype="external" href="https://msdn.microsoft.com/en-us/magazine/mt793270.aspx">
+   MSDN マガジンの記事
+  </a>
+  で説明されています。
+ </p>
+ <p>
+  <strong>
+   WebWorker
+  </strong>
+  : お客様のアプリケーションが動作するインスタンスとなります。
+ </p>
+ <p>
+  <strong>
+   Frontend
+  </strong>
+  : レイヤー 7 ロードバランサーであり、スケールユニットに来たリクエストを目的の Web Apps に振り分ける役割を持っています。SSL オフロードなどに関してもこのインスタンス上で行われます。
+ </p>
+ <p>
+  <strong>
+   FileServers
+  </strong>
+  : お客様のアプリケーション コンテンツが保存されるインスタンスとなります。
+ </p>
+ <p>
+  <strong>
+   API Controllers
+  </strong>
+  : Azure Portal や REST API から送信した API を受け取り、App Service の変更の処理を司ります。
+ </p>
+ <p>
+  <strong>
+   Publishers
+  </strong>
+  : FTP や Git、VSDeploy などのデプロイメントを司るロールになります。
+ </p>
+ <p>
+  そのほか、アプリケーションのメタデータを保存しておく SQL Database や、その SQL Database と各インスタンスとの仲立ちの役割を果たす Data Role と呼ばれるインスタンスが存在しており、これらのインスタンスは各スケールユニットごとに存在しています。
+ </p>
+ <p>
+  ASEはこの App Service の環境をお客様専用にご提供するサービスとなります。
+ </p>
+ <p>
+ </p>
+ <p>
+  加えて ASE では、100 インスタンスまでスケールアウトが可能であり、特に、ASE v2 では インスタンスとして Dv2 シリーズを利用しておりますので、高負荷なアプリケーションもホストすることができます。
+ </p>
+ <p>
+  詳しくは
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/environment/intro">
+   こちら
+  </a>
+  でご案内しておりますが、このほか、ASE は仮想ネットワーク上にデプロイされるため、NSG を適用してアクセスするポートを制限したり、仮想ネットワーク内の仮想マシンや、オンプレミス環境から VPN 経由で Web Apps に接続できるといった特徴があります。
+ </p>
+ <p>
+ </p>
+ <h2 id="app-service-environmentase-って使う必要あるの">
+  App Service Environment(ASE) って使う必要あるの？
+ </h2>
+ <hr/>
+ <p>
+  それでは、いつ ASE の利用を検討するべきでしょうか。
+ </p>
+ <p>
+  もちろん、負荷の高いアプリケーションをホストする場合には ASE のご利用をおすすめしています。
+ </p>
+ <p>
+  他にも、App Service に関しては、下記のようなお問い合わせを頻繁にいただきます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   1. App Service 利用時に不要なポートを閉じたい
+  </strong>
+ </p>
+ <p>
+  <strong>
+   2. App Service へ VPN 経由でアクセスしたい
+  </strong>
+ </p>
+ <p>
+  <strong>
+   3. 別サービスへの送信 IP を一つに絞りたい
+  </strong>
+ </p>
+ <p>
+ </p>
+ <p>
+  これらはいずれも
+  <strong>
+   通常の App Service では実現できません
+  </strong>
+  。
+ </p>
+ <p>
+  このため、システムを作成する際に上記のようなご要件がある場合には、ASE をご利用いただくようご案内しています。
+ </p>
+ <p>
+  つまり、「
+  <strong>
+   ASE を利用すればできる
+  </strong>
+  」わけですが具体的にどういうことかご説明しようと思います。
+ </p>
+ <p>
+ </p>
+ <h3 id="app-service-利用時に不要なポートを閉じたい">
+  App Service 利用時に不要なポートを閉じたい
+ </h3>
+ <p>
+ </p>
+ <p>
+  App Service Environment は、仮想ネットワーク内のサブネット上にデプロイを行います。
+ </p>
+ <p>
+  サブネット上にデプロイするため、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/virtual-network/virtual-networks-nsg">
+   NSG
+  </a>
+  と呼ばれる機能が利用可能になります。
+ </p>
+ <p>
+  以前このブログの
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/jpcie/?p=935">
+   別の記事
+  </a>
+  でも紹介させていただきましたが、現在は App Service Environment 作成と同時に既定で下記のような NSG が作成されます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day11-app-service-environment-って何ですか-？.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/ase1.png"/>
+  </a>
+  <a href="advent-calendar-2017-day11-app-service-environment-って何ですか-？.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/ase2.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  ASE では、弊社 Microsoft Azure プラットフォーム側が管理を行うために、いくつか開放しなくてはならないポートがあり、上記の NSG はその条件を満たした状態で作成されます。
+ </p>
+ <p>
+  詳しくは先ほどのブログ記事でも紹介しておりますので、もしこの他のポートも閉じる必要がある場合は上記の記事も参考にしていただけますと幸いです。
+ </p>
+ <p>
+  つまり、App Service 利用時に不要なポートを 閉じる必要がある場合は、
+  <strong>
+   App Service Environment とNSG の利用
+  </strong>
+  を検討してください。
+ </p>
+ <p>
+ </p>
+ <h3 id="app-service-へ-vpn-経由でアクセスしたい">
+  App Service へ VPN 経由でアクセスしたい
+ </h3>
+ <p>
+ </p>
+ <p>
+  これもよくあるお問い合わせの一つですが、結論から言いますと
+  <strong>
+   ASE ならできます
+  </strong>
+  。
+ </p>
+ <p>
+  仮想ネットワーク内部や、サイト間接続したオンプレミスのネットワークから接続をする場合は、ILB を含む ASE (以下 ILB ASE) を構成するようにしてください。
+ </p>
+ <p>
+  ILB ASE を作成すると、オンプレミスのサイト間接続 VPN などからインターネットを経由せず App Service にアクセスすることができます。
+ </p>
+ <p>
+  詳しくは
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/environment/create-ilb-ase">
+   こちら
+  </a>
+  を読んでいただければと思います。ILB ASE ご利用の際には、お客様側で仮想ネットワーク内部に、DNS サーバーを構成する必要があります。
+ </p>
+ <p>
+  なお、App Service 上で
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/web-sites-integrate-with-vnet">
+   VNET 統合
+  </a>
+  という機能がありますが、こちらは
+  <strong>
+   App Service が仮想ネットワーク内部もしくはオンプレミスのリソースへアクセスする
+  </strong>
+  ための機能となりますので、VNET 統合では、App Service からオンプミス側にアクセスすることはできてもその逆はできません。
+ </p>
+ <p>
+  なお、App Service Environment では、作成時に
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/environment/create-external-ase">
+   外部
+  </a>
+  と
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/environment/create-ilb-ase">
+   内部
+  </a>
+  を選択することができますが、ASE作成後の切り替えはできませんのでご注意ください。
+ </p>
+ <p>
+  また、これまでASE 作成時に外部を選んだ場合は、外部向けエンドポイント、内部を選んだ場合は仮想ネットワーク内部向けエンドポイントの片方しか作成されませんでしたが、ILB ASE に関しては Application Gateway と連携して、外部と内部の両方にアクセスポイントを持つことができるようになりました。
+ </p>
+ <p>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/environment/integrate-with-application-gateway">
+   こちらのドキュメント
+  </a>
+  で詳しく説明されています。
+ </p>
+ <p>
+ </p>
+ <h3 id="別サービス-への送信-ip-を一つに絞りたい">
+  別サービス への送信 IP を一つに絞りたい
+ </h3>
+ <p>
+ </p>
+ <p>
+  App Service では インバウンド IP と アウトバウンド IPが分かれており、スケール ユニットごとにそれぞれ割り当てられております。
+ </p>
+ <p>
+  上記の MSDN マガジンでも詳細が記載されていますが、日本語の場合は
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/jpcie/?p=325">
+   こちらの記事
+  </a>
+  に詳細が書かれています。
+ </p>
+ <p>
+  このため、通常の App Service ではスケール ユニットごとに IP が割り当てられ、アウトバウンド IP が複数存在しており送信時には複数あるアウトバウンド IP のいずれかが利用されます。
+ </p>
+ <p>
+  ※
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/blog/azure-app-service-premium-v2-in-public-preview/">
+   App Service Plan Premium v2 (Preview)
+  </a>
+  は除きます。
+ </p>
+ <p>
+ </p>
+ <p>
+  ASE を利用する場合は、下記のようになります。
+ </p>
+ <p>
+  <strong>
+   外部 ASE
+  </strong>
+  : インバウンド IPとアウトバウンド IP が同一のものになります。(IP SSL利用時は、インバウンドの IP が変化します。)
+ </p>
+ <p>
+  <strong>
+   内部 ASE
+  </strong>
+  : インバウンド IP が ILB の IP となり、インターネット経由で通信する際のアウトバウンド用パブリック IP が割り当てられます。
+ </p>
+ <p>
+  ASE を利用すると、お客様専用の App Service の環境が割り当てられますので、利用する IP もお客様固有のものとなります。
+ </p>
+ <p>
+  なお、ASE が仮想ネットワーク内部やオンプレミスのリソースへアクセスする場合は、外部/内部ともに、ASE の WebWorker インスタンスのプライベート IP が利用されます。
+ </p>
+ <p>
+  スケールアウトをして複数のインスタンスがある場合は、そのインスタンスごとにプライベート IP が送信 IP となります。
+ </p>
+ <p>
+  このため、ASE がサイト間接続 VPN でつながれたオンプレミスのリソースへアクセスする際は、オンプレミス側の設定で、ASE がデプロイされたサブネットの IP レンジからのアクセスを許可するようにしてください。
+ </p>
+ <p>
+  なお、ASE は今年の夏に App Service Environment v2 がリリースされており、変更点に関しては
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/blog/announcing-app-service-environment-v2/">
+   こちら
+  </a>
+  に詳細な説明が書かれています。
+ </p>
+ <p>
+  また、クラシックの仮想ネットワーク上にデプロイする場合には、ASE v1 しか利用できませんので、ご注意ください。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h2 id="最後に">
+  最後に
+ </h2>
+ <hr/>
+ <p>
+  ASE は通常の App Service 利用時と比べて費用がだいぶ高くなりますが、その分 App Service と比べてより高性能になっています。
+ </p>
+ <p>
+  上記のような要件がある場合には、通常の App Service では実現することができないので、ぜひ ASE の利用を検討してください !
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  ※ 記事の内容は予告なく変更される場合がございますのでご了承ください。
+ </p>
+ <!-- </content> -->
+</main>

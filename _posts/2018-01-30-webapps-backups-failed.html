@@ -1,0 +1,177 @@
+---
+title: "Web Apps のバックアップが失敗しました。さぁ、サポート チケットを開きましょう。"
+author_name: "Japan Azure CIE Support Team"
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/web-apps-のバックアップが失敗しました。さぁ、サポー">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 1 月 30 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  このポストは、2018 年 1 月 2 日に投稿された
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/appserviceteam/2018/01/02/my-backups-are-failing/">
+   My Backups are failing, Let’s open a support ticket
+  </a>
+  <a data-linktype="external" href="https://azure.microsoft.com/en-us/blog/gdpr-how-to-get-organized-and-implement-the-right-processes/">
+  </a>
+  の翻訳です。
+ </p>
+ <h1 id="ちょっと待ってください">
+  ちょっと待ってください！
+ </h1>
+ <p>
+ </p>
+ <p>
+  バックアップ失敗の大部分（
+  <strong>
+   42％以上
+  </strong>
+  ）は、サポートチケットを開かなくても数分で解決できます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   ステップ 1:
+  </strong>
+  バックアップの何が失敗したかを把握する
+ </p>
+ <p>
+ </p>
+ <p>
+  バックアップ ブレードから、障害の発生したバックアップをクリックし、ログの詳細を確認します。
+  <br/>
+  (Azure ポータル上から、対象の Web Apps を選択し、ブレードの中から [バックアップ] を選択してください。)
+ </p>
+ <p>
+  <a data-linktype="external" href="/blog/media/2018/01/backup-log-in-portal.png">
+   <img alt="" data-linktype="external" src="/blog/media/2018/01/backup-log-in-portal-1024x694.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   ステップ 2:
+  </strong>
+  下記のテーブルをチェックしてください。
+ </p>
+ <p>
+ </p>
+ <table>
+  <tbody>
+   <tr class="odd">
+    <td>
+     <strong>
+      Error
+     </strong>
+    </td>
+    <td>
+     <strong>
+      Fix
+     </strong>
+    </td>
+   </tr>
+   <tr class="even">
+    <td>
+     Storage access failed. {0}
+    </td>
+    <td>
+     バックアップのスケジュールを削除し、再度設定を行ってください。
+    </td>
+   </tr>
+   <tr class="odd">
+    <td>
+     The website + database size exceeds the {0} GB limit for backups. Your content size is {1} GB.
+    </td>
+    <td>
+     部分バックアップを使用して、バックアップに必要のないファイルを除外してください。もしくは、データベースの設定を削除して、データベースは別のバックアップを利用してください。https://docs.microsoft.com/ja-jp/Azure/app-service/web-sites-backup#configure-partial-backups
+    </td>
+   </tr>
+   <tr class="even">
+    <td>
+     Error occurred while connecting to the database {0} on server {1}: Authentication to host ‘{1}’ for user ‘&lt;username&gt;’ using method ‘mysql_native_password’ failed with message: Unknown database ‘&lt;db name&gt;’
+    </td>
+    <td>
+     データベースの接続文字列を更新してください。
+    </td>
+   </tr>
+   <tr class="odd">
+    <td>
+     Cannot resolve {0}. {1} (CannotResolveStorageAccount)
+    </td>
+    <td>
+     バックアップのスケジュールを削除し、再度設定を行ってください。
+    </td>
+   </tr>
+   <tr class="even">
+    <td>
+     Login failed for user ‘{0}’.
+    </td>
+    <td>
+     データベースの接続文字列を更新してください。
+    </td>
+   </tr>
+   <tr class="odd">
+    <td>
+     Create Database copy of {0} ({1}) threw an exception. Could not create Database copy
+    </td>
+    <td>
+     接続文字列に管理者権限を持つユーザーを設定してください。
+    </td>
+   </tr>
+   <tr class="even">
+    <td>
+     The server principal “&lt;name&gt;” is not able to access the database “master” under the current security context. Cannot open database “master” requested by the login. The login failed. Login failed for user ‘&lt;name&gt;’.
+    </td>
+    <td>
+     接続文字列に管理者権限を持つユーザーを設定してください。
+    </td>
+   </tr>
+   <tr class="odd">
+    <td>
+     A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 – Could not open a connection to SQL Server)
+    </td>
+    <td>
+     Check that the connection string is valid, whitelist site’s outbound IPs in database server settings接続文字列が有効か確認し、データベース サーバーの設定で Web Apps のアウトバウンド IP が許可されているか確認してください。
+    </td>
+   </tr>
+   <tr class="even">
+    <td>
+     Cannot open server “&lt;name&gt;” requested by the login. The login failed.
+    </td>
+    <td>
+     接続文字列が有効か確認してください。
+    </td>
+   </tr>
+   <tr class="odd">
+    <td>
+     Missing mandatory parameters for valid Shared Access Signature
+    </td>
+    <td>
+     バックアップのスケジュールを削除し、再度設定を行ってください。
+    </td>
+   </tr>
+  </tbody>
+ </table>
+ <p>
+ </p>
+ <p>
+  <strong>
+   ステップ 3:
+  </strong>
+  失敗が上記のテーブルにない場合
+ </p>
+ <p>
+  <strong>
+   そうしたら、、サポート チケットを開いてください。
+  </strong>
+ </p>
+ <!-- </content> -->
+</main>

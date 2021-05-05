@@ -1,0 +1,563 @@
+---
+title: "[Advent Calendar 2017 Day8] Azure Functions 上で Python と CNTK を使ってみる"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - Function App
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 12 月 8 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こちらの記事は、Qiita に掲載した Microsoft Azure Tech Advent Calendar 2017 の企画に基づき、執筆した内容となります。
+  <br/>
+  カレンダーに掲載された記事の一覧は、
+  <a data-linktype="external" href="https://qiita.com/advent-calendar/2017/microsoft-azure-tech">
+   こちら
+  </a>
+  よりご確認ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  こんにちは。Azure Dev サポートの村山です。
+ </p>
+ <p>
+  今回は、Azure Functions で 64bit の Python を利用して、
+  <a data-linktype="external" href="https://www.microsoft.com/en-us/cognitive-toolkit/">
+   CNTK
+  </a>
+  と呼ばれるオープン ソースのライブラリ使って、与えられた値に基づいて予測を行う API を作ってみようと思います。
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   CNTK とは
+  </strong>
+ </p>
+ <p>
+  弊社 Microsoft が開発している Deep Learning が利用可能なオープン ソースのライブラリになります。現在、Python や C#、C++ 、BrainScript で提供されております。
+ </p>
+ <p>
+  詳しくは
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/cognitive-toolkit/">
+   こちら
+  </a>
+  のドキュメントに記載されおり、また質問やフィードバックに関しては
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/cognitive-toolkit/Feedback-Channels">
+   こちら
+  </a>
+  のページになります。
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure Functions では、C# や、Javascript のほかにも、 Python や PHP、PowerShell が試験段階という位置付けで提供されており、利用可能なデフォルトの Python ランタイムは 32 bit のみですが、実は拡張機能をインストールすることで 64 bit の Python も利用可能になります。
+ </p>
+ <p>
+  今回は、そんな Azure Functions での拡張機能の Python の利用方法をご紹介するとともに、 流行りのライブラリをインストールして遊んでみたいと思います。
+ </p>
+ <p>
+  最後に Azure Functions で現在利用可能な言語に関してもちょこっと紹介します。
+ </p>
+ <h3 id="1-app-service-web-apps-や-function-app-など上の-python-の-64-bit-対応に関して">
+  1. App Service (Web Apps や Function App など)上の Python の 64 bit 対応に関して
+ </h3>
+ <hr/>
+ <p>
+  まず、Function App の作成にいきなり入る前に、なぜ 64 bit の Python を利用する際に、拡張機能のインストールが必要なのかご説明します。
+ </p>
+ <p>
+  Web Apps や Function App では、現在デフォルトでは 32 bit の Python しか利用できません。(バージョンは Python 2.7.8 or Python 3.4.1 のいずれか)
+ </p>
+ <p>
+  このため、Web Appsや Function App では、[アプリケーション 設定] からプラットフォームのアーキテクチャを選択可能ですが、デフォルトでは 64 bit のPython は利用することはできず、アプリケーション設定で、設定を 64 bit へ変更した後も 32 bit の Python が利用されます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/134.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure Web Apps や Funcion App で 64 bit の Python を利用するためには、別途拡張機能で提供されている64bit の Python ランタイムをインストールして設定する必要があります。
+ </p>
+ <p>
+  今回は割愛しますが、Web Apps や API Apps で 64bit の Python を利用する場合は、
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/pythonengineering/2016/08/04/upgrading-python-on-azure-app-service/">
+   こちら
+  </a>
+  の設定を試してみてください。
+ </p>
+ <p>
+  この記事では、Funcion App 上で 64 bit の Python 拡張機能をインストールして利用します。
+ </p>
+ <p>
+  その前に、試しに Python の Function を作って、Azure ポータル上で動かしてみようと思います。
+ </p>
+ <h3 id="2-function-app-で-python-の-function-を作ってみる">
+  2. Function App で Python の Function を作ってみる
+ </h3>
+ <hr/>
+ <p>
+  まず、Azure ポータルからFunction App を作成してください。ホスティング プランとして、"
+  <strong>
+   従量課金プラン
+  </strong>
+  " と、"
+  <strong>
+   App Service プラン
+  </strong>
+  " があると思いますが、今回は "
+  <strong>
+   App Service プラン
+  </strong>
+  " を選択します。
+ </p>
+ <p>
+  Function App が作成できたら、さっそく Python の Function を作ってみましょう。
+ </p>
+ <p>
+  画面内の "関数" 右側の ＋ マークをクリックした後、Http trigger もしくは Queue trigger を選択して、言語として Python を選択してください。
+ </p>
+ <p>
+  各トリガーの説明に関しては
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-overview#what-can-i-do-with-functions">
+   こちら
+  </a>
+  をご覧ください
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/94.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  次に、作成した関数を使って、現在のPython のバージョンを確認してみましょう。下記のコードを保存して実行すると Python のバージョンが表示されます。
+ </p>
+ <p>
+  <code>
+   from platform import python_versionprint(python_version())
+  </code>
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/144.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  デフォルトで選択可能な Pyhton のバージョンは2.7.8 か、3.4.1 のみですが、この後拡張機能をインストールして 64 bit の Python を利用できるように設定します。
+ </p>
+ <p>
+ </p>
+ <h3 id="3-拡張機能のインストールと設定">
+  3. 拡張機能のインストールと設定
+ </h3>
+ <hr/>
+ <p>
+  次に、拡張機能のインストールを行い、64 bit の Python を利用できるように設定します。
+ </p>
+ <p>
+  先ほどの Function ポータル上のタブからプラットフォーム機能から Kudu を選択して、Web Apps の管理サイトである Kudu へ移動してください。
+ </p>
+ <p>
+  <a data-linktype="external" href="https://xn--functionapp-ys3s.scm.azurewebsites.net">
+   https://FunctionApp名.scm.azurewebsites.net
+  </a>
+  からもアクセス可能です。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/219.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  Kudu サイトへ移動後、画面上部の [Debug console] -&gt; [CMD] と選択して、コンソール画面を表示してください。
+ </p>
+ <p>
+  その後、画面中段から site -&gt; tools と選択してディレクトリを移動してください。 (コンソール画面で
+  <code>
+   cd site\tools
+  </code>
+  と入力して移動することもできます。)
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/107.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  このディレクトリに拡張機能をインストールすることで、64 bit の Python が利用可能になります。
+ </p>
+ <p>
+  現在利用可能な 他の Python のバージョンに関しては、
+  <a data-linktype="external" href="https://www.siteextensions.net/profiles/steve.dower">
+   こちら
+  </a>
+  に記載されております。
+ </p>
+ <p>
+  今回は提供されている中で一番新しい Python 3.6.1 x64 をインストールします。Kudu のコンソール画面内で下記のコマンドを実行してください。
+ </p>
+ <p>
+ </p>
+ <p>
+  <code>
+   nuget.exe install -Source https://www.siteextensions.net/api/v2/ -OutputDirectory D:\home\site\tools python361x64
+  </code>
+ </p>
+ <p>
+ </p>
+ <p>
+  コマンドを実行すると、Python の拡張機能がインストールされて、フォルダが作成されます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/92.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Function で利用するためには、tools 直下に python.exe を配置する必要がありますのでmv コマンドでインストールした中身を移動します。
+ </p>
+ <p>
+ </p>
+ <p>
+  <code>
+   mv /d/home/site/tools/python361x64.3.6.1.3/content/python361x64/* /d/home/site/tools/
+  </code>
+ </p>
+ <p>
+ </p>
+ <p>
+  これで、 Function App で 64 bit の Python  を利用する準備が整いました。
+ </p>
+ <p>
+  試しにさっきのコードをもう一度実行してみましょう。バージョンが変更されインストールした拡張機能が動いていることが確認できます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/154.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h3 id="4-cntk-のインストール">
+  4. CNTK のインストール
+ </h3>
+ <hr/>
+ <p>
+  64 bit の Python を利用する準備が整いましたので、これから CNTK のインストールを行います。
+ </p>
+ <p>
+  まず、CNTK が依存しているモジュール (
+  <a data-linktype="external" href="http://www.numpy.org/">
+   numpy
+  </a>
+  ,
+  <a data-linktype="external" href="https://www.scipy.org/">
+   scipy
+  </a>
+  ) をインストールしますので、先ほどの Kudu コンソール上で下記のコマンドを実行してください。
+ </p>
+ <p>
+  (カレント ディレクトリが D:\home\site\tools であることをご確認ください。)
+ </p>
+ <p>
+ </p>
+ <p>
+  <code>
+   python -m pip install numpy  python -m pip install scipy
+  </code>
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/1110.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  numpy と scipy をインストールしたら、最後に CNTK をインストールします。
+ </p>
+ <p>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/cognitive-toolkit/Setup-Windows-Python?tabs=cntkpy23">
+   こちら
+  </a>
+  から、今回インストールした Python のバージョンに合わせてリンクをコピーしてください。
+ </p>
+ <p>
+  今回のチュートリアルでは、Python 3.6.1 を拡張機能としてインストールしたので、CNTK は Python 3.6 CPU only を選択してます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <code>
+   python -m pip install https://cntk.ai/PythonWheel/CPU-Only/cntk-2.3-cp36-cp36m-win_amd64.whl
+  </code>
+ </p>
+ <p>
+ </p>
+ <p>
+  インストールが完了すると、コンソール上に下記のように表示されます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/122.png"/>
+  </a>
+ </p>
+ <p>
+  必要なモジュールのインストールが終了しましたので、Function を作っていきましょう。
+ </p>
+ <p>
+ </p>
+ <h3 id="5-ロジスティック回帰モデルの作成とapi">
+  5. ロジスティック回帰モデルの作成と、API
+ </h3>
+ <hr/>
+ <p>
+  今回は、CNTK の Github チュートリアル内にある、ロジスティック回帰モデル作成してみようと思います。
+ </p>
+ <p>
+  ロジスティック回帰モデルは、入力された特徴量に基づいて2値 (以上) のクラスに分類する、教師あり学習モデルです。
+ </p>
+ <p>
+  詳しいロジスティック回帰モデルのチュートリアルは
+  <a data-linktype="external" href="https://github.com/Microsoft/CNTK/blob/master/Tutorials/CNTK_101_LogisticRegression.ipynb">
+   こちら
+  </a>
+  に掲載されてます。
+ </p>
+ <p>
+  チュートリアル内には、モデルの作成には直接関係のないコードも含まれておりますので、モデル作成に必要なコードのみを抽出すると、下記の通りになります。
+ </p>
+ <p>
+  試しに関数を実行すると、Function のポータルのログ上に、チュートリアルに記載されているようにトレーニング過程と、ラベルと予測データが表示されます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/132.png"/>
+  </a>
+  <br/>
+  今回は、データ量も少ないのでモデルの学習にそこまで時間はかからないですが、大規模なデータで学習を行う場合、モデルの学習には相当な時間がかかります。
+ </p>
+ <p>
+  ローカルで学習したモデルを、Funcion App 上で 利用するシナリオ を想定して、CNTK 内にある
+  <a data-linktype="external" href="https://cntk.ai/pythondocs/cntk.ops.functions.html#cntk.ops.functions.Function.save">
+   save
+  </a>
+  関数でモデルを保存します。先ほどのコードに下記を追加して再度実行してください。
+ </p>
+ <p>
+  <code>
+   out.save("D:/home/site/wwwroot/trained_model")
+  </code>
+ </p>
+ <p>
+  Kudu サイトで確認すると、モデル ファイルが作成されているのがわかります。今回はデータ量が少ないのでモデルのファイル サイズも小さいですね。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/125.png"/>
+  </a>
+ </p>
+ <p>
+  このモデル ファイルをロードして、送られてきたデータに対してどちらのクラスか予測を行う Python の関数を新たに作ってみましょう。
+ </p>
+ <p>
+  実際にモデルがちゃんとロードされているかを確認するために、先ほど作った関数に下記のコードを追加して再度実行してください。
+ </p>
+ <p>
+  <code>
+   test_data = features[0] print(test_data) print(out.eval({feature:test_data}))
+  </code>
+ </p>
+ <p>
+ </p>
+ <p>
+  テスト データとして使用する特徴量と、予測結果であるクラスの所属確率がログに表示されますので、メモ帳などに控えておいてください。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/152.png"/>
+  </a>
+  <br/>
+  それでは、Azure ポータルで、Python の Function を作成しましょう、今回は API を作りますので HttpTrigger関数を選択してください。
+ </p>
+ <p>
+  CNTK では
+  <a data-linktype="external" href="https://cntk.ai/pythondocs/cntk.ops.functions.html#cntk.ops.functions.load_model">
+   load_model
+  </a>
+  関数を利用することで保存したモデルをロードすることができます。
+ </p>
+ <p>
+  今回はこんな感じでコードを書いてみました。
+ </p>
+ <p>
+  送信する要求本文に、パラメータとして、さっき控えておいた値を入れてください。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/162.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Function を実行すると、先ほど控えておいたクラスの所属確率と同じ結果が出てくることが分かります。きちんと訓練されたモデルがロードされていますね。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/172.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  レスポンスにどちらのクラスに所属するかを出すようにしているので、データを投げたらその予測結果を返します。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day-8-azure-funcitons-with-python-で-cntk-を使ってみる.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/1112.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  サーバーのセット アップなしにコードを書くだけで API が作れるのは非常に便利です。
+ </p>
+ <p>
+  CNTK の他のチュートリアルも面白いので、ぜひ試してみてください。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h3 id="6-注意事項">
+  6. 注意事項
+ </h3>
+ <hr/>
+ <p>
+  <strong>
+   商用環境での、プレビュー・試験段階の言語のご利用はお控えください
+  </strong>
+ </p>
+ <p>
+  冒頭でも少しご案内しましたが、Azure Functions 上での Python の利用は現在試験段階となります。(2017/12/08 現在)
+ </p>
+ <p>
+  試験段階の言語は現在サポートされておらず、Function のランタイムの更新などがあった場合、廃止される可能性もございます。
+ </p>
+ <p>
+  このため、もしも運用環境上でお困りごとがあった場合には、弊社サポート サービスにて十分にご支援を差し上げることができない可能性がございますのでご了承ください。
+ </p>
+ <p>
+  下記資料内で、現在サポ―トされている言語に関してご案内しております。
+ </p>
+ <p>
+  <a data-linktype="external" href="https://docs.microsoft.com/ja-jp/azure/azure-functions/supported-languages">
+   https://docs.microsoft.com/ja-jp/azure/azure-functions/supported-languages
+  </a>
+ </p>
+ <p>
+  なお、試験段階ではございますが、Python に関しては、商用環境でのご利用をご要望のお客様が多数いらっしゃいます。
+ </p>
+ <p>
+  このため、時期は未定とはなりますが、新しい Function ランタイム ver 2.0 で提供できますよう現在開発を進めている段階です。
+ </p>
+ <p>
+  <a data-linktype="external" href="https://github.com/Azure/Azure-Functions/wiki/Language-support#what-about-the-experimental-languages-that-are-in-v1">
+   https://github.com/Azure/Azure-Functions/wiki/Language-support#what-about-the-experimental-languages-that-are-in-v1
+  </a>
+ </p>
+ <p>
+  また、Azure Functions 上でPython のご利用をご要望いただいているお客様に向けて、現在
+  <a data-linktype="external" href="https://microsoft.qualtrics.com/jfe/form/SV_3OYZvwEglbDG925">
+   Survey
+  </a>
+  を行っておりますので、もしよろしければご参加いただけますと幸いです。
+ </p>
+ <p>
+ </p>
+ <p>
+  <strong>
+   モデルを作成する場合は、ファイルサイズが大きくなりすぎないように注意してください。
+  </strong>
+ </p>
+ <p>
+  モデルファイルをロードする際にファイルサイズが大きすぎると、ロードするまでに時間がかかる可能性がございます。
+ </p>
+ <p>
+  特に、
+  <strong>
+   従量課金プラン
+  </strong>
+  をご利用の場合には、初回 Function が呼びだされた際は、まず Azure Storage からデータが実行環境にロードされ、その後  Function が実行されます。
+ </p>
+ <p>
+  Function が一定期間実行されない場合は、自動的にデータがアンロードされ、次回実行時にまた同じような動作を行います。
+ </p>
+ <p>
+  このため、"常時接続" 機能を使ってあらかじめデータをロードした状態の保持が可能な、App Service プランと比べて Function の呼び出しが遅くなります。
+ </p>
+ <p>
+  また、関数の実行に時間がかかりすぎると、Function がタイムアウトすることもあり、HttpTrigger の場合は、約 230 秒でタイムアウトが発生しますので、重すぎる関数の実行はお控えください。
+ </p>
+ <p>
+  そのほかの Azure Functions のベストプラクティスに関しては、
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-best-practices">
+   こちら
+  </a>
+  でご案内しております。
+ </p>
+ <p>
+ </p>
+ <p>
+  それでは、失礼します !
+ </p>
+ <!-- </content> -->
+</main>

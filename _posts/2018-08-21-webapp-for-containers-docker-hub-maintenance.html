@@ -1,0 +1,103 @@
+---
+title: "Azure Web App for Containers をご利用のお客様へのお知らせ (Docker Hub のメンテナンスについて)"
+author_name: "Japan Azure CIE Support Team"
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-web-app-for-containers-をご利用のお客様へのお知らせ-docker-hub-のメン">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 8 月 21 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  Azure Web App for Containers のカスタム Docker イメージ ソースとして Docker Hub をご利用のお客様につきまして、サービス稼働に影響のある情報がありますので、お知らせします。
+ </p>
+ <p>
+  ※本投稿は、
+  <a data-linktype="external" href="https://aka.ms/dockerhub">
+   https://aka.ms/dockerhub
+  </a>
+  に投稿された内容を補足する内容になっています。
+ </p>
+ <p>
+ </p>
+ <hr/>
+ <p>
+  先日 Docker 社より、2018 年 8 月 25 日 11:00 AM (PST) から、Docker 各サービスについて 15 分から 45 分のアップグレード作業が実施されることがアナウンスされました。以下、アナウンス情報をご確認ください。
+ </p>
+ <p>
+  <a data-linktype="external" href="https://success.docker.com/article/planned-downtime-on-hub-cloud-store">
+   Planned Downtime on Docker Hub, Docker Cloud, and Docker Store on August 25th, 2018
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  このアップグレード作業の実施中には、Docker Hub について、Docker イメージの Push および Docker イメージの Pull ができなくなるとのことです。したがいまして、日本時間の 8 月 26 日 (日) 4:00 AM から、一時的に Docker Hub からの Docker イメージの Pull ができない状態になる可能性があります。
+ </p>
+ <p>
+  Azure Web App for Containers では、アプリケーションをホストするインスタンスの初期化処理において、Docker イメージを Pull し、Docker コンテナを起動します。このため、Docker イメージを Pull できない場合、インスタンスの初期化に失敗します。
+  <br/>
+  そして、インスタンスの初期化に失敗したインスタンスに対して要求が転送されることで、HTTP エラーが応答される動作となる場合があります。
+ </p>
+ <p>
+  なお、本件は Web App for Containers でカスタム Docker イメージを利用している場合が対象となります。App Service on Linux で組み込みのランタイム スタックを利用している場合には、Docker Hub へのアクセスは発生しませんので、本件による影響はありません。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  以上の理由により、Azure Web App for Containers のカスタム Docker イメージ ソースとして Docker Hub を設定している場合、Docker Hub 側でのアップグレード作業実施中に、Web App 側で以下のような動作が発生すると、サービス稼働に影響が及ぶ可能性があります。
+ </p>
+ <ul>
+  <li>
+   Web App の再起動
+  </li>
+ </ul>
+ <p>
+  Web App の再起動により、Docker イメージの再展開が行われるため、影響を受ける場合があります。これには、手動による再起動の他、Azure プラットフォーム側でサービス品質の低下を検知したことによる自動再起動も含まれます。
+  <br/>
+  この場合、再起動が行われたインスタンスが影響を受けることになります。
+ </p>
+ <ul>
+  <li>
+   インスタンスのスケール アップ
+  </li>
+ </ul>
+ <p>
+  インスタンス サイズを変更することにより、新規サイズのインスタンスへの Docker イメージの展開が行われるため、影響を受ける場合があります。
+  <br/>
+  この場合、全インスタンスが影響を受けることになります。
+ </p>
+ <ul>
+  <li>
+   インスタンスのスケール アウト
+  </li>
+ </ul>
+ <p>
+  インスタンス数を増加させることにより、新規インスタンスへの Docker イメージの展開が行われるため、影響を受ける場合があります。
+  <br/>
+  この場合、増加分のインスタンスが影響を受けることになります。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  現時点では、Azure Web App for Containers では、Docker Hub にアクセスできないという状況についての対策方法がございません。
+  <br/>
+  このため、上記のような問題を回避するために、現状では、
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/services/container-registry/">
+   Azure Container Registry
+  </a>
+  あるいはその他のプライベート レジストリを利用するということが対策案となります。
+  <br/>
+  該当の時間帯に影響を受ける可能性のあるアプリケーションをホストしている場合、前述のような動作が発生した場合にサービス稼働に影響が及ぶ可能性がありますので、何卒対応をご検討ください。
+ </p>
+ <!-- </content> -->
+</main>

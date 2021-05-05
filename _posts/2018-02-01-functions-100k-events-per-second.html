@@ -1,0 +1,497 @@
+---
+title: "Azure Functions で秒間 10 万のイベントを処理する"
+author_name: "Japan Azure CIE Support Team"
+tags:
+    - MigratedArticle
+    - Function App
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-functions-で秒間-10-万のイベントを処理する方法">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 2 月 1 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  このポストは、2017 年 9 月 19 日に投稿された
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/appserviceteam/2017/09/19/processing-100000-events-per-second-on-azure-functions/">
+   Processing 100,000 Events Per Second on Azure Functions
+  </a>
+  の翻訳です。
+ </p>
+ <p>
+ </p>
+ <p>
+  しばしば、
+  <a data-linktype="external" href="https://azure.microsoft.com/en-us/services/functions/">
+   Azure Functions
+  </a>
+  の従量課金プランのスケーラビリティ/スループットの限界についてお客様からご質問をいただきます。簡易な答えは常に「それは場合によって異なりますが、ワークロードはどの程度ですか ？」です。 本日は、 Event Hubs /  IoT Hubs の高スケールなワークロードを Functions で実行し、プラットフォームから得られるパフォーマンスを最大限に引き出すために注意すべきいくつかの重要なポイントについて説明したいと思います。
+ </p>
+ <p>
+ </p>
+ <p>
+  私たちは
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/azurecat/2017/01/05/hello-world-welcome-to-azurecat-guidance/">
+   Azure CAT
+  </a>
+  チームと連携して、Function と
+  <a data-linktype="external" href="https://azure.microsoft.com/en-us/services/event-hubs/">
+   Event Hubs
+  </a>
+  を使用したシンプルで代表的なイベント処理パイプラインを構築しました。テレメトリは
+  <a data-linktype="external" href="https://azure.microsoft.com/en-us/services/application-insights/">
+   Application Insights
+  </a>
+  に送信されます。
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2017/09/01-overview.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  負荷生成器（Function で実行されています）は、バッチ処理されたメッセージを、Ingestion Event Hub に書き込みます。これらのメッセージは、与えられたセンサーからの一連の測定値を表します。Function は、Ingestion Event Hub からメッセージを収集し、そこから個々の測定値を抽出し、それらを追加のテレメトリとともに、それぞれ天気/地震データ用の Event Hub に書き込みます。加えて同じ  Function App 内の 2 つの Function（従量課金プラン）は、それぞれ個別の測定値を処理し、集約されたテレメトリを Application Insights に送信します。
+ </p>
+ <p>
+ </p>
+ <h2 id="performance">
+  Performance
+ </h2>
+ <p>
+  我々は、合計 9 日間、毎秒 100,000 イベントの負荷目標の下でシステムを実行しました。その間、システムは合計 760 億イベントを処理しました。パイプラインの e2e 待ち時間、すなわち、メッセージを Ingestion Event Hub に書き込んでから天気/地震の Function でメッセージを処理するまでに要した時間を測定しました。結果は次のとおりです。
+ </p>
+ <p>
+ </p>
+ <h4 id="e2e-latency-percentiles">
+  <strong>
+   E2E Latency Percentiles
+  </strong>
+ </h4>
+ <table>
+  <tbody>
+   <tr class="odd">
+    <td>
+     P50
+    </td>
+    <td>
+     P90
+    </td>
+    <td>
+     P95
+    </td>
+    <td>
+     P99
+    </td>
+    <td>
+     P99.9
+    </td>
+    <td>
+     P99.99
+    </td>
+    <td>
+     Max
+    </td>
+   </tr>
+   <tr class="even">
+    <td>
+     1,102.42ms
+    </td>
+    <td>
+     2,755.56ms
+    </td>
+    <td>
+     3,788.30ms
+    </td>
+    <td>
+     11,894.12ms
+    </td>
+    <td>
+     50,367.23ms
+    </td>
+    <td>
+     111,240.50ms
+    </td>
+    <td>
+     239,890.10ms
+    </td>
+   </tr>
+  </tbody>
+ </table>
+ <p>
+ </p>
+ <p>
+  簡単にお伝えすると：
+ </p>
+ <p>
+  ・メッセージの半分が、処理ハブに書き込まれてから1.2秒以内に処理されました
+ </p>
+ <p>
+  ・10 件中 9 件のメッセージが3秒以内に処理されました
+ </p>
+ <p>
+  ・1 分未満で 1,000 件のメッセージのうち 999 件が処理されました
+ </p>
+ <p>
+  ・すべてのメッセージが 5 分以内に処理されました
+ </p>
+ <p>
+ </p>
+ <h2 id="monitoring">
+  Monitoring
+ </h2>
+ <p>
+  Azure Functions には、WebJobs ダッシュボードと Application Insights（Azure FunctionsとApplication Insightsの統合は現在プレビュー中）の 2 つの監視用ソリューションが組み込まれています。 ダッシュボードは長時間実行されるジョブを考慮して設計されており、1  秒あたりに 10,000 回以上の Function が実行されるシナリオには最適化されていません。 幸いなことに、Application Insights は驚異的に頑健なテレメトリ システムであり、大規模なシナリオでは Azure Functions との連携が優れていることを確認しました。
+ </p>
+ <p>
+ </p>
+ <p>
+  App Insightを有効にするのは簡単です。Function App にインストルメント キーを追加するだけで、Azure Functions は自動的にApp Insightsにデータを送信し始めます。 詳細は
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/appserviceteam/2017/04/06/azure-functions-application-insights/">
+   こちら
+  </a>
+  をご覧ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  Azureダッシュボードは高度にカスタマイズ可能で、App Insightsはその視覚的コンポーネントを固定するのに非常に効果的です。 このシナリオでは、非常に便利な監視ダッシュボードをまとめるのに 1〜2 時間程度しかかかりませんでした。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2017/09/02-monitoring.png"/>
+ </p>
+ <h2 id="configuration">
+  Configuration
+ </h2>
+ <p>
+  今回の結果を達成するためにいくつか注目すべき設定を行いました。
+ </p>
+ <p>
+ </p>
+ <ul>
+  <li>
+   Function はバッチでメッセージを処理します
+  </li>
+  <li>
+   WebJobs ダッシュボードを無効化し、監視とテレメトリーのためにApplication Insights を使用しています
+  </li>
+  <li>
+   各 Event Hubs は 100 個のパーティションで構成されています
+  </li>
+  <li>
+   データはパーティションキーなしで Event Hubs に送信されます
+  </li>
+  <li>
+   イベントはプロトコルバッファを使用してシリアル化されます
+  </li>
+ </ul>
+ <p>
+  それぞれの詳細については、以下を参照してください。
+ </p>
+ <p>
+ </p>
+ <h3 id="batching">
+  Batching
+ </h3>
+ <p>
+  Event Hubs でトリガーされる Function を記述して、単一のメッセージまたは複数のメッセージのバッチ処理を行うことができます。 後者に関しては、とても優れた性能特性を持っています。 スプリットする関数を例に取ってみましょう：
+ </p>
+ <p>
+ </p>
+ <pre><code> public static async Task Run(
+  EventData[] sensorEvent,
+  PartitionContext partitionContext,
+  IAsyncCollector outputWeatherData,
+  IAsyncCollector outputSeismicData,
+  TraceWriter log)
+  {
+    foreach (var sensorData in sensorEvent)
+    {
+      SensorType sensorType = SensorType.Unknown;
+
+      try
+      {                   
+        if (sensorData.Properties.ContainsKey("SensorType"))
+        {
+          System.Enum.TryParse(sensorData.Properties["SensorType"].ToString(), out sensorType);
+        }
+
+        await ProcessEvent(sensorData, sensorType, partitionContext, outputWeatherData, outputSeismicData);
+      }
+      catch(Exception ex)
+      {
+        telemetryHelper.PostException(ex, sensorData, partitionContext.Lease.PartitionId, sensorType.ToString());
+      }
+    }                                   
+  }
+</code></pre>
+ <p>
+ </p>
+ <p>
+  このコードに関する主な注意事項：
+ </p>
+ <ul>
+  <li>
+   <p>
+    イベントの配列は1回の実行で関数に渡されます
+   </p>
+  </li>
+  <li>
+   <p>
+    例外処理ブロックは、各イベントの処理をラップします
+   </p>
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  配列ベースのアプローチは、各関数の実行よりもオーバーヘッドの面で優れています。このシステムは、関数を呼び出すときに多数のアクションを実行します。これらのアクションは、イベントごとに1回ではなく、イベントの配列に対して 1 回だけ発生します。注：JavaScript の Function の場合、バッチ処理を有効にするために、function.jsonの
+  <strong>
+   "cardinality"
+  </strong>
+  プロパティを明示的に
+  <strong>
+   "many"
+  </strong>
+  に設定する必要があります。（
+  <a data-linktype="external" href="https://github.com/Azure/azure-webjobs-sdk-templates/blob/df94e19484fea88fc2c68d9f032c9d18d860d5b5/Functions.Templates/Templates/EventHubTrigger-JavaScript/function.json#L10">
+   こちら
+  </a>
+  の例を参照してください）
+ </p>
+ <p>
+ </p>
+ <p>
+  例外処理に対するこのアプローチは、メッセージの消失/スキップを防ぐ場合に重要です。 一般的には、後の処理/分析に失敗したイベントを格納するように例外ハンドラを作成します。 Azure Functions には Event Hub のデッドレターが組み込まれていないため、これは重要です。
+ </p>
+ <p>
+ </p>
+ <h3 id="webjobs-dashboard">
+  WebJobs Dashboard
+ </h3>
+ <p>
+  上記のとおり、私たちは監視のためにApp Insightを使用していたので、ダッシュボードを無効にしました。アプリケーション設定で、
+  <strong>
+   AzureWebJobsDashboard
+  </strong>
+  の設定を削除します。
+ </p>
+ <p>
+ </p>
+ <h3 id="partition-configuration">
+  Partition Configuration
+ </h3>
+ <p>
+  Azure Functions は Event Hubs SDK で提供される EventProcessorHost（詳細は
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/event-hubs/event-hubs-programming-guide#event-processor-host">
+   こちら
+  </a>
+  を参照）を使用して、Event Hub メッセージを処理します。 EventProcessorHost は、アプリケーションを実行する各VMが複数のパーティションのリースを取得し、それらのパーティションでメッセージを処理できるようにする仕組みです。つまり、Event Hub に 2 つのパーティションしかない場合、任意の時間に 2 つの VM しかメッセージを処理できません。つまり、パーティション数が Function のスケーラビリティに上限を設定します。
+ </p>
+ <p>
+ </p>
+ <p>
+  Event Hub の Basic と Standard には、Event Hub ごとに 32 個までのパーティションの既定の制限がありますが、
+  <a data-linktype="external" href="https://portal.azure.com/#create/Microsoft.Support">
+   課金サポート
+  </a>
+  に問い合わせることでこの制限を増やすことができます。Event Hub を100 個のパーティションに設定することにより、各 Function を 100 台の VM で同時に実行することができるようになりました。天気データ用の Function を 1分間に実行した一意の VM の数を数えると、下記のような結果になります。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2017/09/query3.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  別の簡単なクエリを使用して、94 台の VM 上で作業が均等に分散されているか確認することができます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2017/09/query2.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="" data-linktype="external" src="/blog/media/2017/09/04-distribution.png"/>
+ </p>
+ <h3 id="partition-keys">
+  Partition Keys
+ </h3>
+ <p>
+  Event Hub のプログラミングガイドには、パーティションキーの
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-programming-guide#partition-key">
+   概要
+  </a>
+  と、それをいつ使用したらよいかが記載されています。 このシナリオでは順序付けやステートフルな要件がないため、パーティションキーなしでイベントを生成しました。 これにより、実行のスループットと可用性が向上しました。
+ </p>
+ <p>
+ </p>
+ <h3 id="protocol-buffers">
+  Protocol Buffers
+ </h3>
+ <p>
+  1秒間に10万回以上のイベントを読み書きする場合は、シリアライズ・ステップを実行するのに要する時間とデータサイズの観点から、これらのイベントのシリアライゼーションとデシリアライゼーションを可能な限り効率的にしたいと考えています。
+  <a data-linktype="external" href="https://developers.google.com/protocol-buffers/">
+   プロトコルバッファー
+  </a>
+  は、扱いやすい高性能シリアル化フォーマットです。 イベントから気象測定値のバッチをデシリアライズして処理するコードの例を次に示します。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <pre><code> if (sensorType == SensorType.Weather)
+{
+  var batch = WeatherReadingBatch.Parser.ParseFrom(sensorData.GetBytes());
+  var messages = batch.SensorReadings
+    .Select(reading =&gt; EnrichData(enqueuedTime, reading));
+  await WriteOutput(messages, sensorData.PartitionKey, outputWeatherData);
+}
+</code></pre>
+ <p>
+ </p>
+ <p>
+  このシナリオで使用する.protoファイルを知りたい場合は、
+  <a data-linktype="external" href="https://gist.github.com/paulbatum/c918e19cadb43fdfcce978d58d97d235">
+   ここ
+  </a>
+  を参照してください。
+ </p>
+ <h2 id="section">
+ </h2>
+ <h2 id="cost">
+  Cost
+ </h2>
+ <p>
+  Function App とその依存リソースを 9 日間実行するための費用総額は、
+  <strong>
+   約 1,200 ドル
+  </strong>
+  でした。各サービスの 1 時間あたりのコストは次のようになります。
+ </p>
+ <p>
+ </p>
+ <table>
+  <tbody>
+   <tr class="odd">
+    <td>
+     <strong>
+      Service
+     </strong>
+    </td>
+    <td>
+     <strong>
+      Cost per Hour (USD)
+     </strong>
+    </td>
+   </tr>
+   <tr class="even">
+    <td>
+     Functions
+    </td>
+    <td>
+     $2.71
+    </td>
+   </tr>
+   <tr class="odd">
+    <td>
+     Storage
+    </td>
+    <td>
+     $1.80
+    </td>
+   </tr>
+   <tr class="even">
+    <td>
+     Application Insights
+    </td>
+    <td>
+     $1.03
+    </td>
+   </tr>
+  </tbody>
+ </table>
+ <p>
+ </p>
+ <p>
+  注目すべき重要な点は次のとおりです。
+ </p>
+ <p>
+ </p>
+ <ul>
+  <li>
+   <p>
+    このデータには、負荷ジェネレータおよびイベントハブのコストは含まれていません。これらの最適化には労力が費やされなかったためです。
+   </p>
+  </li>
+  <li>
+   <p>
+    Azure Storage の費用は、1 時間あたり約 5,000 万件のトランザクションに基づいています。これらのトランザクションのほとんどは、Event Hub のチェックポイントに関連しています。
+   </p>
+  </li>
+  <li>
+   <p>
+    Application Insightsの費用は、時間当たり 450 メガバイトのデータ収集量に基づいています。
+   </p>
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  Azure Monitor REST API を使用して実行可能な実行カウントと実行ユニットのデータを使用することで、Function Appのコストをより詳細に把握できます（詳細は
+  <a data-linktype="external" href="https://stackoverflow.com/questions/41128329/how-can-i-programmatically-access-azure-functions-usage-metrics">
+   こちら
+  </a>
+  ）。 1 時間分のデータを照会すると、次のようになります。
+ </p>
+ <p>
+ </p>
+ <ul>
+  <li>
+   <p>
+    Function Execution Counts: 6,500,012
+   </p>
+  </li>
+  <li>
+   <p>
+    Function Execution Units：90,305,037,184
+   </p>
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  ここでのFunction Execution Units は、mb-milliseconds 単位で測定されることに注意してください。これらをgb-secondsに変換するには、1,024,000で割ります。（Function の価格設定の詳細は
+  <a data-linktype="external" href="https://azure.microsoft.com/en-us/pricing/details/functions/">
+   ここ
+  </a>
+  にあります。簡単な補助プログラムは
+  <a data-linktype="external" href="https://gist.github.com/paulbatum/2b16c5f92351ed1c59e3a2b8a727ca97">
+   ここ
+  </a>
+  にあります）：
+ </p>
+ <p>
+ </p>
+ <p>
+  時間あたりのコスト=（6,500,012回の実行*（$ 0.20 / 1,000,000））+（（90,305,037,184単位/（1024 * 1000））* $ 0.000016）= 2.71ドル
+ </p>
+ <p>
+ </p>
+ <h2 id="summary">
+  Summary
+ </h2>
+ <p>
+  Azure Functions の従量課金プランは、何百もの VM 上で実行するようにアプリケーションをスケーリングすることができ、膨大な計算容量の確保のために料金を支払うことなく、高パフォーマンスが要求されるシナリオを実現可能にします。 Azure Functions の詳細とサーバレス技術でのクラウドアプリケーションの構築については、
+  <a data-linktype="external" href="https://azure.microsoft.com/en-us/services/functions/">
+   ここ
+  </a>
+  から始めてください。
+ </p>
+ <!-- </content> -->
+</main>

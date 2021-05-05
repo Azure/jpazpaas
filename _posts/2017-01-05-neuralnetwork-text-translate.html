@@ -1,0 +1,285 @@
+---
+title: "ニューラルネットワークモデルによるテキスト翻訳"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - etc
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/ニューラルネットワークモデルによるテキスト翻">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 1 月 5 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  あけましておめでとうございます！
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure CIE サポートの村山です。
+ </p>
+ <p>
+ </p>
+ <p>
+  いきなり本題ですが、皆さん、翻訳サービスって普段使ってますか？
+ </p>
+ <p>
+  「Web 上の翻訳サービスって前からあるけど、なんだか結果に違和感があるから使いづらいなぁ、、」っていう感想を持っている方が大半だと思います。僕もそうでした。
+ </p>
+ <p>
+ </p>
+ <p>
+  でも今は違うんです！！
+ </p>
+ <p>
+ </p>
+ <p>
+  Microsoft が昨年 11 月に発表したはニューラルネットワークモデルを利用したテキスト翻訳は、精度が大幅に向上していて、翻訳結果も違和感のないものになっています。
+ </p>
+ <p>
+  下のリンクでお試し可能なので、まずは試してみてください。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a data-linktype="external" href="https://translator.microsoft.com/neural">
+   https://translator.microsoft.com/neural
+  </a>
+ </p>
+ <p>
+  <img alt="8434e575-7894-4134-8d34-3a76cc404e62" data-linktype="external" src="/blog/media/2017/01/8434E575-7894-4134-8D34-3A76CC404E62.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  実は、この翻訳機能、Microsoft Azure の Cognitive Services というサービス内で誰でも利用可能です。
+  <s>
+   現在は、日本語を含む10か国語をサポートしていて、今後も言語は増えていく予定です。 (2017/01/03 現在)
+  </s>
+ </p>
+ <p>
+  <strong>
+   現在は、韓国語も含めた 11 ヵ国の言語がご利用いただけます。(2017/06/21 現在)
+  </strong>
+ </p>
+ <p>
+ </p>
+ <p>
+  Microsoft Translator launching Neural Network based translations for all its speech languages
+ </p>
+ <p>
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/translation/2016/11/15/microsoft-translator-launching-neural-network-based-translations-for-all-its-speech-languages/">
+   https://blogs.msdn.microsoft.com/translation/2016/11/15/microsoft-translator-launching-neural-network-based-translations-for-all-its-speech-languages/
+  </a>
+ </p>
+ <p>
+  <em>
+   In addition to the nine languages supported by the Microsoft Translator speech API, namely Arabic, Chinese Mandarin, English, French, German, Italian, Brazilian Portuguese, Russian and Spanish, neural networks also power Japanese text translations. These ten languages together represent more than 80% of the translations performed daily by Microsoft Translator.
+  </em>
+ </p>
+ <p>
+  今回は、そんなニューラルネットワークモデルによる翻訳を Microsoft Azure で利用する方法をご案内します。
+ </p>
+ <p>
+ </p>
+ <h4 id="text-translation-api-でニューラルネットワークモデルによる翻訳を行うまで">
+  <strong>
+   Text Translation API
+  </strong>
+  <strong>
+   でニューラルネットワークモデルによる翻訳を行うまで
+  </strong>
+ </h4>
+ <p>
+  1.     Text Translator API を利用する際は、まず Microsoft Azure のアカウントを作成します。
+ </p>
+ <p>
+  2.     アカウント作成後、下記リンクよりAzure にログインします。ログイン後のトップページは下記となります。
+ </p>
+ <p>
+  Azure ポータル
+ </p>
+ <p>
+  <a data-linktype="external" href="https://portal.azure.com/">
+   https://portal.azure.com/
+  </a>
+ </p>
+ <p>
+  <img alt="42462382-c536-4d1c-b872-a3fc347caf98" data-linktype="external" src="/blog/media/2017/01/42462382-C536-4D1C-B872-A3FC347CAF98.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  3.     ポータル左側の “+新規” をクリックし、[Intelligence + analytics] より、[Cognitive Services ] を選択します。
+ </p>
+ <p>
+  <img alt="2c7259a5-cb4f-452d-83d3-0e34b86317a2" data-linktype="external" src="/blog/media/2017/01/2C7259A5-CB4F-452D-83D3-0E34B86317A2.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  4.     必要な情報を入力して Cognitive Services のアカウントを作成します。
+ </p>
+ <p>
+  <img alt="11d636c5-ce09-4a30-9e8f-01de8b3faac8" data-linktype="external" src="/blog/media/2017/01/11D636C5-CE09-4A30-9E8F-01DE8B3FAAC8.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  5.     API Type から、”Translator Text API” を選択します。
+ </p>
+ <p>
+  <img alt="16494498-6641-4a51-a80d-94f3c7ff78ce" data-linktype="external" src="/blog/media/2017/01/16494498-6641-4A51-A80D-94F3C7FF78CE.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  6.     Pricing tier から、プランを選択します。この際、右上の “詳細情報” から価格のページを確認し、続けて、リソースグループを作成し、リージョンを選択ののち、[作成] をクリックします。
+ </p>
+ <p>
+  価格のページはこちらになります。
+ </p>
+ <p>
+  Cognitive Services の価格
+ </p>
+ <p>
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/pricing/details/cognitive-services">
+   https://azure.microsoft.com/ja-jp/pricing/details/cognitive-services
+  </a>
+ </p>
+ <p>
+  <img alt="ff9d620e-8c12-4d48-8d30-46f321333e5c" data-linktype="external" src="/blog/media/2017/01/FF9D620E-8C12-4D48-8D30-46F321333E5C.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  7.     作成をクリック後、Translator API が作成されます。作成された Translator API を選択し、[Key] をクリックした後、赤枠の key1 をコピーします。(右側のアイコンをクリックするとコピーされます。)
+ </p>
+ <p>
+  <img alt="8eca084f-db5f-4584-95ee-971eaf051892" data-linktype="external" src="/blog/media/2017/01/8ECA084F-DB5F-4584-95EE-971EAF051892.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  8.     下記リンクにて、APIの動作を確認します。
+ </p>
+ <p>
+  Text Translation API
+ </p>
+ <p>
+  <a data-linktype="external" href="http://docs.microsofttranslator.com/text-translate.html#!/default/get_Translate">
+   http://docs.microsofttranslator.com/text-translate.html#!/default/get_Translate
+  </a>
+ </p>
+ <p>
+  その前に、手順  7. でコピーしたキー (key1) を利用して、API を利用するためのトークンを生成する必要があります。
+ </p>
+ <p>
+  下記画像の赤枠のリンクをクリックして、トークン生成のページに飛びます。
+ </p>
+ <p>
+  <img alt="7300fdd3-3268-43f1-b761-e4cfac57e303" data-linktype="external" src="/blog/media/2017/01/7300FDD3-3268-43F1-B761-E4CFAC57E303.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  9.  先ほどコピーしたキー (key1) を用いて、トークンを生成します。 Value の欄にキーを貼り付けて、”Try it out!” をクリックし、Response Body の内容をすべてコピーします。
+ </p>
+ <p>
+  <img alt="e44e848d-ee9f-495a-8971-278532e20225" data-linktype="external" src="/blog/media/2017/01/E44E848D-EE9F-495A-8971-278532E20225.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  10.  下記のように情報を入力し、その場でAPIを試します。
+ </p>
+ <p>
+  入力例:
+ </p>
+ <p>
+  appid: Bearer &lt;先ほど取得したトークン&gt; (Bearer と トークンの間は半角スペースを開けてください)
+ </p>
+ <p>
+  text: 翻訳したいテキスト(下記では、例文として  ”一方、敷地面積は41%減の32.9ヘクタールとなった。” を利用しています。)
+ </p>
+ <p>
+  from: ja
+ </p>
+ <p>
+  to: en
+ </p>
+ <p>
+  category: generalnn (ニューラルネットワークモデルによる翻訳を利用する場合は、generalnn を選択してください。)
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="63ec2219-d5b3-4dc7-b834-7786c11f3ac5" data-linktype="external" src="/blog/media/2017/01/63EC2219-D5B3-4DC7-B834-7786C11F3AC5.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  11.  入力後、 Try it out! を選択して、API を実行します。Curl コマンドや、Request URL にて投げる場合などの例も表示されます。実行結果から、ニューラルネットワークモデルによる翻訳と同等であることが確認できます。
+ </p>
+ <p>
+  <img alt="9f096a99-41ae-4dfb-b71f-d51a71932cf2" data-linktype="external" src="/blog/media/2017/01/9F096A99-41AE-4DFB-B71F-D51A71932CF2.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  いかがでしょうか。
+ </p>
+ <p>
+  APIをプログラムで実装する手間が省けて、簡単にニューラルネットワークモデルによる翻訳がどんな動作をするか確認できるので、サービス応用へのイメージも付きやすいと思います。
+ </p>
+ <p>
+ </p>
+ <p>
+  なお、Bing 翻訳でも、URL に"?category=generalnn" と追加することで、ニューラルネットワークモデルによる翻訳を利用することができます。
+ </p>
+ <p>
+  ※ 翻訳時にニューラルネットワークモデルが利用可能なのは、現在は、上記と同じ
+  <s>
+   10
+  </s>
+  <strong>
+   11
+  </strong>
+  言語です。
+ </p>
+ <p>
+ </p>
+ <p>
+  Bing 翻訳
+ </p>
+ <p>
+  <a data-linktype="external" href="http://www.bing.com/translator?category=generalnn">
+   http://www.bing.com/translator?category=generalnn
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  今後も、下記ブログにて新着情報が更新されますので、是非チェックしてください！
+ </p>
+ <p>
+  Translation
+ </p>
+ <p>
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/translation/">
+   https://blogs.msdn.microsoft.com/translation/
+  </a>
+ </p>
+ <p>
+  それでは、本年もよろしくお願いします！
+ </p>
+ <!-- </content> -->
+</main>

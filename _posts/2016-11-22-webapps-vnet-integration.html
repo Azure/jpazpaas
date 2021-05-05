@@ -1,0 +1,346 @@
+---
+title: "Azure Web Apps と VNET 統合"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-web-apps-と-vnet-統合">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2016 年 11 月 22 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。CIE サポート村山です。
+ </p>
+ <p>
+  今回は Azure App Service の VNET 統合について、説明します。
+ </p>
+ <p>
+ </p>
+ <p>
+  特に下記資料の中で、あまり説明されていない部分を中心に行います。
+ </p>
+ <p>
+  アプリを Azure 仮想ネットワークに統合する
+ </p>
+ <p>
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/documentation/articles/web-sites-integrate-with-vnet/">
+   https://azure.microsoft.com/ja-jp/documentation/articles/web-sites-integrate-with-vnet/
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure App Service を利用しているお客様から、「Web Apps から、社内のオンプレミスで稼働しているデータベースや、Azure の仮想ネットワーク上に配置した仮想マシンにアクセスさせたい」というご要望をよくお伺いします。
+ </p>
+ <p>
+  そのようなシナリオの場合に利用されるのが VNET 統合です。VNET 統合を利用することで、Web Apps から仮想ネットワークを経由して以下の環境にアクセスすることができます。
+ </p>
+ <p>
+  ・仮想マシン
+ </p>
+ <p>
+  ・オンプレミスのサーバーやネットワーク
+ </p>
+ <p>
+  VNET 統合を使用する場合、プライベートネットワーク経由でアクセスを行いますので、仮想ネットワーク上に配置された VM 上のアプリケーション用にパブリックエンドポイントを公開する必要はありません。
+ </p>
+ <p>
+  ただし、VNET 統合を利用する場合は、下記の点を注意してください。
+ </p>
+ <p>
+ </p>
+ <p>
+  ・VNET 統合はStandard または Premium 価格プランでのみ利用可能です。
+ </p>
+ <p>
+  ・動的ルーティング ゲートウェイによるポイント対サイト VPNを有効にする必要があります。
+ </p>
+ <p>
+  ・作成する VNET と App Service Plan は同一サブスクリプション上で作成してください。
+ </p>
+ <p>
+  ・VNET 統合される Web Apps は、その VNET に対して指定されている DNS を利用します。
+ </p>
+ <p>
+  ・VNET で定義されているルーティングにもとづいて、その VNET にのみトラフィックをルーティングする。
+ </p>
+ <p>
+ </p>
+ <p>
+  下記では、Point to Site 接続を利用した、Azure Web Apps の VNET 統合と、オンプレミスのサーバーの設定手順をご説明します。
+ </p>
+ <p>
+ </p>
+ <h3 id="1-azure-web-apps-側の設定">
+  (1)  Azure Web Apps 側の設定
+ </h3>
+ <hr/>
+ <p>
+  VNET 統合の設定をするには、まずWeb Apps の[設定]ページを開き、ネットワークを選択します。
+ </p>
+ <p>
+  今回は新規に VNET を作成しますので、[新しい仮想ネットワークの作成] を選択してください。
+ </p>
+ <p>
+  ここで、作成された仮想ネットワーク V2 VNETで、自動的にポイント対サイト VPN ゲートウェイを持ちます。
+ </p>
+ <p>
+ </p>
+ <p>
+  作成した仮想ネットワークは、自動的には設定されませんので、再びこのUI でVNET 統合したい仮想ネットワークを選択してください。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="1" data-linktype="external" src="/blog/media/2016/11/129.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  [新しい仮想ネットワーク] の作成をクリックして、要件に合わせて新規にネットワークを作成してください。
+ </p>
+ <p>
+  仮想ネットワークの作成はすぐに終わりますが、仮想ネットワークゲートウェイは作成に 30 分 ~ 1 時間かかります。
+ </p>
+ <p>
+ </p>
+ <p>
+  <img alt="2" data-linktype="external" src="/blog/media/2016/11/220.png"/>
+ </p>
+ <p>
+ </p>
+ <h3 id="section">
+ </h3>
+ <h3 id="2-仮想ネットワークとオンプレミスの接続">
+  (2)  仮想ネットワークとオンプレミスの接続
+ </h3>
+ <hr/>
+ <p>
+ </p>
+ <p>
+  仮想ネットワークとオンプレミスのネットワークを接続するには、下記の二つの設定を行います。
+ </p>
+ <p>
+  a. Azure の仮想ネットワークで使用する自己署名ルート証明書を作成します。
+ </p>
+ <p>
+  b. その証明書によって署名されたクライアント証明書を使用して VPN で仮想ネットワークに接続できるよう VPN クライアントのインストールと、クライアント証明書の作成をそれぞれ行います。
+ </p>
+ <p>
+ </p>
+ <h4 id="a-azure-の仮想ネットワークで使用する自己署名ルート証明書の作成">
+  a.  Azure の仮想ネットワークで使用する自己署名ルート証明書の作成
+ </h4>
+ <p>
+ </p>
+ <p>
+  下記ドキュメントの手順に従い、自己署名ルート証明書、クライアント証明書を作成します。
+ </p>
+ <p>
+  ポイント対サイト構成の自己署名ルート証明書の操作
+ </p>
+ <p>
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-certificates-point-to-site/">
+   https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-certificates-point-to-site/
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  自己署名ルート証明書: makecert -sky exchange -r -n "CN=RootCertificateName" -pe -a sha1 -len 2048 -ss My "RootCertificateName.cer"
+ </p>
+ <p>
+  クライアント証明書: makecert.exe -n "CN=ClientCertificateName" -pe -sky exchange -m 96 -ss My -in "RootCertificateName" -is my -a sha1
+ </p>
+ <p>
+ </p>
+ <p>
+  作成した自己署名ルート証明書は証明書サービススナップインの [現在のユーザー] の個人ストアにインストールされますので、秘密鍵なしで Base64 でエクスポートします (cer ファイル)。
+ </p>
+ <p>
+  また、エクスポートした自己署名ルート証明書をオンプレミスのサーバーにインストールします。
+ </p>
+ <p>
+  クライアント証明書も [現在のユーザー] の個人ストアにインストールされますので、秘密鍵付きでエクスポートして (pfx ファイル)、オンプレミス サーバーにインポートします。
+ </p>
+ <h4 id="section-1">
+ </h4>
+ <p>
+ </p>
+ <h4 id="b-vpn-クライアントのインストールとクライアント証明書の作成">
+  b.  VPN クライアントのインストールと、クライアント証明書の作成
+ </h4>
+ <p>
+ </p>
+ <p>
+  下記ドキュメントの「クライアントの構成」の手順に従い、Web API サーバー上に VPN クライアントのセットアップを行います。
+ </p>
+ <p>
+  VPN クライアントのインストールパッケージの URL は、以下の PowerShell コマンドレットの戻り値として得られます。
+ </p>
+ <p>
+  PS C:\&gt; Get-AzureRmVpnClientPackage -ResourceGroupName "ResourceGroupName" -VirtualNetworkGatewayName "GatewayName" -ProcessorArchitecture Amd64
+ </p>
+ <p>
+  表示された URL の exe を オンプレミス サーバー上でダウンロードした後、実行していただくと VPN クライアントがインストールされます。
+ </p>
+ <p>
+ </p>
+ <p>
+  PowerShell を利用し、仮想ネットワークへのポイント対サイト接続を構成する
+ </p>
+ <p>
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-howto-point-to-site-rm-ps/">
+   https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-howto-point-to-site-rm-ps/
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  先ほど作成した自己署名ルート証明書 (cer ファイル) をテキストエディタで開いて、内容を MyP2SCertPubKeyBase64_2 引数に設定していただき、PowerShell を用いて自己署名ルート証明書を Azure の仮想ネットワークにインストールしてください。
+ </p>
+ <p>
+  PS C:\&gt; $P2SRootCertName2 = "ARMP2SRootCert2.cer"
+  <br/>
+  PS C:\&gt; $MyP2SCertPubKeyBase64_2 = "MIIDETCCAf2gAwIBAgIQ1…"
+  <br/>
+  PS C:\&gt; Add-AzureRmVpnClientRootCertificate -VpnClientRootCertificateName $P2SRootCertName2 -VirtualNetworkGatewayname "GatewayName" -ResourceGroupName "ResourceGroupName" -PublicCertData $MyP2SCertPubKeyBase64_2
+ </p>
+ <p>
+ </p>
+ <p>
+  先ほどインストールした VPN クライアントで仮想ネットワークに接続してください。この時、クライアント証明書は前の手順で作成した ”ClientCertificateName” を選択してください。
+ </p>
+ <p>
+  オンプレミス側で VPN 接続できているか確認するために、コマンドプロンプトで以下を実行してください。
+ </p>
+ <p>
+ </p>
+ <p>
+  ipconfig /all
+ </p>
+ <p>
+ </p>
+ <p>
+  コマンドの結果として以下のような接続があるかをご確認ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  PPP adapter {仮想ネットワーク名}:
+ </p>
+ <p>
+ </p>
+ <p>
+  Connection-specific DNS Suffix  . :
+ </p>
+ <p>
+  Description . . . . . . . . . . . : 仮想ネットワーク名
+ </p>
+ <p>
+  Physical Address. . . . . . . . . :
+ </p>
+ <p>
+  DHCP Enabled. . . . . . . . . . . : No
+ </p>
+ <p>
+  Autoconfiguration Enabled . . . . : Yes
+ </p>
+ <p>
+  IPv4 Address. . . . . . . . . . . : 172.16.0.3(Preferred)
+ </p>
+ <p>
+  Subnet Mask . . . . . . . . . . . : 255.255.255.255
+ </p>
+ <p>
+  Default Gateway . . . . . . . . . :
+ </p>
+ <p>
+  NetBIOS over Tcpip. . . . . . . . : Enabled
+ </p>
+ <p>
+ </p>
+ <p>
+  Web Apps から Point to Site 接続を通して、VNET上の仮想マシンに接続したり、Site to Site (or Point to Site ) 接続を利用して、オンプレミスのリソースにアクセスすることが可能です。
+ </p>
+ <p>
+  <img alt="5" data-linktype="external" src="/blog/media/2016/11/513.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  なお、VNET 統合をすると、仮想ネットワークゲートウェイの設定に、Web Apps の仮想ネットワーク内のプライベートアドレスが表示されます。
+ </p>
+ <p>
+  <img alt="3" data-linktype="external" src="/blog/media/2016/11/319.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+  インスタンスが増えた場合は、各インスタンスにプライベートアドレスが割り振られますので、スケールアウトをご予定されている方はご注意ください。
+ </p>
+ <p>
+  <img alt="4" data-linktype="external" src="/blog/media/2016/11/416.png"/>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  澤田が以前の記事で書いていたように、Azure Web Apps はマルチテナント環境となりますが、このように VNET 統合を用いることで自社リソースにも VPN 経由で安全に通信することができます。
+ </p>
+ <p>
+  仮想ネットワークと、オンプレミスのネットワーク間をつなぐ、サイト間接続の場合も手順は下記内容に従って構成することで実現できます。
+ </p>
+ <p>
+  こちらは、また別の機会に具体的に説明しようと思います。
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure Portal を使用してサイト間接続を持つ VNet を作成する - 6.ローカル ネットワーク ゲートウェイの作成 -
+ </p>
+ <p>
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-howto-site-to-site-resource-manager-portal/#6">
+   https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-howto-site-to-site-resource-manager-portal/#6
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  また、VPN Gateway 接続の VPN デバイスについては下記の資料がございますのでご参考ください。
+ </p>
+ <p>
+ </p>
+ <p>
+  サイト間 VPN Gateway 接続の VPN デバイスについて
+ </p>
+ <p>
+  <a data-linktype="external" href="https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-about-vpn-devices/">
+   https://azure.microsoft.com/ja-jp/documentation/articles/vpn-gateway-about-vpn-devices/
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  それでは、失礼します！
+ </p>
+ <p>
+  本情報の内容 (添付文書、リンク先などを含む) は、作成日時点でのものであり、予告なく変更される場合があります。
+ </p>
+ <!-- </content> -->
+</main>

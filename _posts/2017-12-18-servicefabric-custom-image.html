@@ -1,0 +1,116 @@
+---
+title: "ServiceFabric でカスタムイメージを利用する"
+author_name: "Toshinao Onodera"
+tags:
+    - MigratedArticle
+    - Service Fabric
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/servicefabric-でカスタムイメージを利用する">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 12 月 18 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。小野寺です。
+ </p>
+ <p>
+  本日は Service Fabric で、カスタマイズした OS イメージをもとに環境を構築する (ARM テンプレートを使用する) 方法についてご案内します。
+  <br/>
+  ただ、昨今様々な機能拡張がなされており、OS イメージのカスタマイズを行わずとも、コンテナーを使用することで要件を満たせるかもしれませんが、Service Fabric は ARM テンプレートを使うことでクラスタ設定のカスタマイズをより柔軟に行うことが可能です。本件を通してぜひ ARM テンプレートを使ったデプロイをお試しいただけますと幸いです。(カスタムイメージはすでに作成されているものとしますのでご承知おきください。)
+ </p>
+ <h2 id="azure-service-fabric-の構成">
+  [Azure Service Fabric の構成]
+ </h2>
+ <p>
+  Azure Service Fabric を利用すると拡張性や信頼性の優れたアプリケーションを作成することができます。これは Service Fabric を構成している複数層にわたるサブシステムによるものです。
+ </p>
+ <ul>
+  <li>
+   <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/service-fabric/service-fabric-architecture">
+    Service Fabric のアーキテクチャ
+   </a>
+  </li>
+ </ul>
+ <p>
+  Azure Service Fabric ではこの Service Fabric の仕組みを Virtual Machine Scale Set 上に構築し、ご利用いただけるようにしています。(オンプレミス環境でも構築可能です。)
+ </p>
+ <p>
+  実際に Azure 上に Service Fabric クラスターをデプロイすると、以下のように、Service Fabric クラスターとともに Virtual Machine Scale Set もデプロイされます。 (Service Fabric ではノードと呼ばれます。)
+ </p>
+ <p>
+  <a href="servicefabric-でカスタムイメージを利用する.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/SFPost_1.png"/>
+  </a>
+ </p>
+ <p>
+  そのため、Virtual Machine Scale Set  と同じように Azure Service Fabric でももちろんカスタムイメージを利用することが可能です。
+ </p>
+ <h2 id="azure-service-fabric-の-arm-テンプレートの取得">
+  [Azure Service Fabric の ARM テンプレートの取得]
+ </h2>
+ <p>
+  とはいうものの、何もないところから、 Azure Service Fabric の ARM テンプレートを作成するのは至難の業です。そのため、Azure ポータルから、テンプレート JSON を取得してみましょう。
+ </p>
+ <p>
+  まずはポータルから Azure Service Fabric クラスターの作成を進めてみましょう。
+ </p>
+ <ol>
+  <li>
+   リソースの作成から Service Fabric クラスターを探します。
+   <br/>
+   <a href="servicefabric-でカスタムイメージを利用する.html">
+    <img alt="" data-linktype="external" src="/blog/media/2017/12/SFPost_2.png"/>
+   </a>
+  </li>
+  <li>
+   そのまま、Service Fabric クラスターの作成の最終検証まで進めると、画面下部に テンプレートとパラメータのダウンロードというメニューが表示されます。
+   <br/>
+   <a href="servicefabric-でカスタムイメージを利用する.html">
+    <img alt="" data-linktype="external" src="/blog/media/2017/12/SFPost_3.png"/>
+   </a>
+  </li>
+  <li>
+   テンプレートとパラメータの JSON が表示されますので、上部 ダウンロードからファイルをダウンロードしてください。
+   <br/>
+   <a href="servicefabric-でカスタムイメージを利用する.html">
+    <img alt="" data-linktype="external" src="/blog/media/2017/12/SFPost_4.png"/>
+   </a>
+  </li>
+ </ol>
+ <p>
+  少し操作の手間はかかりますが上記手順を進めることで、実際に Service Fabric クラスターをデプロイしなくてもテンプレ―ト JSON が取得できました。
+ </p>
+ <p>
+  取得したテンプレート JSON を確認すると、Azure Service Fabric クラスターとともにデプロイされた Virtual Machine Scale Set では、ServiceFabricNode と呼ばれる extension がインストールされることがわかるかと思います。
+ </p>
+ <p>
+  つまり、VMSS と同じように カスタム OS イメージを作成しておき、ServiceFabricNode 拡張機能をインストール、VMSS の OS イメージでカスタムイメージが指定されていればよいということになります。
+ </p>
+ <h2 id="カスタムイメージの登録とテンプレート-json-の修正">
+  [カスタムイメージの登録とテンプレート JSON の修正]
+ </h2>
+ <p>
+  まずは利用するカスタムイメージを登録します。イメージの登録については、下記 blog をご参照ください。
+ </p>
+ <ul>
+  <li>
+   <a data-linktype="external" href="https://blogs.technet.microsoft.com/jpaztech/2017/05/10/deployvmsfrommanagedimage/">
+    管理ディスク (Managed Disks) の “イメージ” リソースを使用し、仮想マシンを複数台展開する
+   </a>
+   <br/>
+   ※記事内の 「1. 仮想マシン内部で一般化する」、「2. 一般化済みマスター イメージを"イメージ" リソースに登録する。」をご参照ください
+   <br/>
+   <a data-linktype="external" href="https://blogs.technet.microsoft.com/jpaztech/2017/05/10/deployvmsfrommanagedimage/">
+   </a>
+  </li>
+ </ul>
+ <p>
+  では、登録したカスタムイメージを利用するように、 ARM テンプレートを修正してみましょう。
+ </p>
+ <p>
+  ～～ 念のため最新環境にて検証が終わり次第更新いたします ～～
+ </p>
+ <!-- </content> -->
+</main>

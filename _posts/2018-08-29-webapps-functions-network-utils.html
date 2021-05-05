@@ -1,0 +1,274 @@
+---
+title: "Azure Web Apps / Azure Functions で利用可能なネットワーク関連のツール"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - Function App
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 8 月 29 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。Azure PaaS Developer サポートの村山です。
+ </p>
+ <p>
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/waws/2017/07/24/networking-related-commands-for-azure-app-services/">
+   海外のブログ
+  </a>
+  ではすでに紹介されているのですが、Azure Web Apps や Azure Functions で、SQL Database など別サービスのエンドポイントと疎通確認をするときや、VNET 統合を利用して仮想ネットワークと接続後、仮想ネットワーク内のリソースとの接続を確認をする場合によく使うコマンドなどを紹介します。
+ </p>
+ <p>
+ </p>
+ <h2 id="azure-web-apps--azure-functions-で-ping-は利用できない">
+  Azure Web Apps / Azure Functions で Ping は利用できない
+ </h2>
+ <hr/>
+ <p>
+  最初に Azure Web Apps や Azure Functions 上では、Ping の実行が許可されていません。
+ </p>
+ <p>
+  また、Azure Load Balancer は、ICMP プロトコルの通過を許可していないので、Azure  Web Apps / Azure Functions への Ping もできません。
+ </p>
+ <p>
+  なお、ping がタイムアウトする話の詳細は
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/mast/2014/06/22/use-port-pings-instead-of-icmp-to-test-azure-vm-connectivity/">
+   こちらのブログ
+  </a>
+  に書かれています。
+ </p>
+ <p>
+  このため、Azure  ポータル上から Web Apps を選択後、[コンソール] などで Ping を実行しようとすると画像のようにエラーが発生します。
+ </p>
+ <p>
+  Kudu のコンソール (
+  <a data-linktype="external" href="https://yourwebapp.scm.azurewebsites.net/DebugConsole">
+   https://yourwebapp.scm.azurewebsites.net/DebugConsole
+  </a>
+  ) 上で実行した場合も結果は同様です。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/110.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  では、どうすればよいでしょうか？
+  <strong>
+   tcpping
+  </strong>
+  と呼ばれるツールがあるのでこちらを利用しましょう。
+ </p>
+ <p>
+ </p>
+ <h2 id="tcpping-を実行する">
+  tcpping を実行する
+ </h2>
+ <hr/>
+ <p>
+  tcpping を コンソール上で実行するとこんな感じになります。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/28.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Web Apps でエンドポイントへの接続確認をする場合は、Ping の代わりに tcpping を利用してください。
+ </p>
+ <p>
+ </p>
+ <p>
+  例えば、Web Apps から Azure SQL Database を利用する際の接続確認として利用されます。SQL Database へ接続する場合は、ポート 1433 を指定してください。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a data-linktype="external" href="/blog/media/2018/08/36.png">
+  </a>
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/38.png"/>
+  </a>
+  <a data-linktype="external" href="/blog/media/2018/08/36.png">
+  </a>
+  <a data-linktype="external" href="/blog/media/2018/08/36.png">
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  また、Azure Web Apps では VNET 統合と呼ばれる機能を利用することで、仮想ネットワーク内に配置されている VM に接続できるようになります。
+ </p>
+ <p>
+  VNET 統合の設定後、Web Apps から仮想マシンのプライベート IP に接続できているかどうか確認する場合は、tcpping が役に立ちます。
+ </p>
+ <p>
+  なお、仮想ネットワーク内の VM に対して tcpping を実行する際は、仮想マシン側で開放しているポートを指定してください。
+ </p>
+ <p>
+  下記画像は、仮想ネットワーク内に配置した VM に割り当てられたプライベート IP に対して tcpping で接続確認をしている例になります。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a data-linktype="external" href="/blog/media/2018/08/54.png">
+  </a>
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/55.png"/>
+  </a>
+  <a data-linktype="external" href="/blog/media/2018/08/54.png">
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  ※ VNET 統合を利用することで、Web Apps から仮想マシンへは接続できますが、仮想マシンから Web Apps へのプライベートな接続はできません。費用が高額になりますが、ILB ASE と呼ばれるサービスを使ってください。
+ </p>
+ <p>
+  VNET 統合の機能の紹介は
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/web-sites-integrate-with-vnet">
+   こちらのドキュメント
+  </a>
+  になります。 また、弊ブログの
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/jpcie/?p=1677">
+   こちらの記事
+  </a>
+  で ASE (App Service Environment)の紹介もしています。
+ </p>
+ <p>
+ </p>
+ <h2 id="nameresolver-を利用する">
+  nameresolver を利用する
+ </h2>
+ <hr/>
+ <p>
+  VNET 統合後や、ASE 利用時に、仮想ネットワーク側で自前の DNS を指定している場合、その DNS できちんと名前解決ができるか確認するコマンドとして nameresolver が利用可能です。
+ </p>
+ <p>
+  nameresolver では VNET 側で構成した DNS サーバーを指定可能です。 こちらはサンプルとして DNS を指定せずに nameresolver を利用した結果です。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/48.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <h2 id="network-traceも収集できる">
+  Network Traceも収集できる
+ </h2>
+ <hr/>
+ <p>
+  App Service の通信に関しては、[問題の診断と解決] から Network Trace を利用することでパケットをキャプチャできるようになりました。(Basic プラン以上)
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/network.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  収集したトレースは
+  <a data-linktype="external" href="https://www.microsoft.com/en-in/download/details.aspx?id=4865">
+   Network Monitor
+  </a>
+  や、
+  <a data-linktype="external" href="https://www.wireshark.org/">
+   Wireshark
+  </a>
+  、
+  <a data-linktype="external" href="https://www.microsoft.com/en-us/download/details.aspx?id=44226">
+   Message Analyzer
+  </a>
+  を使って解析が可能です。なお HTTPS などの TLS/SSL での通信は暗号化されますのでご注意ください。
+ </p>
+ <p>
+  ※ VNET 統合を設定している App Service Plan や、従量課金プランの Azure Functions ではこの機能は利用できません。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/network2.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  "Collect Network Trace" を押下して Network Trace を収集します。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h2 id="tcp-connections-からコネクションの状況を確認することもできる">
+  TCP Connections からコネクションの状況を確認することもできる
+ </h2>
+ <hr/>
+ <p>
+  [問題の診断と解決] ブレードにある、"TCP Connections" では、自分の Web App の TCP コネクションの状況も確認することができます。
+ </p>
+ <p>
+  接続数の増減や、TIME_WAIT が発生しているかどうかなど、1 か月前までさかのぼって確認できます。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/network3.png"/>
+  </a>
+ </p>
+ <h2 id="section">
+ </h2>
+ <h2 id="おまけ">
+  おまけ
+ </h2>
+ <hr/>
+ <p>
+  <strong>
+   curl
+  </strong>
+  コマンドも利用することが可能です。オプションをつける際は Kudu 上でしかうまく動作しなかったので、画像では、Kudu 上で実行しています。
+ </p>
+ <p>
+ </p>
+ <p>
+  <a href="azure-web-apps-azure-functions-で利用可能なネットワーク関連のツール.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/08/curl1.png"/>
+  </a>
+ </p>
+ <h2 id="section-1">
+ </h2>
+ <h2 id="まとめ">
+  まとめ
+ </h2>
+ <hr/>
+ <p>
+  Azure Web Apps / Azure Functions 上で実行可能なコマンドを紹介しました。
+ </p>
+ <p>
+  次回は、VNET 統合設定時のトラブルを例にとって実際にどのように利用するのかご紹介しようと思います。
+ </p>
+ <p>
+ </p>
+ <p>
+  ※ 記事の内容は予告なく変更される可能性がございます。
+ </p>
+ <!-- </content> -->
+</main>

@@ -1,0 +1,105 @@
+---
+title: "Azure Web Apps / Azure Functions から同じリージョンの Azure Storage Account へ接続する時の注意点"
+author_name: Murayama
+tags:
+    - MigratedArticle
+    - Function App
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-web-apps-azure-functions-から同じリージョンの-azure-storage-account-へ接続する時">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 10 月 30 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは、Azure PaaS サポートの村山です。
+ </p>
+ <p>
+  今回は、Azure Web Apps / Azure Functions から同リージョンの Azure Storage Account へ接続する際の注意点についてご案内します。
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h3 id="同じリージョン内での通信の場合firewall-を設定すると通信ができなくなる">
+  同じリージョン内での通信の場合、Firewall を設定すると通信ができなくなる
+ </h3>
+ <hr/>
+ <p>
+  Azure Web Apps / Azure Functions から同リージョンの Azure Storage Account へ接続する際は、Azure ポータル上の、Web App -&gt; [プロパティ] に記載されている送信 IP ではなく、Azure Web Apps / Azure Functions のプラットフォーム内部で利用されているプライベート IP 経由で通信を行います。
+ </p>
+ <p>
+  このため、Firewall に下記のような Azure Web Apps や Azure Functions の [プロパティ]に記載されているパブリック IP を設定すると、同じリージョン の Azure Web Apps/ Azure Functions から Storage Account  に接続することができなくなります。
+ </p>
+ <p>
+  <a href="azure-web-apps-azure-functions-から同じリージョンの-azure-storage-account-へ接続する時.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/10/ips.png"/>
+  </a>
+ </p>
+ <p>
+  ちなみに、Storage Account のログを有効化して、接続に失敗した時のログを見ると、10.72.196.80:50062; のように、クライアントの IP としてプライベート IP が記載されます。
+ </p>
+ <blockquote>
+  <p>
+   1.0;2018-10-29T08:50:00.3251459Z;CreateContainer;IpAuthorizationError;403;2;2;authenticated;kemurastorage;kemurastorage;blob;"https://kemurastorage.blob.core.windows.net:443/firewalltestcont?restype=container";"/";cb846703-501e-006d-1864-6f7cee000000;0;10.72.196.80:50062;2017-04-17;448;0;95;246;0;;;;;;"Azure-Storage/0.36.0 (Python CPython 3.6.4; Windows 10)";;"9e659d00-db57-11e8-9c95-0003ffec138c"
+  </p>
+ </blockquote>
+ <p>
+ </p>
+ <p>
+  このプライベート IP の範囲は公開されていないため、恐れ入りますが現状では下記のいずれかが対象方法となります。
+ </p>
+ <ul>
+  <li>
+   Firewall を解除して Azure Storage Account と通信する
+  </li>
+  <li>
+   App Service Environment を利用して、サービス エンドポイントと連携する
+  </li>
+ </ul>
+ <p>
+ </p>
+ <p>
+  もしくは、
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/jpcie/?p=2055">
+   通常の VNET 統合機能
+  </a>
+  ではサービス エンドポイントと連携することはできませんが、
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/appserviceteam/2018/10/17/new-app-service-vnet-integration-feature/">
+   新しい VNET 統合の機能 (プレビュー)
+  </a>
+  であればサービス エンドポイントとの連携が可能です。
+ </p>
+ <p>
+ </p>
+ <h3 id="別リージョンであれば問題なく設定できる">
+  別リージョンであれば問題なく設定できる
+ </h3>
+ <hr/>
+ <p>
+  Azure Web Apps / Azure Functions と、Azure Storage Account が東日本と西日本などそれぞれ
+  <strong>
+   別リージョンにある場合
+  </strong>
+  は、Firewall の設定が可能です。
+ </p>
+ <p>
+  <a href="azure-web-apps-azure-functions-から同じリージョンの-azure-storage-account-へ接続する時.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/10/west.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  お手数をおかけしますが、通常の Azure Web Apps を使いつつ Storage Account の Firewall を利用する場合は、Azure Web Apps / Azure Functions と、Azure Storage Account のリージョンを分けていただきますようお願い申し上げます。
+ </p>
+ <p>
+ </p>
+ <p>
+  ※ 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
+ </p>
+ <!-- </content> -->
+</main>

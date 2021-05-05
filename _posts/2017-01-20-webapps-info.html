@@ -1,0 +1,120 @@
+---
+title: "Azure ポータルから確認できる Web Apps の情報"
+author_name: Kataoka
+tags:
+    - MigratedArticle
+    - App Service
+    - Web Apps
+
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-ポータルから確認できる-web-apps-の情報">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 1 月 20 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。日本マイクロソフト Azure CIE サポートの片岡です。
+  <br/>
+  Azure Web Apps を利用する中で、Web サイトの動作が遅いなど、いろいろな問題が発生する可能性もあるかと思います。
+  <br/>
+  そのため、Azure Web Apps で問題が発生した場合に、ご利用者様にてご実施可能なトラブルシューティング方法について、シリーズ化してご紹介させていただきます！
+ </p>
+ <p>
+  今回のブログでは、Azure ポータル上から確認できる、以下の 2 点についてご紹介させていただきます。
+ </p>
+ <p>
+  1. メトリック情報
+  <br/>
+  2. アプリケーションの正常性確認
+ </p>
+ <h3 id="1-メトリック情報">
+  <strong>
+   1. メトリック情報
+  </strong>
+ </h3>
+ <p>
+  Azure ポータル上では、CPU 使用率、HTTP エラー、平均応答時間など、様々な情報が確認可能です。
+  <br/>
+  これらの情報は、Azure ポータル上で該当の Web App を選択し、以下の赤い四角で囲った ”インスタンスあたりのメトリックス” という項目から、確認が可能であり、例えばアプリケーションの動作が遅いなどの事象が発生した場合に、負荷状況を確認するためなどに有効です。
+ </p>
+ <p>
+  例えば、動作が遅いと感じたときは、以下の画像の表で、CPU 使用率を確認するのが効果的です。
+ </p>
+ <p>
+  <img alt="metric_cpu" data-linktype="external" src="/blog/media/2017/01/metric_cpu.png"/>
+ </p>
+ <p>
+  CPU 使用率が高い場合には、アプリケーションの処理で非常に高い負荷がかかってしまっていると考えられます。
+ </p>
+ <p>
+  もし、CPU 使用率が高い状態が一時的に発生していた場合には、続いて [Site Metrics] タブから確認できる以下の表を確認するのがよいかもしれません。
+  <br/>
+  HTTP 通信の状況が確認できますので、例えば CPU 使用率が一時的に向上していた時間帯に、HTTP リクエストの数も向上していた場合は、一時的に HTTP リクエストが急増したことによる負荷と判断できます。
+ </p>
+ <p>
+  <img alt="metric_http" data-linktype="external" src="/blog/media/2017/01/metric_http.png"/>
+ </p>
+ <p>
+  一方で、常に CPU 使用率が高い、HTTP リクエストの数が多いといった場合には、非常にアクセス数の多いサイトであると思われます。
+  <br/>
+  この場合は、スケール アウト (インスタンスの数を増やして負荷分散する) などの対応をご検討いただくのも有効かもしれません。
+  <br/>
+  スケール アウトは、以下の画像のように「CPU 使用率が指定した閾値よりも高くなった場合」といったトリガーを作成し、その間だけインスタンスを増やすという対応もできます。
+  <br/>
+  必要なときだけ増やし、不要となったら減らすことで、費用も抑えることができます。
+ </p>
+ <p>
+  <img alt="autoscale" data-linktype="external" src="/blog/media/2017/01/autoscale.png"/>
+ </p>
+ <p>
+  なお、本情報は、アプリごと、もしくは App Service プランごとに確認可能です。
+  <br/>
+  特定のアプリケーションのメトリック情報を参照する場合にはアプリごと、インスタンス全体の情報を参照する場合には App Service プランごとのメトリックを参照ください。
+  <br/>
+  参照可能な情報については、以下のドキュメントがございますので、必要に応じてご参照ください。
+ </p>
+ <p>
+  Azure App Service でアプリを監視する方法
+  <br/>
+  <a data-linktype="external" href="https://docs.microsoft.com/ja-jp/azure/app-service-web/web-sites-monitor">
+   https://docs.microsoft.com/ja-jp/azure/app-service-web/web-sites-monitor
+  </a>
+ </p>
+ <p>
+ </p>
+ <h3 id="2-アプリケーションの正常性確認">
+  <strong>
+   2. アプリケーションの正常性確認
+  </strong>
+ </h3>
+ <p>
+  上記のメトリックの情報と併せて、以下の赤い四角で囲った “障害の履歴” の箇所から、失敗した HTTP リクエストの数やサイトの正常性 (Availability) などが確認可能です。
+  <br/>
+  何らかの異常が発生していないかなどは、以下より確認が可能です。
+ </p>
+ <p>
+  <img alt="applens" data-linktype="external" src="/blog/media/2017/01/applens.png"/>
+ </p>
+ <p>
+  なお、"障害の履歴" は、appLens と呼ばれる機能でドキュメントなどでは、appLens として紹介されていることもあるので、ご注意ください。
+  <br/>
+  英文のみのご用意となりますが、上記に機能については以下の情報がございます。
+ </p>
+ <p>
+  Introducing appLens for Azure App Service Web App
+  <br/>
+  <a data-linktype="external" href="https://blogs.msdn.microsoft.com/appserviceteam/2016/06/02/applens/">
+   https://blogs.msdn.microsoft.com/appserviceteam/2016/06/02/applens/
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure ポータル上から有効な情報が確認できない場合は、診断ログの機能を利用し、Web サーバー ログなどを確認するのが有効となる場合があります。
+  <br/>
+  そのため、次回以降は Azure ポータル以外から確認できるログ機能などについて、ご紹介させていただきます！
+ </p>
+ <!-- </content> -->
+</main>

@@ -1,0 +1,247 @@
+---
+title: "[Advent Calendar 2017 Day12] API Management 導入編"
+author_name: Kataoka
+tags:
+    - MigratedArticle
+    - API Management
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/advent-calendar-2017-day12-api-management-導入編">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2017 年 12 月 12 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こちらの記事は、Qiita に掲載した Microsoft Azure Tech Advent Calendar 2017 の企画に基づき、執筆した内容となります。 カレンダーに掲載された記事の一覧は、
+  <a data-linktype="external" href="https://qiita.com/advent-calendar/2017/microsoft-azure-tech">
+   こちら
+  </a>
+  よりご確認ください。
+ </p>
+ <p>
+  みなさまこんにちは。Azure サポート チームの片岡です。
+  <br/>
+  本日のブログでは、App Service などの Web 系サービスを利用して公開された Web API 群の前段に配置する API Management というサービスをご紹介します。
+  <br/>
+  App Service などのように主役となるサービスではございませんが、Web API の管理をしやすくするという観点で一役買うサービスであり、二―ズも増えてきております。
+ </p>
+ <p>
+  すべてを紹介すると長くなってしまうので、今回は導入編として簡単な機能を紹介いたしますが、今後もカスタマイズ機能などについて随時紹介していきます。
+  <br/>
+  また、下記では発行者ポータルでの手順を紹介しておりますが、現在 API Management は Azure ポータルへの移行を進めており、基本的には Azure ポータルでも同様の設定が可能です。
+ </p>
+ <h3 id="1-api-management-とは-">
+  1. API Management とは ?
+ </h3>
+ <p>
+  ひとことで言うと、Web API の Gateway となるサービスです。
+  <br/>
+  近頃の Web サービスでは、ユーザーが実際にアクセスする UI をもった Web ページから、バックエンドのWeb API を呼び出すという作りとなっていることが一般的です。
+  <br/>
+  Web API がひとつのみであれば簡易に管理が可能ですが、複数の Web API を呼び出す、特にドメインが異なる Web API を複数呼び出す場合には、その分管理が煩雑となります。
+  <br/>
+  API Management は以下のような機能を提供し、Web API の管理に一役買います。
+ </p>
+ <p>
+  - 管理ポータルの提供
+  <br/>
+  - ドメインの統一
+  <br/>
+  - Web API のユーザー管理、アクセス キーの発行
+  <br/>
+  - HTTP ヘッダーなど、HTTP リクエスト/レスポンスのカスタイマイズ
+ </p>
+ <p>
+  では、早速それぞれの機能を見ていきましょう。
+ </p>
+ <h3 id="2-管理ポータルの提供">
+  2. 管理ポータルの提供
+ </h3>
+ <p>
+  API Management をデプロイすると、発行者ポータル、および開発者ポータルという 2 つの管理用ポータルが併せてデプロイされます。
+  <br/>
+  発行者ポータルでは Web API のコール数などが確認できるダッシュボードの表示や Web API の登録、ユーザー管理などの機能が提供され、開発者ポータルでは実際の Web API 呼び出しをテストするといった機能が提供されております。
+  <br/>
+  それぞれのポータルは、Azure ポータルから直接アクセスすることが可能です。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day12-api-management-導入編.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/apim_1.png"/>
+  </a>
+ </p>
+ <h3 id="3-ドメインの統一">
+  3. ドメインの統一
+ </h3>
+ <p>
+  ひとつの Web サービスでは多くの機能が提供されておりますので、その分多くの Web API が呼び出されることがあります。
+  <br/>
+  複数の Web API ですので、ドメインが異なることも一般的ですが、API Management では、すべての Web API を同じドメインに統一し、パスのみで Web API を区別できます。
+  <br/>
+  API の登録は、発行者ポータルから以下のように登録が可能です。
+ </p>
+ <p>
+  3-1) 発行者ポータルの [APIs] – [ADD API] をクリックします。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day12-api-management-導入編.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/apim_2.png"/>
+  </a>
+ </p>
+ <p>
+  3-2) 実際の Web API の URL などを入力します。以下の例では、実際の Web API の URL は
+  <a data-linktype="external" href="http://contoso.azurewebsites.net/">
+   http://contoso.azurewebsites.net/
+  </a>
+  ですが、API Management のドメインである
+  <a data-linktype="external" href="https://apim.ykataoka.com/">
+   https://apim.ykataoka.com/
+  </a>
+  に統一する例です。
+  <br/>
+  同じ API Management サービスに登録された API 群はすべて同じドメイン名となり、その後に続くパスで API を区別します。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day12-api-management-導入編.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/apim_3.png"/>
+  </a>
+ </p>
+ <p>
+  3-3) 最後に Web API を選択して "Operations" タブをクリックし、"Operation" を登録します。GET リクエストや POST リクエストなどの HTTP メソッド、実際のアクセス パス (下記例は
+  <a data-linktype="external" href="http://contoso.azurewebsites.net/todolist">
+   http://contoso.azurewebsites.net/todolist
+  </a>
+  ) などの情報を入力し、Web API の登録は完了です。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day12-api-management-導入編.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/apim_4.png"/>
+  </a>
+ </p>
+ <p>
+  上記の手順で登録した Web API は、開発者ポータルにて実際に動作を確認することができます。
+  <br/>
+  以下の画像は、API Management を作成した際に既定作成される Echo API のページですが、"Try it" ボタンをクリックすることで動作が確認できます。
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day12-api-management-導入編.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/apim_5.png"/>
+  </a>
+ </p>
+ <h3 id="4-web-api-のユーザー管理アクセス-キーの発行">
+  4. Web API のユーザー管理、アクセス キーの発行
+ </h3>
+ <p>
+  API Management では、ユーザーおよび Product を登録することでアクセス キーが発行され、登録されたユーザーが Web API を利用することが可能となります。
+  <br/>
+  Product とは、API や、その API に設定しているポリシーなどをまとめた概念であり、各ユーザーは Product をサブスクライブする必要がございます。例えば「○○ の Product のユーザーは 1 分間に最大 5 回までの呼び出しを許可する」、「□□ の Product のユーザーは無制限に呼び出しを許可する」といった制御に利用されます。
+  <br/>
+  各 Web API は、必ずいずれかの Product に登録されている必要があり、その Product のルールに沿った呼び出しが可能です。ユーザーと Product はいずれも発行者ポータルから登録します。
+ </p>
+ <p>
+  4-1) ユーザー登録
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day12-api-management-導入編.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/apim_6.png"/>
+  </a>
+ </p>
+ <p>
+  4-2) Product 登録
+ </p>
+ <p>
+  <a href="advent-calendar-2017-day12-api-management-導入編.html">
+   <img alt="" data-linktype="external" src="/blog/media/2017/12/apim_7.png"/>
+  </a>
+ </p>
+ <h3 id="5-http-ヘッダーなどhttp-リクエストレスポンスのカスタイマイズ">
+  5. HTTP ヘッダーなど、HTTP リクエスト/レスポンスのカスタイマイズ
+ </h3>
+ <p>
+  HTTP ヘッダーなどのカスタマイズというタイトルとはしましたが、ポリシーという機能であり、HTTP リクエストやレスポンスのカスタマイズ、HTTP レスポンス コードの変更、ログ機能の追加など、ブログでは紹介しきれなほどとにかく様々なカスタマイズが可能となる API Management の中核機能です。
+  <br/>
+  ポリシーは、Azure ポータルや発行者ポータル上で設定可能であり、XML 形式で定義を行います。基本的な設定方法、またよくご利用をいただくアクセス制限ポリシーについては、以下でご紹介をしております。
+ </p>
+ <p>
+  How to set or edit Azure API Management policies
+  <br/>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/api-management/set-edit-policies">
+   https://docs.microsoft.com/ja-jp/azure/api-management/set-edit-policies
+  </a>
+ </p>
+ <p>
+  API Management のアクセス制限ポリシー
+  <br/>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/api-management/api-management-access-restriction-policies">
+   https://docs.microsoft.com/ja-jp/azure/api-management/api-management-access-restriction-policies
+  </a>
+ </p>
+ <p>
+  また、アクセス制限ポリシー以外にも様々な実装が可能であり、例えば HTTP リクエストのヘッダーの内容に応じた処理を行う、HTTP レスポンスのステータス コードをカスタマイズするといった処理も可能です。
+  <br/>
+  それらのポリシーについて、また XML 内で利用できるポリシー式は、以下でご紹介をしております。ポリシー式は、System.DateTime や System.Text など、.NET Framework で利用可能なクラスが利用できたりと、比較的なじみやすい形式の変数が利用可能です。
+ </p>
+ <p>
+  API Management の高度なポリシー
+  <br/>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/api-management/api-management-advanced-policies">
+   https://docs.microsoft.com/ja-jp/azure/api-management/api-management-advanced-policies
+  </a>
+ </p>
+ <p>
+  API Management ポリシー式
+  <br/>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/api-management/api-management-policy-expressions">
+   https://docs.microsoft.com/ja-jp/azure/api-management/api-management-policy-expressions
+  </a>
+ </p>
+ <p>
+  なお、ポリシーは、&lt;inbound&gt;/&lt;backend&gt;/&lt;outbound&gt;/&lt;on-error&gt; の 4 つのタグから構成され、制御したい内容に応じて、タグ内にポリシーを定義します。(&lt;on-error&gt; は省略可能)
+  <br/>
+  例えば、API Management が受信するクライアントからの HTTP リクエストに関する制御を行いたい場合には &lt;inbound&gt; タグ、バックエンドの API から返された HTTP レスポンスに関する制御を行いたい場合には &lt;outbound&gt; タグに制御内容を定義します。
+  <br/>
+  そして、それぞれの処理の中で何らかのエラー (許可されていない IP アドレスからのアクセスが発生したなど) が発生した場合には、&lt;on-error&gt; タグ内の処理が実行されます。
+ </p>
+ <p>
+  例といたしまして、IP アドレスによるアクセス制限を行い、許可されていない IP アドレスからのアクセスに対しては HTTP 599 エラーを返すポリシー式は以下の通りとなります。
+ </p>
+ <p>
+  ~~~~~
+  <br/>
+  &lt;policies&gt;
+  <br/>
+  &lt;inbound&gt;
+  <br/>
+  &lt;ip-filter action="allow"&gt;
+  <br/>
+  &lt;address&gt;IP アドレス&lt;/address&gt;
+  <br/>
+  &lt;/ip-filter&gt;
+  <br/>
+  &lt;base /&gt;
+  <br/>
+  &lt;/inbound&gt;
+  <br/>
+  &lt;on-error&gt;
+  <br/>
+  &lt;return-response&gt;
+  <br/>
+  &lt;set-status code="599" reason="AccessDenied" /&gt;
+  <br/>
+  &lt;set-body&gt;Unallowed IP address.&lt;/set-body&gt;
+  <br/>
+  &lt;/return-response&gt;
+  <br/>
+  &lt;/on-error&gt;
+  <br/>
+  &lt;/policies&gt;
+  <br/>
+  ~~~~~
+  <br/>
+  ※ &lt;backend&gt; および &lt;outbound&gt; は割愛しております。
+ </p>
+ <p>
+  その他にも様々なカスタマイズが可能なので、ぜひ Web API の利用にご利用いただけますと幸いです！
+ </p>
+ <!-- </content> -->
+</main>

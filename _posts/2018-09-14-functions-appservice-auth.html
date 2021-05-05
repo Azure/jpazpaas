@@ -1,0 +1,709 @@
+---
+title: "Azure Functions での App Service 認証/承認"
+author_name: "Toru Itagaki"
+tags:
+    - MigratedArticle
+    - Function App
+    - App Service
+    - Web Apps
+---
+<!-- article summary -->
+<small><span style="font-style: italic">
+この記事は <a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-functions-での-app-service-認証-承認">旧 Japan Azure PaaS Support Blog</a> からのコピーとなります。<br />
+記載されている内容は 2018 年 9 月 14 日 時点のものとなり、現時点におきましては変更されている可能性がありますので、ご注意下さい。
+</span></small><hr />
+<main class="content" data-bi-name="content" dir="ltr" id="main" lang="en-us" role="main">
+ <!-- <content> -->
+ <p>
+  こんにちは。Azure サポートの板垣です。
+ </p>
+ <p>
+  Azure App Service では、組み込みの認証/承認機能がサポートされています。
+ </p>
+ <p>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/app-service/app-service-authentication-overview">
+   Azure App Service での認証および承認
+  </a>
+ </p>
+ <p>
+  この機能は、Azure Functions でも利用することができ、HTTP トリガーで起動する Function に、任意の認証プロバイダーによる認証機能を付加することができます。
+  <br/>
+  これにより、認証されたクライアントのみを Function にアクセスできるようにさせることができます。
+  <br/>
+  今回は、認証プロバイダーとして Azure Active Directory を利用する場合の手順をご紹介します。
+ </p>
+ <p>
+ </p>
+ <hr/>
+ <h2 id="概要">
+  概要
+ </h2>
+ <p>
+  認証/承認機能が有効化された Function App にアクセスするためには、認証プロバイダーから取得した認証トークンを Function App に提示します。
+  <br/>
+  このため、Function App へのアクセス前に、認証プロバイダーから認証トークンを取得する必要があります。
+  <br/>
+  以下より、認証トークンを取得するための構成と、認証トークンの取得、使用方法を記載します。
+ </p>
+ <p>
+ </p>
+ <h2 id="function-app-で認証承認を構成する">
+  Function App で認証/承認を構成する
+ </h2>
+ <p>
+  Function App を作成し、プラットフォーム機能の [認証/承認] をクリックします。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/14.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  App Service 認証をオンにして "Azure Active Directory でのログイン" を選択し、認証プロバイダーとして Azure Active Directory を選択します。
+  <br/>
+  管理モードを "簡易" とし、新しい AD アプリを作成します。
+ </p>
+ <h2 id="section">
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/24.png"/>
+  </a>
+ </h2>
+ <p>
+ </p>
+ <p>
+  作成完了後、管理モードを "詳細" に切り替えると、作成された AD アプリの詳細を参照することができます。
+  <br/>
+  ここで、"クライアント ID" はこの AD アプリのリソースを表す ID となります。この ID を控えておきます。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/31.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  [関数の URL の取得] をクリックして、実行したい Function の URL を控えておきます。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/8.png"/>
+  </a>
+ </p>
+ <p>
+  なお、HTTP トリガーで起動する Function は、既定では要求を承認するために API キーを必要とします(上図の code 値)。
+  <br/>
+  この設定は function.json で変更可能であり、authLevel プロパティを anonymous に設定すると、API キー無しでアクセス可能になります。
+  <br/>
+  API キーによる承認は Function ごとであるのに対して、本稿でご案内している Azure AD トークンによる承認は Function App 全体に対して適用されるという違いがあります。セキュリティ要件にあわせてそれぞれご利用ください。
+ </p>
+ <p>
+  <a data-linktype="absolute-path" href="https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook#trigger---configuration">
+   Azure Functions における HTTP と Webhook のバインド - トリガー - 構成
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h2 id="azure-active-directory-にアプリケーションを登録する">
+  Azure Active Directory にアプリケーションを登録する
+ </h2>
+ <p>
+  Function にアクセスするクライアント アプリケーションの定義を Azure AD に登録します。
+  <br/>
+  Azure AD アプリケーションは、Azure AD を利用するアプリケーションの定義です。Azure AD アプリケーションを登録することで、アプリケーションに対してトークンを発行する方法を定義します。
+ </p>
+ <p>
+ </p>
+ <p>
+  Azure AD テナントで、[アプリの登録] - [新しいアプリケーションの登録] をクリックします。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/51.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  以下、ネイティブ アプリケーション、Web アプリ/API のそれぞれを登録した場合について記載します。
+  <br/>
+  # 2018/09/19 アクセス許可の設定を追記しました。
+  <br/>
+  <br/>
+ </p>
+ <h3 id="ネイティブ-アプリケーション">
+  ネイティブ アプリケーション
+ </h3>
+ <p>
+  ネイティブ アプリケーションでは、クライアントに配布されるようなアプリケーションが想定されます。トークンを取得するために、基本的にユーザーが対話形式でサインインして、資格情報を提供します。
+ </p>
+ <p>
+ </p>
+ <p>
+  アプリケーションの種類を "ネイティブ" とします。リダイレクト URI は物理的に存在するものである必要はありませんが、アプリケーションに固有の値を設定しておきます。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/42.png"/>
+  </a>
+ </p>
+ <p>
+  次に、アクセス許可の設定を追加します。この設定により、このアプリケーションで発行されるトークンが、Function App に対するアクセス許可を持つことを定義します。
+ </p>
+ <p>
+  [必要なアクセス許可] で [追加] をクリックします。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/121.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  API として、Function App で簡易作成した Azure AD アプリケーションを指定します。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/131.png"/>
+  </a>
+ </p>
+ <p>
+  その Azure AD アプリケーションへのアクセスを許可するように設定し、完了します。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/141.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  最後に、登録したアプリケーションのアプリケーション  ID を控えておきます。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/6.png"/>
+  </a>
+  <br/>
+  <br/>
+ </p>
+ <h3 id="web-アプリapi-アプリケーション">
+  Web アプリ/API アプリケーション
+ </h3>
+ <p>
+  Web アプリ/API アプリケーションでは、サーバーでホストされるようなアプリケーションが想定されます。アプリケーション コードがユーザーからは機密となるため、トークンを取得するために、シークレット キーを使用して資格情報を提供することができます。
+ </p>
+ <p>
+ </p>
+ <p>
+  アプリケーションの種類を "Web アプリ/API" とします。サインオン URL は物理的に存在するものである必要はありませんが、アプリケーションに固有の値を設定しておきます。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/9.png"/>
+  </a>
+ </p>
+ <p>
+  次に、ネイティブ アプリケーションと同様に、アクセス許可の設定を追加します。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/151.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+  キーを生成します。"説明" と "有効期限" を設定後、[保存] をクリックすると、キー値が表示されます。
+  <br/>
+  キー値が表示されるのは保存後のみですので、このタイミングで必ずキー値を控えておきます。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/112.png"/>
+  </a>
+ </p>
+ <p>
+  <br/>
+  最後に、登録したアプリケーションのアプリケーション  ID を控えておきます。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/10.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <p>
+  以上で Azure AD アプリケーションの登録は完了です。最後に、Azure AD テナントのプロパティからディレクトリ ID を控えておきます。
+ </p>
+ <p>
+  <a href="azure-functions-での-app-service-認証-承認.html">
+   <img alt="" data-linktype="external" src="/blog/media/2018/09/71.png"/>
+  </a>
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h2 id="クライアント-アプリケーションを実装する">
+  クライアント アプリケーションを実装する
+ </h2>
+ <p>
+  以下は、PowerShell スクリプトと C# アプリケーションで、 Function を実行する場合のサンプルです。
+ </p>
+ <p>
+  Azure AD からトークンを取得するために
+  <a data-linktype="external" href="https://www.nuget.org/packages/Microsoft.IdentityModel.Clients.ActiveDirectory">
+   ADAL.NET
+  </a>
+  を使用していますので、適宜ダウンロードしてください。
+ </p>
+ <p>
+  # 2018/09/19 コードを一部修正しました。
+ </p>
+ <h3 id="ネイティブ-アプリケーション-1">
+  ネイティブ アプリケーション
+ </h3>
+ <p>
+  [PowerShell]
+  <br/>
+  [powershell]
+  <br/>
+  ### ADAL.NET をロード ###
+  <br/>
+  $adal = "C:\ADAL\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+  <br/>
+  [System.Reflection.Assembly]::LoadFrom($adal)
+ </p>
+ <p>
+  ### Azure AD テナントの設定 ###
+  <br/>
+  # Azure AD テナントのディレクトリ ID
+  <br/>
+  $adId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+ </p>
+ <p>
+  # トークン発行元
+  <br/>
+  $authority = "https://login.microsoftonline.com/$adId"
+ </p>
+ <p>
+  ### Function App で作成した AD アプリ ###
+  <br/>
+  # クライアント ID
+  <br/>
+  $resourceApplicationId = "11f15836-8e45-4fb9-b9f8-b66611b21f8b"
+ </p>
+ <p>
+  ### クライアント用に作成した AD アプリ ###
+  <br/>
+  # アプリケーション ID
+  <br/>
+  $clientApplicationId = "dbcb7ba3-c667-4323-a310-a5e834b32675"
+ </p>
+ <p>
+  # リダイレクト URI
+  <br/>
+  $redirectUri = "https://jpciesample/MyNativeApp"
+ </p>
+ <p>
+  ### トークン生成 ###
+  <br/>
+  # ADAL の AuthenticationContext オブジェクト
+  <br/>
+  $authContext = New-Object Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext -ArgumentList $authority
+ </p>
+ <p>
+  # トークン要求 (資格情報がキャッシュされていない場合、資格情報プロンプトが起動します)
+  <br/>
+  $platformParameters = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.PlatformParameters" -ArgumentList "Auto"
+  <br/>
+  $authResult = $authContext.AcquireTokenAsync($resourceApplicationId, $clientApplicationId, $redirectUri, $platformParameters)
+ </p>
+ <p>
+  # Bearer トークン
+  <br/>
+  $bearerToken = $authResult.Result.CreateAuthorizationHeader()
+ </p>
+ <p>
+  ### Function の呼び出し###
+  <br/>
+  # Function の URL
+  <br/>
+  $functionUri = "https://jpcieauthtest.azurewebsites.net/api/HttpTriggerCSharp1?code=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ </p>
+ <p>
+  # 要求 Body
+  <br/>
+  $body="{'name': 'Azure'}"
+ </p>
+ <p>
+  # HTTP 要求ヘッダの Authorization ヘッダに Bearerトークンを設定
+  <br/>
+  $requestHeader = @{
+  <br/>
+  "Authorization" = $bearerToken
+  <br/>
+  }
+ </p>
+ <p>
+  # HTTPS のセキュリティ プロトコルを TLS 1.2 に設定
+  <br/>
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+ </p>
+ <p>
+  # Function に HTTP 要求を送信
+  <br/>
+  try{
+  <br/>
+  $response = Invoke-RestMethod -Uri $functionUri -Method Post -Headers $requestHeader -Body $body -ContentType "application/json"
+  <br/>
+  echo $response
+  <br/>
+  }catch{
+  <br/>
+  Write-Error($_.Exception);
+  <br/>
+  }
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+  [C#]
+ </p>
+ <p>
+  [csharp]
+  <br/>
+  /* Azure AD テナントの設定 */
+  <br/>
+  // Azure AD テナントのディレクトリ ID
+  <br/>
+  string adId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+ </p>
+ <p>
+  // トークン発行元
+  <br/>
+  string authority = "https://login.microsoftonline.com/" + adId;
+ </p>
+ <p>
+  /* Function App で作成した AD アプリ */
+  <br/>
+  // クライアント ID
+  <br/>
+  string resourceApplicationId = "11f15836-8e45-4fb9-b9f8-b66611b21f8b";
+ </p>
+ <p>
+  /* クライアント用に作成した AD アプリ */
+  <br/>
+  // アプリケーション ID
+  <br/>
+  string clientApplicationId = "dbcb7ba3-c667-4323-a310-a5e834b32675";
+ </p>
+ <p>
+  // リダイレクト URI
+  <br/>
+  string redirectUri = "https://jpciesample/MyNativeApp";
+ </p>
+ <p>
+  /* トークン生成 */
+  <br/>
+  // ADAL の AuthenticationContext オブジェクト
+  <br/>
+  AuthenticationContext authContext = new AuthenticationContext(authority);
+ </p>
+ <p>
+  // トークン要求 (資格情報がキャッシュされていない場合、資格情報プロンプトが起動します)
+  <br/>
+  var authResult = authContext.AcquireTokenAsync(resourceApplicationId, clientApplicationId, new Uri(redirectUri), new PlatformParameters(PromptBehavior.Auto, null));
+ </p>
+ <p>
+  // Bearer トークン
+  <br/>
+  string bearerToken = authResult.Result.CreateAuthorizationHeader();
+ </p>
+ <p>
+  /* Function の呼び出し */
+  <br/>
+  // Function の URL
+  <br/>
+  string functionUri = "https://jpcieauthtest.azurewebsites.net/api/HttpTriggerCSharp1?code=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+ </p>
+ <p>
+  // 要求 Body
+  <br/>
+  string bodydata = "{\"name\": \"Azure\"}";
+ </p>
+ <p>
+  // Function に HTTP 要求を送信
+  <br/>
+  HttpWebRequest request = WebRequest.Create(functionUri) as HttpWebRequest;
+  <br/>
+  request.Method = "POST";
+  <br/>
+  request.Headers["Authorization"] = bearerToken;
+  <br/>
+  request.ContentType = "application/json";
+ </p>
+ <p>
+  Stream reqstr = request.GetRequestStream();
+  <br/>
+  reqstr.Write(Encoding.ASCII.GetBytes(bodydata), 0, bodydata.Length);
+  <br/>
+  reqstr.Close();
+ </p>
+ <p>
+  HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+  <br/>
+  Stream resstr = response.GetResponseStream();
+  <br/>
+  StreamReader sr = new StreamReader(resstr);
+  <br/>
+  string resresult = sr.ReadToEnd();
+ </p>
+ <p>
+  Console.WriteLine(resresult);
+  <br/>
+  [/csharp]
+ </p>
+ <p>
+ </p>
+ <p>
+ </p>
+ <h3 id="web-アプリapi-アプリケーション-1">
+  Web アプリ/API アプリケーション
+ </h3>
+ <p>
+  [PowerShell]
+  <br/>
+  [powershell]
+  <br/>
+  ### ADAL.NET をロード ###
+  <br/>
+  $adal = "C:\ADAL\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+  <br/>
+  [System.Reflection.Assembly]::LoadFrom($adal)
+ </p>
+ <p>
+  ### Azure AD テナントの設定 ###
+  <br/>
+  # Azure AD テナントのディレクトリ ID
+  <br/>
+  $adId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+ </p>
+ <p>
+  # トークン発行元
+  <br/>
+  $authority = "https://login.microsoftonline.com/$adId"
+ </p>
+ <p>
+  ### Function App で作成した AD アプリ ###
+  <br/>
+  # クライアント ID
+  <br/>
+  $resourceApplicationId = "11f15836-8e45-4fb9-b9f8-b66611b21f8b"
+ </p>
+ <p>
+  ### クライアント用に作成した AD アプリ ###
+  <br/>
+  # アプリケーション ID
+  <br/>
+  $clientApplicationId = "3cd3551e-fc68-4510-b236-64c207b353fb"
+ </p>
+ <p>
+  # リダイレクト URI
+  <br/>
+  $redirectUri = "https://jpciesample/MyNativeApp"
+ </p>
+ <p>
+  # シークレット キー
+  <br/>
+  $secretKey = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ </p>
+ <p>
+  ### トークン生成 ###
+  <br/>
+  # ADAL の AuthenticationContext オブジェクト
+  <br/>
+  $authContext = New-Object Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext -ArgumentList $authority
+ </p>
+ <p>
+  # クライアント資格情報
+  <br/>
+  $clientCredential = New-Object -TypeName Microsoft.IdentityModel.Clients.ActiveDirectory.ClientCredential ($clientApplicationId, $secretKey)
+ </p>
+ <p>
+  # トークン要求
+  <br/>
+  $authResult = $authContext.AcquireTokenAsync($resourceApplicationId, $clientCredential)
+ </p>
+ <p>
+  # Bearer トークン
+  <br/>
+  $bearerToken = $authResult.Result.CreateAuthorizationHeader()
+ </p>
+ <p>
+  ### Function の呼び出し###
+  <br/>
+  # Function の URL
+  <br/>
+  $functionUri = "https://jpcieauthtest.azurewebsites.net/api/HttpTriggerCSharp1?code=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ </p>
+ <p>
+  # 要求 Body
+  <br/>
+  $body="{'name': 'Azure'}"
+ </p>
+ <p>
+  # HTTP 要求ヘッダの Authorization ヘッダに Bearerトークンを設定
+  <br/>
+  $requestHeader = @{
+  <br/>
+  "Authorization" = $bearerToken
+  <br/>
+  }
+ </p>
+ <p>
+  # HTTPS のセキュリティ プロトコルを TLS 1.2 に設定
+  <br/>
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+ </p>
+ <p>
+  # Function に HTTP 要求を送信
+  <br/>
+  try{
+  <br/>
+  $response = Invoke-RestMethod -Uri $functionUri -Method Post -Headers $requestHeader -Body $body -ContentType "application/json"
+  <br/>
+  echo $response
+  <br/>
+  }catch{
+  <br/>
+  Write-Error($_.Exception);
+  <br/>
+  }
+  <br/>
+  [/powershell]
+ </p>
+ <p>
+  [C#]
+ </p>
+ <p>
+  [csharp]
+  <br/>
+  /* Azure AD テナントの設定 */
+  <br/>
+  // Azure AD テナントのディレクトリ ID
+  <br/>
+  string adId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+ </p>
+ <p>
+  // トークン発行元
+  <br/>
+  string authority = "https://login.microsoftonline.com/" + adId;
+ </p>
+ <p>
+  /* Function App で作成した AD アプリ */
+  <br/>
+  // クライアント ID
+  <br/>
+  string resourceApplicationId = "11f15836-8e45-4fb9-b9f8-b66611b21f8b";
+ </p>
+ <p>
+  /* クライアント用に作成した AD アプリ */
+  <br/>
+  // アプリケーション ID
+  <br/>
+  string clientApplicationId = "3cd3551e-fc68-4510-b236-64c207b353fb";
+ </p>
+ <p>
+  // シークレット キー
+  <br/>
+  string secretKey = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+ </p>
+ <p>
+  /* トークン生成 */
+  <br/>
+  // ADAL の AuthenticationContext オブジェクト
+  <br/>
+  AuthenticationContext authContext = new AuthenticationContext(authority);
+ </p>
+ <p>
+  // クライアント資格情報
+  <br/>
+  var clientCredential = new ClientCredential(clientApplicationId, secretKey);
+ </p>
+ <p>
+  // トークン要求
+  <br/>
+  var authResult = authContext.AcquireTokenAsync(resourceApplicationId, clientCredential);
+ </p>
+ <p>
+  // Bearer トークン
+  <br/>
+  string bearerToken = authResult.Result.CreateAuthorizationHeader();
+ </p>
+ <p>
+  /* Function の呼び出し */
+  <br/>
+  // Function の URL
+  <br/>
+  string functionUri = "https://jpcieauthtest.azurewebsites.net/api/HttpTriggerCSharp1?code=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+ </p>
+ <p>
+  // 要求 Body
+  <br/>
+  string bodydata = "{\"name\": \"Azure\"}";
+ </p>
+ <p>
+  // Function に HTTP 要求を送信
+  <br/>
+  HttpWebRequest request = WebRequest.Create(functionUri) as HttpWebRequest;
+  <br/>
+  request.Method = "POST";
+  <br/>
+  request.Headers["Authorization"] = bearerToken;
+  <br/>
+  request.ContentType = "application/json";
+ </p>
+ <p>
+  Stream reqstr = request.GetRequestStream();
+  <br/>
+  reqstr.Write(Encoding.ASCII.GetBytes(bodydata), 0, bodydata.Length);
+  <br/>
+  reqstr.Close();
+ </p>
+ <p>
+  HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+  <br/>
+  Stream resstr = response.GetResponseStream();
+  <br/>
+  StreamReader sr = new StreamReader(resstr);
+  <br/>
+  string resresult = sr.ReadToEnd();
+ </p>
+ <p>
+  Console.WriteLine(resresult);
+  <br/>
+  [/csharp]
+ </p>
+ <hr/>
+ <hr/>
+ <p>
+  今回は、Azure Functions を例としてご案内しましたが、同じ方法で Azure Web Apps、Azure API Apps で公開する API に対して認証/承認アクセスを行うこともできます。
+  <br/>
+  実行する API をパブリック アクセスから制限したいような場合に、有効なソリューションとなりますので、ご参考ください。
+ </p>
+ <!-- </content> -->
+</main>
