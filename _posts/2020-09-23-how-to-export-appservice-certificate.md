@@ -204,8 +204,8 @@ $keyVaultResourceGroupName = $keyVaultIdParts[$keyVaultIdParts.Length - 5]
 Set-AzKeyVaultAccessPolicy -ResourceGroupName $keyVaultResourceGroupName -VaultName $keyVaultName -UserPrincipalName $loginId -PermissionsToSecrets get
 Write-Host "Get Secret Access to account $loginId has been granted from the KeyVault, please check and remove the policy after exporting the certificate"
 
-$secret = Get-AzKeyVaultSecret -VaultName $keyVaultName -Name $keyVaultSecretName
-$pfxCertObject= New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList @([Convert]::FromBase64String($secret.SecretValueText),"",[System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
+$secret = Get-AzKeyVaultSecret -VaultName $keyVaultName -Name $keyVaultSecretName -AsPlainText
+$pfxCertObject= New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList @([Convert]::FromBase64String($secret),"",[System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
 $pfxPassword = -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 50 | % {[char]$_})
 $currentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
 [Environment]::CurrentDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
@@ -216,6 +216,8 @@ Write-Warning "For security reasons, do not store the PFX password. Use it direc
 Write-Host "PFX password: $pfxPassword"
 }
 ```
+2021年5月21日追記: Az PowerShell 5.8.0 で行われたモジュールの動作変更により Get-AzKeyVaultSecret で取得したオブジェクトから SecretValueText での参照が出来なくなったため -AsPlainText オプションで値を取得するようにサンプルコードを変更しました。<br>
+<br>
 <br>3. 次に、作成した Export-AppServiceCertificate コマンドを実行します。
 
 ```powershell
