@@ -63,7 +63,7 @@ Service Bus や、Event Hubs に接続するアプリケーションとして、
 [Event Hub ~ メッセージングの例外](https://docs.microsoft.com/ja-jp/azure/event-hubs/event-hubs-messaging-exceptions)
 <br><br>
 
-[Service Bus ~ メッセージングの例外](https://docs.microsoft.com/ja-jp/azure/service-bus-messaging/service-bus-messaging-exceptions}
+[Service Bus ~ メッセージングの例外](https://docs.microsoft.com/ja-jp/azure/service-bus-messaging/service-bus-messaging-exceptions)
 
 <br><br>
 <br><br>
