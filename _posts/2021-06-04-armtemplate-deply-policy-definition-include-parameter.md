@@ -14,8 +14,8 @@ ARMテンプレートデプロイによってAzure Policyの定義を作成し�
 パラメータや関数の"[]"をエスケープする必要があります。<br>
 関数を利用した文字列の先頭に"["を追加してエスケープ処理をしてください。<br>
 <br>
-ARM テンプレートの構文と式 - エスケープ文字<br>
-https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/templates/template-expressions#escape-characters
+
+[ARM テンプレートの構文と式 - エスケープ文字](https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/templates/template-expressions#escape-characters)
 
 
 # 解説
@@ -23,8 +23,8 @@ https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/templates/template
 例えば下記のドキュメントをご確認頂くと、concatやparametersの利用のために"[]"を利用している様が<br>
 改めてご確認頂けるかと思います。<br>
 <br>
-Azure Policy パターン: パラメーター<br>
-https://docs.microsoft.com/ja-jp/azure/governance/policy/samples/pattern-parameters
+
+[Azure Policy パターン: パラメーター](https://docs.microsoft.com/ja-jp/azure/governance/policy/samples/pattern-parameters)
 
 ```
 "if": {
@@ -49,11 +49,9 @@ https://docs.microsoft.com/ja-jp/azure/governance/policy/samples/pattern-paramet
 ```
 
 # 参考ドキュメント
-- ARM テンプレートの構文と式 - エスケープ文字<br>
-https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/templates/template-expressions#escape-characters
+- [ARM テンプレートの構文と式 - エスケープ文字](https://docs.microsoft.com/ja-jp/azure/azure-resource-manager/templates/template-expressions#escape-characters)
 
-- Azure Policy パターン: パラメーター<br>
-https://docs.microsoft.com/ja-jp/azure/governance/policy/samples/pattern-parameters
+- [Azure Policy パターン: パラメーター](https://docs.microsoft.com/ja-jp/azure/governance/policy/samples/pattern-parameters)
 
 
 <br>

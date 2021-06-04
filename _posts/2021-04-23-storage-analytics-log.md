@@ -47,17 +47,13 @@ Storage Analytics ログは ";" で区切られたテキストファイルです
 また、弊社社員が [AzureStorageLogReader](https://nunomo.github.io/AzureStorageLogReader/) というツールを公開しておりますので、このようなツールをご利用いただくことも可能です。
 
 # 参考ドキュメント
-1. Azure Storage Analytics のログ<br/>
-https://docs.microsoft.com/ja-jp/azure/storage/common/storage-analytics-logging?tabs=dotnet
+1. [Azure Storage Analytics のログ](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-analytics-logging?tabs=dotnet)
 
-2. Storage Analytics ログの形式<br/>
-https://docs.microsoft.com/ja-jp/rest/api/storageservices/storage-analytics-log-format
+2. [Storage Analytics ログの形式](https://docs.microsoft.com/ja-jp/rest/api/storageservices/storage-analytics-log-format)
 
-3. Storage Analytics によって記録される操作やステータス メッセージ<br/>
-https://docs.microsoft.com/ja-jp/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages
+3. [Storage Analytics によって記録される操作やステータス メッセージ](https://docs.microsoft.com/ja-jp/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages)
 
-4. AzureStorageLogReader<br/>
-https://nunomo.github.io/AzureStorageLogReader/
+4. [AzureStorageLogReader](https://nunomo.github.io/AzureStorageLogReader/)
 
 <br>
 <br>

@@ -51,20 +51,20 @@ Service Bus や、Event Hubs に接続するアプリケーションとして、
 
 # 参考ドキュメント
 
-再試行～一般的なガイドライン<br>
-https://docs.microsoft.com/ja-jp/azure/architecture/best-practices/transient-faults
+[再試行 ~ 一般的なガイドライン](https://docs.microsoft.com/ja-jp/azure/architecture/best-practices/transient-faults)
 <br><br>
-Event Hub ~ 再試行メカニズム<br>
-https://docs.microsoft.com/ja-jp/azure/architecture/best-practices/retry-service-specific#event-hubs
+
+[Event Hub ~ 再試行メカニズム](https://docs.microsoft.com/ja-jp/azure/architecture/best-practices/retry-service-specific#event-hubs)
 <br><br>
-Service Bus ~ 再試行メカニズム<br>
-https://docs.microsoft.com/ja-jp/azure/architecture/best-practices/retry-service-specific#service-bus
+
+[Service Bus ~ 再試行メカニズム](https://docs.microsoft.com/ja-jp/azure/architecture/best-practices/retry-service-specific#service-bus)
 <br><br>
-Event Hub ~ メッセージングの例外<br>
-https://docs.microsoft.com/ja-jp/azure/event-hubs/event-hubs-messaging-exceptions
+
+[Event Hub ~ メッセージングの例外](https://docs.microsoft.com/ja-jp/azure/event-hubs/event-hubs-messaging-exceptions)
 <br><br>
-Service Bus ~ メッセージングの例外<br>
-https://docs.microsoft.com/ja-jp/azure/service-bus-messaging/service-bus-messaging-exceptions
+
+[Service Bus ~ メッセージングの例外](https://docs.microsoft.com/ja-jp/azure/service-bus-messaging/service-bus-messaging-exceptions}
+
 <br><br>
 <br><br>
 
