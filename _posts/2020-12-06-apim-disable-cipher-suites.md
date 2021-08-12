@@ -12,7 +12,7 @@ API Management の暗号スイートは Azure Portal では無効化すること
 REST API を使用して無効化することが可能です。  
 この記事では REST API を用いて特定の暗号スイートを無効化する方法を紹介します。
 
-REST API [Api Management Service - Create Or Update](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2019-12-01/apimanagementservice/createorupdate#request-body) で、リクエストボディ内の `properties.customProperties` に、無効化する暗号スイートを指定します。  
+REST API [Api Management Service - Create Or Update](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2020-12-01/api-management-service/create-or-update#request-body) で、リクエストボディ内の `properties.customProperties` に、無効化する暗号スイートを指定します。  
 
 例えば以下のように、リクエストボディに含めれば、暗号スイート `TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA` を無効化できます。
 ~~~
@@ -30,7 +30,7 @@ REST API [Api Management Service - Create Or Update](https://docs.microsoft.com/
     - API Management のサービス名（リソース名）
 
 1. API Management を更新する前に現在の設定を REST API Api Management Service - Get を実行し、確認します。
-    1. 簡単に REST API を試すため、「使ってみる」機能を使用します。[Api Management Service - Get](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2019-12-01/apimanagementservice/get) のページにアクセスし、「使ってみる」をクリックします。  
+    1. 簡単に REST API を試すため、「使ってみる」機能を使用します。[Api Management Service - Get](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2020-12-01/api-management-service/get) のページにアクセスし、「使ってみる」をクリックします。  
        使用する Azure アカウントを選択しログインします。
 
     1. パラメータに手順 1 でメモした値を入力します。以下の画像を参考にしてください。
@@ -54,7 +54,7 @@ REST API [Api Management Service - Create Or Update](https://docs.microsoft.com/
     ```
 
 1. REST API Api Management Service - Create Or Update を使用して暗号スイートを無効化します。
-    1. 簡単に REST API を試すため、「使ってみる」機能を使用します。[Api Management Service - Create Or Update](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2019-12-01/apimanagementservice/createorupdate#request-body) のページにアクセスし、「使ってみる」をクリックします。  
+    1. 簡単に REST API を試すため、「使ってみる」機能を使用します。[Api Management Service - Create Or Update](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2020-12-01/api-management-service/create-or-update#request-body) のページにアクセスし、「使ってみる」をクリックします。  
        使用する Azure アカウントを選択しログインします。
 
         <img alt="try-it" src="{{site.baseurl}}/media/2020/12/2020-12-06-apim-try-it.jpg" width="100%">
@@ -65,7 +65,7 @@ REST API [Api Management Service - Create Or Update](https://docs.microsoft.com/
         <img alt="apim-parameters" src="{{site.baseurl}}/media/2020/12/2020-12-06-apim-parameters.jpg" width="70%">
 
     1. リクエスト本文を入力し、「実行」を押して REST API を実行します。  
-    `location` や `sku` などの必須項目があるため、[Api Management Service - Create Or Update](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2019-12-01/apimanagementservice/createorupdate#request-body) のドキュメントを参考に、値を入力します。
+    `location` や `sku` などの必須項目があるため、[Api Management Service - Create Or Update](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2020-12-01/api-management-service/create-or-update#request-body) のドキュメントを参考に、値を入力します。
     この際に、手順 2 の 3 でメモしたプロパティを参考にします。
     以下のサンプルのリクエスト本文では、API Management で無効化できる暗号スイートを全て無効化します。
 
@@ -102,7 +102,7 @@ REST API [Api Management Service - Create Or Update](https://docs.microsoft.com/
     }
     ```
 
-1. 暗号スイートを無効化する設定が適用されたか確認するために、REST API [Api Management Service - Get](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2019-12-01/apimanagementservice/get) で API Management の情報を取得します。  
+1. 暗号スイートを無効化する設定が適用されたか確認するために、REST API [Api Management Service - Get](https://docs.microsoft.com/ja-jp/rest/api/apimanagement/2020-12-01/api-management-service/get) で API Management の情報を取得します。  
    手順 1 と同様です。  
    レスポンスを確認すると、暗号スイートが無効化されていることがわかります。
 
