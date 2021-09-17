@@ -21,7 +21,7 @@ App Service (Function を含む) は内部的に以下の流れでリクエス�
 クライアント --- [App Service: Front End --- Web Workers]
 ```
 クライアントからのリクエストは Front End (Load Balancer) を経由し、お客様のアプリケーションが稼働している Web Worker (App Service プランに相当します) に到達します。
-クライアントと App Service 間の TLS/SSL 通信は、Front End が[TLS 処理の終端](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-bindings#handle-tls-termination)となるため、Front End から Web Worker へは HTTP で通信されます。
+クライアントと App Service 間の SSL/TLS 通信は、Front End が[TLS 処理の終端](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-bindings#handle-tls-termination)となるため、Front End から Web Worker へは HTTP で通信されます。
 マルチテナントの App Service では、Basic プラン以上の App Service プランを選択することで Web Worker を占有できますが、Front End を占有することはできません。
 
 App Service のアーキテクチャ詳細は、[Inside the Azure App Service Architecture](https://docs.microsoft.com/en-us/archive/msdn-magazine/2017/february/azure-inside-the-azure-app-service-architecture) を確認ください。
