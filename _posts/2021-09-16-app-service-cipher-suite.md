@@ -80,12 +80,91 @@ ASE では、既定の暗号スイートの変更がサポートされていま�
 <br>
 <br>
 
+## 質問（App Service が送信側となる場合）
+- 利用可能な暗号スイート(Cipher Suite)はどのようにして確認を行うのか
+- 利用可能な暗号スイート(Cipher Suite)をカスタマイズする方法はあるか
+
+## 回答（App Service が送信側となる場合）
+### 利用可能な暗号スイート(Cipher Suite)はどのようにして確認を行うのか
+ご利用のApp ServiceがWindowsベースかLinunxベースかによって確認いただける方法が異なります。
+
+#### Windowsの場合
+高度なツール ＞ Debug＞ CMD より以下のコマンドを実行いただくことでご確認いただけます。
+
+##### コマンド
+```
+reg query HKLM\SYSTEM\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002
+```
+
+##### コマンドの実行例
+
+![1-0-kudu-reg-query]({{site.baseurl}}/media/2021/09/2021-09-16-1-0-kudu-reg-query.png)
+
+#### Linuxの場合
+高度なツール ＞ SSH より以下のコマンドを実行いただくことでご確認いただけます。
+
+##### コマンド
+```
+openssl ciphers -v
+```
+
+##### コマンドの実行例
+
+![1-3-linux-kudu-openssl-ciphers]({{site.baseurl}}/media/2021/09/2021-09-16-1-3-linux-kudu-openssl-ciphers.png)
+
+#### （ご参考）その他の確認方法
+ご参考となりますが、実際の通信パケットを確認いただくことでもApp Serviceがクライアントとなる場合に利用可能な暗号スイートの一覧をご確認いただけます。
+具体的には、以下の方法で採取いただけるパケット中の、Client Helloメッセージよりご確認いただけます。
+App Service上でパケットを取得いただく方法は、Windows/Linuxベースかで異なりますため、以下にそれぞれご紹介いたします。
+なお、採取したパケットの解析にはWireshark などのパケットアナライザをご利用いただくことを想定しております。
+
+##### Windowsの場合
+`問題の診断と解決` 内にございますネットワークトレース機能をご利用いただくことでパケットを採取いただけます。
+
+###### 問題の診断と解決のネットワークトレース機能
+![1-1-diagnostic-tool]({{site.baseurl}}/media/2021/09/2021-09-16-1-1-diagnostic-tool.png)
+
+###### 取得したパケットファイルに含まれている Client Hello 内の暗号スイート
+![1-2-packet-clienthello]({{site.baseurl}}/media/2021/09/2021-09-16-1-2-packet-clienthello.png)
+
+##### Linuxの場合
+App Service の 高度なツール ＞ SSH より、以下のコマンドを実行していただき Client Hello、Server Hello をフィルタリングするパケットを採取いただけます。
+
+###### tcpdump コマンド
+```
+tcpdump "tcp port 443 and (tcp[((tcp[12] & 0xf0) >> 2)] = 0x16)" -w client-hello.pcap
+```
+
+###### 取得したパケットファイルに含まれている Client Hello 内の暗号スイート
+
+![1-4-linux-kudu-tcpdump]({{site.baseurl}}/media/2021/09/2021-09-16-1-4-linux-kudu-tcpdump.png)
+
+
+### 利用可能な暗号スイート(Cipher Suite)をカスタマイズする方法はあるか
+クライアントから App Service に対してリクエストを送信するシナリオでは、下記の方法などで暗号スイートのカスタマイズが可能でございましたが、App Serviceがクライアントとなる場合にはカスタマイズすることができません。
+
+[TLS 暗号スイートの順序変更](https://docs.microsoft.com/ja-jp/azure/app-service/environment/app-service-app-service-environment-custom-settings#change-tls-cipher-suite-order)
+
+App Service (Function を含む)がクライアントとなる場合、下記のようにWeb Workersから接続先へリクエストが送信されます。
+```
+[App Servive: Web Workers --- Front End] --- 接続先
+※[] 内が App Service となります。Front End は Web Worker の通信をプロキシする役割があります。
+```
+
+クライアントから App Service に対してリクエストを行うシナリオでは、Front Endが SSL の終端となりますため、Front Endの暗号スイートとクライアントの暗号スイートから使用されるものが決定されます。
+上記でご紹介したASEにおける暗号スイートのカスタマイズ方法は、このFront Endの暗号スイートをカスタマイズするものでございました。
+一方で、App Serviceがクライアントとなる場合には、Front Endが SSL の終端とはならず、Web Workers と相手先がそれぞれ利用可能な暗号スイートから使用されるものが決定されます。
+このため、同様の方法によるカスタマイズが叶いません。
+
+<br>
+<br>
+
 ---
 
 <br>
 <br>
 
-2021 年 9 月 16 日時点の内容となります。<br>
+2022 年 1 月 6 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
