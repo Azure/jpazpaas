@@ -19,7 +19,7 @@ Blob ストレージリソースの一覧表示<br/>
 [https://docs.microsoft.com/ja-jp/rest/api/storageservices/enumerating-blob-resources](https://docs.microsoft.com/ja-jp/rest/api/storageservices/enumerating-blob-resources)
 
 そのため、5,000件を超える Blob が存在する場合に一覧を取得したい場合、5,000 件ごとの取得を繰り返す必要がございます。  
-List Blobs REST API を実行したときに、5,000 件を超える Blob が存在する場合、上記 List Blobs の説明にあるように XML の要素として <NextMarker> という要素にマーカーの要素に値が入りますので、そのマーカーの内容をクエリ文字列 marker に指定して、再び List Blobs を実行すると、1回目の List Blobs の続きから Blob の情報が取得できるという流れになります。
+List Blobs REST API を実行したときに、5,000 件を超える Blob が存在する場合、上記 List Blobs の説明にあるように XML の要素として `<NextMarker>` という要素にマーカーの要素に値が入りますので、そのマーカーの内容をクエリ文字列 marker に指定して、再び List Blobs を実行すると、1回目の List Blobs の続きから Blob の情報が取得できるという流れになります。
 
 例えば、以下のように List Blobs のリクエストを発行したとします。
 
