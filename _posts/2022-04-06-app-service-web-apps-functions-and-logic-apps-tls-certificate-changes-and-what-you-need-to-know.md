@@ -30,7 +30,7 @@ App Service 開発チームによる Blog (英語)
 上記、App Service 開発チーム Blog の日本語版抄訳
 
 ---
-このブログでは、*.azurewebsites.net Web Apps、Functions、およびロジック アプリ (Standard) の TLS 証明書の変更について説明します。お客様はこの変更の影響を受けないようにする必要があります。影響を受けるサービスの範囲には、Web Apps、Functions、ロジック アプリ (従量課金) が含まれます。ロジック アプリ (従量課金) は影響を受けません。この変更はパブリック Azure クラウドに限定されます。政府のクラウドは影響を受けません。
+このブログでは、*.azurewebsites.net Web Apps、Functions、およびロジック アプリ (Standard) の TLS 証明書の変更について説明します。お客様はこの変更の影響を受けないようにする必要があります。影響を受けるサービスの範囲には、Web Apps、Functions、ロジック アプリ (Standard) が含まれます。ロジック アプリ (従量課金) は影響を受けません。この変更はパブリック Azure クラウドに限定されます。政府のクラウドは影響を受けません。
 
 すべての Web アプリ、Functions、またはロジック アプリ (Standard) には、"<resource-name>.azurewebsites.net" で囲まれた独自の既定のホスト名があり、App Service はワイルドカード *.azurewebsites.net TLS 証明書で保護します。Baltimore CyberTrust Root CA によって発行された現在の TLS 証明書は、2022年7月7日に有効期限が切れるように設定されています。2022 年 4 月から、App Service はこれらの TLS 証明書の更新を開始し、代わりに DigiCert Global Root G2 CA によって発行された証明書を使用します。更新プロセスの分散非同期の性質上、個々の Web Apps、Functions、およびロジック アプリ (Standard) における証明書の更新日を事前に把握することは叶いません。
 
