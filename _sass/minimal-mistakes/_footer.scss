@@ -47,6 +47,11 @@
   }
 }
 
+.page-microsoft img {
+  display: block;
+  max-height: 2rem;
+}
+
 .page__footer-copyright {
   font-family: $global-font-family;
   font-size: $type-size-7;
