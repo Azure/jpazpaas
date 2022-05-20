@@ -4,6 +4,8 @@ author_name: "Shogo Ohe"
 tags:
     - Function App
 ---
+***2022 年 5 月 20 日更新***：プライベートエンドポイントを使用したストレージアカウントがサポートされるようになりました。最新の情報は [こちらの記事]({{site.baseurl}}/2022/05/20/protect-functions-storage.html) を参照してください。
+
 「Azure Functions が使用するストレージアカウントの接続制限を行いたい」というご質問を多くのお客様より頂戴しております。
 Azure Functions は従量課金プランまたは Premium (Elastic Premium) プランでご利用頂く場合、アプリケーションコードはストレージアカウントに保存頂く必要がございます (App Service Plan 上でご利用頂く場合は不要)。
 
