@@ -23,7 +23,7 @@ Azure Functions では、[Functions Host](https://github.com/Azure/azure-functio
 Functions では、大きく分けて 3 種類のストレージが使用されます。
  1. アプリケーションコードを格納するストレージ (アプリケーション設定の [WEBSITE_CONTENTAZUREFILECONNECTIONSTRING](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#website_contentazurefileconnectionstring) で指定する Azure Files)
  2. HTTP Trigger の実行キー、Event Hub のチェックポイントを記録するストレージ (アプリケーション設定の [AzureWebJobsStorage](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#azurewebjobsstorage) で指定する Azure Files)
- 3. Blob Trigger により参照されるストレージ
+ 3. Blob Trigger や Queue Trigger により参照されるストレージ
 
 Azure Functions とストレージの接続、特に 1 と 2 に関して、接続元の制限を行いたいというお問い合わせをいただくことが多く、ここではその参考となる情報をご案内いたします。
 
