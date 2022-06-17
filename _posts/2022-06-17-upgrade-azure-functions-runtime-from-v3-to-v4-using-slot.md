@@ -12,7 +12,7 @@ tags:
 
 .NET Core 3.1 は Azure Functions ランタイムバージョン 3.x 内にて使用をしております。しかしながら、.NET Core 3.1 についての更新プログラムやカスタマーサービスの提供は終了いたします。Azure Functions ランタイムバージョンのサポート終了に伴い潜在的なサービス中断の恐れや、セキュリティの脆弱性の回避のためのアップデートの適応外となる可能性がございますため、2022 年 12 月 3 日までの、Functions ランタイムバージョン 4.x へのアップデートを推奨させていただいている状況でございます。
 
-▼ [Extended support for Microsoft .NET Core 3.1 will end on 3 December 2022 | Azure の更新情報 | Microsoft Azure](https://azure.microsoft.com/ja-jp/updates/extended-support-for-microsoft-net-core-31-will-end-on-3-december-2022/) より引用
+▼ [Extended support for Microsoft .NET Core 3.1 will end on 3 December 2022](https://azure.microsoft.com/ja-jp/updates/extended-support-for-microsoft-net-core-31-will-end-on-3-december-2022/) より引用
 
 > On 3 December 2022, extended support for Microsoft .NET Core 3.1 will end. After that date, your applications that are hosted on Functions will continue to run and your applications will not be impacted. However, we'll no longer provide patches or customer service for .NET Core 3.1. Update your Functions applications to runtime version 4.x, which uses .NET 6.
 
@@ -129,7 +129,7 @@ Core Tools には Azure Functions のランタイムバージョンに対応す�
 Core Tools のバージョンの切り替えについては、Core Tools の再インストール、もしくは非公式記事となり恐縮ですが Core Tools のバージョンを切り替えるツールが OSS にて提供されておりますので、利用をご検討ください。
 	
 Core Tools のバージョンの変更についての公式ドキュメントの記載はこちらになります。
-- [Azure Functions Core Tools の操作 | Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local?tabs=v4%2Cwindows%2Ccsharp%2Cportal%2Cbash#changing-core-tools-versions)
+- [Azure Functions Core Tools の操作](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local?tabs=v4%2Cwindows%2Ccsharp%2Cportal%2Cbash#changing-core-tools-versions)
 	
 Core Tools のバージョン切り替えツール
 - [anthonychu/funcvm: Unofficial version manager for Azure Functions Core Tools (github.com)](https://github.com/anthonychu/funcvm)
@@ -140,7 +140,7 @@ Core Tools のバージョン切り替えツール
 
 # 参考ドキュメント
 
-- [Azure Functions ランタイム バージョンの概要 | Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-versions?tabs=in-process%2Cazure-cli%2Cv4&pivots=programming-language-csharp#migration-with-slots)
+- [Azure Functions ランタイム バージョンの概要](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-versions?tabs=in-process%2Cazure-cli%2Cv4&pivots=programming-language-csharp#migration-with-slots)
 
 
 <br>
