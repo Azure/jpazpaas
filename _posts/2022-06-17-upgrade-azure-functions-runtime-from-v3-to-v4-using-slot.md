@@ -80,13 +80,17 @@ Azure Portal から `デプロイメント` ブレードを開き、 `＋スロ�
 
 ![popup-on-vs-d54bfad1-e18c-41cf-b5a2-df32c5e85bf6.png]({{site.baseurl}}/media/2022/06/popup-on-vs-d54bfad1-e18c-41cf-b5a2-df32c5e85bf6.png)
 
-デプロイが完了したら、`stage` スロットのアプリケーション設定に `FUNCTIONS_EXTENSION_VERSION=~4` を設定します。
+デプロイが完了したら、`stage` スロットに `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0` を再び設定します。これは先ほどのデプロイによって上書きされてしまっているからです。
+
+![set-sticky-on-stage-again-86b43662-fe73-4c56-b511-6f0f415fd59c.png]({{site.baseurl}}/media/2022/06/set-sticky-on-stage-again-86b43662-fe73-4c56-b511-6f0f415fd59c.png)
+
+次に `stage` スロットのアプリケーション設定に `FUNCTIONS_EXTENSION_VERSION=~4` を設定します。
 
 ![set-functionsextensionversions-to-stage-9f431a7a-d099-4482-a856-c75a1fd9c2d5.png]({{site.baseurl}}/media/2022/06/set-functionsextensionversions-to-stage-9f431a7a-d099-4482-a856-c75a1fd9c2d5.png)
 
 > Visual Studio から関数アプリをデプロイする場合、アプリケーション設定の `FUNCTIONS_EXTENSION_VERSION` が （デプロイしたものに合わせて）`~4` に自動的に更新されます。
 
-次に、Windows 上で .NET 6 アプリを動かす場合は追加で次のコマンドを Cloud Shell から実行します。コマンド実行の応答として返されるJSONデータの中に `"netFrameworkVersion": "v6.0"` があれば正しく実行できたことが確認できます。
+最後に、Windows 上で .NET 6 アプリを動かす場合は追加で次のコマンドを Cloud Shell から実行します。コマンド実行の応答として返されるJSONデータの中に `"netFrameworkVersion": "v6.0"` があれば正しく実行できたことが確認できます。
 
 
 ```shell
@@ -95,11 +99,15 @@ $ az functionapp config set --net-framework-version v6.0 -g <RESOURCE_GROUP_NAME
 
 ![update-netframeworkversion-on-stage-78478e24-1be4-4e67-8d42-71879f84dc61.png]({{site.baseurl}}/media/2022/06/update-netframeworkversion-on-stage-78478e24-1be4-4e67-8d42-71879f84dc61.png)
 
+最終的な `stage` スロットの設定は次のようになっています。
+
+![app-settings-on-stage-9cea58cf-8508-4808-95ce-e670fc81b657.png]({{site.baseurl}}/media/2022/06/app-settings-on-stage-9cea58cf-8508-4808-95ce-e670fc81b657.png)
+
 ## 【手順 4 】`stage` スロットを `production` スロットとスワップ
 
 最後に `stage` スロットを `production` スロットとスワップします。
 
-![last-swap-6d656781-a4dd-4207-9b16-71a6cf37c1c5.png]({{site.baseurl}}/media/2022/06/last-swap-6d656781-a4dd-4207-9b16-71a6cf37c1c5.png)
+![last-swap-b51b7552-0705-4f76-97f6-b3e965b3ebab.png]({{site.baseurl}}/media/2022/06/last-swap-b51b7552-0705-4f76-97f6-b3e965b3ebab.png)
 
 実行結果を確認すると、正しく関数アプリのバージョンがアップデートされたことが確認できました。
 
