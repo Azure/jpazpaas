@@ -58,7 +58,7 @@ Azure Portal から `デプロイメント` ブレードを開き、 `＋スロ�
 
 次に行うことは `production` スロットに `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0` を設定することです。
 
-`stage` スロットに `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0` を設定しスワップすることで `production` スロットにも設定します。こうすることで、関数アプリの再起動が発生しないため、アプリケーション設定の更新に伴うダウンタイムを回避することができます。
+`stage` スロットに `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0` を設定しスワップすることで `production` スロットにも設定します。こうすることで、（関数アプリの再起動はするがその後の）ウォーム アップが完了次第スロット間をスワップするので、アプリケーション設定の更新に伴うダウンタイムを回避することができます。
 
 **`stage` スロットの** `構成` ブレードから `アプリケーション設定` タブ より `＋新しいアプリケーション設定` ボタンを押下し `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS` を `0` に設定します。
 
@@ -71,6 +71,10 @@ Azure Portal から `デプロイメント` ブレードを開き、 `＋スロ�
 再び **`stage` スロットの** `構成` ブレードから `アプリケーション設定` タブ より `＋新しいアプリケーション設定` ボタンを押下し `FUNCTIONS_EXTENSION_VERSION` を `~3` に設定します。
 
 ![reset-functionsextensionversion-on-stage-13d41d47-6955-43da-bf7c-58fb16b75f77.png]({{site.baseurl}}/media/2022/06/reset-functionsextensionversion-on-stage-13d41d47-6955-43da-bf7c-58fb16b75f77.png)
+
+同様に、`stage` スロットに `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0` を設定します。
+
+![set-sticky-on-stage-one-more-time-fe271358-a686-46d9-a490-65e8559ea072.png]({{site.baseurl}}/media/2022/06/set-sticky-on-stage-one-more-time-fe271358-a686-46d9-a490-65e8559ea072.png)
 
 最終的に `production`/`stage` 両スロットに `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0`、`FUNCTIONS_EXTENSION_VERSION=~3` が設定されることになります。
 
@@ -86,7 +90,7 @@ Azure Portal から `デプロイメント` ブレードを開き、 `＋スロ�
 
 次に `stage` スロットのアプリケーション設定に `FUNCTIONS_EXTENSION_VERSION=~4` を設定します。
 
-![set-functionsextensionversions-to-stage-9f431a7a-d099-4482-a856-c75a1fd9c2d5.png]({{site.baseurl}}/media/2022/06/set-functionsextensionversions-to-stage-9f431a7a-d099-4482-a856-c75a1fd9c2d5.png)
+![set-functionsextensionversions-to-stage-489c7e21-49c7-4758-af3d-b4b66540ff0d.png]({{site.baseurl}}/media/2022/06/set-functionsextensionversions-to-stage-489c7e21-49c7-4758-af3d-b4b66540ff0d.png)
 
 > Visual Studio から関数アプリをデプロイする場合、アプリケーション設定の `FUNCTIONS_EXTENSION_VERSION` が （デプロイしたものに合わせて）`~4` に自動的に更新されます。
 
@@ -163,7 +167,7 @@ Core Tools のバージョン切り替えツール
 
 <br>
 
-2022 年 06 月 17 日時点の内容となります。<br>
+2022 年 06 月 21 日時点の内容となります。<br>
 
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
