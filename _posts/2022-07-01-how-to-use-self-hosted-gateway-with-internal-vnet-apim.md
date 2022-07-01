@@ -38,16 +38,15 @@ API Management（ 以下 APIM ）はデフォルトで VNET に入っておら�
 
 外部・内部 VNET に関係なく APIM を VNET 統合する場合は必ず適切に穴あけを行った NSG をサブネットに関連付ける必要があります。
 
-ドキュメントより SHGW に関連する２つの受信規則を抜粋しました。
+ドキュメントより SHGW に関連する２つの受信規則を抜粋しました。  
+[NSG規則の構成 - Azure API Management を使用して仮想ネットワークに接続する | Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/api-management/api-management-using-with-vnet?tabs=stv2#configure-nsg-rules)
 
-  
 
 | Rule | ソース / ターゲット ポート | Direction | トランスポート プロトコル | サービス タグ ソース / ターゲット |                                         目的                                         | VNet の種類 | メモ |
 | ---- | :------------------------- | :-------- | :------------------------ | :-------------------------------- | :----------------------------------------------------------------------------------- | :---------- | ---- |
 | 1    | * / [80],443               | 受信      | TCP                       | Internet/VirtualNetwork           | 外部からHTTP・HTTPS通信入れる。ゲートウェイでHTTPSのみにしている場合は80ポートは不要 | 外部のみ    |      |
 | 2    | * / 3443                   | 受信      | TCP                       | ApiManagement/VirtualNetwork      | Azure Portal と PowerShell 用の管理エンドポイント                                    | 外部 / 内部 |      |
 
-[NSG規則の構成 - Azure API Management を使用して仮想ネットワークに接続する | Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/api-management/api-management-using-with-vnet?tabs=stv2#configure-nsg-rules)
 
 ### Rule 1 - 80 / 443 ポート
 
