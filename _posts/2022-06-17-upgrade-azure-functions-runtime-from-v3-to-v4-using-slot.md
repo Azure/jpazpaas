@@ -58,7 +58,7 @@ Azure Portal から `デプロイメント` ブレードを開き、 `＋スロ�
 
 次に行うことは `production` スロットに `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0` を設定することです。
 
-`stage` スロットに `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0` を設定しスワップすることで `production` スロットにも設定します。こうすることで、（関数アプリの再起動はするがその後の）ウォーム アップが完了次第スロット間をスワップするので、アプリケーション設定の更新に伴うダウンタイムを回避することができます。
+`production` スロットへの設定のために、まずは `stage` スロットに  `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS=0` を設定します。そして `production` スロットと `stage` スロットをスワップすることで `production` スロットにも設定します。こうすることで、（関数アプリの再起動はするがその後の）ウォーム アップが完了次第スロット間をスワップするので、アプリケーション設定の更新に伴うダウンタイムを回避することができます。
 
 **`stage` スロットの** `構成` ブレードから `アプリケーション設定` タブ より `＋新しいアプリケーション設定` ボタンを押下し `WEBSITE_OVERRIDE_STICKY_EXTENSION_VERSIONS` を `0` に設定します。
 
@@ -167,7 +167,7 @@ Core Tools のバージョン切り替えツール
 
 <br>
 
-2022 年 06 月 21 日時点の内容となります。<br>
+2022 年 07 月 28 日時点の内容となります。<br>
 
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
