@@ -54,7 +54,7 @@ Azure Functions とストレージの接続、特に 1 と 2 に関して、接�
 特にプライベートエンドポイントを構成し、パブリックエンドポイントからのアクセスを制限することで、ストレージアカウントに対するアクセス経路を制御することが可能となります。
 - [Azure Storage のプライベート エンドポイントを使用する](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-private-endpoints)
 
-こちらの方法を使用する場合、Functions における VNet 統合は Elastic Premium プラン または Standard 以上の App Service Plan の場合ご利用いただけます。
+こちらの方法を使用する場合、Functions における VNet 統合は Elastic Premium プラン または Basic 以上の App Service Plan の場合ご利用いただけます。
 
 構成手順は [ドキュメント](https://docs.microsoft.com/ja-jp/azure/azure-functions/configure-networking-how-to#restrict-your-storage-account-to-a-virtual-network) にも記載がございますが、以下のように実施します。
 
