@@ -18,7 +18,7 @@ tags:
 Elastic Premium Plan を使用することで、App Service Plan のように関数アプリを占有のインスタンス上にて実行が行われ、従量課金プランのようにイベントに応じてスケールが行われる機能を利用することができ、以下の利点がございます。そのため、関数アプリをホスティングする際には、Elastic Premium Plan をご検討いただけると幸いです。
 
 ```
-Premium プランのホスティングでは、関数に次の利点があります。
+Elastic Premium Plan のホスティングでは、関数に次の利点があります。
 
 - インスタンスを常にウォーム状態に維持することでコールド スタートを回避。
 - 仮想ネットワーク接続。
@@ -49,8 +49,8 @@ Premium プランのホスティングでは、関数に次の利点がありま
 
 ![image-1d0c0b2d-ed00-4c17-8c77-0a201bd7b7b6.png]({{site.baseurl}}/media/2022/08/image-1d0c0b2d-ed00-4c17-8c77-0a201bd7b7b6.png)
 
-### 3. スケールコントローラのログ
-スケールコントローラーと呼ばれるコンポーネントを使用して、イベントレートを監視し、スケールアウトとスケールインが決定されます。スケールコントローラのログ出力となりますが、以下の弊社提供の公開情報にて詳細のご案内がございますため、ご参考になれば幸いです。
+### 3. スケールコントローラーのログ
+スケールコントローラーと呼ばれるコンポーネントを使用して、イベントレートを監視し、スケールアウトとスケールインが決定されます。スケールコントローラーのログ出力となりますが、以下の弊社提供の公開情報にて詳細のご案内がございますため、ご参考になれば幸いです。
 
 [スケール コントローラーのログを構成する](https://docs.microsoft.com/ja-jp/azure/azure-functions/configure-monitoring?tabs=v2#configure-scale-controller-logs)
 
@@ -71,7 +71,7 @@ traces
 ![image-d01e8a43-615a-4d57-824e-2579c50f7770.png]({{site.baseurl}}/media/2022/08/image-d01e8a43-615a-4d57-824e-2579c50f7770.png)
 
 
-また、スケールコントローラログを有効にしていない場合には以下のクエリを用いて Application Insights の trace テーブルから cloud_RoleInstance プロパティより summarize 構文を使用してインスタンス数も確認をすることが出来ます。
+また、スケールコントローラーのログを有効にしていない場合には以下のクエリを用いて Application Insights の trace テーブルから cloud_RoleInstance プロパティより summarize 構文を使用してインスタンス数も確認をすることが出来ます。
 
 **Application Insights のログ内での summarize 構文クエリ例**
 
