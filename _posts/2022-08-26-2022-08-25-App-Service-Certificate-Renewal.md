@@ -58,7 +58,6 @@ App Service 証明書の発行時において、証明するドメインの所�
 
 App Service 証明書のドメイン検証は自動化されていないため、定期的にドメイン検証を行う必要があります。ドメイン検証の方法については [Appendix](#appendix) にてご紹介します。
 
-
 <br>
 
 # <a id="expected">想定される事象</a> 
@@ -116,13 +115,14 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
     
 <br>
 
-# <a id="reference">参考ドキュメント</a> 
+# <a id="reference">参考ドキュメント</a>
 
-[Azure App Service で TLS/SSL 証明書を追加する - Azure App Service | Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#verify-domain-ownership)
+<a href="https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#verify-domain-ownership">Azure App Service で TLS/SSL 証明書を追加する - Azure App Service | Microsoft Docs</a>
 
 <br>
 
-# <a id="appendix">Appendix : 検証方法について</a> 
+# <a id="appendix">Appendix : 検証方法について</a>
+
 ドメイン検証の手法については上記資料において紹介されていますが、詳細な内容については実際に検証を行わなければ確認することができません。そのため、付録としてドメイン検証の方法についてご紹介します。
 
 ドメイン検証方法は、< App Service > < ドメイン > < メール > < 手動 >の 4 種類がサポートされています。ここで、<手動> は 2 通りの方法があります。
@@ -131,6 +131,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 このトークン値は、ドメイン検証の度に新たに発行される値となるため、過去のトークン値は不要となります。
 
 ## < App Service >
+
 該当ドメインが既に同一のサブスクリプション内の App Service で使用されている場合、 Azure Portal 上で [確認] を選択することで手動 (2. HTML Web ページ) の手順が自動化されドメイン所有権の検証が実施されます。
 
 <br>
@@ -139,8 +140,8 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 <br>
 
-
 ## < ドメイン >
+
 該当ドメインが Azure で購入した App Service ドメインの場合、Azure Portal 上で [確認] を選択することで手動 (1. DNS TXT レコード) の手順が自動化されドメイン所有権の検証が実施されます。
 
 <br>
@@ -150,14 +151,15 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 <br>
 
 ## < メール >
+
 該当ドメインを使用する以下メールアドレスにメールが送信されます。受信したメール内のリンクをクリックすることでドメイン所有権の検証が実施されます。
 なお、メールアドレスを任意のアドレスとすることは叶いません。
+
 * administrator@<該当ドメイン>
 * hostmaster@<該当ドメイン>
 * admin@<該当ドメイン>
 * webmaster@<該当ドメイン>
 * postmaster@<該当ドメイン>
-
 
 <br>
 
@@ -166,7 +168,9 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 <br>
 
 ## < 手動 (1. DNS TXT レコード) >
+
 DNS サーバーの該当ドメインに対して、以下の DNS TXT レコードを追加することでドメイン所有権の検証が実施されます。
+
 * 名前 : @
 * 種類 : TXT レコード
 * 値 : ドメイン検証トークン
@@ -178,6 +182,7 @@ DNS サーバーの該当ドメインに対して、以下の DNS TXT レコー�
 <br>
 
 ## < 手動 (2. HTML Web ページ) >
+
 ドメイン検証トークンを記載した godaddy.html ファイルを作成し、 https://<ドメイン>/.well-known/pki-validation/godaddy.html に配置します。このファイルをインターネットから参照できるようにすることで、ドメイン所有権の検証が実施されます。
 
 <br>
@@ -185,8 +190,6 @@ DNS サーバーの該当ドメインに対して、以下の DNS TXT レコー�
 ![cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png]({{site.baseurl}}/media/2022/08/cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png)
 
 <br>
-
-
 <br>
 <br>
 
