@@ -118,7 +118,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 # <a id="reference">参考ドキュメント</a> 
 
-[Azure App Service で TLS/SSL 証明書を追加する - Azure App Service | Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#verify-domain-ownership)
+[Azure App Service で TLS/SSL 証明書を追加する - Azure App Service &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#verify-domain-ownership)
 
 <br>
 
