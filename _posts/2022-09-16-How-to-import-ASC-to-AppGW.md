@@ -19,7 +19,7 @@ Application Gateway と App Service 証明書を直接紐づけることによ�
 
 App Service 証明書の有効期限は既定で 1 年のため、App Service 証明書を継続して使用していただくためには定期的に更新が必要となります。
 
-参考 : [Azure App Service で TLS/SSL 証明書を追加する - Azure App Service &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#renew-app-service-certificate)
+参考 : [Azure App Service で TLS/SSL 証明書を追加する - Azure App Service &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#renew-app-service-certificate)
 
 
 App Service 証明書をエクスポートする方法では、App Service 証明書の更新の度にお客さまにて App Service 証明書のエクスポートならびに Application Gateway へのインポートが必要となります。
@@ -242,19 +242,19 @@ Application Gateway と App Service 証明書を直接紐づけることで、�
 
 ## 参考ドキュメント
 
-[Application Gateway の統合 &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/app-service/networking/app-gateway-with-service-endpoints)
+[Application Gateway の統合 &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/app-service/networking/app-gateway-with-service-endpoints)
 
-[Application Gateway を使用した App Service の構成 &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/application-gateway/configure-web-app?tabs=customdomain%2Cazure-portal)
+[Application Gateway を使用した App Service の構成 &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/application-gateway/configure-web-app?tabs=customdomain%2Cazure-portal)
 
 [App service 証明書をエクスポートしてパスワードを設定し、他の Azure サービスにインポートする方法 - Japan PaaS Support Team Blog](https://jpazpaas.github.io/blog/2020/09/23/how-to-export-appservice-certificate.html)  
 
-[Azure Application Gateway の証明書を更新する &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/application-gateway/renew-certificates#certificates-on-azure-key-vault)
+[Azure Application Gateway の証明書を更新する &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/application-gateway/renew-certificates#certificates-on-azure-key-vault)
 
-[Azure App Service で TLS/SSL 証明書を追加する  &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#renew-app-service-certificate)
+[Azure App Service で TLS/SSL 証明書を追加する  &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#renew-app-service-certificate)
 
-[Key Vault 証明書を使用した TLS 終端 &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/application-gateway/key-vault-certs#configure-application-gateway-listener)
+[Key Vault 証明書を使用した TLS 終端 &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/application-gateway/key-vault-certs#configure-application-gateway-listener)
 
-[ユーザー割り当てマネージド ID を作成する &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/active-directory/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp#create-a-user-assigned-managed-identity)
+[ユーザー割り当てマネージド ID を作成する &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/active-directory/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp#create-a-user-assigned-managed-identity)
 
 <br>
 <br>
@@ -264,7 +264,7 @@ Application Gateway と App Service 証明書を直接紐づけることで、�
 <br>
 <br>
 
-2022 年 09 月 16 日時点の内容となります。<br>
+2022 年 09 月 26 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
