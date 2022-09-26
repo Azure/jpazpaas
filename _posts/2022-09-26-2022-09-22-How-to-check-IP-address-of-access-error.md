@@ -5,21 +5,21 @@ tags:
     - Storage
 ---
 
-#目次<br>
+# 目次<br>
 • はじめに<br>
 • クライアント IP アドレスを確認する方法<br>
 • ファイアウォールの設定<br>
 • 3行要約<br>
 <br><br>
 
-#はじめに<br>
+# はじめに<br>
 「Storage にアクセスしたら、403 のエラーでアクセスが拒否される」というお問い合わせをいただき、調べてみたら Storage Account のファイアウォールの設定で許可してない IP アドレスからのアクセスだったということが時々ございます。<br><br>
 ![image-a16eb5fd-2ced-4b6b-9663-428c0c479a75.png]({{site.baseurl}}/media/2022/09/image-a16eb5fd-2ced-4b6b-9663-428c0c479a75.png)<br><br>
 この際、上記の写真のように要求 ID などが確認出来れば、プラットフォームのログから Storage Account にとってのクライアント IP アドレスが何になるか知ることが出来ます。以下では、このクライアント IP アドレスを確認する方法と、ファイアウォールの設定についてご紹介いたします。<br>
 
 <br><br><br>
 
-#クライアント IP アドレスを確認する方法<br>
+# クライアント IP アドレスを確認する方法<br>
 診断設定を利用し、このアクセスが Storage Account にとってどんなアクセスになるかを確認することが出来ます。この方法は予め Log Analytics のワークスペースを作成するなど、ストレージへのアクセスのログを確認できるようにしておく必要があります。<br>
 [Log Analytics ワークスペースを作成する](https://learn.microsoft.com/ja-jp/azure/azure-monitor/logs/quick-create-workspace?tabs=azure-portal)<br><br>
 
@@ -43,15 +43,15 @@ tags:
 ![image-717957ff-d877-4efa-8c15-66b71beb545c.png]({{site.baseurl}}/media/2022/09/image-717957ff-d877-4efa-8c15-66b71beb545c.png)<br><br>
 該当のログを選択したら、以下の詳細情報が分かります。<br><br>
 
-##• CallerIpAddress<br>
+## • CallerIpAddress<br>
 アクセス時の IP アドレスを表します。ファイアウォールで設定した IP アドレスで合ってるか、比較することが出来ます。<br>
-##• ステータス メッセージ (StatusText) <br>
+## • ステータス メッセージ (StatusText) <br>
 ログに記録された要求を表します。以下の URL で、全てのステータス メッセージの情報を確認することが出来ます。<br>
 [ログに記録された操作と状態メッセージの Storage Analytics (REST API)](https://learn.microsoft.com/ja-jp/rest/api/storageservices/storage-analytics-logged-operations-and-status-messages) <br>
 ファイアウォールによりアクセスが拒否される場合、ステータス メッセージは 「AuthorizationFailure」 となるため、「データへの不正アクセス、または承認の失敗」のログになります。
 <br><br><br>
 
-#ファイアウォールの設定方法
+# ファイアウォールの設定方法
 <br>
 ファイアウォールとは、特定 IP アドレスや特定の仮想ネットワークからのアクセスのみを許可することで、ストレージのアクセス元を特定のクライアントに限定する設定となります。<br><br>
 
