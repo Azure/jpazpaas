@@ -32,7 +32,7 @@ App Service 証明書の更新時、前回のドメイン検証の有効期間 (
 
 そのため、"前回のドメイン検証の 395 日後" から "App Service 証明書の更新作業" までの間にドメイン検証を行う必要があります。
 
-![cert-overview-3b9ad604-3561-4b81-bf23-255c4ea2c757.png]({{site.baseurl}}/media/2022/09/cert-overview-3b9ad604-3561-4b81-bf23-255c4ea2c757.png)
+![cert-overview-3b9ad604-3561-4b81-bf23-255c4ea2c757.png]({{site.baseurl}}/media/2022/08/cert-overview-3b9ad604-3561-4b81-bf23-255c4ea2c757.png)
 
 <br>
 
@@ -66,7 +66,7 @@ App Service 証明書のドメイン検証は自動化されていないため�
 
 <br>
 
-![cert-screenshot-45351a08-79e0-475f-b78d-c229a1889a29.png]({{site.baseurl}}/media/2022/09/cert-screenshot-45351a08-79e0-475f-b78d-c229a1889a29.png)
+![cert-screenshot-45351a08-79e0-475f-b78d-c229a1889a29.png]({{site.baseurl}}/media/2022/08/cert-screenshot-45351a08-79e0-475f-b78d-c229a1889a29.png)
 
 <br>
 
@@ -76,7 +76,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 <br>
 
-![cert-example-35b212f6-e600-494a-adca-597fab4c6380.png]({{site.baseurl}}/media/2022/09/cert-example-35b212f6-e600-494a-adca-597fab4c6380.png)
+![cert-example-35b212f6-e600-494a-adca-597fab4c6380.png]({{site.baseurl}}/media/2022/08/cert-example-35b212f6-e600-494a-adca-597fab4c6380.png)
 
 <br>
 
@@ -132,7 +132,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 <br>
 
-![cert1-80aa9dcd-10f0-455a-871c-eb8f332f4973.png]({{site.baseurl}}/media/2022/09/cert1-80aa9dcd-10f0-455a-871c-eb8f332f4973.png)
+![cert1-80aa9dcd-10f0-455a-871c-eb8f332f4973.png]({{site.baseurl}}/media/2022/08/cert1-80aa9dcd-10f0-455a-871c-eb8f332f4973.png)
 
 <br>
 
