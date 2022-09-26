@@ -141,7 +141,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 <br>
 
-![cert2-e6c466c0-2508-4f35-8385-a26d3dc991fe.png]({{site.baseurl}}/media/2022/09/cert2-e6c466c0-2508-4f35-8385-a26d3dc991fe.png)
+![cert2-e6c466c0-2508-4f35-8385-a26d3dc991fe.png]({{site.baseurl}}/media/2022/08/cert2-e6c466c0-2508-4f35-8385-a26d3dc991fe.png)
 
 <br>
 
@@ -156,7 +156,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 <br>
 
-![cert3-0ced120e-0b5b-477c-9a4f-7c38f1775b67.png]({{site.baseurl}}/media/2022/09/cert3-0ced120e-0b5b-477c-9a4f-7c38f1775b67.png)
+![cert3-0ced120e-0b5b-477c-9a4f-7c38f1775b67.png]({{site.baseurl}}/media/2022/08/cert3-0ced120e-0b5b-477c-9a4f-7c38f1775b67.png)
 
 <br>
 
@@ -168,7 +168,7 @@ DNS サーバーの該当ドメインに対して、以下の DNS TXT レコー�
 
 <br>
 
-![cert4-de8e3e20-7e38-4ef7-96b8-c14398016b0a.png]({{site.baseurl}}/media/2022/09/cert4-de8e3e20-7e38-4ef7-96b8-c14398016b0a.png)
+![cert4-de8e3e20-7e38-4ef7-96b8-c14398016b0a.png]({{site.baseurl}}/media/2022/08/cert4-de8e3e20-7e38-4ef7-96b8-c14398016b0a.png)
 
 <br>
 
@@ -177,7 +177,7 @@ DNS サーバーの該当ドメインに対して、以下の DNS TXT レコー�
 
 <br>
 
-![cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png]({{site.baseurl}}/media/2022/09/cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png)
+![cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png]({{site.baseurl}}/media/2022/08/cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png)
 
 <br>
 
