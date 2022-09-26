@@ -5,8 +5,6 @@ tags:
     - "App Service 証明書"
 ---
 
-# 概要
-
 2021 年 9 月 23 日より、 App Service 証明書では過去 395 日以内にドメイン検証を行っていない場合、App Service 証明書の更新の際にドメイン検証が必要となりました。
 
 これにより、App Service 証明書の自動更新をオンにしていても、定期的にお客様にてドメインの検証作業を行っていいただく必要があります。
@@ -57,7 +55,6 @@ App Service 証明書の発行時において、証明するドメインの所�
 また、App Service 証明書を更新する際にも、検証の有効期間 (395 日) を過ぎていた場合には再度ドメイン検証が必要となります。
 
 App Service 証明書のドメイン検証は自動化されていないため、定期的にドメイン検証を行う必要があります。ドメイン検証の方法については [Appendix](#appendix) にてご紹介します。
-
 
 <br>
 
@@ -118,7 +115,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 # <a id="reference">参考ドキュメント</a> 
 
-[Azure App Service で TLS/SSL 証明書を追加する - Azure App Service &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#verify-domain-ownership)
+[Azure App Service で TLS/SSL 証明書を追加する - Azure App Service | Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#verify-domain-ownership)
 
 <br>
 
@@ -139,7 +136,6 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 <br>
 
-
 ## < ドメイン >
 該当ドメインが Azure で購入した App Service ドメインの場合、Azure Portal 上で [確認] を選択することで手動 (1. DNS TXT レコード) の手順が自動化されドメイン所有権の検証が実施されます。
 
@@ -157,7 +153,6 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 * admin@<該当ドメイン>
 * webmaster@<該当ドメイン>
 * postmaster@<該当ドメイン>
-
 
 <br>
 
@@ -195,7 +190,7 @@ DNS サーバーの該当ドメインに対して、以下の DNS TXT レコー�
 <br>
 <br>
 
-2022 年 08 月 26 日時点の内容となります。<br>
+2022 年 09 月 26 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
