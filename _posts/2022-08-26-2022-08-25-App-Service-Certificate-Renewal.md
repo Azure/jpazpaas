@@ -5,8 +5,6 @@ tags:
     - "App Service 証明書"
 ---
 
-# 概要
-
 2021 年 9 月 23 日より、 App Service 証明書では過去 395 日以内にドメイン検証を行っていない場合、App Service 証明書の更新の際にドメイン検証が必要となりました。
 
 これにより、App Service 証明書の自動更新をオンにしていても、定期的にお客様にてドメインの検証作業を行っていいただく必要があります。
@@ -34,7 +32,7 @@ App Service 証明書の更新時、前回のドメイン検証の有効期間 (
 
 そのため、"前回のドメイン検証の 395 日後" から "App Service 証明書の更新作業" までの間にドメイン検証を行う必要があります。
 
-![cert-overview-3b9ad604-3561-4b81-bf23-255c4ea2c757.png]({{site.baseurl}}/media/2022/08/cert-overview-3b9ad604-3561-4b81-bf23-255c4ea2c757.png)
+![cert-overview-3b9ad604-3561-4b81-bf23-255c4ea2c757.png]({{site.baseurl}}/media/2022/09/cert-overview-3b9ad604-3561-4b81-bf23-255c4ea2c757.png)
 
 <br>
 
@@ -58,7 +56,6 @@ App Service 証明書の発行時において、証明するドメインの所�
 
 App Service 証明書のドメイン検証は自動化されていないため、定期的にドメイン検証を行う必要があります。ドメイン検証の方法については [Appendix](#appendix) にてご紹介します。
 
-
 <br>
 
 # <a id="expected">想定される事象</a> 
@@ -69,7 +66,7 @@ App Service 証明書のドメイン検証は自動化されていないため�
 
 <br>
 
-![cert-screenshot-45351a08-79e0-475f-b78d-c229a1889a29.png]({{site.baseurl}}/media/2022/08/cert-screenshot-45351a08-79e0-475f-b78d-c229a1889a29.png)
+![cert-screenshot-45351a08-79e0-475f-b78d-c229a1889a29.png]({{site.baseurl}}/media/2022/09/cert-screenshot-45351a08-79e0-475f-b78d-c229a1889a29.png)
 
 <br>
 
@@ -79,7 +76,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 <br>
 
-![cert-example-35b212f6-e600-494a-adca-597fab4c6380.png]({{site.baseurl}}/media/2022/08/cert-example-35b212f6-e600-494a-adca-597fab4c6380.png)
+![cert-example-35b212f6-e600-494a-adca-597fab4c6380.png]({{site.baseurl}}/media/2022/09/cert-example-35b212f6-e600-494a-adca-597fab4c6380.png)
 
 <br>
 
@@ -118,7 +115,7 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 # <a id="reference">参考ドキュメント</a> 
 
-[Azure App Service で TLS/SSL 証明書を追加する - Azure App Service &#124; Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#verify-domain-ownership)
+[Azure App Service で TLS/SSL 証明書を追加する - Azure App Service | Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex%2Cportal#verify-domain-ownership)
 
 <br>
 
@@ -135,17 +132,16 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 
 <br>
 
-![cert1-80aa9dcd-10f0-455a-871c-eb8f332f4973.png]({{site.baseurl}}/media/2022/08/cert1-80aa9dcd-10f0-455a-871c-eb8f332f4973.png)
+![cert1-80aa9dcd-10f0-455a-871c-eb8f332f4973.png]({{site.baseurl}}/media/2022/09/cert1-80aa9dcd-10f0-455a-871c-eb8f332f4973.png)
 
 <br>
-
 
 ## < ドメイン >
 該当ドメインが Azure で購入した App Service ドメインの場合、Azure Portal 上で [確認] を選択することで手動 (1. DNS TXT レコード) の手順が自動化されドメイン所有権の検証が実施されます。
 
 <br>
 
-![cert2-e6c466c0-2508-4f35-8385-a26d3dc991fe.png]({{site.baseurl}}/media/2022/08/cert2-e6c466c0-2508-4f35-8385-a26d3dc991fe.png)
+![cert2-e6c466c0-2508-4f35-8385-a26d3dc991fe.png]({{site.baseurl}}/media/2022/09/cert2-e6c466c0-2508-4f35-8385-a26d3dc991fe.png)
 
 <br>
 
@@ -158,10 +154,9 @@ App Service 証明書の更新およびドメイン検証を実施できる期�
 * webmaster@<該当ドメイン>
 * postmaster@<該当ドメイン>
 
-
 <br>
 
-![cert3-0ced120e-0b5b-477c-9a4f-7c38f1775b67.png]({{site.baseurl}}/media/2022/08/cert3-0ced120e-0b5b-477c-9a4f-7c38f1775b67.png)
+![cert3-0ced120e-0b5b-477c-9a4f-7c38f1775b67.png]({{site.baseurl}}/media/2022/09/cert3-0ced120e-0b5b-477c-9a4f-7c38f1775b67.png)
 
 <br>
 
@@ -173,7 +168,7 @@ DNS サーバーの該当ドメインに対して、以下の DNS TXT レコー�
 
 <br>
 
-![cert4-de8e3e20-7e38-4ef7-96b8-c14398016b0a.png]({{site.baseurl}}/media/2022/08/cert4-de8e3e20-7e38-4ef7-96b8-c14398016b0a.png)
+![cert4-de8e3e20-7e38-4ef7-96b8-c14398016b0a.png]({{site.baseurl}}/media/2022/09/cert4-de8e3e20-7e38-4ef7-96b8-c14398016b0a.png)
 
 <br>
 
@@ -182,7 +177,7 @@ DNS サーバーの該当ドメインに対して、以下の DNS TXT レコー�
 
 <br>
 
-![cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png]({{site.baseurl}}/media/2022/08/cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png)
+![cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png]({{site.baseurl}}/media/2022/09/cert5-7c0156eb-d21d-4913-8ff0-f809ba72db2f.png)
 
 <br>
 
@@ -195,7 +190,7 @@ DNS サーバーの該当ドメインに対して、以下の DNS TXT レコー�
 <br>
 <br>
 
-2022 年 08 月 26 日時点の内容となります。<br>
+2022 年 09 月 26 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
