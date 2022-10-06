@@ -65,7 +65,7 @@ Azure Funcitons を使用してカスタム可用性テストを作成いただ�
 
 上記資料のサンプルコードの `runAvailabilityTest.csx` ファイルにて、カスタムテストのロジックをお客様ご自身でご実装いただきますが、「共通」でご案内した Web ジョブ の状態確認 API をご利用いただければと存じます。
 
-###<a id="mothod2">方法 2：Application Insights の可用性テスト (Standard test) を利用する方法</a>
+### <a id="mothod2">方法 2：Application Insights の可用性テスト (Standard test) を利用する方法</a>
 Application Insights の可用性テスト (Standard test)　を利用し、Web ジョブを監視する方法についてご紹介します。Application Insights の可用性テスト (Standard test) については下記資料に詳細が記載されておりますのでご参照ください。
 [標準テストを作成する](https://learn.microsoft.com/ja-jp/azure/azure-monitor/app/availability-standard-tests) 
 
