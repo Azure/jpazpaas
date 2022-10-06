@@ -1,6 +1,6 @@
 ---
-title: "Application Insights を用いた Web ジョブ 実行状況の死活監視"
-author_name: "Kohei Mayama"
+title: "Application Insights を用いた Web Job 実行状況の死活監視"
+author_name: "Kohei Mayama, Tomomi Hirotane"
 tags:
     - App Service
     - Web Apps
@@ -9,39 +9,43 @@ tags:
 
 Web ジョブ とは Web Apps の一部の機能として提供しており、スクリプト、プログラムファイルをアップロードを行い、継続的もしくはある時間に起動するといったタイマートリガーとしてタスクを実行することができます。しかしながら、Web ジョブ の機能のみで、タスク全体の処理が動作していないといった異常を検知することができません。
 
-<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-0-webjob.png" width="64px"> <br />
 [Azure App Service で Web ジョブを使用してバックグラウンド タスクを実行する](https://docs.microsoft.com/ja-jp/azure/app-service/webjobs-create)
 
-Web ジョブ のタスクの監視を実施するために、Kudu から提供している Web ジョブ API と Application Insighst を組み合わせることにより、簡単に Web ジョブ の監視環境を構築することができます。今回の監視監視は、Azure プラットフォーム側で完結をしているため、監視に必要なアプリケーションの実装を行う必要はなく、監視アプリケーション自体の管理の手間が無くなるため、有用な一例としてご紹介いたします。
+Web ジョブ のタスクの監視を実施するために、Kudu から提供している Web ジョブ API と Application Insights を組み合わせることにより、簡単に Web ジョブ の監視環境を構築することができます。今回の監視監視は、Azure プラットフォーム側で完結をしているため、監視に必要なアプリケーションの実装を行う必要はなく、監視アプリケーション自体の管理の手間が無くなるため、有用な一例としてご紹介いたします。
 
 ## 質問
-Web Appsに設定した Web ジョブが処理実行されない場合に、異常として検知する方法はありますか。
-Web ジョブ に設定したバッチ処理の実行ログが出力されていない場合に異常を検知することで対応を検討していますが、Azure で検知する方法があるか確認しています。
+Web Apps に設定した Web ジョブ が処理実行されない場合に、異常として検知する方法はありますか。
+Web ジョブ に設定したバッチ処理の実行ログが出力されていない場合に異常を検知することで対応を検討していますが、Azure 機能で検知する方法があるか確認しています。
 
 ## 回答
-Web ジョブ 自体に監視機能は含まれておりませんが、Web ジョブ の実行を管理するための WebJobs API と Application Insights を組み合わせることで Web ジョブ のタスク実行状況を監視することができます。
+Web ジョブ の実行状況は Web ジョブ 画面の「ログ」タブより確認ができるものの、Web ジョブ の実行状況に応じてアラートを発報する等、監視をする機能は提供されておりません。そのため、 Web Job の処理実行が正常にされていない場合に異常として検知するためには以下ご案内いたします手順にて監視およびアラートの設定をいただけますと幸いです。
 
-## WebJobs API より状態を取得
+Web ジョブ の動作状況は下記「共通」にてご案内しております Web ジョブ API を利用することにより、実行状況をご確認いただけます。併せて、以下の方法をご利用いただくことで、継続的に状態確認のためのリクエストを Web ジョブ に送信し、異常を検知いただけます。
+- [方法 1：Azure Functions を使用したカスタム可能性テストを作成する方法](#method1)
+- [方法 2：Application Insights の可用性テスト (Standard test) を利用する方法](#method2)
 
-Web ジョブ 画面から `ログ` へ移動すると、各 Web ジョブ タスクの状況が表示され、該当の Web ジョブ へ遷移するとトリガー毎の Status を確認することができます。
-<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-1-webjob.png" width="70%">
+### 共通：Web ジョブ API を利用した死活監視
 
-こちらの状態を API 経由にて取得することができ、以下の WebJobs API に関する弊社開発部門の提供ドキュメントでは、{job name} を Web ジョブ内で定義しているスクリプトの名前に置き換え、該当の WebJobs API への送信を行います。
+Web Job 画面から `ログ` へ移動すると、各 Web Job タスクの状況が表示され、該当の Web Job へ遷移するとトリガー毎の Status を確認することができます。
+
+![1-webjob-ffd5eaee-40e6-4356-81b8-f33eb623925e.png]({{site.baseurl}}/media/2021/02/1-webjob-ffd5eaee-40e6-4356-81b8-f33eb623925e.png)
+
+こちらの状態を API 経由にて取得することができ、以下の Web Job API に関する弊社開発部門の提供ドキュメントでは、{job name} を Web Job 内で定義しているスクリプトの名前に置き換え、該当の Web ジョブ API への送信を行います。
 
 [Get a specific triggered job by name](https://github.com/projectkudu/kudu/wiki/WebJobs-API#get-a-specific-triggered-job-by-name)
 > GET /api/triggeredwebjobs/{job name}
 
-### 認証情報
-WebJobs API の実行には認証情報が必要となるため、Web ジョブ を実行する App Service のユーザの認証情報を取得します。
+#### 認証情報
+Web ジョブ API の実行には、認証情報が必要となり以下のように、当該の Web ジョブ が実行しております App Service よりユーザの認証情報を取得し、Web ジョブ API 実行時にその認証情報を付与します。
 
 [User credentials (aka Deployment Credentials)](https://github.com/projectkudu/kudu/wiki/Deployment-credentials#user-credentials-aka-deployment-credentials)
 
 認証情報を取得するには、当該 App Service の左メニューブレードの デプロイメントセンター > FTPS 資格情報 の画面にて、赤枠で囲まれているユーザ名とパスワードをコピーします。ユーザ名は、"$" 以降を含めた値を取得します。
 
-<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-2-webjob.png" width="70%">
+![2-webjob-a83528f5-e5ea-4ed9-97c8-e1e91084ad92.png]({{site.baseurl}}/media/2021/02/2-webjob-a83528f5-e5ea-4ed9-97c8-e1e91084ad92.png)
 
-### curl コマンドを利用したテスト
-WebJob API を利用して特定の WebJob スクリプトの状態を取得します。"<>" で囲まれている値は使用している環境にて合わせて変更をします。
+#### curl コマンドを利用したテスト
+以下は curl コマンドを使用した Web ジョブ API を利用して特定の Web ジョブ スクリプトの状態を取得します。`<>` で囲まれている値は使用している環境にて合わせて変更をします。
 
 ```bash
 webappsname="<WebApp名>"
@@ -53,68 +57,93 @@ token=$(echo -n $username:$password | base64)
 curl -H "Authorization:Basic $token" -H "accept: application/json" https://$webappsname.scm.azurewebsites.net/api/triggeredwebjobs/$webjobname/
 ```
 
-## Application Insights の設定
+### <a id="mothod1">方法 1：Azure Functions を使用したカスタム可能性テストを作成する方法</a>
+Azure Funcitons を使用してカスタム可用性テストを作成いただけます。作成方法については下記資料に記載がございますのでご参照ください。
 
-### Visual Studio から Web テストプロジェクトの構築
-Visual Studio Enterprise より、Application Insihgts 内で用いるテストファイルの作成を行います。Visual Studio は Professional の場合だと、Application Insighsts のテストファイルを作成することができず、Web パフォーマンスとロードテストツールは、Visual Studio Enterprise や Ultimate が必要となります。
-
-テストファイルを作成するために、Visual Studio にてコンポーネントのインストールとロードテストプロジェクトを作成します。詳しい情報につきましては、弊社提供のドキュメントを参照ください。
-
-[クイック スタート: ロード テスト プロジェクトを作成する](https://docs.microsoft.com/ja-jp/visualstudio/test/quickstart-create-a-load-test-project?view=vs-2019)
+[Azure Functions を使用してカスタム可用性テストを作成して実行する](https://learn.microsoft.com/ja-jp/azure/azure-monitor/app/availability-azure-functions) 
 
 
-### Web テストのファイルを作成
-プロジェクト作成後に、`webtest` ファイルが作成していますので、以下の要素を追加します。
-- Web ジョブ API に対する URL 
-- 認証情報である Authorization ヘッダ（curl コマンドで利用した Authorization ヘッダの値を利用します）
-- 検証規則（レスポンスにて探す文字列）
+上記資料のサンプルコードの `runAvailabilityTest.csx` ファイルにて、カスタムテストのロジックをお客様ご自身でご実装いただきますが、「共通」でご案内した Web ジョブ の状態確認 API をご利用いただければと存じます。
 
-**webtest ファイルの構成**
+###<a id="mothod2">方法 2：Application Insights の可用性テスト (Standard test) を利用する方法</a>
+こちらの方法は、現時点では プレビュー の機能となりますため、ご注意いただければと存じます。プレビュー機能につきましては、後述のリンクをご参照ください。
 
-<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-3-webjob.png" width="70%">
+【手順】
+1. 対象の App Service のポータルにアクセスしていただき、左メニュー [Application Insights (プレビュー)] > [Application Insights データの表示] の順に遷移してください。
+2. 左メニューより [可用性] に遷移してください。
+3. 上部の [+ Add Standard (preview) test] をクリックすると、テスト作成画面が表示されますので、以下項目をご設定のうえ、テストを作成してください。
 
-**検証テキスト**
+```
+テスト名：任意のテスト名
+URL : Web Job の状態取得 API の URL（「共通」でご案内した内容をご参照ください）
+HTTP要求の動詞 : GET
+カスタム ヘッダーの追加 : 
+　ヘッダー名 : Authorization
+　ヘッダー値 : Basic <Base64エンコードのユーザー名とパスワード>（「共通」でご案内した内容をご参照ください）
+HTTP応答 : 
+　応答コードが次の値に等しい : 200
+コンテンツの一致 : 
+　見つかった場合は合格
+　コンテンツに含める必要がある対象 : Runnning
+```
+ 
+4. 作成されたテストの「規則（アラート）ページを開く」を選択します。
 
-Web ジョブ API のレスポンスから、Success という文字列を検索するために、検索テキストに `Success` を入力します。
+![3-webjob-5beef572-e4d9-4bd7-a25b-d4a7e95ff60c.png]({{site.baseurl}}/media/2021/02/3-webjob-5beef572-e4d9-4bd7-a25b-d4a7e95ff60c.png)
 
-<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-4-webjob.png" width="70%">
+ 
+5. アラート ルール の編集画面にて、通知の条件（エラー回数のしきい値などがご設定いただけます）や通知先（SMSやメールをご指定いただけます）をご設定ください。
+詳しくは以下の公式情報をご参照ください。
+[Azure Monitor アラートのアラート プロセス ルール](https://docs.microsoft.com/ja-jp/azure/azure-monitor/alerts/alerts-action-rules?tabs=portal) 
+
+ 
+以上の手順にて、Web Job の状態が「Runnning」以外の状態を検知して、アラートを発することが可能となりますので、お試しいただければと存じます。
+重ねてのご案内となりますが、当機能は現時点ではプレビューでございますので、以下リンクの内容をご承知おきください。
+現在プレビュー版としてご提供しておりますが、他のお客様でもご利用をいただいている状況でございますため、開発環境にてお試しいただきお客様にてご確認したのち、本番環境にてお試しください。
+ 
+[プレビュー使用条件](https://azure.microsoft.com/ja-jp/support/legal/preview-supplemental-terms/) 
 
 
-最終的な webtest ファイルは以下のような構成となります。こちらのように xml ファイルから Web Test の作成を行っても問題はございませんが、動作に保証はなくかつサポートをいたしかねる状況でございますので、Visual Studio Enterprise より作成することを推奨します。
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<WebTest Name="WebTest1" Id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" Owner="" Priority="xxxxxxxxxx" Enabled="True" CssProjectStructure="" CssIteration="" Timeout="0" WorkItemIds="" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010" Description="" CredentialUserName="" CredentialPassword="" PreAuthenticate="True" Proxy="default" StopOnError="False" RecordedResultFile="" ResultsLocale="">
-  <Items>
-    <Request Method="GET" Guid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" Version="1.1" Url="https://xxxxxxxxxxxxxx.scm.azurewebsites.net/api/triggeredwebjobs/xxxxxxxxxxxxxxxxx" ThinkTime="0" Timeout="300" ParseDependentRequests="True" FollowRedirects="True" RecordResult="True" Cache="False" ResponseTimeGoal="0" Encoding="utf-8" ExpectedHttpStatusCode="200" ExpectedResponseUrl="" ReportingName="" IgnoreHttpStatusCode="True">
-      <Headers>
-        <Header Name="Authorization" Value="Basic xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
-      </Headers>
-    </Request>
-  </Items>
-  <ValidationRules>
-    <ValidationRule Classname="Microsoft.VisualStudio.TestTools.WebTesting.Rules.ValidationRuleFindText, Microsoft.VisualStudio.QualityTools.WebTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" DisplayName="検索テキスト" Description="指定されたテキストが応答に存在するかを確認します。" Level="High" ExectuionOrder="BeforeDependents">
-      <RuleParameters>
-        <RuleParameter Name="FindText" Value="Success" />
-        <RuleParameter Name="IgnoreCase" Value="False" />
-        <RuleParameter Name="UseRegularExpression" Value="False" />
-        <RuleParameter Name="PassIfTextFound" Value="True" />
-      </RuleParameters>
-    </ValidationRule>
-  </ValidationRules>
-</WebTest>
+```
+お客様の Azure サブスクリプションの条件に従い、プレビューは、「現状有姿のまま」、「瑕疵を問わない条件」で、かつ「提供可能な場合に限り提供しうる形で」提供されるものとし、サービス レベル契約および限定的保証の対象とはなりません。
 ```
 
-### Webtest ファイルを Application Insights へアップロード
-Azure Portal の Application Insights 左ブレードメニューの `可用性` へ移動し、上部にある `テストの追加` を選択します。
-テストの種類を `複数ステップの Web テスト` を選択し、作成した webtest ファイルをアップロードします。
+## アクセス制限について
+上記二つの方法を設定した際のアクセス制限についても多くお問い合わせ頂いておりますので、それぞれの方法で必要なアクセス制限について下記ご案内させていただきます。
 
-<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-5-webjob.png" width="70%">
+### 方法 1：Azure Functions を使用したカスタム可能性テストを作成する方法
+こちらの方法では Azure Functions から Web Apps へアクセスが可能となっている必要がございます。
+そのため、Web Apps のアクセス制限機能より設定をする場合は、まず Azure Functions の送信 IP を固定し、Azure Functions の送信 IP をアクセス制限で許可いただけますと幸いです。
+Azure Functions の送信 IP を固定する方法につきましては下記資料に記載がございますのでご参照いただけますと幸いです。
 
-### 監視状況の確認
-テストの追加を行い、可用性のグラフを散布図へ変更すると監視状況を可視化することができます。
+[Azure 仮想ネットワーク NAT ゲートウェイを使用して Azure Functions の送信 IP を制御する](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-how-to-use-nat-gateway)
 
-<img alt="assign-role" src="{{site.baseurl}}/media/2021/02/2021-02-24-6-webjob.png" width="70%">
+
+### 方法 2：Application Insights の可用性テスト (Standard test) を利用する方法
+こちらの方法では、該当 Web Apps の SCM サイトのアクセス制限にて「ApplicationInsightsAvailability」というサービスタグを許可いただけますと幸いです。
+以下に手順をご案内いたします。
+ 
+【手順】
+1. ポータルより SCM へのアクセス制限画面にアクセスしてください。
+2. [+ 規制の追加] をクリックしていただき、「アクセス制限の編集」を表示いたします。
+3. 以下の設定例をご参考に、サービス タグ「ApplicationInsightsAvailability」への許可を追加していただき、[ルールの更新] を押下して追加実行してください。
+
+![access_restriction-c114958f-9a1c-4ac7-a342-f5bf7a99b22f.jpg]({{site.baseurl}}/media/2021/02/access_restriction-c114958f-9a1c-4ac7-a342-f5bf7a99b22f.jpg)
+
+#### 補足
+サービスタグ「ApplicationInsightsAvailability」は下記資料にございますように、Application Insights の可用性テストに用いられる IP アドレスとなります。
+
+[Azure サービス タグの概要](https://docs.microsoft.com/ja-jp/azure/virtual-network/service-tags-overview#available-service-tags)
+```
+ ApplicationInsightsAvailability	Application Insights の可用性。
+```
+
+また、可用性テストをご利用いただきますと、世界各地の複数ポイント (上記のサービスタグに含まれる IP アドレス) から該当 Web Apps に対して Web 要求が送信されます。
+
+[Application Insights 可用性テスト](https://docs.microsoft.com/ja-jp/azure/azure-monitor/app/availability-overview)
+```
+Application Insights は、世界各地の複数のポイントから定期的にアプリケーションに Web 要求を送信します。
+```
 
 
 <br>
@@ -125,7 +154,7 @@ Azure Portal の Application Insights 左ブレードメニューの `可用性`
 <br>
 <br>
 
-2021 年 2 月 24 日時点の内容となります。<br>
+2022 年 10 月 06 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
