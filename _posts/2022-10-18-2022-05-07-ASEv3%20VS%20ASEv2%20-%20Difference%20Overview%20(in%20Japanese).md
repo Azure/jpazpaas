@@ -15,8 +15,6 @@ https://techcommunity.microsoft.com/t5/apps-on-azure-blog/asev3-vs-asev2-differe
 
 ---
 
-##
-
 App Service Environment v3 (ASEv3) は 2021 年 7 月から 一般提供が開始されています。そして [ASEv1 と ASEv2 は 2024 年 8 月 31 日 をもって廃止となります](https://azure.microsoft.com/ja-jp/updates/app-service-environment-v1-and-v2-retirement-announcement/)。   
 
 ASEv3 は ASEv1 や ASEv2 と比べ、[様々な利点や異なる機能](https://docs.microsoft.com/ja-jp/azure/app-service/environment/overview#feature-differences)を有しています。
