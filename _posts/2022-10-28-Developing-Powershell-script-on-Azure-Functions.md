@@ -10,24 +10,35 @@ tags:
 PowerShellモジュールを利用して Azure Functions から Azure 上のリソースへアクセスを行いたい。
 
 # 回答
-以下に Azure Functions から特定のリソース グループの LogicApps リソース一覧を参照する場合の環境構築手順例を示します。<br>
+以下に Azure Functions から特定のリソース グループの LogicApps リソース一覧を参照する場合の環境構築手順例を示します。
 ## 構築手順
 1. 任意のプランで Azure Functions と LogicApps を作成します。<br>
 今回は Azure Functions の従量課金プランと Logic Apps の消費プランを作成します。
+
 2. 任意の関数アプリを作成します。<br>
 今回は HTTP トリガーを作成します。<br>
+
 ![image-f732f4ae-a83e-4db7-9317-60dcb0db60bc.png]({{site.baseurl}}/media/2022/10/image-f732f4ae-a83e-4db7-9317-60dcb0db60bc.png)
+
 3. PowerShell にて利用する依存モジュールを宣言します。<br>
 Azure Functions の PowerShell では、以下にご案内がございますように requirements.psd1 にて依存モジュールを宣言するかモジュール群をダウンロードし既定のフォルダに配置することでアプリケーション コードで利用することができます。<br>
+
 ■ [Azure Functions の PowerShell 開発者向けガイド - 依存関係管理](
-https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-reference-powershell?tabs=portal#dependency-management)<br>
-※使用したいモジュールに必要なパッケージは [PowerShell Gallery](https://www.powershellgallery.com/) から検索いただけます。<br><br>
-Get-AzLogicApp コマンドを利用したいため Az.LogicApp を requirements.psd1 に宣言します。PowerShell の場合には Azure ポータルで編集できるため簡単のために今回はアプリ ファイル ブレードから編集しました。<br>
-![image-52ed6e2a-577c-47b7-a386-7ec5eac931ac.png]({{site.baseurl}}/media/2022/10/image-52ed6e2a-577c-47b7-a386-7ec5eac931ac.png)<br>
-requirements.psd1 に宣言されたモジュール群は \home\data\ManagedDependencies 配下にアーカイブされて保存されます。<br>
+https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-reference-powershell?tabs=portal#dependency-management)
+
+※使用したいモジュールに必要なパッケージは [PowerShell Gallery](https://www.powershellgallery.com/) から検索いただけます。
+
+Get-AzLogicApp コマンドを利用したいため Az.LogicApp を requirements.psd1 に宣言します。PowerShell の場合には Azure ポータルで編集できるため簡単のために今回はアプリ ファイル ブレードから編集しました。
+
+![image-52ed6e2a-577c-47b7-a386-7ec5eac931ac.png]({{site.baseurl}}/media/2022/10/image-52ed6e2a-577c-47b7-a386-7ec5eac931ac.png)
+
+requirements.psd1 に宣言されたモジュール群は \home\data\ManagedDependencies 配下にアーカイブされて保存されます。
+
 ![image-0452a7a9-ea69-4d87-8f91-b1d2cba95a31.png]({{site.baseurl}}/media/2022/10/image-0452a7a9-ea69-4d87-8f91-b1d2cba95a31.png)
-4. アプリケーション コードを編集します。<br>
+
+4. アプリケーション コードを編集します。
 Get-AzLogicApp を利用する簡易なコードを記載します。特定のリソース グループ配下にある LogicApps の一覧を取得し、HTTP の応答として返却します。
+
 ```
 using namespace System.Net
 
@@ -42,20 +53,27 @@ Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
     Body = $body
 })
 ```
+
 5. アプリケーション コードがリソース グループへアクセスするための権限を付与します。<br>
-今回はマネージド ID を利用します。ID ブレードからシステム割り当て済みマネージド ID をオンに変更し、保存します。<br>
-![image-a765051f-dd18-480b-8773-27f64de43e20.png]({{site.baseurl}}/media/2022/10/image-a765051f-dd18-480b-8773-27f64de43e20.png)<br><br>
+今回はマネージド ID を利用します。ID ブレードからシステム割り当て済みマネージド ID をオンに変更し、保存します。
+
+![image-a765051f-dd18-480b-8773-27f64de43e20.png]({{site.baseurl}}/media/2022/10/image-a765051f-dd18-480b-8773-27f64de43e20.png)
+
 次に、有効化したマネージド ID にリソース グループへのアクセス権限を付与します。リソース グループの「アクセス制御(IAM)」から「ロールの割り当ての追加」から、下図の操作例に従って権限を追加します。
 ![image-7cdfc8d1-9a77-423e-a1a5-ab2b67c1780d.png]({{site.baseurl}}/media/2022/10/image-7cdfc8d1-9a77-423e-a1a5-ab2b67c1780d.png)
 
 6. アプリケーションを実行します。<br>
-リソース グループに含まれる LogicApps の一覧を応答データとして取得することができました。<br>
+リソース グループに含まれる LogicApps の一覧を応答データとして取得することができました。
+
 ![image-6aa48eeb-c7a4-4918-b791-4181b4fd057a.png]({{site.baseurl}}/media/2022/10/image-6aa48eeb-c7a4-4918-b791-4181b4fd057a.png)
 
 ## 発生するエラー例
-今回の構成において発生し得るエラーと回避策をまとめます。手元環境の構築時に検出したエラーとなっており、すべての場合を網羅しているわけではないのでご了承ください。<br><br>
-###A. 依存モジュールが不足している場合
-項番3の依存モジュール宣言が不足しているや設定誤りしている場合には、アプリケーション実行時に以下のようなモジュールが見つからない旨エラーが発生します。<br>
+今回の構成において発生し得るエラーと回避策をまとめます。手元環境の構築時に検出したエラーとなっており、すべての場合を網羅しているわけではないのでご了承ください。
+
+
+### A. 依存モジュールが不足している場合
+項番3の依存モジュール宣言が不足しているや設定誤りしている場合には、アプリケーション実行時に以下のようなモジュールが見つからない旨エラーが発生します。
+
 ```
 YYYY-MM-DDTHH:MI:SSZ   [Error]   ERROR: The term 'Get-AzLogicApp' is not recognized as a name of a cmdlet, function, script file, or executable program.
 Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
@@ -127,18 +145,25 @@ InvocationInfo        :
     CommandOrigin    : Internal
 ScriptStackTrace      : at <ScriptBlock>, C:\home\site\wwwroot\HttpTrigger1\run.ps1: line 6
 ```
-[回避策A]<br>
-・requirements.psd1 を確認します。また requirements.psd1 が誤っていない場合には、\home\data\ManagedDependecies に配置された依存モジュールのアーカイブ ファイルに利用予定のモジュールが含まれているか確認します。<br>
-・手動で依存モジュールを宣言できるため、Save-Module で依存モジュールをダウンロードしていただき \home\site\wwwroot\Modules に配置ください。<br><br>
-手動で依存モジュールを追加する方法を解説します。<br>
-今回の例では、Save-Module コマンドをローカル マシン上の任意のディレクトリで実行します。<br>
-> コマンド例: Save-Module -Name Az.LogicApp -Path ./<br>
 
-Az.LogicApps 及びその依存モジュールがダウンロードされるため、ダウンロードされたファイル一式を \home\site\wwwroot\Modules に配置します。Kudu をご利用の場合には、ドラッグ＆ドロップでアップロードいただけます。最終的には以下のようなフォルダ構成となります。Windows OS での Kudu 表示画面例となります。<br>
+#### [回避策A]
+・requirements.psd1 を確認します。また requirements.psd1 が誤っていない場合には、\home\data\ManagedDependecies に配置された依存モジュールのアーカイブ ファイルに利用予定のモジュールが含まれているか確認します。
+
+・手動で依存モジュールを宣言できるため、Save-Module で依存モジュールをダウンロードしていただき \home\site\wwwroot\Modules に配置ください。
+
+手動で依存モジュールを追加する方法を解説します。
+
+今回の例では、Save-Module コマンドをローカル マシン上の任意のディレクトリで実行します。
+
+> コマンド例: Save-Module -Name Az.LogicApp -Path ./
+
+Az.LogicApps 及びその依存モジュールがダウンロードされるため、ダウンロードされたファイル一式を \home\site\wwwroot\Modules に配置します。Kudu をご利用の場合には、ドラッグ＆ドロップでアップロードいただけます。最終的には以下のようなフォルダ構成となります。Windows OS での Kudu 表示画面例となります。
+
 ![image-2e2fe095-8864-4c69-8c60-d7939d2b35ce.png]({{site.baseurl}}/media/2022/10/image-2e2fe095-8864-4c69-8c60-d7939d2b35ce.png)
 
-###B. 依存モジュールはあるが Get-AzLogicApp コマンドのリソース グループへのアクセス設定が全くない場合
+### B. 依存モジュールはあるが Get-AzLogicApp コマンドのリソース グループへのアクセス設定が全くない場合
 項番5のアクセス制御を実施していない場合には Get-AzLogicApp 実行時にリソース グループへのアクセス権限がない旨エラーが発生します。
+
 ```
 YYYY-MM-DDTHH:MI:SSZ   [Error]   ERROR: No subscription found in the context.  Please ensure that the credentials you provided are authorized to access an Azure subscription, then run Connect-AzAccount to login.
 
@@ -185,11 +210,13 @@ InvocationInfo        :
 ScriptStackTrace      : at <ScriptBlock>, C:\home\site\wwwroot\HttpTrigger1\run.ps1: line 6
 PipelineIterationInfo : 
 ```
-[回避策B]<br>
+
+#### [回避策B]
 手順5のアクセス権限の付与手順を実施します。
 
-###C. 依存モジュールはあり Get-AzLogicApp コマンドのリソース グループへのアクセス権限がない場合
+### C. 依存モジュールはあり Get-AzLogicApp コマンドのリソース グループへのアクセス権限がない場合
 A(依存モジュールの宣言不足) 及び B(アクセス権限の付与設定漏れ) を順番に解消後、Azure Functions のマネージド ID を有効化したにもかかわらずリソース グループへのアクセス権を付与できていない場合にはヌル オブジェクトに対する操作である旨エラーが発生します。
+
 ```
 YYYY-MM-DDTHH:MI:SSZ   [Error]   ERROR: Object reference not set to an instance of an object.
 
@@ -227,12 +254,11 @@ InvocationInfo        :
 ScriptStackTrace      : at <ScriptBlock>, C:\home\site\wwwroot\HttpTrigger1\run.ps1: line 6
 PipelineIterationInfo : 
 ```
-[回避策C]<br>
-設定が手順5のアクセス権限の付与手順において有効化したマネージド ID にリソース グループへのアクセス権限を付与を実施します。<br><br>
-以上で任意の PowerShell モジュールを利用して Azure Functions から Azure 上のリソースへアクセスを行えました。他の PowerShell モジュールを利用の場合にも、同様の手順で構成可能ですので是非お試しください。
 
-<br>
-<br>
+#### [回避策C]
+設定が手順5のアクセス権限の付与手順において有効化したマネージド ID にリソース グループへのアクセス権限を付与を実施します。
+
+以上で任意の PowerShell モジュールを利用して Azure Functions から Azure 上のリソースへアクセスを行えました。他の PowerShell モジュールを利用の場合にも、同様の手順で構成可能ですので是非お試しください。
 
 ---
 
