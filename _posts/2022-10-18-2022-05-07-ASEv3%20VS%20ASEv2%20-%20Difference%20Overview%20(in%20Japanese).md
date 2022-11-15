@@ -23,7 +23,7 @@ ASEv3 は ASEv1 や ASEv2 と比べ、[様々な利点や異なる機能](https:
 多くのお客様から ASEv3 の変更点についてお問い合わせやフィードバックを頂いておりますので、この記事では ASE のバージョンごとの違いについてご紹介いたします。少しでもお客様のご参考になれば幸いです。
  
 ## 移行方法
-ASEv2 → ASEv3: 自動マイグレーションが利用可能です ※東日本リージョンでは利用不可 (https://docs.microsoft.com/ja-jp/azure/app-service/environment/migrate)  
+ASEv2 → ASEv3: 自動マイグレーションが利用可能です (https://docs.microsoft.com/ja-jp/azure/app-service/environment/migrate)  
 ASEv1 → ASEv3: 手動での移行が必要となります (https://docs.microsoft.com/ja-jp/azure/app-service/environment/migration-alternatives)
 
 ## 公開ドキュメント
@@ -149,7 +149,7 @@ ASEv2 でも ASEv1 と同様に IP アドレスの割り当てがサポートさ
 <br>
 <br>
 
-2022 年 9 月 10 日時点の内容となります。<br>
+2022 年 11 月 15 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
