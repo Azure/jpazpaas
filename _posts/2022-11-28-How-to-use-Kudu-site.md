@@ -150,3 +150,18 @@ Kudu には CUI ツールを使える機能 (CMD や PowerShell, Bash シェル�
     ![4_tcpping_ng_linux-7038e2e6-2777-474d-8343-cde6a91f92e8.png]({{site.baseurl}}/media/2022/11/4_tcpping_ng_linux-7038e2e6-2777-474d-8343-cde6a91f92e8.png)
 
 ※ OS によってポートの指定方法や使用可能なオプションが異なります。詳しくは上記のコンソールで `tcpping` を実行してください。
+
+
+<br>
+<br>
+
+---
+
+<br>
+<br>
+
+2022 年 11 月 28 日時点の内容となります。<br>
+本記事の内容は予告なく変更される場合がございますので予めご了承ください。
+
+<br>
+<br>
