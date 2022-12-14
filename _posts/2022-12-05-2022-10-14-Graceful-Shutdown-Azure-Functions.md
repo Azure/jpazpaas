@@ -24,7 +24,7 @@ https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-dotnet-class-li
 
 ![image-b73fa841-761d-4526-924f-bc458c83ec41.png]({{site.baseurl}}/media/2022/12/image-b73fa841-761d-4526-924f-bc458c83ec41.png)
 
-## Auzre Functions の停止処理時の動作
+## Azure Functions の停止処理時の動作
 Azure Functions では Azure ポータルからの停止要求、スケーリングまたは Azure メンテナンスによる再起動が発生する可能性があります。HTTP トリガー等アプリケーションの処理実行中に停止されてしまう場合、どういった制御が可能であるかは関心事だと思います。
 
 本題に入りましょう。
@@ -61,7 +61,7 @@ Azure Functions は停止処理開始時にアプリケーションの実行が�
 
 少し解説します。
 
-上記の停止処理の中で、11 行目の Task result にて await Task.WhenAny でタスクの完了待ちをしています。待っているタスクは、stopTask または Task.Delay となっており、stopTaks の実体は [Orphan](https://github.com/Azure/azure-functions-host/blob/ed814c569434d65abcc22a169ac2d95f1ef79c32/src/WebJobs.Script.WebHost/WebJobsScriptHostService.cs#L669) メソッド、Task.Delay の方では遅くとも 10 待機後に完了 Task を返却します。Orphan というメソッドでは、実行中の関数を待機する処理を継続しています。つまり、関数の実行が終わるか、長くとも 10 秒待つという解釈になります。またこの 10 秒という待機時間はハードコートされているため利用者 様にて変更はしていただけません。
+上記の停止処理の中で、11 行目の Task result にて await Task.WhenAny でタスクの完了待ちをしています。待っているタスクは、stopTask または Task.Delay となっており、stopTaks の実体は [Orphan](https://github.com/Azure/azure-functions-host/blob/ed814c569434d65abcc22a169ac2d95f1ef79c32/src/WebJobs.Script.WebHost/WebJobsScriptHostService.cs#L669) メソッド、Task.Delay の方では遅くとも 10 待機後に完了 Task を返却します。Orphan というメソッドでは、実行中の関数を待機する処理を継続しています。つまり、関数の実行が終わるか、長くとも 10 秒待つという解釈になります。またこの 10 秒という待機時間はハードコードされているため利用者様にて変更はしていただけません。
 
 以上から、Graceful Shutdown 時には 10 秒(ハードコード)待つけどそれ以上は強制的にシャットダウンされる動作でした。
 
@@ -103,7 +103,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log, Cancel
 }
 ```
 
-実行中に Azure Functions を Azure ポータルから停止させると以下のようなログとなりました。赤枠部分の通りキャンセルトークンを受け取った後に 10 秒間は処理を継続していたことが確認できました。
+実行中に Azure Functions を Azure ポータルから停止させると以下のようなログとなりました。赤枠部分の通りキャンセル トークンを受け取った後に 10 秒間は処理を継続していたことが確認できました。
 
 ![image-be68284c-551d-4b49-8080-e9bf5ba5db5c.png]({{site.baseurl}}/media/2022/12/image-be68284c-551d-4b49-8080-e9bf5ba5db5c.png)
 
