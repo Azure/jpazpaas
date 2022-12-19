@@ -127,7 +127,7 @@ https://learn.microsoft.com/ja-jp/azure/app-service/webjobs-create#ncrontab-expr
 <br>
 <br>
 
-2022 年 12 月 16 日時点の内容となります。<br>
+2022 年 12 月 19 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
