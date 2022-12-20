@@ -11,12 +11,11 @@ App Service (windows) では、Internet Information Services (IIS) と呼ばれ�
 
 FREB の詳細については、以下ドキュメントをご参照ください。
 
-<ご参考: Monitor Activity on a Web Server (IIS 7) | Microsoft Learn><br>
-https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-r2-and-2008/cc730608(v=ws.10)#failed-request-tracing-rules
+[Monitor Activity on a Web Server (IIS 7)](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-r2-and-2008/cc730608(v=ws.10)#failed-request-tracing-rules)
 
-<ご参考: インターネット Web サーバー
-構築ガイドライン【ドラフト版】  第 9 章： ログやトレースを活用しよう><br>
-https://download.microsoft.com/download/8/F/3/8F3E42CB-5E5A-4BC5-8549-5F408389469F/InternetWebServerGuideline_chapter9_draft.pdf (PDF)
+
+[インターネット Web サーバー
+構築ガイドライン【ドラフト版】  第 9 章： ログやトレースを活用しよう(PDF)](https://download.microsoft.com/download/8/F/3/8F3E42CB-5E5A-4BC5-8549-5F408389469F/InternetWebServerGuideline_chapter9_draft.pdf) 
 
 本記事では、要求のトレース機能を使用して FREB ファイルを取得する方法についてご紹介いたします。
 
@@ -25,8 +24,7 @@ https://download.microsoft.com/download/8/F/3/8F3E42CB-5E5A-4BC5-8549-5F40838946
 Azure ポータルより当該 App Service を選択後、[App Service ログ] ブレード > 失敗した要求のトレースを"オン"にします。
 
 
-<ご参考: 診断ログの有効化 - Azure App Service | Microsoft Learn><br>
-https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#log-detailed-errors
+[診断ログの有効化](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#log-detailed-errors)
 >Azure portal で Windows アプリのエラー ページまたは失敗した要求のトレースを保存するには、アプリに移動し、 [App Service ログ] を選択します。
 >[詳細なエラー ログ記録] または [失敗した要求のトレース] で、 [オン] を選択し、 [保存]を選択します。
 
@@ -109,15 +107,21 @@ FREB は、Kudu サイトより取得いただくことが出来ます。
 
 ログファイルの格納先については、以下ドキュメントにも記載がございますため、併せてご参照ください。
 
-<ご参考: 診断ログの有効化 - Azure App Service | Microsoft Learn><br>
-https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#access-log-files
+[診断ログの有効化](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#access-log-files)
 >![image-4b58b45a-292e-45fb-b0da-99127268f055.png]({{site.baseurl}}/media/2022/12/image-4b58b45a-292e-45fb-b0da-99127268f055.png)
 
 
 以上、App Service 上で FREB を取得する方法についてご紹介させていただきました。
 
+<br>
+<br>
 
-2012 年 12 月 15 日時点の内容となります。<br>
+---
+
+<br>
+<br>
+
+2022 年 12 月 20 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
