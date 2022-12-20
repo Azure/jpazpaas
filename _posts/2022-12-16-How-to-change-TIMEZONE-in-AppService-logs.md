@@ -13,7 +13,7 @@ App Service の組み込みの診断機能により出力される以下ログ�
 - 失敗した要求トレース
 - デプロイ ログ
 
-[<ご参考: 診断ログの有効化 - Azure App Service | Microsoft Learn>](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#overview)
+[診断ログ一覧](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#overview)
 
 
 # 回答
@@ -28,13 +28,13 @@ App Service の組み込みの診断機能により出力される以下ログ�
 Web サーバー ログなどの一部の診断ログは、[Diagnostic settings (診断設定)] より Azure Monitor の Log Analytics に転送することが出来ます。Log Analytics に転送後、タイムゾーンを UTC から 現地時間 に変更してログを表示することが出来ます。
 診断設定による Azure Monitor への転送がサポートされるログの種類は以下ドキュメントをご参照ください。
 
-[<ご参考: サポートされるログの種類 - Azure App Service | Microsoft Learn>](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#supported-log-types)
+[サポートされるログの種類](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#supported-log-types)
 
 
 ### 1 ) App Service のログを Log Analytics へ送信
 Azure ポータルより対象の App Service を選択後、[Diagnostic settings (診断設定)] ブレードより、ご希望の App Service ログを Log Analytics へ送信します。Log Analytics への送信手順と、送信いただけるログの種類の詳細は、以下ドキュメントに記載がございますため、ご参照ください。
 
-[<ご参考: 診断ログの有効化 - Azure App Service | Microsoft Learn>](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#send-logs-to-azure-monitor)
+[ログを Azure Monitor に送信する](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#send-logs-to-azure-monitor)
 
 ![image-0e06e1b7-7e69-4a83-bd83-f1a3cdd17949.png]({{site.baseurl}}/media/2022/12/image-0e06e1b7-7e69-4a83-bd83-f1a3cdd17949.png)
 
@@ -69,13 +69,13 @@ App Service では、オンプレミス環境のアプリケーションと同�
 ### 注意事項） ログの出力先について
 App Service でパッケージからの実行が有効である (WEBSITE_RUN_FROM_PACKAGE が true または 1) とき、お客様のアプリケーションが配置されている wwwroot ディレクトリ配下が読み取り専用となります。そのため、当該機能が有効である場合に wwwroot ディレクトリ配下をログの出力先として指定すると、ログの書き込みエラーが発生いたします。
 
-[<ご参考: ZIP パッケージからアプリを実行する - Azure App Service | Microsoft Learn>](https://learn.microsoft.com/ja-jp/azure/app-service/deploy-run-package#troubleshooting)
+[ZIP パッケージからアプリを実行する](https://learn.microsoft.com/ja-jp/azure/app-service/deploy-run-package#troubleshooting)
 
 > パッケージから直接実行すると、wwwroot は読み取り専用になります。 アプリがこのディレクトリにファイルを書き込もうとすると、エラーが発生します。
 
 コンテンツ共有 (%HOME%) ディレクトリはお客様のアプリケーションから書き込みが可能となりますため、ログの書き込みエラーが発生された場合には、コンテンツ共有 (%HOME%) ディレクトリをログの出力先としてをご検討ください。コンテンツ共有 (%HOME%) ディレクトリの詳細は、以下ドキュメントをご参照ください。
 
-[<ご参考: オペレーティング システムの機能 - Azure App Service | Microsoft Learn>](https://learn.microsoft.com/ja-jp/azure/app-service/operating-system-functionality#file-access-across-multiple-instances)
+[オペレーティング システムの機能](https://learn.microsoft.com/ja-jp/azure/app-service/operating-system-functionality#file-access-across-multiple-instances)
 >コンテンツ共有 (%HOME%) ディレクトリにはアプリのコンテンツが含まれ、アプリケーション コードからの書き込みが可能です。 
 >(中略)
 >アップロードされたファイルがアプリによって %HOME% ディレクトリに保存されると、それらのファイルはすぐにすべてのインスタンスから利用できるようになります。
@@ -87,7 +87,7 @@ App Service でパッケージからの実行が有効である (WEBSITE_RUN_FRO
 ## App Service の組み込みの診断機能の診断ログ (Web サーバー ログ など) のタイムスタンプのタイムゾーンを "WEBSITE_TIME_ZONE" により変更できますか？
 WEBSITE_TIME_ZONE 設定は、App Service が動作するインスタンス (仮想マシン) のタイムゾーンを変更できますが、これにより診断ログのタイムスタンプは変更されません。
 
-[<ご参考: Web Appsの構成と管理に関する FAQ - Azure | Microsoft Learn>](https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/web-apps-configuration-and-management-faqs#how-do-i-set-the-server-time-zone-for-my-web-app)
+[Web Appsの構成と管理に関する FAQ](https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/web-apps-configuration-and-management-faqs#how-do-i-set-the-server-time-zone-for-my-web-app)
 > Web アプリのサーバー タイム ゾーンを設定するには、次の手順に従います。
 > [アプリ設定] で次の設定を追加します。
 > 
@@ -97,7 +97,7 @@ WEBSITE_TIME_ZONE 設定は、App Service が動作するインスタンス (仮
 
 WEBSITE_TIME_ZONE 設定は、下記ドキュメントに記載のように Web ジョブの CRON 式などで基準とするタイムゾーンを変更する際に利用されます。しかしながら、この設定により App Service 基盤にてご用意しているログの出力日時を変更いただけませんため、もし現地時刻によるログの出力をご希望でしたら上述のワークアラウンド (Log Analytics を使用して診断ログの表示時刻を変更する方法または、独自ログを出力する方法) のご利用をご検討ください。
 
-[<ご参考: Web ジョブでバックグラウンド タスクを実行する - Azure App Service | Microsoft Learn>](https://learn.microsoft.com/ja-jp/azure/app-service/webjobs-create#ncrontab-expressions)
+[Web ジョブでバックグラウンド タスクを実行する](https://learn.microsoft.com/ja-jp/azure/app-service/webjobs-create#ncrontab-expressions)
 
 > CRON 式の実行に使用される既定のタイム ゾーンは、協定世界時 (UTC) です。 別のタイム ゾーンに基づいて CRON 式を実行するには、ご使用の関数アプリ用に WEBSITE_TIME_ZONE という名前のアプリ設定を作成します。
 
