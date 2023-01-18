@@ -8,19 +8,21 @@ tags:
 
 # 質問
 - 保管コスト削減のため、診断設定のログをアーカイブ層に移動したいのですが、移動できません。
+<br>
+<br>
 
 # 回答
 ## 前提
 Azure Monitor の機能である診断設定によって収集されるログは、出力の宛先の一つとしてストレージ アカウントに出力いただくことが可能です。その際、出力されるログの BLOB は「追加 BLOB」となります。
 
 Azure Monitor リソース ログの形式変更のための準備 - Azure Monitor | Microsoft Learn<br>
-https://learn.microsoft.com/ja-JP/azure/azure-monitor/essentials/resource-logs-blob-format<br>
+[https://learn.microsoft.com/ja-JP/azure/azure-monitor/essentials/resource-logs-blob-format](https://learn.microsoft.com/ja-JP/azure/azure-monitor/essentials/resource-logs-blob-format)<br>
 > この新しい形式では、Azure Monitor で**追加 BLOB** を使用してログ ファイルをプッシュすることができ、継続的に新しいイベント データを追加する場合により効率的です。
 
 しかしながら、現在、BLOB ストレージにて層の変更はブロック BLOB にのみ対応しており、追加 BLOB を直接アーカイブ層に移動いただくことができません。また、BLOB の種類は作成時にのみ指定が可能であり、後から変更もできません。
 
 BLOB データのホット、クールおよびアーカイブ アクセス層 - Azure Storage | Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview<br>
+[https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview](https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview)<br>
 > **アクセス層の設定はブロック BLOB でのみ許可されています。** これらは、追加 BLOB とページ BLOB ではサポートされていません。
 
 そこで、コスト削減を目的とした代替案について、以下にご紹介させていただきます。
@@ -36,10 +38,8 @@ https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview<br>
 追加 BLOB の層は、以下にて設定されているストレージ アカウントの既定のアクセス層に従い決定されます。そのため、ストレージ アカウントの既定のアクセス層を「クール」に設定いただくことで、容量当たりのコストがより安価な層をご利用いただくことが可能です。ただし、既定のアクセス層はオンライン層のみが指定可能なため、オフライン層であるアーカイブ層はご利用いただけない点ご留意ください。
 
 BLOB データのホット、クールおよびアーカイブ アクセス層 - Azure Storage # アカウントのデフォルト アクセス層の設定 |  Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview#default-account-access-tier-setting<br>
-
+[https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview#default-account-access-tier-setting](https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview#default-account-access-tier-setting)<br>
 ![image-ef5a4e57-5bf4-486d-a874-3d739a0ff39f.png]({{site.baseurl}}/media/2023/01/image-ef5a4e57-5bf4-486d-a874-3d739a0ff39f.png)<br>
-<br>
 
 > **※注意**<br>
 上記デフォルト アクセス層の設定のドキュメント内にて言及があるように、ストレージ アカウントのデフォルト アクセス層の設定を変更すると、ストレージ アカウント内のアクセス層を明示的に設定していないすべての BLOB に層の変更が適用されます。そのため、汎用 v2 アカウントで既定のアクセス層の設定をホットからクールに切り替えると、そのアクセス層が推定されるすべての BLOB に対する書き込み操作 (10,000 件ごと) に料金が発生する点、ご留意ください。<br>たとえば、明示的に層を設定していない BLOB が 10,000 件存在するストレージ アカウントにて、ホットからクールへ既定のアクセス層を変更した場合、10,000 件の SetBlobTier リクエストが発生いたします。<br>
@@ -48,7 +48,7 @@ https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview#defa
 既定のアクセス層の設定はストレージ アカウント単位となっており、コンテナごとには設定できません。そのため、ストレージ アカウント内の別コンテナーの利用で、ホット層へのアップロードと混在したい際には、アップロード時にアクセス層を明示的にご指定いただくなどの運用でカバーいただく必要がございます。<br>
 <br> 
 BLOB のアクセス層を設定する - Azure Storage # アップロード時に BLOB の層を設定する |  Microsoft Docs<br>
-https://docs.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-online-manage?tabs=azure-portal#set-a-blobs-tier-on-upload<br>
+[https://docs.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-online-manage?tabs=azure-portal#set-a-blobs-tier-on-upload](https://docs.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-online-manage?tabs=azure-portal#set-a-blobs-tier-on-upload)<br>
 <br> 
 明示的なアクセス層の指定が煩わしい場合や、ホット層へアップロードする対象が追加 BLOB の場合には、診断設定のログ保管用のストレージ アカウントを別途用意し、運用したい層毎にストレージアカウント単位で分けてご利用いただくことをご検討ください。
 
@@ -81,7 +81,7 @@ azcopy copy "https://<storage-account-name>.blob.core.windows.net/<source-contai
 また、BLOB の種類とアクセス層を変更するために使用したオプションは次の通りです。
 
 azcopy copy | Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/azure/storage/common/storage-ref-azcopy-copy<br>
+[https://learn.microsoft.com/ja-jp/azure/storage/common/storage-ref-azcopy-copy](https://learn.microsoft.com/ja-jp/azure/storage/common/storage-ref-azcopy-copy)<br>
 >・--blob-type=[BlockBlob|PageBlob|AppendBlob]<br>
 ブロック、ページ、または追加 BLOB として BLOB をコピーします。<br>
 ・--block-blob-tier=[None|Hot|Cool|Archive]<br>
@@ -89,7 +89,6 @@ https://learn.microsoft.com/ja-jp/azure/storage/common/storage-ref-azcopy-copy<b
 ・--recursive<br>
 対象のディレクトリ配下を再帰的にコピーします。<br>
 
-<br>
 
 AzCopy v10 の基本的なご利用方法等に関しましては、下記ドキュメントなどがございますので必要に応じてご活用くださいませ。
 
@@ -99,7 +98,7 @@ https://learn.microsoft.com/ja-jp/azure/storage/common/storage-use-azcopy-v10<br
 https://docs.microsoft.com/ja-jp/azure/storage/common/storage-use-azcopy-blobs-copy?toc=/azure/storage/blobs/toc.json<br>
 <br>
 
-####・Azure PowerShell のコマンド
+#### ・Azure PowerShell のコマンド
 
 以下コマンドにて、コピー元の追加 BLOB を、ブロック BLOB としてコピーし、さらに、コピー先の BLOB の層としてアーカイブ層を指定可能です。このようなコマンドをもとに、ループ処理などで対象の BLOB 群のコピーを実現するスクリプトを実装し、スケジュール実行が可能なバッチ処理などで日次などで実行いただくことが考えられます。
 
@@ -111,7 +110,7 @@ Copy-AzStorageBlob -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -
 BLOB の種類とアクセス層を変更するために使用したオプションは次の通りです。
 
 Copy-AzStorageBlob (Az.Storage) | Microsoft Learn<br>
-https://learn.microsoft.com/en-us/powershell/module/az.storage/copy-azstorageblob?view=azps-9.3.0<br>
+[https://learn.microsoft.com/en-us/powershell/module/az.storage/copy-azstorageblob?view=azps-9.3.0](https://learn.microsoft.com/en-us/powershell/module/az.storage/copy-azstorageblob?view=azps-9.3.0)<br>
 >・-DestBlobType [Block|Page|Append]<br>
 ブロック、ページ、または追加 BLOB として BLOB をコピーします。<br>
 ・-StandardBlobTier [Hot|Cool|Archive]<br>
@@ -122,10 +121,10 @@ https://learn.microsoft.com/en-us/powershell/module/az.storage/copy-azstorageblo
 BLOB の種類を変換する `-DestBlobType` オプションは、Az モジュールの 9.1.0 にて新たに追加されたオプションのため、古いバージョンをご利用のお客様はバージョン 9.1.0 以降にアップデートの上、ご利用ください。<br>
 <br>
 Azure PowerShell release notes |  Microsoft Learn<br>
-https://learn.microsoft.com/en-us/powershell/azure/release-notes-azureps?view=azps-9.3.0#azstorage-2
+[https://learn.microsoft.com/en-us/powershell/azure/release-notes-azureps?view=azps-9.3.0#azstorage-2](https://learn.microsoft.com/en-us/powershell/azure/release-notes-azureps?view=azps-9.3.0#azstorage-2)
 <br>
 
-####・Azure CLI のコマンド
+#### ・Azure CLI のコマンド
 
 以下コマンドにて、コピー元の追加 BLOB を、ブロック BLOB としてコピーし、さらに、コピー先の BLOB の層としてアーカイブ層を指定可能です。このようなコマンドをもとに、ループ処理などで対象の BLOB 群のコピーを実現するスクリプトを実装し、スケジュール実行が可能なバッチ処理などで日次などで実行いただくことが考えられます。
 
@@ -136,7 +135,7 @@ az storage blob copy start --account-name $accountName --destination-blob $destB
 BLOB の種類とアクセス層を変更するために使用したオプションは次の通りです。
 
 az storage blob copy # az storage blob copy start |  Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/cli/azure/storage/blob/copy?view=azure-cli-latest#az-storage-blob-copy-start<br>
+[https://learn.microsoft.com/ja-jp/cli/azure/storage/blob/copy?view=azure-cli-latest#az-storage-blob-copy-start](https://learn.microsoft.com/ja-jp/cli/azure/storage/blob/copy?view=azure-cli-latest#az-storage-blob-copy-start)<br>
 >・--destination-blob-type [Detect|BlockBlob|PageBlob|AppendBlob]<br>
 ブロック、ページ、または追加 BLOB として BLOB をコピーします。<br>
 ・--tier [Hot|Cool|Archive]<br>
@@ -147,10 +146,11 @@ https://learn.microsoft.com/ja-jp/cli/azure/storage/blob/copy?view=azure-cli-lat
 上記オプションは、バージョン 2.44.0 にて用意されたオプションのため、古いバージョンをご利用のお客様はバージョン 2.44.0 以降にアップデートの上、ご利用ください。<br>
 <br>
 Release notes & updates – Azure CLI |  Microsoft Learn<br>
-https://learn.microsoft.com/en-us/cli/azure/release-notes-azure-cli?toc=%2Fcli%2Fazure%2Ftoc.json&bc=%2Fcli%2Fazure%2Fbreadcrumb%2Ftoc.json&view=azure-cli-latest#storage
+[https://learn.microsoft.com/en-us/cli/azure/release-notes-azure-cli?toc=%2Fcli%2Fazure%2Ftoc.json&bc=%2Fcli%2Fazure%2Fbreadcrumb%2Ftoc.json&view=azure-cli-latest#storage](https://learn.microsoft.com/en-us/cli/azure/release-notes-azure-cli?toc=%2Fcli%2Fazure%2Ftoc.json&bc=%2Fcli%2Fazure%2Fbreadcrumb%2Ftoc.json&view=azure-cli-latest#storage)
 <br>
 
-####・ノン コーディングで実現可能なサービス
+#### ・ノン コーディングで実現可能なサービス
+
 Azure Data Factory というサービスでは、ノン コーディングで BLOB のコピー処理が実現できます。<br>
 本サービスで利用可能な、BLOB ストレージのコピー アクティビティは、コピー元の BLOB の種類に依らず、すべてブロック BLOB へのコピーとなります。
 そのため、このコピー アクティビティを利用して、コンテナー間で追加 BLOB からブロック BLOB へ変換してBLOB のコピーが可能です。また、スケジュール実行のトリガーを利用することで、定期的な自動実行へも対応できます。
@@ -160,14 +160,14 @@ Azure Data Factory というサービスでは、ノン コーディングで BL
 Azure Data Factory の基本的な内容ならびにコピー アクティビティの利用について、下記にドキュメントをご紹介いたしますので、あわせてご参考となれば幸いです。
 
 - Azure Data Factory の概要 - Azure Data Factory | Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/azure/data-factory/introduction
+[https://learn.microsoft.com/ja-jp/azure/data-factory/introduction](https://learn.microsoft.com/ja-jp/azure/data-factory/introduction)
 - 最初のデータ ファクトリ パイプラインの開始と試用 - Azure Data Factory | Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/azure/data-factory/quickstart-get-started
+[https://learn.microsoft.com/ja-jp/azure/data-factory/quickstart-get-started](https://learn.microsoft.com/ja-jp/azure/data-factory/quickstart-get-started)
 
 - データのコピー ツールを使用してデータをコピーする - Azure Data Factory | Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/azure/data-factory/quickstart-hello-world-copy-data-tool
+[https://learn.microsoft.com/ja-jp/azure/data-factory/quickstart-hello-world-copy-data-tool](https://learn.microsoft.com/ja-jp/azure/data-factory/quickstart-hello-world-copy-data-tool)
 - Azure Blob Storage のデータをコピーし変換する - Azure Data Factory & Azure Synapse | Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/azure/data-factory/connector-azure-blob-storage?tabs=data-factory
+[https://learn.microsoft.com/ja-jp/azure/data-factory/connector-azure-blob-storage?tabs=data-factory](https://learn.microsoft.com/ja-jp/azure/data-factory/connector-azure-blob-storage?tabs=data-factory)
 
 
 <br>
@@ -228,10 +228,10 @@ https://learn.microsoft.com/ja-jp/azure/data-factory/connector-azure-blob-storag
 
 **＜参照情報＞**<br>
 - ストレージ アカウントの課金について | Japan Azure 課金 サブスクリプション サポート ブログ<br>
-https://jpazasms.github.io/blog/AzureSubscriptionManagement/20190226c/
+[https://jpazasms.github.io/blog/AzureSubscriptionManagement/20190226c/](https://jpazasms.github.io/blog/AzureSubscriptionManagement/20190226c/)
 
 - Azure Storage Blob の価格 | Microsoft Azure<br>
-https://azure.microsoft.com/ja-jp/pricing/details/storage/blobs/
+[https://azure.microsoft.com/ja-jp/pricing/details/storage/blobs/](https://azure.microsoft.com/ja-jp/pricing/details/storage/blobs/)
 ※ 2023/01/16 時点の価格情報
 ![2023-01-16_18h09_03-9c08687e-6bc1-4308-bbcc-ec9ab4898e14.jpg]({{site.baseurl}}/media/2023/01/2023-01-16_18h09_03-9c08687e-6bc1-4308-bbcc-ec9ab4898e14.jpg)
 ![2023-01-16_18h09_18-b7261a1c-95db-4079-9a32-cdc93fa451f6.jpg]({{site.baseurl}}/media/2023/01/2023-01-16_18h09_18-b7261a1c-95db-4079-9a32-cdc93fa451f6.jpg)
@@ -241,10 +241,8 @@ https://azure.microsoft.com/ja-jp/pricing/details/storage/blobs/
 ---
 
 <br>
-<br>
 
 2023 年 01 月 16 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
-<br>
 <br>
