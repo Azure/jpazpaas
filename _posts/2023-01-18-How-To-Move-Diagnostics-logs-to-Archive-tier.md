@@ -93,9 +93,9 @@ azcopy copy | Microsoft Learn<br>
 AzCopy v10 の基本的なご利用方法等に関しましては、下記ドキュメントなどがございますので必要に応じてご活用くださいませ。
 
 - AzCopy v10 を使用して Azure Storage にデータをコピーまたは移動する | Microsoft Learn<br>
-https://learn.microsoft.com/ja-jp/azure/storage/common/storage-use-azcopy-v10<br>
+[https://learn.microsoft.com/ja-jp/azure/storage/common/storage-use-azcopy-v10](https://learn.microsoft.com/ja-jp/azure/storage/common/storage-use-azcopy-v10)<br>
 - AzCopy v10 を使用して Azure ストレージ アカウント間で BLOB をコピーする | Microsoft Docs<br>
-https://docs.microsoft.com/ja-jp/azure/storage/common/storage-use-azcopy-blobs-copy?toc=/azure/storage/blobs/toc.json<br>
+[https://docs.microsoft.com/ja-jp/azure/storage/common/storage-use-azcopy-blobs-copy?toc=/azure/storage/blobs/toc.json](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-use-azcopy-blobs-copy?toc=/azure/storage/blobs/toc.json)<br>
 <br>
 
 #### ・Azure PowerShell のコマンド
