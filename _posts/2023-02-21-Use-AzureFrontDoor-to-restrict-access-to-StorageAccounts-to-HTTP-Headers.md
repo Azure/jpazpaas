@@ -1,5 +1,5 @@
 ---
-title: "ストレージへのアクセスを特定の Http Header を有無に制限する(Azure Front Door 連携)"
+title: "ストレージへのアクセスを特定の Http Header の有無で制限する(Azure Front Door 連携)"
 author_name: "chansiklee"
 tags:
     - Storage Account
