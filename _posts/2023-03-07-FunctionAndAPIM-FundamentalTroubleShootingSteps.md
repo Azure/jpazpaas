@@ -27,7 +27,7 @@ APIM Management では、GUI や診断設定のログよりバックエンドの
 
   分析 ブレードや概要 ブレードの監視を確認いただくとバックエンドのデータが確認できます。今回は 3 回のリクエストがあり、平均で 14.64 秒の応答時間がかかっていることがわかります。
 
-<分析 ブレードの表示例>
+[分析 ブレードの表示例]
 
 ![image-8f4b121f-7067-472d-8ecb-16e28d748aca.png]({{site.baseurl}}/media/2023/03/image-8f4b121f-7067-472d-8ecb-16e28d748aca.png)
 
@@ -69,7 +69,7 @@ union traces,requests,dependencies
 
 複数のログが確認できるため、1 つの operation_Id `99824b7c8c56e29ef39e980703af9421` を選択しフィルタします。それぞのログ元のテーブルは itemType から確認ができ、requests(赤ハイライト)、traces(黄ハイライト)、dependencies(青ハイライト)としています。
 
-<Function Apps1(HakurodaChain001) ログの確認結果>
+[Function Apps1(HakurodaChain001) ログの確認結果]
 
 ![image-4f568876-4e1f-433b-a59f-602629d10c3b.png]({{site.baseurl}}/media/2023/03/image-4f568876-4e1f-433b-a59f-602629d10c3b.png)
 
@@ -84,7 +84,7 @@ union traces,requests,dependencies
 ###バックエンドその2：Function Apps2(HakurodaChain002)
 同様の手順で Function Apps/HakurodaChain002 を確認します。先の operation_Id `99824b7c8c56e29ef39e980703af9421` を利用します。
 
-<Function Apps2(HakurodaChain002) ログの確認結果>
+[Function Apps2(HakurodaChain002) ログの確認結果]
 
 ![image-c5972a66-8e4e-427e-b1f0-735ed020fe3a.png]({{site.baseurl}}/media/2023/03/image-c5972a66-8e4e-427e-b1f0-735ed020fe3a.png)
 
@@ -97,7 +97,7 @@ union traces,requests,dependencies
 ###バックエンドその3：Function Apps3(HakurodaChain003)
 最後に同様の手順で Function Apps/HakurodaChain003 を確認します。 operation_Id `99824b7c8c56e29ef39e980703af9421` を利用します。
 
-<Function Apps3(HakurodaChain003) ログの確認結果>
+[Function Apps3(HakurodaChain003) ログの確認結果]
 
 ![image-272b1048-64d8-4575-8172-6dec932624f5.png]({{site.baseurl}}/media/2023/03/image-272b1048-64d8-4575-8172-6dec932624f5.png)
 
