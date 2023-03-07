@@ -49,7 +49,7 @@ APIM Management では、GUI や診断設定のログよりバックエンドの
 
 
 ## Function Apps 観点の確認
-###バックエンドその1：Function Apps1(HakurodaChain001)
+### バックエンドその1：Function Apps1(HakurodaChain001)
 API Management から呼び出された時間帯で Function Apps1 のログを確認しましょう。
 
 Application Insights を開き、下記のクエリを実行します。requests テーブルから [operation_Id](https://learn.microsoft.com/ja-jp/azure/azure-monitor/app/correlation#data-model-for-telemetry-correlation)(一連の実行を表す一意の ID でテーブル間で共有されます) を取得し、他のテーブルも operation_Id で検索しています。
@@ -79,9 +79,9 @@ union traces,requests,dependencies
 
 以上から API Management からバックエンドの API として HakurodaChain001 を呼び出していますが、その応答時間のほとんどは dependencies テーブルの通り HakurodaChain002 が使っているとわかります。
 
-***Azure Functions では既定でログ サンプリングが有効化されています。場合によってはすべてのログが記録されないことがございますため、こちらの[ブログ](https://jpazpaas.github.io/blog/2023/03/02/LogSampling-OnAzureFunctions.html)を参考にログ サンプリングを無効化することをご検討ください。**
+**Azure Functions では既定でログ サンプリングが有効化されています。場合によってはすべてのログが記録されないことがございますため、こちらの[ブログ](https://jpazpaas.github.io/blog/2023/03/02/LogSampling-OnAzureFunctions.html)を参考にログ サンプリングを無効化することをご検討ください。**
 
-###バックエンドその2：Function Apps2(HakurodaChain002)
+### バックエンドその2：Function Apps2(HakurodaChain002)
 同様の手順で Function Apps/HakurodaChain002 を確認します。先の operation_Id `99824b7c8c56e29ef39e980703af9421` を利用します。
 
 [Function Apps2(HakurodaChain002) ログの確認結果]
@@ -94,7 +94,7 @@ union traces,requests,dependencies
 
 以上から Function Apps/HakurodaChain001 から呼び出された HTTP トリガー/HakurodaChain002 は、約 11 秒要していますが、内訳は  HTTP トリガー/HakurodaChain002 の内部処理で 1 秒要しており、dependencies テーブルより HakurodaChain003 が約 10 秒使っているとわかります。
 
-###バックエンドその3：Function Apps3(HakurodaChain003)
+### バックエンドその3：Function Apps3(HakurodaChain003)
 最後に同様の手順で Function Apps/HakurodaChain003 を確認します。 operation_Id `99824b7c8c56e29ef39e980703af9421` を利用します。
 
 [Function Apps3(HakurodaChain003) ログの確認結果]
