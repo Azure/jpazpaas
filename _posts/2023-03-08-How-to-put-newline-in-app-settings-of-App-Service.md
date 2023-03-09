@@ -228,7 +228,7 @@ https://learn.microsoft.com/ja-jp/azure/key-vault/secrets/multiline-secrets
 <br>
 <br>
 
-2023 年 03 月 xx 日時点の内容となります。<br>
+2023 年 03 月 10 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
