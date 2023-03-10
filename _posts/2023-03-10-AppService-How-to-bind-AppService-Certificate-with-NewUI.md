@@ -48,6 +48,7 @@ tags:
 ## a) Custom domains より確認する方法
 1. "Custom domains" ブレードを開き、該当ドメインの "..." より "Update binding" を開きます。
  ![image-85b509d3-2484-49c6-baa5-00485ff4b90d.png]({{site.baseurl}}/media/2023/03/image-85b509d3-2484-49c6-baa5-00485ff4b90d.png) 
+
 2. "TLS/SSL type" の "Current certificates used" より現在バインドされている証明書を確認できます。
  ![image-38fbeea4-4631-425f-b908-5abde8f1ba91.png]({{site.baseurl}}/media/2023/03/image-38fbeea4-4631-425f-b908-5abde8f1ba91.png) 
 
