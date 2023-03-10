@@ -55,6 +55,7 @@ tags:
 1. 該当 App Service の "Diagnose and solve problems" を開きます。
 2. "Binding & SSL Configuration" を開きます。
  ![image-f429429b-8e64-4985-850f-1f415859d1e7.png]({{site.baseurl}}/media/2023/03/image-f429429b-8e64-4985-850f-1f415859d1e7.png) 
+
 3. "Findings for 'xxxx' を開き、Insight より現在バインドされている証明書を確認できます。
  ![image-125229e3-0538-4188-8626-cea91093f2c5.png]({{site.baseurl}}/media/2023/03/image-125229e3-0538-4188-8626-cea91093f2c5.png) 
 
