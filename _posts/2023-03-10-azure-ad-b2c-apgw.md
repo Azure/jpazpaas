@@ -66,8 +66,17 @@ Azure AD B2C 認証設定後、カスタムドメインにアクセスし想定�
 1. [クイック スタート:Azure Application Gateway による Web トラフィックのルーティング - Azure portal](https://learn.microsoft.com/ja-jp/azure/application-gateway/quick-create-portal)に従い、バックエンドターゲットを持たない Application Gateway を作成します。リンク先の手順末尾にある「**バックエンド ターゲットの追加**」以降の手順は実施不要です。<br>
 <br>
 **※注意点**<br>
-App Service と Application Gateway に関連付けるカスタムドメインの証明書として Key Vault に格納した App Service 証明書を使う場合、Application Gateway の作成時点では証明書を参照する事が出来ません。これによりリスナーを HTTPS で作成時に証明書が指定出来ないため、一旦 **HTTP** でリスナーを作成します。<br>
+・App Service と Application Gateway に関連付けるカスタムドメインの証明書として Key Vault に格納した App Service 証明書を使う場合、Application Gateway の作成時点では証明書を参照する事が出来ません。これによりリスナーを HTTPS で作成時に証明書が指定出来ないため、一旦 **HTTP** でリスナーを作成します。<br>
 <IMG  src="https://learn.microsoft.com/ja-jp/azure/application-gateway/media/application-gateway-create-gateway-portal/application-gateway-create-rule-listener.png"  alt="新しいアプリケーション ゲートウェイの作成: リスナー"/>
+<br><br>
+・ネットワーク セキュリティ グループ (NSG) を使用する場合、Application Gateway v2 SKU では以下のセキュリティ規則は許可する必要があります。詳しくは [Application Gateway インフラストラクチャの構成 - ネットワーク セキュリティ グループ](https://learn.microsoft.com/ja-jp/azure/application-gateway/configuration-infrastructure#network-security-groups) を参照ください。<br><br>
+　**受信セキュリティ規則:**<br>
+　・[ソース] **サービスタグ GatewayManager**、[宛先] **Any**、[サービス] **Custom**、[宛先ポート範囲] **65200-65535**<br>
+　・[ソース] **サービスタグ AzureLoadBalancer**、[宛先] **Any**、[サービス] **Custom**、[宛先ポート範囲] *<br>
+<br>
+　**送信セキュリティ規則:**<br>
+　・既定のルールを削除しないようにします。また、アウトバウンド接続を拒否する他のアウトバウンド規則は作成しないようにします。<br>
+
 
 ## 2. Application Gateway へのカスタムドメイン設定
 事前準備の段階では、用意したカスタムドメインは App Service に関連付けられています。同じカスタムドメインにアクセスした際に Application Gateway を参照する様に設定を行います。<br>
@@ -88,19 +97,24 @@ App Service と Application Gateway に関連付けるカスタムドメイン�
 1. Application Gateway の [正常性プローブ] ブレードを開き、[+追加] ボタンを選択します。
 ![image-b06b9c16-5293-4402-9b13-d78d9169ebd6.png]({{site.baseurl}}/media/2023/03/image-b06b9c16-5293-4402-9b13-d78d9169ebd6.png)
 <br><br>
-「プロトコル」に **HTTPS**、「ホスト名」にカスタムドメインを指定します。<br>
-「パス」にはリクエストに対し HTTP Status 200-399 が返るパスを指定します。Azure AD B2C の認証を設定すると通常 401 などの応答が返り、正常応答と見做されません。この対策としては**認証対象外のパス (excludedPaths)** を設定いただくか、**Azure AD B2C のリダイレクト URI として設定したパスを指定する**方法がございます。(リダイレクト URI へのリクエストに対しては 200 応答が返るため)<br>
+[プロトコル] に **HTTPS**、[ホスト名] にカスタムドメインを指定します。<br>
+[パス] にはリクエストに対し HTTP Status 200-399 が返るパスを指定します。Azure AD B2C の認証を設定すると通常 401 などの応答が返り、正常応答と見做されません。<br>
+この対策としては**認証対象外のパス (excludedPaths)** を設定いただくか、**Azure AD B2C のリダイレクト URI として設定したパスを指定する**方法がございます。(リダイレクト URI へのリクエストに対しては 200 応答が返るため)<br>
 **認証対象外のパス (excludedPaths)** を設定する方法については、弊社エンジニアが執筆した記事 [Azure App Service の Authentication/Authorization(EasyAuth)で認証しないURLを設定する](https://qiita.com/takashiuesaka/items/57db6c1600240408cd03) をご参照ください。<br>
 
 2. [テスト] ボタンを選択し、バックエンドの正常性が確認できたら保存します。<br>
 ![image-0a39d219-1b2c-47f5-bbc8-1ee3e68443db.png]({{site.baseurl}}/media/2023/03/image-0a39d219-1b2c-47f5-bbc8-1ee3e68443db.png)
 3. [バックエンド設定] ブレードを選択し、作成済みバックエンド設定を選択します。<br>
-「バックエンド プロトコル」を **HTTPS**、「既知の CA 証明書を使用する」を **はい**、「新しいホスト名でオーバーライドする」を **いいえ**、に指定します。「カスタム プローブ」に先ほど作成した正常性プローブを指定して保存します。
+[バックエンド プロトコル] を **HTTPS**、[既知の CA 証明書を使用する] を **はい**、[新しいホスト名でオーバーライドする] を **いいえ**、に指定します。[カスタム プローブ] に先ほど作成した正常性プローブを指定して保存します。
 ![image-a13bb800-f720-4930-af83-516852cfa479.png]({{site.baseurl}}/media/2023/03/image-a13bb800-f720-4930-af83-516852cfa479.png)
 
-以上、Azur AD B2C 認証を設定した App Service と Application Gateway の統合手順についてご紹介させていただきました。
+以上で Azur AD B2C 認証を設定した App Service と Application Gateway の統合は完了です。<br>
+<br>
 
+# Appendix
+バックエンド正常性に関する問題が発生した場合は、以下のトラブルシューティングガイドを参照していただけますと幸いです。<br>
 
+[Application Gateway のバックエンドの正常性に関する問題のトラブルシューティング](https://learn.microsoft.com/ja-jp/azure/application-gateway/application-gateway-backend-health-troubleshooting)
 
 <br>
 <br>
@@ -110,7 +124,7 @@ App Service と Application Gateway に関連付けるカスタムドメイン�
 <br>
 <br>
 
-2023 年 03 月 10 日時点の内容となります。<br>
+2023 年 03 月 13 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
