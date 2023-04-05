@@ -2,14 +2,14 @@
 title: "Durable Functions のトラブルシューティングガイド"
 author_name: "Hayato Kuroda"
 tags:
-    - Function Apps
+    - Function App
     - Durable Functions
 ---
 
-#質問
+# 質問
 Durable Functions のトラブルシューティングについて確認方法を教えてください。
 
-#回答
+# 回答
 Duralbe Functions の動作を解説し、トラブルシューティング方法について説明します。
 ##Durable Functions の動作
 簡単に Durable Functions の動作について解説します。
@@ -72,6 +72,7 @@ https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-function
 38     }
 ```
 実際に上記のコードをデプロイすると 3 つの関数が作成されることが確認できます。
+
 ![image-0bd91a10-f596-4837-a470-e3e41c54769f.png]({{site.baseurl}}/media/2023/04/image-0bd91a10-f596-4837-a470-e3e41c54769f.png)
 
 他のパターンの実装例は、[チュートリアル](https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-functions-sequence?tabs=csharp)や[クイック スタート](https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-functions-create-first-csharp?pivots=code-editor-vscode)を参照ください。
@@ -85,6 +86,7 @@ https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-function
 この動作の際にオーケストレーター関数は実行開始、実行完了、アクティビティ関数の実行完了待といった状態が遷移するためログを確認いただいた際には複数回オーケストレーター関数が実行されているような状況が確認できます。
 
 - テーブルには 2 種類あり、標準では TestHubNameInstances（オーケストレーション ID ごとの実行開始終了時刻やステータス情報など） と TestHubNameHistory（オーケストレーション ID のオーケストレーター関数及びアクティビティ関数ごとの実行開始終了や実行結果など） があります。出力例は下記となります。
+
 ![image-3d1878db-2b2f-4669-99ff-bf4e949cb2c7.png]({{site.baseurl}}/media/2023/04/image-3d1878db-2b2f-4669-99ff-bf4e949cb2c7.png)
 
 - オーケストレーター関数からアクティビティ関数の実行はアクティビティ作業項目キューと呼ばれるキューが利用されます。キューの名前は、<task hub 名>-workitems([標準](https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-functions-task-hubs?tabs=csharp#hostjson-functions-20-1)では testhubname-workitems) にメッセ－ジが作成されます。キュー メッセージが消えない限りはアクティビティ関数が完了せず実行され続けます。[キュー メッセ－ジの有効期限が 7 日間](https://learn.microsoft.com/ja-jp/azure/storage/queues/storage-queues-introduction)となるため、何かしらの要因によってアクティビティ関数の実行が（実行結果の成否問わず）完了しない場合には最大で 7 日間実行され続けます。
@@ -116,32 +118,36 @@ https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-function
 }
 ```
 
-##トラブルシューティング
+## トラブルシューティング
 問題の診断と解決や Application Insights などを使ってどういった観点でトラブルシューティングをしていけばよいかを紹介します。<br>
 
-###1. 問題の診断と解決
+### 1. 問題の診断と解決
 
 Azure ポータルで確認いただける問題の診断と解決に、耐久性のある関数(Durable Functions) と呼ばれる画面があります。ないかしら問題の有無について簡易的な診断を行うことが可能です。
 
 <表示画面例>
+
 ![image-e7eea426-a533-4161-abf4-ceb5bd583608.png]({{site.baseurl}}/media/2023/04/image-e7eea426-a533-4161-abf4-ceb5bd583608.png)
 
-###2. Application Insights などログを使ったトラブルシューティング
+### 2. Application Insights などログを使ったトラブルシューティング
 
 ある Durable Functions の実行が遅いや期待した時間内で完了しないシナリオを考えます。多くの場合にはいずれかのアクティビティ関数が実行し続けており完了していないことが考えられます。また、先に解説したタスク ハブ上の情報連携のどこかで処理が失敗している可能性があります。
 
-####2-1. 実行完了していないオーケストレーション ID を特定します。
+#### 2-1. 実行完了していないオーケストレーション ID を特定します。
 
 次の API([すべてのインスタンス ステータスを取得する](https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-functions-http-api#get-all-instances-status)) を実行して実行完了していないオーケストレーション ID を特定します。インスタンスごとに実行状態が確認できるため、Completed 以外の状態となっているオーケストレーション ID を確認します。
+
 <応答例>
+
 ![image-7acb09bb-c5ea-4ec3-af96-939330258cf1.png]({{site.baseurl}}/media/2023/04/image-7acb09bb-c5ea-4ec3-af96-939330258cf1.png)
 
 また、前述したテーブルの TestHubNameInstances を確認すると、CompletedTime が空となっている行が確認できます。このときの PartitionKey がオーケストレーション ID（今回は f71ac761454f41468d9923ac39e9bdbc） になります。
+
 ![image-af057bee-f728-4770-b43d-efd8fc62d777.png]({{site.baseurl}}/media/2023/04/image-af057bee-f728-4770-b43d-efd8fc62d777.png)
 
 *Durable Functions の API を利用する際にはパラメータに code を追加する必要があります。Azure Functions がリスンしているエンドポイントは [API キー](https://learn.microsoft.com/ja-jp/azure/azure-functions/security-concepts?tabs=v4#system-key)による保護が標準で有効化されているため、Durable Functions のインスタンス ステータスを取得する際には **API キーを与える必要があります（与えないと 401 となります）。** キーの参照方法については、[こちら](https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-csharp#obtaining-keys)を参照ください。
 
-####2-2. Application Insights を確認します。
+#### 2-2. Application Insights を確認します。
 以下のクエリを実行すると、次のような結果が得られます。するとオーケストレーター関数からアクティビティ関数が順番に呼び出されている様子が確認できます。
 
 Executing から始まるログと Executed から始まるログまでの間（黄色ハイライト部分）でひとつの関数の実行となります。また、オーケストレーター関数が実行されたのちに、アクティビティ関数が実行されている状況が確認できます。これは、先の説明の通りオーケストレーター関数がアクティビティ関数の実行契機を与えるためです。
@@ -153,6 +159,7 @@ traces
 | where message startswith "f71ac761454f41468d9923ac39e9bdbc" or operation_Name != "" 
 | order by timestamp asc 
 ```
+
 ![image-8e52489a-e70f-42ab-94cb-0dc8d3439341.png]({{site.baseurl}}/media/2023/04/image-8e52489a-e70f-42ab-94cb-0dc8d3439341.png)
 
 さらにログを確認するとログが途中で切れているものがあることがわかります。オーケストレーター関数が動作し、アクティビティ関数(TaskScheduleId \#2 の実行)の実行計画を行い、それを受けてアクティビティ関数が起動しています。本来であれば Executing から始まるログがあり、アプリケーションで出力している "Saying hello to London." の次に Executed から始まるログがあるはずですが、出力されていません。
@@ -163,6 +170,7 @@ traces
 さらに追加のログがあればアプリケーションの具体的にどこまで処理が進んだかなどご確認いただけます。実は今回はデバッグ実行で途中で処理を止めており、意図的に処理途中で Durable Functions を終了させていました。このような状態になってもタスク ハブ(アクティビティ関数の実行であれば作業項目キュー)にデータが残っているために次回の起動時に未完了の箇所から処理が再開されますのでご安心ください。
 
 <作業項目キューに残存している TaskScheduleId \#2 の実行計画>
+
 ![image-377b5135-4712-4f7f-a5d6-707396b4c836.png]({{site.baseurl}}/media/2023/04/image-377b5135-4712-4f7f-a5d6-707396b4c836.png)
 <作業項目キューのメッセージの内容例>
 ```
