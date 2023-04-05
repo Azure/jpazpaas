@@ -6,10 +6,10 @@ tags:
     - Durable Functions
 ---
 
-# 質問
+#質問
 Durable Functions のトラブルシューティングについて確認方法を教えてください。
 
-# 回答
+#回答
 Duralbe Functions の動作を解説し、トラブルシューティング方法について説明します。
 ##Durable Functions の動作
 簡単に Durable Functions の動作について解説します。
@@ -119,18 +119,18 @@ https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-function
 ##トラブルシューティング
 問題の診断と解決や Application Insights などを使ってどういった観点でトラブルシューティングをしていけばよいかを紹介します。<br>
 
-### 1. 問題の診断と解決
+###1. 問題の診断と解決
 
 Azure ポータルで確認いただける問題の診断と解決に、耐久性のある関数(Durable Functions) と呼ばれる画面があります。ないかしら問題の有無について簡易的な診断を行うことが可能です。
 
 <表示画面例>
 ![image-e7eea426-a533-4161-abf4-ceb5bd583608.png]({{site.baseurl}}/media/2023/04/image-e7eea426-a533-4161-abf4-ceb5bd583608.png)
 
-### 2. Application Insights などログを使ったトラブルシューティング
+###2. Application Insights などログを使ったトラブルシューティング
 
 ある Durable Functions の実行が遅いや期待した時間内で完了しないシナリオを考えます。多くの場合にはいずれかのアクティビティ関数が実行し続けており完了していないことが考えられます。また、先に解説したタスク ハブ上の情報連携のどこかで処理が失敗している可能性があります。
 
-#### 2-1. 実行完了していないオーケストレーション ID を特定します。
+####2-1. 実行完了していないオーケストレーション ID を特定します。
 
 次の API([すべてのインスタンス ステータスを取得する](https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-functions-http-api#get-all-instances-status)) を実行して実行完了していないオーケストレーション ID を特定します。インスタンスごとに実行状態が確認できるため、Completed 以外の状態となっているオーケストレーション ID を確認します。
 <応答例>
@@ -141,7 +141,7 @@ Azure ポータルで確認いただける問題の診断と解決に、耐久�
 
 *Durable Functions の API を利用する際にはパラメータに code を追加する必要があります。Azure Functions がリスンしているエンドポイントは [API キー](https://learn.microsoft.com/ja-jp/azure/azure-functions/security-concepts?tabs=v4#system-key)による保護が標準で有効化されているため、Durable Functions のインスタンス ステータスを取得する際には **API キーを与える必要があります（与えないと 401 となります）。** キーの参照方法については、[こちら](https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=in-process%2Cfunctionsv2&pivots=programming-language-csharp#obtaining-keys)を参照ください。
 
-#### 2-2. Application Insights を確認します。
+####2-2. Application Insights を確認します。
 以下のクエリを実行すると、次のような結果が得られます。するとオーケストレーター関数からアクティビティ関数が順番に呼び出されている様子が確認できます。
 
 Executing から始まるログと Executed から始まるログまでの間（黄色ハイライト部分）でひとつの関数の実行となります。また、オーケストレーター関数が実行されたのちに、アクティビティ関数が実行されている状況が確認できます。これは、先の説明の通りオーケストレーター関数がアクティビティ関数の実行契機を与えるためです。
