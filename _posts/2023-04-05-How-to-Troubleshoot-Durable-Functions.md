@@ -172,7 +172,9 @@ traces
 <作業項目キューに残存している TaskScheduleId \#2 の実行計画>
 
 ![image-377b5135-4712-4f7f-a5d6-707396b4c836.png]({{site.baseurl}}/media/2023/04/image-377b5135-4712-4f7f-a5d6-707396b4c836.png)
+
 <作業項目キューのメッセージの内容例>
+
 ```
 {
    "$type":"DurableTask.AzureStorage.MessageData",
