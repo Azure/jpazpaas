@@ -89,7 +89,7 @@ https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-function
 
 ![image-3d1878db-2b2f-4669-99ff-bf4e949cb2c7.png]({{site.baseurl}}/media/2023/04/image-3d1878db-2b2f-4669-99ff-bf4e949cb2c7.png)
 
-- オーケストレーター関数からアクティビティ関数の実行はアクティビティ作業項目キューと呼ばれるキューが利用されます。キューの名前は、<task hub 名>-workitems( [標準](https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-functions-task-hubs?tabs=csharp#hostjson-functions-20-1) では testhubname-workitems) にメッセ－ジが作成されます。キュー メッセージが消えない限りはアクティビティ関数が完了せず実行され続けます。 [キュー メッセ－ジの有効期限が 7 日間](https://learn.microsoft.com/ja-jp/azure/storage/queues/storage-queues-introduction)となるため、何かしらの要因によってアクティビティ関数の実行が（実行結果の成否問わず）完了しない場合には最大で 7 日間実行され続けます。
+- オーケストレーター関数からアクティビティ関数の実行はアクティビティ作業項目キューと呼ばれるキューが利用されます。キューの名前は、<task hub 名>-workitems [標準](https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-functions-task-hubs?tabs=csharp#hostjson-functions-20-1) では testhubname-workitems にメッセ－ジが作成されます。キュー メッセージが消えない限りはアクティビティ関数が完了せず実行され続けます。 [キュー メッセ－ジの有効期限が 7 日間](https://learn.microsoft.com/ja-jp/azure/storage/queues/storage-queues-introduction) となるため、何かしらの要因によってアクティビティ関数の実行が（実行結果の成否問わず）完了しない場合には最大で 7 日間実行され続けます。
 
 以上の動作でオーケストレーター関数の開始及びオーケストレーション ID の生成から、テーブルやキューといった揮発しにくいストレージに情報を保持しておくことで持続的にアプリケーションの実行が行われます。
 
@@ -137,7 +137,7 @@ Azure ポータルで確認いただける問題の診断と解決に、耐久�
 
 次の API([すべてのインスタンス ステータスを取得する](https://learn.microsoft.com/ja-jp/azure/azure-functions/durable/durable-functions-http-api#get-all-instances-status)) を実行して実行完了していないオーケストレーション ID を特定します。インスタンスごとに実行状態が確認できるため、Completed 以外の状態となっているオーケストレーション ID を確認します。
 
-<応答例>
+**応答例**
 
 ![image-7acb09bb-c5ea-4ec3-af96-939330258cf1.png]({{site.baseurl}}/media/2023/04/image-7acb09bb-c5ea-4ec3-af96-939330258cf1.png)
 
