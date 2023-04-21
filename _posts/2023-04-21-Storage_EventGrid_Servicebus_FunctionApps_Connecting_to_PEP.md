@@ -63,7 +63,7 @@ Identity ブレードで状態が「オン」になっているか確認し、Az
 既存のイベントサブスクリプションをご利用頂く場合は以下の追加機能から設定を変更することができます。<br>
 ![image-15755bdf-f06f-4b35-8b0d-fef2ca9599da.png]({{site.baseurl}}/media/2023/04/image-15755bdf-f06f-4b35-8b0d-fef2ca9599da.png)<br>
 
-上記の手順通り、システムトピックを作成・設定してイベントサブスクリプションを作成するのではなく、イベントブレードからイベントサブスクリプションとシステムトピックを一緒に作成する場合は、システムトピックのアクセス許可設定がされていないため以下の様な認証エラーが発生します。
+上記の手順通り、システムトピックを作成・設定してイベントサブスクリプションを作成するのではなく、イベントブレードからイベントサブスクリプションとシステムトピックを一緒に作成する場合は、システムトピックのアクセス許可設定がされていないため以下の様な認証エラーが発生します。<br>
 ![image-0c81601e-573e-4c60-a221-f2b4c1c13b32.png]({{site.baseurl}}/media/2023/04/image-0c81601e-573e-4c60-a221-f2b4c1c13b32.png)<br>
 ```
 "code":"Managed Identity Authorization Error"..."subscription does not have permission to perform Microsoft.ServiceBus/namespaces/messages/send/..."<br>
@@ -89,7 +89,7 @@ Private Endpoint は、Service Bus の Premium SKU のみでサポートして�
 つまり、図で表現すると上記の様な構成になります。<br>
 
 先ず仮想ネットワークを追加します。サブネットは Service Bus 用と Function Apps 用、２個が必要となります。<br>
-以下がFunction Apps 用サブネット作成の画面になります。
+以下がFunction Apps 用サブネット作成の画面になります。<br>
 ![image-74162b27-d7c9-4035-ab70-dd440fba84d8.png]({{site.baseurl}}/media/2023/04/image-74162b27-d7c9-4035-ab70-dd440fba84d8.png)<br>
 <br>
 以下が Service Bus 用サブネット作成の画面になります。
@@ -112,7 +112,8 @@ Private Endpoint は、Service Bus の Premium SKU のみでサポートして�
 ![image-30842ad0-bbee-48d6-a425-07ae3db407a9.png]({{site.baseurl}}/media/2023/04/image-30842ad0-bbee-48d6-a425-07ae3db407a9.png)<br>
 上記の記載の通り Function Apps 側に設定されているNSGのアウトバウンド通信(送信セキュリティ規則)に AMQP の5671と5672、HTTPS の443の許可が必要です。同じく、Service Bus 側の NSG にも以下の内容通り設定してください。<br>
 
-※ Function Apps のVNET統合されたサブネットに設定するネットワークセキュリティグループのルール
+※ Function Apps のVNET統合されたサブネットに設定するネットワークセキュリティグループのルール<br>
+
 ||受信規則（設定必要なし）|送信規則|
 |---|---|---|
 |ソース|x|Any|
@@ -124,7 +125,8 @@ Private Endpoint は、Service Bus の Premium SKU のみでサポートして�
 |アクション|x|許可|
 |優先度|x|適宜設定|
 
-※ Service Bus のサブネットに設定するネットワークセキュリティグループのルール
+※ Service Bus のサブネットに設定するネットワークセキュリティグループのルール<br>
+
 ||受信規則|送信規則（設定必要なし）|
 |---|---|---|
 |ソース|IP Addresses|x|
