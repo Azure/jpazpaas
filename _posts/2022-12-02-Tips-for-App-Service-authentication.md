@@ -3,7 +3,7 @@ title: "App Service 認証機能（Easy Auth）の Tips のご紹介"
 author_name: "Yudai Kurashita"
 tags:
     - App Service
-    - Azure Functions
+    - Function App
 ---
 
 
@@ -153,7 +153,7 @@ JWT トークンは [jwt.ms](https://jwt.ms/) 等をご利用いただくこと�
 <br>
 <br>
 
-2022 年 12 月 02 日時点の内容となります。<br>
+2023 年 04 月 24 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
