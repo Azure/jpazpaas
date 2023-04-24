@@ -2,7 +2,7 @@
 title: "任意のPowerShellモジュールを利用したAzure Functions の環境構築ガイド"
 author_name: "Hayato Kuroda"
 tags:
-    - Function Apps
+    - Function App
     - PowerShell
 ---
 
