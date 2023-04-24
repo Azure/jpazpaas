@@ -13,7 +13,7 @@ Durable Functions のトラブルシューティングについて確認方法�
 Duralbe Functions の動作を解説し、トラブルシューティング方法について説明します。
 
 
-##Durable Functions の動作
+## Durable Functions の動作
 簡単に Durable Functions の動作について解説します。
 
 Durable Functions で実装される関数は、大きくオーケストレーター関数とアクティビティ関数の２種類に分けることができます。
