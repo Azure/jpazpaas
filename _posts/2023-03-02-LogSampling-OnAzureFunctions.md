@@ -2,7 +2,7 @@
 title: "Azure Functions のログサンプリング"
 author_name: "Hayato Kuroda"
 tags:
-    - Azure Functions
+    - Function Apps
 ---
 
 # 質問
@@ -105,7 +105,7 @@ traces
 <br>
 <br>
 
-2023 年 03 月 02 日時点の内容となります。<br>
+2023 年 04 月 24 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
