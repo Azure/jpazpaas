@@ -2,7 +2,7 @@
 title: "任意のPowerShellモジュールを利用したAzure Functions の環境構築ガイド"
 author_name: "Hayato Kuroda"
 tags:
-    - Azure Functions
+    - Function Apps
     - PowerShell
 ---
 
@@ -265,7 +265,7 @@ PipelineIterationInfo :
 <br>
 <br>
 
-2022 年 10 月 28 日時点の内容となります。<br>
+2023 年 04 月 24 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
