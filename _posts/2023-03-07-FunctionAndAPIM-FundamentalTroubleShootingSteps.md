@@ -2,7 +2,7 @@
 title: "API Management と Function Apps を構成した際の基本のパフォーマンス トラブルシューティング"
 author_name: "Hayato Kuroda"
 tags:
-    - Function Apps
+    - Function App
     - API Management
     - Application Insights
 ---
@@ -162,7 +162,7 @@ requests
 <br>
 <br>
 
-2023 年 03 月 07 日時点の内容となります。<br>
+2023 年 04 月 24 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
