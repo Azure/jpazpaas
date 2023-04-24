@@ -2,7 +2,7 @@
 title: "Azure Functions の Graceful Shutdown について"
 author_name: "Hayato Kuroda"
 tags:
-    - Azure Functions
+    - Function Apps
     - Durable Functions
 ---
 
@@ -121,7 +121,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log, Cancel
 <br>
 <br>
 
-2022 年 12 月 05 日時点の内容となります。<br>
+2023 年 04 月 24 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
