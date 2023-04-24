@@ -2,7 +2,7 @@
 title: "Azure Functions のログサンプリング"
 author_name: "Hayato Kuroda"
 tags:
-    - Function Apps
+    - Function App
 ---
 
 # 質問
