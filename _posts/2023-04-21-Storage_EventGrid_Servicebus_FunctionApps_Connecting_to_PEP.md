@@ -1,5 +1,5 @@
 ---
-title: ストレージアカウント → Event Grid → Service Bus → Function Apps の経路で可能な限りプライベートでイベントを配信する設定手順
+title: ストレージアカウント → Event Grid → Service Bus → Functions の経路で可能な限りプライベートでイベントを配信する設定手順
 author_name: "chansiklee"
 tags:
     - Storage Account
@@ -10,28 +10,28 @@ tags:
 # はじめに
 お世話になっております。PaaS Dev サポート担当の李です。<br>
 本日はストレージアカウントから Event Grid 経由で Service Bus にイベントを配信し、<br>
-Service Bus に届いたイベントをトリガーに Function Apps を動作する一連の手順を、パブリックインタネットを経由せずに可能な限りプライベートアクセスで行うための設定方法をご紹介いたします。<br>
-尚、Service Bus と Function Apps それぞれに Network Security Group(NSG) がついている場合どのようなポートを許可すれば良いかに関してもご紹介いたします。<br>
+Service Bus に届いたイベントをトリガーに Functions を動作する一連の手順を、パブリックインターネットを経由せずに可能な限りプライベートアクセスで行うための設定方法をご紹介いたします。<br>
+尚、Service Bus と Functions それぞれに Network Security Group(NSG) がついている場合どのようなポートを許可すれば良いかに関してもご紹介いたします。<br>
 ## 全体の構成図
-![image-9c1f24ac-8cec-4caf-b3bc-ad41ca8057e1.png]({{site.baseurl}}/media/2023/04/image-9c1f24ac-8cec-4caf-b3bc-ad41ca8057e1.png)<br>
+![image-5eaff32e-938e-4499-9fc6-79c300063a25.png]({{site.baseurl}}/media/2023/04/image-5eaff32e-938e-4499-9fc6-79c300063a25.png)<br>
 今回の構成を図で簡単に表現しますと上記の構成になります。<br>
-Service Busの代わりに、お客様のご要件に合わせてEvent hubs若しくはストレージご利用頂くことも可能ですが、今回の記事ではService Busを利用した設定手順をご案内させて頂きます。<br>
+Service Busの代わりに、お客様のご要件に合わせてEvent Hubs若しくはキューストレージをご利用頂くことも可能ですが、今回の記事ではService Busを利用した設定手順をご案内させて頂きます。<br>
 
-## Event Grid → Function Apps に直接繋げられないか？
-シンプルな構成として Storage -> Event Grid -> Functions (プライベートエンドポイント経由) とされたい場合もあるかと存じますが、<br>
+## Event Grid → Functions に直接繋げられないか？
+シンプルな構成として ストレージ -> Event Grid -> Functions (プライベートエンドポイント経由) とされたい場合もあるかと存じますが、<br>
 大変恐れ入りますが、現時点では以下のドキュメント記載の通り、Event Grid からプライベートエンドポイント経由でのイベントの配信はサポートしておりません。<br>
 <br>
 
 >現時点では、プライベート エンドポイントを使用してイベントを配信することはできません。 つまり、配信されたイベント トラフィックがプライベート IP 空間から外に出てはならないという、ネットワークの分離の厳格な要件がある場合はサポートされません。<br>
 [マネージド ID を使用したイベント配信](https://learn.microsoft.com/ja-jp/azure/event-grid/managed-service-identity#private-endpoints)<br>
 
-したがって、Event Gridと Functions 間に Service Bus/Event Hubs/Storage を構成し、Functions がイベントをプルするという構成をする必要があるため、今回は一例として Service Busを間に挟んだ場合にどのように構成するか記載いたします。<br>
+したがって、Event Gridと Functions 間に Service Bus/Event Hubs/ストレージ を構成し、Functions がイベントをプルするという構成をする必要があるため、今回は一例として Service Busを間に挟んだ場合にどのように構成するか記載いたします。<br>
 
 # ストレージアカウント → Event Grid
 ストレージアカウントから Service Bus へイベントを配信する場合は直接配信されるのではなく、Event Grid サービスを経由して Service Bus に配信する形となります。こちらの通信は常に Microsoft バックボーンネットワークでのアクセスになっているため、既にパブリックインターネット経由しない構成となっておりお客様側で何らかの設定を加える必要はございません。<br>
 
 
-# Event Grid → Service Bus（若しくはEvent Hubs、Storage）
+# Event Grid → Service Bus（若しくはEvent Hubs、ストレージ）
 ![image-2b041c50-d659-4672-8bd2-0e99fa2674cc.png]({{site.baseurl}}/media/2023/04/image-2b041c50-d659-4672-8bd2-0e99fa2674cc.png)<br>
 この手順に関しては上記の図の通り、Managed Id を利用して安全にイベントを送信することができます。今回は、Service Bus のキューに対してイベントを配信してみます。<br>
 
@@ -78,18 +78,18 @@ Identity ブレードで状態が「オン」になっているか確認し、Az
 [プライベート リンク サービスを使用してイベントを配信する](https://learn.microsoft.com/ja-jp/azure/event-grid/consume-private-endpoints)<br>
 [Service Bus - 信頼できる Microsoft サービス](https://learn.microsoft.com/ja-jp/azure/service-bus-messaging/service-bus-ip-filtering#trusted-microsoft-services)<br>
 
-# Service Bus → Function Apps
+# Service Bus → Functions
 ![image-6c1e53e6-2f3e-4ce6-929f-b105c36aa459.png]({{site.baseurl}}/media/2023/04/image-6c1e53e6-2f3e-4ce6-929f-b105c36aa459.png)<br>
-この手順に関しては同じく上記の図の通り、Private Endpoint を利用してプライベートアクセスを実現することができます。<br>
-Private Endpoint は、Service Bus の Premium SKU のみでサポートしておりますのでご了承ください。<br>
-こちらの設定に関しては、Service Bus と Function Apps それぞれ既に NSG がついている状況でご案内いたします。
+この手順に関しては同じく上記の図の通り、プライベートエンドポイントを利用してプライベートアクセスを実現することができます。<br>
+プライベートエンドポイントは、Service Bus の Premium SKU のみでサポートしておりますのでご了承ください。<br>
+こちらの設定に関しては、Service Bus と Functions それぞれ既に NSG がついている状況でご案内いたします。
 
-先ず通信経路に関して、正確には Service Bus → Functions ではなく Function Apps から VNET を経由し Service Bus の Private Endpoint を通って Service Bus にイベントを取りに行くイメージとなります。<br>
-![image-bf4ef96f-7710-4b7d-9ce5-2e20bb8a562b.png]({{site.baseurl}}/media/2023/04/image-bf4ef96f-7710-4b7d-9ce5-2e20bb8a562b.png)<br>
+先ず通信経路に関して、正確には Service Bus → Functions ではなく Functions から VNET を経由し Service Bus のプライベートエンドポイントを通って Service Bus にイベントを取りに行くイメージとなります。<br>
+![image-79855275-3f30-4fc4-be54-10cc5794b430.png]({{site.baseurl}}/media/2023/04/image-79855275-3f30-4fc4-be54-10cc5794b430.png)<br>
 つまり、図で表現すると上記の様な構成になります。<br>
 
-先ず仮想ネットワークを追加します。サブネットは Service Bus 用と Function Apps 用、２個が必要となります。<br>
-以下がFunction Apps 用サブネット作成の画面になります。<br>
+先ず仮想ネットワークを追加します。サブネットは Service Bus 用と Functions 用、２個が必要となります。<br>
+以下がFunctions 用サブネット作成の画面になります。<br>
 ![image-74162b27-d7c9-4035-ab70-dd440fba84d8.png]({{site.baseurl}}/media/2023/04/image-74162b27-d7c9-4035-ab70-dd440fba84d8.png)<br>
 <br>
 以下が Service Bus 用サブネット作成の画面になります。
@@ -104,15 +104,15 @@ Private Endpoint は、Service Bus の Premium SKU のみでサポートして�
 [既存の名前空間のプライベート アクセスを構成する](https://learn.microsoft.com/ja-jp/azure/service-bus-messaging/private-link-service#configure-private-access-for-an-existing-namespace)<br>
 
 ![image-5d37a408-1eb2-4a9d-93ff-3a6b18d11f19.png]({{site.baseurl}}/media/2023/04/image-5d37a408-1eb2-4a9d-93ff-3a6b18d11f19.png)<br>
-上記のプライベートエンドポイント作成が終わった後、下記手順に従い Function Apps の VNET 統合を行います。<br>
+上記のプライベートエンドポイント作成が終わった後、下記手順に従い Functions の VNET 統合を行います。<br>
 ![image-90267737-2a94-45b2-aaf7-9a0e3f996019.png]({{site.baseurl}}/media/2023/04/image-90267737-2a94-45b2-aaf7-9a0e3f996019.png)<br>
 
 ![image-468a8bb9-de50-46ea-a562-601e4f998ce2.png]({{site.baseurl}}/media/2023/04/image-468a8bb9-de50-46ea-a562-601e4f998ce2.png)<br>
 その後上記の NSG 設定で Functions → Service Bus のアウトバウンド通信に対して関連ポートを許可する必要がございます。<br>
 ![image-30842ad0-bbee-48d6-a425-07ae3db407a9.png]({{site.baseurl}}/media/2023/04/image-30842ad0-bbee-48d6-a425-07ae3db407a9.png)<br>
-上記の記載の通り Function Apps 側に設定されているNSGのアウトバウンド通信(送信セキュリティ規則)に AMQP の5671と5672、HTTPS の443の許可が必要です。同じく、Service Bus 側の NSG にも以下の内容通り設定してください。<br>
+上記の記載の通り Functions 側に設定されているNSGのアウトバウンド通信(送信セキュリティ規則)に AMQP の5671と5672、HTTPS の443の許可が必要です。同じく、Service Bus 側の NSG にも以下の内容通り設定してください。<br>
 
-※ Function Apps のVNET統合されたサブネットに設定するネットワークセキュリティグループのルール<br>
+※ Functions のVNET統合されたサブネットに設定するネットワークセキュリティグループのルール<br>
 
 ||受信規則（設定必要なし）|送信規則|
 |---|---|---|
@@ -148,9 +148,9 @@ Private Endpoint は、Service Bus の Premium SKU のみでサポートして�
 これで全ての設定手順が完了しました。<br>
 
 ![image-ca8757ae-44a7-4b9b-9fea-c21bab80338f.png]({{site.baseurl}}/media/2023/04/image-ca8757ae-44a7-4b9b-9fea-c21bab80338f.png)<br>
-全てのリソースに対してパブリックアクセスを無効にしても、ストレージに BLOB が追加されると Function Apps で Service Bus キュートリガーが実行されることが確認できました。
+全てのリソースに対してパブリックアクセスを無効にしても、ストレージに BLOB が追加されると Functions で Service Bus キュートリガーが実行されることが確認できました。
 
-以上、ストレージアカウント → Event Grid → Service Bus → Function Apps をプライベートでアクセスする設定手順(NSG を含め)を紹介いたしました。
+以上、ストレージアカウント → Event Grid → Service Bus → Functions をプライベートでアクセスする設定手順(NSG を含め)を紹介いたしました。
 
 <br>
 <br>
