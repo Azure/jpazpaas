@@ -39,7 +39,7 @@ Stream Analytics ジョブを作成せず、上記のプレビュー機能をご
 Event Hubs からイベントを受信するためのアプリケーションを構築いただき、受信したイベントの中身を確認することが可能でございます。<br/>
 以下の .NET のみならず、Java、Python などで受信アプリケーション構築のクイックスタートがございますので参考になれば幸いです。
 
->[クイック スタート: .NET を使用して Azure Event Hubs との間でイベントを送受信する | イベント ハブからイベントを受信する](https://learn.microsoft.com/ja-jp/azure/event-hubs/event-hubs-dotnet-standard-getstarted-send?tabs=connection-string%2Croles-azure-portal#receive-events-from-the-event-hub)
+>[クイック スタート: .NET を使用して Azure Event Hubs との間でイベントを送受信する イベント ハブからイベントを受信する](https://learn.microsoft.com/ja-jp/azure/event-hubs/event-hubs-dotnet-standard-getstarted-send?tabs=connection-string%2Croles-azure-portal#receive-events-from-the-event-hub)
 
 上記クイックスタートを元にアプリケーションを作成し実行すると、例えば Blob Storage の診断ログを Event Hubs に送信するようにした場合、以下のようにイベントの中身を確認することができます。<br/>
 ![image-2a31653e-1139-4255-9ce3-bc18e722e99a.png]({{site.baseurl}}/media/2023/05/image-2a31653e-1139-4255-9ce3-bc18e722e99a.png)
