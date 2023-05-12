@@ -2,7 +2,8 @@
 title: "Service Bus および Event Hubs の UserError、ServerError について"
 author_name: "Kentaro Katahira"
 tags:
-    - Service Bus,Event Hubs
+    - Service Bus
+    - Event Hubs
 ---
 
 # よくある質問
