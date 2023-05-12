@@ -86,7 +86,7 @@ Event Hubs への接続方法については「Connect to a namespace」を、<b
 # 参考ドキュメント
 
 - [Azure Stream Analytics を使用してイベント ハブからのデータを処理する](https://learn.microsoft.com/ja-JP/azure/event-hubs/process-data-azure-stream-analytics)
-- [クイック スタート: .NET を使用して Azure Event Hubs との間でイベントを送受信する | イベント ハブからイベントを受信する](https://learn.microsoft.com/ja-jp/azure/event-hubs/event-hubs-dotnet-standard-getstarted-send?tabs=connection-string%2Croles-azure-portal#receive-events-from-the-event-hub)
+- [クイック スタート: .NET を使用して Azure Event Hubs との間でイベントを送受信する イベント ハブからイベントを受信する](https://learn.microsoft.com/ja-jp/azure/event-hubs/event-hubs-dotnet-standard-getstarted-send?tabs=connection-string%2Croles-azure-portal#receive-events-from-the-event-hub)
 - [Azure Event Hubs で Azure Blob Storage または Azure Data Lake Storage にイベントをキャプチャする](https://learn.microsoft.com/ja-jp/azure/event-hubs/event-hubs-capture-overview)
 - [Azure Event Hubs からストリーム配信されるイベントのキャプチャを有効にする](https://learn.microsoft.com/ja-jp/azure/event-hubs/event-hubs-capture-enable-through-portal)
 - [Azure Event Hubs でキャプチャされた Avro ファイルの操作](https://learn.microsoft.com/ja-jp/azure/event-hubs/explore-captured-avro-files)
