@@ -112,6 +112,19 @@ Linux OS をご利用の場合、/home/LogFiles に docker ログ(YYYY_MM_DD_<�
 ![image-41ea3ec8-be78-4c96-aa86-8b7fc91d485d.png]({{site.baseurl}}/media/2023/04/image-41ea3ec8-be78-4c96-aa86-8b7fc91d485d.png)
 
 
+#### シナリオ５ー３：１度もアプリケーションをデプロイしていないもののパッケージからの実行を構成している場合
+App Service をご利用の際、[パッケージからの実行](https://learn.microsoft.com/ja-jp/azure/azure-functions/run-functions-from-deployment-package)(ZIP ファイルにアプリケーション コード一式をアーカイブし、実行する方法)を構成できます。
+`WEBSITE_RUN_FROM_PACKAGE=1` を構成している場合には、`/home/data/SitePackages` から ZIP ファイルを読み込み起動します。
+何もアプリケーションをデプロイしていない状態で `WEBSITE_RUN_FROM_PACKAGE=1` とした場合には、`/home/data/SitePackages` に ZIP ファイルが無いために「Azure Functions Runtime に到達できません」が発生します。この場合には、アプリケーション ログが記録されません。
+
+パッケージからの実行に失敗しているかどうかは、Kudu より `/home/site/wwwroot` に `FAILED TO INITIALIZE RUN FROM PACKAGE.txt` があることを確認します。本ファイルがある場合には、パッケージからの実行に失敗していることを表します。
+
+![image-951caa7c-0616-4229-9bb1-bcc4daf379e6.png]({{site.baseurl}}/media/2023/04/image-951caa7c-0616-4229-9bb1-bcc4daf379e6.png)
+
+また、`/home/data/SitePackages` にアプリケーション コード一式をアーカイブした ZIP ファイルがあることを確認し、アプリケーションが無い場合には任意の方法でデプロイします。
+
+![image-7bc56981-f731-4882-8e75-219a8c2346ce.png]({{site.baseurl}}/media/2023/04/image-7bc56981-f731-4882-8e75-219a8c2346ce.png)
+
 ### シナリオ６：Azure Functions が BYOS を利用している場合
 ストレージ アカウントの Azure Files を[任意のディレクトリにマウント](https://learn.microsoft.com/ja-jp/azure/azure-functions/storage-considerations?tabs=azure-cli#mount-file-shares)して利用いただくことができます。この時の設定誤りなどの理由により正しくマウントできない場合には「Azure Functions Runtime に到達できません」が発生します。
 
@@ -151,7 +164,7 @@ App_Offline.htm は、[ASP.NET Core 用](https://learn.microsoft.com/ja-jp/aspne
 <br>
 <br>
 
-2023 年 04 月 25 日時点の内容となります。<br>
+2023 年 05 月 15 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
