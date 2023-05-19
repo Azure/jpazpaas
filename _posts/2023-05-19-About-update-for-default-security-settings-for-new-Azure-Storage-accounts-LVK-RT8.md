@@ -38,7 +38,7 @@ tags:
 より詳細は下記の資料をご確認下さい。 
  
 コンテナーと BLOB の匿名パブリック読み取りアクセスを構成する<br>
-https://learn.microsoft.com/ja-jp/azure/storage/blobs/anonymous-read-access-configure?tabs=portal
+[https://learn.microsoft.com/ja-jp/azure/storage/blobs/anonymous-read-access-configure?tabs=portal](https://learn.microsoft.com/ja-jp/azure/storage/blobs/anonymous-read-access-configure?tabs=portal)
  
 これまでは、この設定について、初期値が "有効" となっておりましたが、 <br>
 2023 年 8 月より、新規に作成されるストレージアカウントに対して、この設定の初期値を "無効" に変更します。 <br>
@@ -53,7 +53,7 @@ https://learn.microsoft.com/ja-jp/azure/storage/blobs/anonymous-read-access-conf
 詳細は下記の資料をご確認下さい。 <br>
 <br>
 Get-AzStorageAccount<br>
-https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0
+[https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0](https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0)
 
 ### クロステナントレプリケーションについて
 また、クロステナントレプリケーションという設定がございます。 <br>
@@ -61,7 +61,7 @@ https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAcco
 より詳細は下記の資料をご確認下さい。 <br>
 
 Azure Active Directory テナント間でのオブジェクト レプリケーションを禁止する<br>
-https://learn.microsoft.com/ja-JP/azure/storage/blobs/object-replication-prevent-cross-tenant-policies?tabs=portal
+[https://learn.microsoft.com/ja-JP/azure/storage/blobs/object-replication-prevent-cross-tenant-policies?tabs=portal](https://learn.microsoft.com/ja-JP/azure/storage/blobs/object-replication-prevent-cross-tenant-policies?tabs=portal)
 
  
 これまでは、この設定について、初期値が "有効" となっておりましたが、 <br>
@@ -77,7 +77,7 @@ https://learn.microsoft.com/ja-JP/azure/storage/blobs/object-replication-prevent
 詳細は下記の資料をご確認下さい。 <br>
 <br>
 Get-AzStorageAccount<br>
-https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0
+[https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0](https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0)
 
 ## <補足>
 通知の中に "EnableAnonymousAccessForNewStorageAccounts" という機能について紹介がございます。<br>
@@ -93,13 +93,13 @@ Azure Portal よりサブスクリプションの管理画面を開いて、<br>
 
 # 参考ドキュメント
 - コンテナーと BLOB の匿名パブリック読み取りアクセスを構成する<br>
-https://learn.microsoft.com/ja-jp/azure/storage/blobs/anonymous-read-access-configure?tabs=portal 
+[https://learn.microsoft.com/ja-jp/azure/storage/blobs/anonymous-read-access-configure?tabs=portal](https://learn.microsoft.com/ja-jp/azure/storage/blobs/anonymous-read-access-configure?tabs=portal ) 
 - Azure Active Directory テナント間でのオブジェクト レプリケーションを禁止する<br>
-https://learn.microsoft.com/ja-JP/azure/storage/blobs/object-replication-prevent-cross-tenant-policies?tabs=portal
+[https://learn.microsoft.com/ja-JP/azure/storage/blobs/object-replication-prevent-cross-tenant-policies?tabs=portal](https://learn.microsoft.com/ja-JP/azure/storage/blobs/object-replication-prevent-cross-tenant-policies?tabs=portal)
 - Get-AzStorageAccount<br>
-https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0
+[https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0](https://learn.microsoft.com/ja-jp/powershell/module/az.storage/Get-azStorageAccount?view=azps-8.3.0)
 - Azure サブスクリプションでプレビュー機能を設定する<br>
-https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/management/preview-features?tabs=azure-portal
+[https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/management/preview-features?tabs=azure-portal](https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/management/preview-features?tabs=azure-portal)
 
 <br>
 <br>
