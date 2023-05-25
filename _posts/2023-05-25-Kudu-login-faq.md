@@ -21,13 +21,13 @@ Kudu の機能そのものについては下記記事もご参考ください。
 # Kudu へ認証について
 
 ## Q: Kudu の認証はいつ行われますか？
-**A** : Kudu の認証は、ブラウザを利用してポータルの高度なツールより、https://<AppName>.scm.azurewebsites.net にアクセスして、Kudu UI を利用する場合や、curl 等の HTTP クライアントで
+**A** : Kudu の認証は、ブラウザを利用してポータルの高度なツールより、https://<AppName>.scm.azurewebsites.net にアクセスして、Kudu UI を利用する場合や、curl 等の HTTP クライアントで 
 [Kudu が提供する API](https://github.com/projectkudu/kudu/wiki/REST-API) を利用する際に必要となります。
 代表的な API には デプロイAPI があります。`az cli` や VS Code 、GitHub Actions からのデプロイ時にもこれらの API が利用されることになります。
 
 参考:
 
-- [App Service にファイルをデプロイする - Azure App Service]https://learn.microsoft.com/ja-jp/azure/app-service/deploy-zip?tabs=api#deploy-a-zip-package
+- [App Service にファイルをデプロイする - Azure App Service](https://learn.microsoft.com/ja-jp/azure/app-service/deploy-zip?tabs=api#deploy-a-zip-package)
 
 ## Q: Kudu の認証はどのように行われますか？
 **A**: Kudu の認証は AAD(Azure Active Directory) を用いたシングルサインオン、と [Deployment－credentials（発行プロファイル）](https://github.com/projectkudu/kudu/wiki/Deployment-credentials) を用いた Basic 認証の2つの方法があります。
