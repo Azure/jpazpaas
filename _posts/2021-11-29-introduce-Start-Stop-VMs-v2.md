@@ -52,37 +52,19 @@ Azure ポータルの [リソースの作成] を利用して、 Function App �
 
 ![1_6_list_resourcegroup-55ade3e8-73c3-447e-a26b-691b58ffe222.png]({{site.baseurl}}/media/2021/11/1_6_list_resourcegroup-55ade3e8-73c3-447e-a26b-691b58ffe222.png)
 
-## 2. サブスクリプションに対してロールを割り当てる
+## 2. (Options) サブスクリプションに対してロールを割り当てる
 
 Start/Stop VMs v2 では、作成された Function App が VM の起動/停止を行うため、該当 Function App に対して、VM が属するサブスクリプションにロールを割り当てる必要があります。
 
-2-1. VM が属するサブスクリプションに移動します。
+Start/Stop VMs v2 を作成すると、作成された Function App に対してシステム割り当てマネージド ID が構成され、サブスクリプションに対する共同作成者ロールが付与されますが、 Start/Stop VMs v2 を作成したサブスクリプションとは異なるサブスクリプション上に存在する VM を自動起動/停止したいといった場合には、それらの VM が属するサブスクリプションに対する協同作成者ロールを付与する必要がございます。詳細については下記ドキュメントをご参照ください。
 
-![2_1_list_subscription-bab55d2c-ceec-45e8-b305-87802b5bdf04.png]({{site.baseurl}}/media/2021/11/2_1_list_subscription-bab55d2c-ceec-45e8-b305-87802b5bdf04.png)
-
-2-2. [アクセス制御(IAM)] に移動し、 [追加] から [ロールの割り当ての追加] をクリックします。
-
-![2_2_subscription_add-73475e26-0b70-494c-9686-d72c9b9a0189.png]({{site.baseurl}}/media/2021/11/2_2_subscription_add-73475e26-0b70-494c-9686-d72c9b9a0189.png)
-
-![2_3_subscription_add_role-1fca1995-13d3-4481-9945-a25ae1fe838f.png]({{site.baseurl}}/media/2021/11/2_3_subscription_add_role-1fca1995-13d3-4481-9945-a25ae1fe838f.png)
-
-2-3. [共同作成者] を選択し、 [次へ] をクリックします。
-
-![2_4_select_cocreator-f5e09458-15fc-4376-9886-4229a9483691.png]({{site.baseurl}}/media/2021/11/2_4_select_cocreator-f5e09458-15fc-4376-9886-4229a9483691.png)
-
-2-4. アクセスの割当先として [マネージド ID] を選択し、 [メンバーを追加する] から [サブスクリプション] を選択、マネージド ID は [関数アプリ] を選択し、 1-4 で作成された Fucntion App を選択します。
-
-![2_5_add_role_function-1bcfdab2-3efd-4165-8d4b-129c85facdfe.png]({{site.baseurl}}/media/2021/11/2_5_add_role_function-1bcfdab2-3efd-4165-8d4b-129c85facdfe.png)
-
-2-5. [レビューと割り当て] を選択し、 Function App にロールを割り当てます。
-
-![2_6_confirm_add_role-a93cc575-08ee-4457-bc17-40a1308ab13e.png]({{site.baseurl}}/media/2021/11/2_6_confirm_add_role-a93cc575-08ee-4457-bc17-40a1308ab13e.png)
+[複数のサブスクリプションを有効にする | Start/Stop VMs v2 を Azure サブスクリプションにデプロイする](https://learn.microsoft.com/ja-jp/azure/azure-functions/start-stop-vms/deploy#enable-multiple-subscriptions)
 
 ## 3. スケジュールを構成する
 
 VM の起動/停止を制御するには、要件に基づいて、 1-4 で作成された Logic App を 1 つ以上構成します。 Start/Stop VMs v2 では、 VM を起動/停止するトリガーが 3 種類あります。
 
-| トリガー種類 | 機能                                                                                                                                                                           |
+| トリガー種類 | 機能                                                                                                                                                                    |
 | :-------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Scheduled | 指定したスケジュールに基づいて、 VM を起動/停止します。 <br/>Azure Resource Manager とクラシック VM の両方に対して実行できます。                                          |
 | Sequenced | 事前に定義されたシーケンス処理タグの付いた VM に対して順番に起動/停止を行います。<br/>Azure Resource Manager の VM のみがサポートされ、クラシック VM では実行できません。 |
@@ -97,6 +79,7 @@ VM の起動/停止を制御するには、要件に基づいて、 1-4 で作�
 ![3_1_edit_logicapp_code-c5651a5e-4617-450e-b1d5-ea4898eec04e.png]({{site.baseurl}}/media/2021/11/3_1_edit_logicapp_code-c5651a5e-4617-450e-b1d5-ea4898eec04e.png)
 
 起動/停止する VM のスコープとして、サブスクリプション、リソースグループ、VM の3種類が用意されています。 `RequestScopes` を以下のフォーマットに従って記述することで、複数の VM を指定できます。
+
 
 |       Key       | Value (例)                                                                                                             |
 | :-------------: | :--------------------------------------------------------------------------------------------------------------------- |
@@ -155,7 +138,7 @@ VM の起動/停止を制御するには、要件に基づいて、 1-4 で作�
 <br>
 <br>
 
-2022 年 12 月 08 日時点の内容となります。<br>
+2023 年 06 月 05 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
