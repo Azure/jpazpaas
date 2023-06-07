@@ -1,5 +1,5 @@
 ---
-title: "App Service で fullFREB を取得する方法"
+title: "App Service で full FREB (失敗した要求トレース) を取得する方法"
 author_name: "Yuna Sugimoto"
 tags:
     - App Service
@@ -121,7 +121,7 @@ FREB は、Kudu サイトより取得いただくことが出来ます。
 <br>
 <br>
 
-2022 年 12 月 20 日時点の内容となります。<br>
+2023 年 06 月 05 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
