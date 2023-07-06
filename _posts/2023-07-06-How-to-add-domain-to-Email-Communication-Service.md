@@ -5,11 +5,11 @@ tags:
     - Azure Communication Services
 ---
 
-# 質問
+## 質問
 
 メール通信サービスにカスタムドメインを追加したいのですが、検証が完了しません。
 
-# 回答
+## 回答
 
 検証に必要ないくつかの DNS レコードがパブリック DNS サーバーに設定されている必要があります。まずはご利用のドメインにて下記 DNS レコードが正しく設定されているかご確認ください。
 
@@ -17,10 +17,10 @@ tags:
 
 | Record | Type | Name | Value |
 |--|--|--|--|
-| Domain Verify | TXT | <custom-domain> | ms-domain-verification=<token> |
-| SPF | TXT | <custom-domain> | v=spf1 include:spf.protection.outlook.com -all |
-| DKIM | CNAME | selector1-azurecomm-prod-net._domainkey.<custom-domain> | selector1-azurecomm-prod-net._domainkey.azurecomm.net |
-| DKIM2 | CNAME | selector2-azurecomm-prod-net._domainkey.<custom-domain> | selector2-azurecomm-prod-net._domainkey.azurecomm.net |
+| Domain Verify | TXT | \<custom-domain\> | ms-domain-verification=\<token\> |
+| SPF | TXT | \<custom-domain\> | v=spf1 include:spf.protection.outlook.com -all |
+| DKIM | CNAME | selector1-azurecomm-prod-net._domainkey.\<custom-domain\> | selector1-azurecomm-prod-net._domainkey.azurecomm.net |
+| DKIM2 | CNAME | selector2-azurecomm-prod-net._domainkey.\<custom-domain\> | selector2-azurecomm-prod-net._domainkey.azurecomm.net |
 
 ## メール通信サービスにカスタムドメインを追加する手順
 
@@ -70,7 +70,7 @@ tags:
 
 特に DKIM/DKIM2 に関しましては `selector1-azurecomm-prod-net._domainkey.<custom-domain>` に CNAME レコードを追加する必要がございます。まずは [digwebinterface](https://digwebinterface.com) などで DNS レコードをご確認いただけますと幸いです。
 
-# 参考ドキュメント
+## 参考ドキュメント
 
 <https://learn.microsoft.com/azure/communication-services/quickstarts/email/add-custom-verified-domains>
 
