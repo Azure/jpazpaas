@@ -5,11 +5,11 @@ tags:
     - Azure Communication Services
 ---
 
-## 質問
+# 質問
 
 メール通信サービスにカスタムドメインを追加したいのですが、検証が完了しません。
 
-## 回答
+# 回答
 
 検証に必要ないくつかの DNS レコードがパブリック DNS サーバーに設定されている必要があります。まずはご利用のドメインにて下記 DNS レコードが正しく設定されているかご確認ください。
 
@@ -32,7 +32,7 @@ tags:
 
     ![image-553a382f-f6ba-4709-aace-c6aba8dfb534.png]({{site.baseurl}}/media/2023/07/image-553a382f-f6ba-4709-aace-c6aba8dfb534.png)
 
-    [digwebinterface](https://digwebinterface.com) など TXT レコードが追加されていることを確認します。
+    [digwebinterface](https://digwebinterface.com) などで TXT レコードが追加されていることを確認します。
 
     ![image-8c160ab2-3c87-4d5d-9cc9-a4d160b71e3c.png]({{site.baseurl}}/media/2023/07/image-8c160ab2-3c87-4d5d-9cc9-a4d160b71e3c.png)
 
@@ -70,7 +70,7 @@ tags:
 
 特に DKIM/DKIM2 に関しましては `selector1-azurecomm-prod-net._domainkey.<custom-domain>` に CNAME レコードを追加する必要がございます。まずは [digwebinterface](https://digwebinterface.com) などで DNS レコードをご確認いただけますと幸いです。
 
-## 参考ドキュメント
+# 参考ドキュメント
 
 <https://learn.microsoft.com/azure/communication-services/quickstarts/email/add-custom-verified-domains>
 
