@@ -2,7 +2,7 @@
 title: "Azure APIM services の 4xx や 5xx のトラブルシューティング パート 2"
 author_name: "hmachida"
 tags:
-    - api-management
+    - API Management
 ---
 
 このポストは、2021 年 3 月 1 日に投稿された [Troubleshooting 4xx and 5xx Errors with Azure APIM services
@@ -48,7 +48,7 @@ API リクエストが呼び出すポリシーの式の評価に失敗し、500 
 
 ## 原因：
 
-このエラーは通常、「NullReferenceException」によって発生します。まだ定義されていないか、2023 年 07 月 24 日時点の内容となります。<br> に設定されているパラメーター値を読み取ろうとします。
+このエラーは通常、「NullReferenceException」によって発生します。まだ定義されていないか、2023 年 08 月 01 日時点の内容となります。<br> に設定されているパラメーター値を読み取ろうとします。
 
 診断ログの **ErrorSource** には、リクエスト処理中にエラーが発生しているポリシーの名前が表示されます。
 
