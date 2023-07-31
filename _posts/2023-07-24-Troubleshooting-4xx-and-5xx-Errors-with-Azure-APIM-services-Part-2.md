@@ -148,7 +148,7 @@ APIM サービスのメトリクス ブレードのキャパシティ ダッシ�
 
 SNAT ポートの枯渇は、ハードウェア固有の失敗です。<br/>
 APIM からバックエンドへの最大同時リクエスト数は、Developer レベルの場合 1024で、他のレベルでは 2048 です。<br/>
-https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/management/azure-subscription-service-limits#api-management-limits
+[https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/management/azure-subscription-service-limits#api-management-limits](https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/management/azure-subscription-service-limits#api-management-limits)
 
 Developer レベルを例にとって、これが何を意味するかを理解しましょう。<br/>
 Developer レベルは、APIM サービスがひとつのの VM/ノード/ホストマシンにホストされています。<br/>
@@ -185,7 +185,7 @@ APIM はバックエンドへの接続を再利用できるように可能な限
 
 APIM のリトライロジックを使用することで、これを回避できます。
 
-参照：APIM Retry Policy - https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies
+参照：APIM Retry Policy - [https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies)
 
 
 # シナリオ 7：The remote name could not be resolved
@@ -230,7 +230,7 @@ APIM サービスは、Windows OS で実行される PaaS VM を使用して Azu
 
 したがって、すべての APIM インスタンスは、全 Windows マシンが信頼する同じデフォルトのルート証明機関を信頼します。
 
-信頼されたルート証明機関のリストは、Microsoft Trusted Root Certificate Program Participants リストを使用してダウンロードできます - https://learn.microsoft.com/ja-jp/security/trusted-root/participants-list
+信頼されたルート証明機関のリストは、Microsoft Trusted Root Certificate Program Participants リストを使用してダウンロードできます - [https://learn.microsoft.com/ja-jp/security/trusted-root/participants-list](https://learn.microsoft.com/ja-jp/security/trusted-root/participants-list)
 
 ## 解決策：
 
@@ -249,8 +249,8 @@ New-AzApiManagementBackend -Context $context -Url 'https://contoso.com/myapi' -P
 
 参照：バックエンドエンティティを作成/更新する
 
-* https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/new-azapimanagementbackend?view=azps-9.4.0&viewFallbackFrom=azps-4.8.0
-* https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/set-azapimanagementbackend?view=azps-9.4.0&viewFallbackFrom=azps-4.8.0
+* [https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/new-azapimanagementbackend?view=azps-9.4.0&viewFallbackFrom=azps-4.8.0](https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/new-azapimanagementbackend?view=azps-9.4.0&viewFallbackFrom=azps-4.8.0)
+* [https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/set-azapimanagementbackend?view=azps-9.4.0&viewFallbackFrom=azps-4.8.0](https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/set-azapimanagementbackend?view=azps-9.4.0&viewFallbackFrom=azps-4.8.0)
 
 # シナリオ 9：Unable to read data from the transport connection: The connection was closed.
 
@@ -275,7 +275,7 @@ APIM がレスポンスステータスコードとヘッダーを最初に読み
 
 ユーザーは、このエラーを回避するためにAPIMでリトライロジックを実装できます：
 
-参照：APIM リトライ ポリシー-https://docs.microsoft.com/en-us/azure/api-management/api-management-advanced-policies#Retry
+参照：APIM リトライ ポリシー-[https://docs.microsoft.com/en-us/azure/api-management/api-management-advanced-policies#Retry](https://docs.microsoft.com/en-us/azure/api-management/api-management-advanced-policies#Retry)
 
 # シナリオ 10：The underlying connection was closed: The connection was closed unexpectedly
 
@@ -390,7 +390,7 @@ APIM サービスがクライアントに 504 レスポンスを返す一般的�
 この問題を軽減するための 2 つの解決策があります。
 
 * APIM サービスの <forward-request> ポリシーのタイムアウト値を、バックエンドのリクエスト処理にかかる平均時間に合わせて増やす。<br/>
-参照：https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies
+参照：[https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies)
 * バックエンドのレスポンス時間を短縮してパフォーマンスを改善する。
 
 **シナリオ 3：** forward-request ポリシー内で APIM サービスに設定されたタイムアウト値が低い。
@@ -399,10 +399,10 @@ APIM サービスがクライアントに 504 レスポンスを返す一般的�
 
 注：APIM API リクエスト処理において、APIM サービスが強制するデフォルトのタイムアウト値は 300 秒/ 5 分です。
 
-デフォルトのタイムアウト値は、**forward-request** ポリシーを使用して増やすことができます - https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies
+デフォルトのタイムアウト値は、**forward-request** ポリシーを使用して増やすことができます - [https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies)
 
 タイムアウトについては、有効な整数を設定できますが、上記のドキュメントにあるように、実際の最大値は約 240 秒です。240 秒を超える値は、基礎となるネットワーク インフラストラクチャがアイドル接続をドロップする場合があるため、動作しない可能性があります。<br/>
-参照：https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies
+参照：[https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies)
 
 
 
