@@ -389,8 +389,8 @@ APIM サービスがクライアントに 504 レスポンスを返す一般的�
 
 この問題を軽減するための 2 つの解決策があります。
 
-* APIM サービスの <forward-request> ポリシーのタイムアウト値を、バックエンドのリクエスト処理にかかる平均時間に合わせて増やす。<br/>
-参照：[https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies)
+* APIM サービスの <forward-request> ポリシーのタイムアウト値を、バックエンドのリクエスト処理にかかる平均時間に合わせて増やす。
+  * 参照：[https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies)
 * バックエンドのレスポンス時間を短縮してパフォーマンスを改善する。
 
 **シナリオ 3：** forward-request ポリシー内で APIM サービスに設定されたタイムアウト値が低い。
