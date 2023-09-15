@@ -28,11 +28,11 @@ host.json と呼ばれる Azure Functions 全体の設定ファイルに加え�
 
 例えば、Azure ポータルの関数一覧に実装したトリガーを表示することを考えます。下記のような複数のトリガーを実装した場合には、この Azure Functions リソースにデプロイされているアプリケーションには、BLOBTrigger~TimerTrigger まで 15 個のトリガーが実装されていますが、この一覧という情報はどの設定ファイルにも無く、それぞれのトリガーごとのフォルダに含まれている functions.json を確認する必要があります。
 
-<関数一覧>
+**関数一覧**
 
 ![image-46fd2f8a-e707-4450-8525-fe6f71bcebdc.png]({{site.baseurl}}/media/2023/09/image-46fd2f8a-e707-4450-8525-fe6f71bcebdc.png)
 
-<BLOBTrigger の function.json の例>
+**BLOBTrigger の function.json の例**
 
 ![image-b6c0a2a3-1896-4566-9365-d3d18a9650d6.png]({{site.baseurl}}/media/2023/09/image-b6c0a2a3-1896-4566-9365-d3d18a9650d6.png)
 
@@ -81,7 +81,7 @@ Kudu から確認するとアプリケーション ルート(/home/site/wwwroot/
 動作シーケンスの通りトリガーの同期の通信が通るように通信許可設定を追加します。
 前述の NSG によって通信が拒否されている場合には、AppService のサービスタグを通信許可ルールとして追加します。AzureFirewall などを利用の場合には、`*.azurewebsites.net` の FQDN で 80 番及び 443 番ポートの外部通信を許可します。
 
-<NSG の送信ルール例>
+**NSG の送信ルール例**
 
 ![image-c22289ef-2b81-459f-a953-57b9e050a74b.png]({{site.baseurl}}/media/2023/09/image-c22289ef-2b81-459f-a953-57b9e050a74b.png)
 
