@@ -45,14 +45,14 @@ Web ジョブ API の実行には、認証情報が必要となり以下のよ�
 ![2-webjob-a83528f5-e5ea-4ed9-97c8-e1e91084ad92.png]({{site.baseurl}}/media/2021/02/2-webjob-a83528f5-e5ea-4ed9-97c8-e1e91084ad92.png)
 
 #### curl コマンドを利用したテスト
-以下は curl コマンドを使用した Web ジョブ API を利用して特定の Web ジョブ スクリプトの状態を取得します。`<>` で囲まれている値は使用している環境にて合わせて変更をします。
+以下は curl コマンドを使用した Web ジョブ API を利用して特定の Web ジョブ スクリプトの状態を取得します。`<>` で囲まれている値は使用している環境にて合わせて変更をします。<ユーザ名> 前の `\` は `$` のエスケープ文字を含めるために追加をします。
 
 ```bash
 webappsname="<WebApp名>"
 webjobname="<WebJob名>"
-username="<ユーザ名>"
+username="\<ユーザ名>"
 password="<パスワード>"
-token=$(echo -n $username:$password | base64)
+token=$(echo -n $username:$password | base64 -i)
 
 curl -H "Authorization:Basic $token" -H "accept: application/json" https://$webappsname.scm.azurewebsites.net/api/triggeredwebjobs/$webjobname/
 ```
@@ -146,7 +146,7 @@ Application Insights は、世界各地の複数のポイントから定期的�
 <br>
 <br>
 
-2022 年 10 月 06 日時点の内容となります。<br>
+2023 年 10 月 11 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
