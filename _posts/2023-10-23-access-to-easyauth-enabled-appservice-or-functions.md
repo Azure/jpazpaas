@@ -11,7 +11,7 @@ App Service では組み込みの認証機能を提供しており、App Service
 
 [参考: 認証と承認 - Azure App Service](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization)
 
-App Service 認証が有効な App Service(Azure Functions 含む) でホスティングされているお客様の Web アプリケーションや API (以下、まとめてサイトと表記します) へアクセスする方法はクライアントの種類により異なります。本記事では、代表的な 5 つのクライアントからアクセスする例を 5 つご紹介します。
+App Service 認証が有効な App Service(Azure Functions 含む) でホスティングされているお客様の Web アプリケーションや API (以下、まとめてサイトと表記します) へアクセスする方法はクライアントの種類により異なります。本記事では、代表的なクライアントからアクセスする例を 5 つご紹介します。
 
 イメージ:<br>
 Client --> App Service 認証が有効な App Service/Azure Functions のサイト
@@ -315,7 +315,7 @@ Client(ユーザー) -->  App Service 認証が有効な App Service -->  App Se
 <br>
 手順８：取得した App Service 独自の認証トークン(セッショントークン)を利用して、App Service にアクセスする
 
-###手順１：Microsoft Entra ID（Azure AD）に SPA アプリケーションを登録する
+### 手順１：Microsoft Entra ID（Azure AD）に SPA アプリケーションを登録する
 
 以下の手順により、Microsoft Entra ID にアプリケーションを登録します。
 <br>
@@ -338,13 +338,13 @@ Microsoft Entra ID に SPA アプリケーションを登録できた場合、�
  ![image-dd10d57f-43e2-4ea1-b7ab-590ed749b138.png]({{site.baseurl}}/media/2023/10/image-dd10d57f-43e2-4ea1-b7ab-590ed749b138.png)
 
 
-###手順２：JavaScript SPA アプリケーションのプロジェクトをダウンロードする
+### 手順２：JavaScript SPA アプリケーションのプロジェクトをダウンロードする
 下記のリンクより SPA アプリケーションのプロジェクトをダウンロードします。
 
 [手順 2:プロジェクトのダウンロード](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript#step-2-download-the-project)
 >Node.js を使用して Web サーバーでプロジェクトを実行するために、コア プロジェクト ファイルをダウンロードします。
 
-###手順３：JavaScript SPA アプリケーションの構成ファイルを編集する
+### 手順３：JavaScript SPA アプリケーションの構成ファイルを編集する
 
 app フォルダに格納された authConfig.js ファイルを開き、下記の項目を修正します。
 <br>・clientId　 ： Microsoft Entra ID に登録した SPA アプリケーションのアプリケーション (クライアント) ID
@@ -370,7 +370,7 @@ scopes: ["api://{App Service 認証のアプリケーション(クライアン�
 <br><参考: JavaScript アプリの構成>
 <br>https://learn.microsoft.com/ja-jp/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript#step-3-configure-your-javascript-app
 
-###手順４：Microsoft Entra ID に登録された SPA アプリケーションに対して、App Service のアクセス許可を追加する
+### 手順４：Microsoft Entra ID に登録された SPA アプリケーションに対して、App Service のアクセス許可を追加する
 
 Microsoft Entra ID に登録された SPA アプリケーションの「API のアクセス許可」メニューより、「アクセス許可の追加」をクリックします。
 「API アクセス許可の要求」画面にて、「自分のAPI」タブにてApp Service 認証で登録したアプリケーションを選択します。
@@ -385,7 +385,7 @@ Microsoft Entra ID に登録された SPA アプリケーションの「API の�
 
 ![image-b91570b8-f6c5-499e-b7da-928328b152c8.png]({{site.baseurl}}/media/2023/10/image-b91570b8-f6c5-499e-b7da-928328b152c8.png)
 
-###手順５：App Service 認証の ID プロバイダーを構成する
+### 手順５：App Service 認証の ID プロバイダーを構成する
 App Service の [認証] ブレードより、Microsoft ID プロバイダー項目にて、編集アイコンをクリックして、以下の項目の値を編集します。
 
 ・発行者のURL：手順３で指定された authority の値に編集します。
@@ -400,7 +400,7 @@ api://<App Service 認証のアプリケーション(クライアント) ID>
 
 ![image-dd0f3398-2d55-4b3f-82e0-d1c7312f0b22.png]({{site.baseurl}}/media/2023/10/image-dd0f3398-2d55-4b3f-82e0-d1c7312f0b22.png)
 
-###手順６：プロジェクトを実行してアクセストークンを取得する
+### 手順６：プロジェクトを実行してアクセストークンを取得する
 下記の手順によりプロジェクトを実行します。
 <br>[Node.js を使用して Web サーバーでプロジェクトを実行します。](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript#step-4-run-the-project)
 >1.サーバーを起動するために、プロジェクト ディレクトリ内から次のコマンドを実行します。
@@ -420,7 +420,7 @@ api://<App Service 認証のアプリケーション(クライアント) ID>
 <br><参考:「管理者の承認が必要」のメッセージが表示された場合の対処法>
 <br>https://jpazureid.github.io/blog/azure-active-directory/azure-ad-consent-framework/
 
-###手順７：取得したアクセストークンを App Service 認証に POST して App Service 独自の認証トークン(セッショントークン)を取得する
+### 手順７：取得したアクセストークンを App Service 認証に POST して App Service 独自の認証トークン(セッショントークン)を取得する
 下記の形式でアクセストークンを Body に指定して、`https://App Service名.azurewebsites.net/.auth/login/aad` にPOSTして、App Service 独自の認証トークン(セッショントークン) authenticationToken の値を取得します。
 
 [参考: クライアント主導型サインイン](https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-customize-sign-in-out#client-directed-sign-in)
@@ -431,7 +431,7 @@ api://<App Service 認証のアプリケーション(クライアント) ID>
 
 ![image-6641cca9-558e-49c6-917b-724d5ce2fca1.png]({{site.baseurl}}/media/2023/10/image-6641cca9-558e-49c6-917b-724d5ce2fca1.png)
 
-###手順８：取得した App Service 独自の認証トークン(セッショントークン)を利用して、App Service にアクセスする
+### 手順８：取得した App Service 独自の認証トークン(セッショントークン)を利用して、App Service にアクセスする
 
 手順7で取得した authenticationToken の値をヘッダー "X-ZUMO-AUTH" で指定した上で、App Service のURL（`https://App Service 名.azurewebsites.net`）に対してGETを実行します。
 <br>Postman ツールで試してみると、以下の様に App Service でホストしているサイトから HTTP 200 応答が返却され、正常にアクセスできていることが確認できます。
