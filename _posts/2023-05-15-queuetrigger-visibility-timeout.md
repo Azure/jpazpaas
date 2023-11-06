@@ -45,6 +45,11 @@ _visibilityTimeout = TimeSpan.FromMinutes(10);
 
 実行結果の可否によらず、Queue トリガーの処理終了時にはメッセ－ジが更新されます。アプリケーションが正常終了した場合にはメッセ－ジを削除しますが、異常終了した場合には Queue メッセージを可視状態に戻します。
 
+[正常終了時のイメージ図]
+
+![image-19c9f675-0a0b-4715-869a-77a3163cb1dd.png]({{site.baseurl}}/media/2023/05/image-19c9f675-0a0b-4715-869a-77a3163cb1dd.png)
+
+
 Queue トリガーの処理終了時には [CompleteProcessingMessageAsync](https://github.com/Azure/azure-webjobs-sdk/blob/3f4ec78be9f43bb041937425ced00b341883aa42/src/Microsoft.Azure.WebJobs.Extensions.Storage/Queues/QueueProcessor.cs#L99-L134) が実行されます。正常終了であれば、DeleteMessageAsync が呼び出されメッセ－ジの削除が行われます。正常終了ではない場合には、デキュー カウント(そのメッセージを取り出した回数)を比較しつつ、ReleaseMessageAsync が呼び出されます。ReleaseMessageAsync の処理の中で [UpdateMessageAsync](https://learn.microsoft.com/ja-jp/dotnet/api/microsoft.azure.storage.queue.cloudqueue.updatemessageasync?view=azure-dotnet) にて VisibilityTimeout が反映されます。この分岐に入った場合には、host.json に設定された [visibilityTimeout](https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-storage-queue?tabs=in-process%2Cextensionv5%2Cextensionv3&pivots=programming-language-csharp#host-json) が Queue メッセージに反映されます。
 ```
 /// <summary>
@@ -97,6 +102,9 @@ Queue トリガーの動作時に Azure Functions のメンテナンスなどの
 
 ![image-d70ba119-bd70-4db3-9db5-d5d06fa43493.png]({{site.baseurl}}/media/2023/05/image-d70ba119-bd70-4db3-9db5-d5d06fa43493.png)
 
+[処理中にプロセスが強制的に再起動される場合のイメージ図]
+
+![image-a5246984-e23a-4b28-8ac2-2657f33a661f.png]({{site.baseurl}}/media/2023/05/image-a5246984-e23a-4b28-8ac2-2657f33a661f.png)
 
 - アプリケーション処理で例外が発生する場合
 
@@ -104,7 +112,9 @@ Queue トリガーの動作時に Azure Functions のメンテナンスなどの
 
 ![image-8ad1b2dc-006f-4bd7-9002-eeae2b400eb5.png]({{site.baseurl}}/media/2023/05/image-8ad1b2dc-006f-4bd7-9002-eeae2b400eb5.png)
 
+[アプリケーション処理で例外が発生する場合のイメージ図]
 
+![image-a3a31aaa-e70c-4af2-b24d-a889a820c3a4.png]({{site.baseurl}}/media/2023/05/image-a3a31aaa-e70c-4af2-b24d-a889a820c3a4.png)
 
 以上、Queue トリガーの動作について解説しました。visibilityTimeout については、どんな制御ができるかなどわかりにくい部分もあるかと思います。少しでもご参考になれば幸いです。
 
@@ -116,7 +126,7 @@ Queue トリガーの動作時に Azure Functions のメンテナンスなどの
 <br>
 <br>
 
-2023 年 05 月 15 日時点の内容となります。<br>
+2023 年 11 月 06 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
