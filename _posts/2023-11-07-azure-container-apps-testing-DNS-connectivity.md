@@ -8,7 +8,7 @@ tags:
 ※本記事は Azure OSS Developer Support ブログ
  [Troubleshooting DNS connectivity on Azure Container Apps](https://azureossd.github.io/2023/03/03/azure-container-apps-testing-DNS-connectivity/index.html) の日本語抄訳版です。
 # はじめに
-Azure Container Apps は、コンテナー化されたアプリケーションをクラウドにデプロイするための便利で効率的な方法を提供し、アプリケーションを簡単にすばやくスケーリングして管理できるようにします。ただし、他のテクノロジと同様に、アプリケーションの可用性とパフォーマンスに影響を与える可能性のある接続の問題が発生することは珍しくありません。
+Container Apps サポート担当の谷津です。Azure Container Apps は、コンテナー化されたアプリケーションをクラウドにデプロイするための便利で効率的な方法を提供し、アプリケーションを簡単にすばやくスケーリングして管理できるようにします。ただし、他のテクノロジと同様に、アプリケーションの可用性とパフォーマンスに影響を与える可能性のある接続の問題が発生することは珍しくありません。
 
 この投稿では、ネットワークDNS接続の問題を特定するためのツールのインストールと実行に焦点を当てます。
 
