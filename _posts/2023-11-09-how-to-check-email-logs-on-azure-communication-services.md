@@ -11,7 +11,7 @@ Azure Communication Services のメール機能でメールを送信しました
 # 回答
 診断設定を用いることでメール送信のログを確認することができます。具体的には Azure ポータルから Azure Communication Services を開き、[ログ] ブレードから各テーブルのログを確認する方法と、[分析情報（プレビュー）] ブレードからグラフ等で視覚的に確認する方法の 2 種類があります。
 
-##前提条件
+## 前提条件
 どちらの方法でメール送信のログを確認する場合にも、Azure Communication Services の診断設定機能を有効化する必要があります。
 ![acslog1-dbc82f53-55f9-4f90-8ed9-659133d1252a.png]({{site.baseurl}}/media/2023/11/acslog1-dbc82f53-55f9-4f90-8ed9-659133d1252a.png)
 
