@@ -8,6 +8,8 @@ tags:
 
 ※本記事は Azure OSS Developer Support ブログ [Troubleshooting DNS connectivity on Azure Container Apps](https://azureossd.github.io/2023/03/22/Troubleshooting-ingress-issues-on-Azure-Container-Apps/index.html) の日本語抄訳版です。
 
+Container Apps サポート担当の谷津です。
+
 この投稿では、Azure Container Apps でのさまざまな外部イングレスの問題のトラブルシューティングについて説明します。
 
 # 概要
@@ -19,6 +21,7 @@ Azure Container Apps は、[Envoy](https://www.envoyproxy.io/) をプロキシ�
 
 # 一般的なエラー
 ## HTTP
+---
 ### HTTP 404 / Not Found
 HTTP 404は、通常はリソースが存在しないことが原因です(例： URI が実際にアプリケーションにマッピングされていない)。 しかしながら、他のいくつかの理由でも発生する可能性があります。
 
