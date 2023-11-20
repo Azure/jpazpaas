@@ -6,7 +6,7 @@ tags:
 ---
 
 # 質問
-Azure Data Lake Gen2 の特徴として、階層型名前空間が追加された、とありますが、通常の BLOB もポータル等でみるとディレクトリができているから階層構造になっているように見えます。通常の BLOB と Azure Data Lake Gen2 の違いはどこにあるのですが。
+Azure Data Lake Gen2 の特徴として、階層型名前空間が追加された、とありますが、通常の BLOB もポータル等でみるとディレクトリができているから階層構造になっているように見えます。通常の BLOB と Azure Data Lake Gen2 の違いはどこにあるのでしょうか。
 
 [Azure Data Lake Storage Gen2 の階層型名前空間](https://learn.microsoft.com/ja-jp/azure/storage/blobs/data-lake-storage-namespace)
 
