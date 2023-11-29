@@ -2,13 +2,23 @@
 title: "Azure Resource Graph を用いた App Service 証明書の管理"
 author_name: "Takeharu Oshida"
 tags:
-    - App Service Certificate
+    - App Service 証明書
     - Azure Resource Graph
-    - Azure Functions
+    - Function App
 ---
 
+# 2023/11/29 追記
+
+2023年11月時点でプレビューではありますが、Azure Monitor から Azure Resource Graph に対してクエリを実行、アラートルールすることが可能となっています。
+下記記事に本記事の続編を記載しています。
+
+[Azure Resource Graph を用いた App Service 証明書の管理 その2](https://jpazpaas.github.io/blog/2023/11/29/check-app-service-certificate-expiration-with-azure-resource-graph-part2.html)
+
+---
 
 # はじめに
+
+
 お世話になっております。App Service サポート担当の押田です。
 
 App Service 証明書の有効期間は既定では 1 年です。 有効期限が近づいたら、自動または手動により App Service 証明書を 1 年単位で更新できます。
@@ -64,6 +74,7 @@ resources
 # App Service 証明書の有効期限を監視する
 
 残念ながら Azure Resource Graph そのものには定期実行や、結果からのログアラートのような機能が提供されていないため、[Azure Workbooks](https://learn.microsoft.com/ja-jp/azure/azure-monitor/visualize/workbooks-data-sources) のデータソースとして Azure Resource Graph を利用してダッシュボードに表示するか、各言語の SDK を用いてご自身で用意したクライアントから実行する必要があります。
+
 
 ## 定期実行する方法
 
@@ -187,7 +198,7 @@ Azure Monitor ログ アラートについての詳細は下記記事をご参�
 
 以上、Azure Resource Graph を用いて、サブスクリプションに存在する購入済み App Service 証明書の状態を確認する方法についてご紹介させていただきました。
 
-2023 年 01 月 30 日時点の内容となります。<br>
+2023 年 11 月 29 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
