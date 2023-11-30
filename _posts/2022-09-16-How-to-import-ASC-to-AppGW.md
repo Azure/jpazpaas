@@ -238,6 +238,22 @@ Application Gateway と App Service 証明書を直接紐づけることで、�
 一方で Key Vault に格納された App Service 証明書をエクスポートした後に Application Gateway にインポートした場合には、Key Vault に格納された App Service 証明書が更新されたとしても、Application Gateway の App Service 証明書は自動で更新されません。
 これは、Key Vault からエクスポートされた App Service 証明書は Key Vault に格納された App Service 証明書を直接参照しないためです。
 
+
+## Application Gateway から App Service 証明書の紐づけの動作の検証方法
+Application Gateway から App Service 証明書の紐づけの動作の検証を実施する方法といたしまして、App Service 証明書の Azure Portal にございます キー更新と同期 > キー更新 をしていただくことで、App Service 証明書のサムプリント（拇印）が更新され、時間経過後にブラウザから Application Gateway へ接続を実施することで更新された証明書のサムプリントを確認することができます。
+
+**App Service 証明書 Azure Portal の キー更新と同期 画面**
+
+![image-bd436361-cd43-4ad2-ada0-372397e03a2d.png]({{site.baseurl}}/media/2022/09/image-bd436361-cd43-4ad2-ada0-372397e03a2d.png)
+
+**キー更新ボタン押下前**
+
+![image-da98d81f-c0ab-4b89-a01a-21e981155f26.png]({{site.baseurl}}/media/2022/09/image-da98d81f-c0ab-4b89-a01a-21e981155f26.png)
+
+**キー更新ボタン押下後**
+
+![image-d9f3ef29-679c-4fef-9c62-f465f07dd806.png]({{site.baseurl}}/media/2022/09/image-d9f3ef29-679c-4fef-9c62-f465f07dd806.png)
+
 <br>
 
 ## 参考ドキュメント
@@ -264,7 +280,7 @@ Application Gateway と App Service 証明書を直接紐づけることで、�
 <br>
 <br>
 
-2022 年 09 月 26 日時点の内容となります。<br>
+2023 年 11 月 30 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
