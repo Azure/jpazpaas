@@ -4,9 +4,8 @@ author_name: "Haruka Matsumura"
 tags:
     - Storage Account
 ---
-
-2023/02/21: GUI (Azure ポータル) を用いる方法の機能廃止に伴い、内容を更新いたしました。
-
+- 2023/02/21: GUI (Azure ポータル) を用いる方法の機能廃止に伴い、内容を更新いたしました。<br>
+- 2024/01/19: Azure PowerShell のスクリプトを用いる方法でご紹介のリンク先のスクリプトが、単一コンテナーのサンプルからストレージ アカウント内の全コンテナー対象のサンプルへの変更に伴い、内容を更新いたしました。<br>
 ---
 
 # 質問
@@ -47,16 +46,9 @@ Azure PowerShell (Az モジュール) のご利用に関しましては、下記
 (ご参考) Azure Az PowerShell モジュールの概要<br>
 [https://docs.microsoft.com/ja-jp/powershell/azure/new-azureps-module-az?view=azps-5.9.0](https://docs.microsoft.com/ja-jp/powershell/azure/new-azureps-module-az?view=azps-5.9.0)<br>
 <br>
-スクリプトに関しましては、下記に単一コンテナーの場合のサンプル スクリプトがございます。<br>
+スクリプトに関しましては、下記に対象のストレージ アカウント内のすべてのコンテナーのサイズを計算するためのサンプル スクリプトがございますので、お客様にてスクリプトを作り込みいただく際のご参考となれば幸いです。<br>
 <br>(ご参考) PowerShell を使用して BLOB コンテナーのサイズを計算する<br>
 [https://docs.microsoft.com/ja-jp/azure/storage/scripts/storage-blobs-container-calculate-size-powershell](https://docs.microsoft.com/ja-jp/azure/storage/scripts/storage-blobs-container-calculate-size-powershell)<br>
-<br>
-上記は単一コンテナーでのサンプルとなりますが、コンテナー名の一覧をご用意いただき、ループ処理を実施いただくことによって対象ストレージ アカウント内のコンテナー一覧での表示を実施いただけます。<br>
-具体的には、下記コマンドで対象ストレージ アカウント内のコンテナー名を配列で取得いただけるため、このコンテナー名の配列をループで回し、上記公開情報のサンプル スクリプト内の「# get a list of all of the blobs in the container」行以降の処理をループ内で実施いただくことで、各コンテナーごとにサイズを計算し表示いただくことが可能と存じますので、スクリプトを作り込みいただく際のご参考となれば幸いでございます。<br>
-
-```
-$containerNameList = (Get-AzStorageContainer -Context $ctx).Name
-```
 <br>
 
 <a id="storage-explorer"></a>
