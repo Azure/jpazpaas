@@ -1,3 +1,10 @@
+---
+title: API を用いた App Service のネットワークトラブルシューティング
+author_name: "Tsutomu Mori"
+tags:
+    - App Service
+---
+
 # はじめに
 本記事では、ネットワークトラブルシューティングに利用可能な新しい API の利用方法をご紹介します。
 
