@@ -5,8 +5,6 @@ tags:
     - Azure
 ---
 
-# PaaS Blog の URL 変更について
-
 Azure PaaS ブログの読者の皆様、こんにちは！
 
 今回は、Azure PaaS ブログがリポジトリ移行により URL が変更となることをお知らせいたします。
