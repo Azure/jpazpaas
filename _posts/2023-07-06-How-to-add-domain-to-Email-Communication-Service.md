@@ -48,8 +48,6 @@ tags:
 
     ![image-6b60fff3-f69b-4b19-920b-3390d3cf14c5.png]({{site.baseurl}}/media/2023/07/image-6b60fff3-f69b-4b19-920b-3390d3cf14c5.png)
 
-    なお SPF に関しましては、 TXT レコードに複数の SPF 値が含まれていると検証が成功しない場合がございますのでご注意ください。詳細については [SPF record for domain won't verify for custom Email domain](https://learn.microsoft.com/en-us/answers/questions/929882/spf-record-for-domain-wont-verify-for-custom-email) をご参照ください。
-
     **<DKIM (CNAME レコード)>**
 
     ![image-2cf15561-08be-4efa-9273-57b8f5c3f7fc.png]({{site.baseurl}}/media/2023/07/image-2cf15561-08be-4efa-9273-57b8f5c3f7fc.png)
@@ -70,6 +68,19 @@ tags:
 
 特に DKIM/DKIM2 に関しましては `selector1-azurecomm-prod-net._domainkey.<custom-domain>` に CNAME レコードを追加する必要がございます。まずは [digwebinterface](https://digwebinterface.com) などで DNS レコードをご確認いただけますと幸いです。
 
+## SPF (TXT) レコードについて
+
+SPF レコードに関しましては、以前 [TXT レコードに複数の SPF 値が含まれていると検証が成功しない](https://learn.microsoft.com/en-us/answers/questions/929882/spf-record-for-domain-wont-verify-for-custom-email) 事象が報告されておりましたが、 2024 年 1 月 29 日時点では既に改善されており、 TXT レコードに複数の SPF 値が含まれていても検証は成功することが期待されます。
+
+一方で、 SPF レコード (例 : `v=spf1 include:spf.protection.outlook.com -all`) の末尾に記載する `all` につきましては、 `~all (チルダ)` ではなく `-all (ハイフン)` としてレコードを設定いただく必要がございますのでご留意ください。
+
+SPF (送信者ポリシーフレームワーク) において、 `~all` は [Soft fail](http://www.open-spf.org/SPF_Record_Syntax/) と呼ばれ、送信サーバーがドメインを使用して送信することを許可されているかを明確に示すものではなく、 SPF の検証に失敗したメッセージを完全に拒否しません。そのため悪意のある何者かによって悪用された場合、お客様のドメインから送信されたように見えるメールが送信されるといった可能性も考えられ、 Azure メール通信サービスのカスタムドメインでは `~all` でドメイン検証に通過できない動作となっております。
+
+SPF レコードを DNS サーバーに追加したにもかかわらず検証が成功しないといった場合、 SPF レコードが Hard fail (`-all`) として構成されているかご確認ください。
+
+なお、対象のカスタムドメインを他のメールサービスなどで使用しており、既に SPF レコードの末尾を `~all (チルダ)` として DNS サーバーに登録している場合など、 SPF レコードを `-all (ハイフン)` として登録することが難しいご事情がある可能性も考えられます。
+その場合には、それら 「SPF レコードを Hard fail (`-all`) にて登録することが難しいご事情」 を添えて、実際にカスタムドメインを登録されたいメール通信サービスリソースが属するサブスクリプションより [Azure サポートまでご相談いただければと存じます](https://learn.microsoft.com/ja-jp/azure/azure-portal/supportability/how-to-create-azure-support-request) (数日程度のお時間を要することが見込まれますので、予めご了承ください)。
+
 # 参考ドキュメント
 
 <https://learn.microsoft.com/azure/communication-services/quickstarts/email/add-custom-verified-domains>
@@ -82,7 +93,7 @@ tags:
 <br>
 <br>
 
-2023 年 07 月 06 日時点の内容となります。<br>
+2024 年 01 月 29 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
