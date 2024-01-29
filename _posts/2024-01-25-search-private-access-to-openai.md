@@ -2,7 +2,7 @@
 title: "Azure AI Search から Azure OpenAI Service へ可能な限りセキュアに接続したい"
 author_name: "Takumi Nagaya"
 tags:
-    - Search
+    - "AI Search"
 ---
 
 # 質問
@@ -166,7 +166,7 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
-2024 年 01 月 25 日時点の内容となります。<br>
+2024 年 01 月 29 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
