@@ -48,12 +48,12 @@ az rest --method POST --url "/subscriptions/<サブスクリプションid>/reso
 
 ## tcpPingCheck を実行
 
-PowerShell を使用する場合、 `Connect-AzAccount` でログインします。
+PowerShell を使用する場合、 `az login` でログインします。
 
-![image-57433daf-c99d-431a-942c-8f4fd0db6c59.png]({{site.baseurl}}/media/2024/01/image-57433daf-c99d-431a-942c-8f4fd0db6c59.png)
+![image-7acb6066-3d54-4867-9a8a-15711519d498.png]({{site.baseurl}}/media/2024/01/image-7acb6066-3d54-4867-9a8a-15711519d498.png)
 
 `tcpPing` を行う API エンドポイントを指定します。<br>
-`body` の `propeties` では接続するホスト名とポート番号を指定します。
+`body` の `properties` では接続するホスト名とポート番号を指定します。
 
 ![image-ed07ac37-3c17-47e4-96ba-9dd22a201dda.png]({{site.baseurl}}/media/2024/01/image-ed07ac37-3c17-47e4-96ba-9dd22a201dda.png)
 
@@ -75,13 +75,13 @@ PowerShell を使用する場合、 `Connect-AzAccount` でログインします
 ## dnsCheck を実行
 
 `dnsCheck` を行う API エンドポイントを指定します。<br>
-`body` の `propeties` では接続するホストを指定します。<br>
+`body` の `properties` では接続するホストを指定します。<br>
 
 ![image-b7f292f6-84e5-4974-b57c-c22fba9fb9a8.png]({{site.baseurl}}/media/2024/01/image-b7f292f6-84e5-4974-b57c-c22fba9fb9a8.png)
 
 **成功例**
 
-`propaties.connectionsStatus` から接続が `Success` であったことが分かります。
+`properties.connectionsStatus` から接続が `Success` であったことが分かります。
 また、DNS 解決の結果として 実際のホスト名 `blob.tyo22prdstr07a.store.core.windows.net` と対応する IP アドレスが出力されています。<br>
 
 ![image-ea8574a4-f3aa-4229-accf-0b285629c843.png]({{site.baseurl}}/media/2024/01/image-ea8574a4-f3aa-4229-accf-0b285629c843.png)
@@ -89,7 +89,7 @@ PowerShell を使用する場合、 `Connect-AzAccount` でログインします
 
 **失敗例**
 
- アクセス先に存在しない DNS 名を指定すると `propaties.connectionStatus` は `UnknownError` となり、名前解決に失敗したことが分かります。<br>
+ アクセス先に存在しない DNS 名を指定すると `properties.connectionStatus` は `UnknownError` となり、名前解決に失敗したことが分かります。<br>
 
 ![image-d71e5b1b-c08d-4374-8d18-ed4e79120c33.png]({{site.baseurl}}/media/2024/01/image-d71e5b1b-c08d-4374-8d18-ed4e79120c33.png)
 
