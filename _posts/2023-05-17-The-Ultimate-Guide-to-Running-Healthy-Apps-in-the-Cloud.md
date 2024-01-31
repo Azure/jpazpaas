@@ -19,9 +19,9 @@ tags:
 
 
 **Learn More**
-- [App Service を構成する主要な要素とそれぞれの役割](https://jpazpaas.github.io/blog/2023/05/10/Appservice-components.html)
-- [[日本語訳] Inside the Azure App Service Architecture](https://jpazpaas.github.io/blog/2023/05/10/Inside-the-Azure-App-Service-Architecture.html)
-- [Azure App Service の計画メンテナンスの事前通知](https://jpazpaas.github.io/blog/2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html)
+- [App Service を構成する主要な要素とそれぞれの役割](https://azure.github.io/jpazpaas/2023/05/10/Appservice-components.html)
+- [[日本語訳] Inside the Azure App Service Architecture](https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html)
+- [Azure App Service の計画メンテナンスの事前通知](https://azure.github.io/jpazpaas/2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html)
 
 <br>
 

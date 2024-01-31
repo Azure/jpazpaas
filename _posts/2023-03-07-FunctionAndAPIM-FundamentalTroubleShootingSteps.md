@@ -79,7 +79,7 @@ union traces,requests,dependencies
 
 以上から API Management からバックエンドの API として HakurodaChain001 を呼び出していますが、その応答時間のほとんどは dependencies テーブルの通り HakurodaChain002 が使っているとわかります。
 
-**Azure Functions では既定でログ サンプリングが有効化されています。場合によってはすべてのログが記録されないことがございますため、こちらの[ブログ](https://jpazpaas.github.io/blog/2023/03/02/LogSampling-OnAzureFunctions.html)を参考にログ サンプリングを無効化することをご検討ください。**
+**Azure Functions では既定でログ サンプリングが有効化されています。場合によってはすべてのログが記録されないことがございますため、こちらの[ブログ](https://azure.github.io/jpazpaas/2023/03/02/LogSampling-OnAzureFunctions.html)を参考にログ サンプリングを無効化することをご検討ください。**
 
 ### バックエンドその2：Function Apps2(HakurodaChain002)
 同様の手順で Function Apps/HakurodaChain002 を確認します。先の operation_Id `99824b7c8c56e29ef39e980703af9421` を利用します。

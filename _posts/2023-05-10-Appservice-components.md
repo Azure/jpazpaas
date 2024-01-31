@@ -85,7 +85,7 @@ App Service では、複数の Worker インスタンス間で共通的に使用
 
 App Service を構成する要素のうち、お客様のアプリに関連することの多い要素について解説いたしました。
 
-上記でご紹介した内容は App Service を構成する要素の一部であり、全ての各要素についての詳細は [(日本語訳) Inside-the-Azure-App-Service-Architecture](https://jpazpaas.github.io/blog/2023/05/10/Inside-the-Azure-App-Service-Architecture.html) をご参照いただければ幸いです。
+上記でご紹介した内容は App Service を構成する要素の一部であり、全ての各要素についての詳細は [(日本語訳) Inside-the-Azure-App-Service-Architecture](https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html) をご参照いただければ幸いです。
 
 次に、 App Service で稼働するアプリケーションの内部構成について解説いたします。
 
@@ -121,7 +121,7 @@ App Service のアプリケーションは、大きく **Windows アプリ** , *
 
 Kudu については下記の記事にて紹介しておりますため、ご参照いただけますと幸いでございます。
 
-[Kudu サイトの使い方 (Tips 4 選)](https://jpazpaas.github.io/blog/2022/11/28/How-to-use-Kudu-site.html)
+[Kudu サイトの使い方 (Tips 4 選)](https://azure.github.io/jpazpaas/2022/11/28/How-to-use-Kudu-site.html)
 
 <br>
 <br>
@@ -148,7 +148,7 @@ App Service のアーキテクチャは上記でご紹介したような、複�
 
 
 # 5. 参考ドキュメント
--  [(日本語訳) Inside-the-Azure-App-Service-Architecture](https://jpazpaas.github.io/blog/2023/05/10/Inside-the-Azure-App-Service-Architecture.html)
+-  [(日本語訳) Inside-the-Azure-App-Service-Architecture](https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html)
 - [App Service の概要](https://learn.microsoft.com/ja-jp/azure/app-service/overview)
 - [A Heavy Lift: Bringing Kestrel + YARP to Azure App Services](https://devblogs.microsoft.com/dotnet/bringing-kestrel-and-yarp-to-azure-app-services/)
 - [組み込みのイメージ](https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/faqs-app-service-linux#--------)

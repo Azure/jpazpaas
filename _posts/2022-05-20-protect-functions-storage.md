@@ -37,7 +37,7 @@ Azure Functions とストレージの接続、特に 1 と 2 に関して、接�
 
 
 ## 案2. ストレージアカウントからの接続で IP 制限を適用する
-参考記事: [Azure Functions が使用するストレージアカウントに対するアクセス制限の方法](https://jpazpaas.github.io/blog/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html) <br />
+参考記事: [Azure Functions が使用するストレージアカウントに対するアクセス制限の方法](https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html) <br />
 こちらにも記載がございますが、同一リージョン内の App Service, Functions から ストレージアカウントに対する接続では、データセンター内で使用されるプライベート IP アドレスが使用されます。
 ストレージアカウントの [ネットワーク] > [許可するアクセス元: 選択されたネットワーク] を指定した場合、ファイアウォール にて接続を許可する IP アドレスを指定頂けますが、2021年5月現在では [プライベート IP アドレスはご指定頂くことは叶いません](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-network-security?tabs=azure-portal#grant-access-from-an-internet-ip-range)。
 また、App Service, Functions がストレージアカウントに接続する際に使用するプライベート IP アドレスは不定であり、特定することは困難であるため、同一リージョンに配置されたストレージアカウントではご利用頂くことは叶いません。

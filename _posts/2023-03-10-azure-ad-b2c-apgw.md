@@ -25,7 +25,7 @@ App Service に [Azure AD B2C](https://learn.microsoft.com/ja-jp/azure/active-di
 
 ## 参考資料
 ・[Azure App Service のカスタム ドメイン名を購入する](https://learn.microsoft.com/ja-jp/azure/app-service/manage-custom-dns-buy-domain)<br>
-・[App Service の TLS/SSL 証明書の更新手順 - App Service の TLS/SSL 証明書の更新手順](https://jpazpaas.github.io/blog/2023/03/10/AppService-How-to-bind-AppService-Certificate-with-NewUI.html#app-service-%E8%A8%BC%E6%98%8E%E6%9B%B8%E3%81%AE%E3%83%90%E3%82%A4%E3%83%B3%E3%83%89%E6%89%8B%E9%A0%86)
+・[App Service の TLS/SSL 証明書の更新手順 - App Service の TLS/SSL 証明書の更新手順](https://azure.github.io/jpazpaas/2023/03/10/AppService-How-to-bind-AppService-Certificate-with-NewUI.html#app-service-%E8%A8%BC%E6%98%8E%E6%9B%B8%E3%81%AE%E3%83%90%E3%82%A4%E3%83%B3%E3%83%89%E6%89%8B%E9%A0%86)
 
 **※注意点**<br>
 ・「**無料の App Service マネージド証明書**」は、Application Gateway に紐づける事が出来ません。<br>
@@ -90,7 +90,7 @@ Azure AD B2C 認証設定後、カスタムドメインにアクセスし想定�
 
 ## 3. Application Gateway への証明書設定
 設定したカスタムドメインへアクセス出来るよう、証明書を設定します。
-1. [Application Gateway のリスナーに Key Vault に格納された App Service 証明書を表示させる方法](https://jpazpaas.github.io/blog/2022/09/16/How-to-import-ASC-to-AppGW.html)に従い Key Vault に格納した App Service 証明書を設定します。<br>
+1. [Application Gateway のリスナーに Key Vault に格納された App Service 証明書を表示させる方法](https://azure.github.io/jpazpaas/2022/09/16/How-to-import-ASC-to-AppGW.html)に従い Key Vault に格納した App Service 証明書を設定します。<br>
 
 ## 4. バックエンドの設定
 最後に、Application Gateway からバックエンドまでの通信を HTTPS で行うよう設定します。

@@ -11,7 +11,7 @@ tags:
 
 本稿では、日頃より App Service をご利用いただいているお客様やこれから App Service をご検討いただいているお客様向けに、 App Service をネットワークの観点からセキュアな環境で運用するための機能や仕組みについてご紹介します。
 
-App Service プラットフォームの構成について知ったうえで読んでいただくことでより理解も深まるかと存じますので、もしよろしければ [App Service を構成する主要な要素とそれぞれの役割](https://jpazpaas.github.io/blog/2023/05/10/Appservice-components.html) もぜひご一読いただけますと幸いです。
+App Service プラットフォームの構成について知ったうえで読んでいただくことでより理解も深まるかと存じますので、もしよろしければ [App Service を構成する主要な要素とそれぞれの役割](https://azure.github.io/jpazpaas/2023/05/10/Appservice-components.html) もぜひご一読いただけますと幸いです。
 
 App Service は既定でインターネットに公開され、 「クライアントから App Service (上のアプリケーション) へのアクセス」 や 「App Service (上のアプリケーション) からデータベース等のエンドポイントへの接続」 はそれぞれインターネット<sup>*1</sup> を経由して送信されます。また Visual Studio や Azure Pipelines 等からのアプリケーションのデプロイに関してもインターネットを経由して App Service (Kudu<sup>*2</sup>) に送信されます。
 
@@ -42,7 +42,7 @@ App Service ではリソースごとに固有の FQDN (`<app-service-name>.azure
 
 ![image-2ce718dc-b2ad-42a3-9d12-4bd3f91bf82b.png]({{site.baseurl}}/media/2023/07/image-2ce718dc-b2ad-42a3-9d12-4bd3f91bf82b.png)
 
-> - <sup>3)</sup> [App Service を構成する主要な要素とそれぞれの役割](https://jpazpaas.github.io/blog/2023/05/10/Appservice-components.html)
+> - <sup>3)</sup> [App Service を構成する主要な要素とそれぞれの役割](https://azure.github.io/jpazpaas/2023/05/10/Appservice-components.html)
 
 ### カスタムドメインの追加について
 
@@ -110,7 +110,7 @@ App Service 上のアプリケーションが外部のエンドポイント (Web
 
 App Service からインターネット上のエンドポイントに接続する場合、スケールユニット内のロードバランサーで SNAT が行われます。
 
-この際に使用できる SNAT ポート数はインスタンスごとに制限があり、 SNAT ポートを使い果たすとアプリケーションエラーが発生することがございます。詳細については [App Service における SNAT ポート枯渇問題とその解決方法](https://jpazpaas.github.io/blog/2021/09/29/app-service-snat.html) をご参照ください。
+この際に使用できる SNAT ポート数はインスタンスごとに制限があり、 SNAT ポートを使い果たすとアプリケーションエラーが発生することがございます。詳細については [App Service における SNAT ポート枯渇問題とその解決方法](https://azure.github.io/jpazpaas/2021/09/29/app-service-snat.html) をご参照ください。
 
 ![image-49930902-1933-4483-a679-41f1bbfc00fa.png]({{site.baseurl}}/media/2023/07/image-49930902-1933-4483-a679-41f1bbfc00fa.png)
 

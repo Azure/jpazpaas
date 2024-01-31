@@ -21,7 +21,7 @@ Singleton lock renewal failed for blob '***/host' with error code 409: LeaseIdMi
 
 Azure Functions の動作において、各インスタンスには Azure Functions Host と呼ばれるプロセスが 1 つ動作しております。このプロセスの中で、プライマリーとされる Azure Functions Host を 1 つ選択する動作が存在します（特段ご利用者様で意識いただくことは不要でございます）。このプライマリーの Azure Functions Host は、アプリケーション設定 [`AzureWebJobsStorage`](https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#azurewebjobsstorage) で指定されたストレージ アカウントの `azure-webjobs-hosts/locks/<Azure Functoins 名>/host` のファイルをロックすることでプライマリーとして動作いたします。必ずいずれかの Azure Functions Host がプライマリーとなり、Azure Functions の動作中は、`azure-webjobs-hosts/locks/<Azure Functoins 名>/host` のファイルをロックがされる状態となります。
 
-※Azure Functions Host については[こちら](https://jpazpaas.github.io/blog/2023/08/24/azure-functions-words-relative-management.html)のブログ記事を参照ください。
+※Azure Functions Host については[こちら](https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management.html)のブログ記事を参照ください。
 
 ![image-087b4036-9e14-4e88-820b-4a74f488f09f.png]({{site.baseurl}}/media/2023/10/image-087b4036-9e14-4e88-820b-4a74f488f09f.png)
 

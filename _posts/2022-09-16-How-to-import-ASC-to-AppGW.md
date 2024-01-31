@@ -7,7 +7,7 @@ tags:
 
 App Service 証明書をエクスポートする手順が以下の記事で紹介されており、エクスポートされた証明書は Application Gateway などで利用することが可能となっております。
 
-参考 : [App service 証明書をエクスポートしてパスワードを設定し、他の Azure サービスにインポートする方法 - Japan PaaS Support Team Blog](https://jpazpaas.github.io/blog/2020/09/23/how-to-export-appservice-certificate.html)
+参考 : [App service 証明書をエクスポートしてパスワードを設定し、他の Azure サービスにインポートする方法 - Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2020/09/23/how-to-export-appservice-certificate.html)
 
 上記の記事とは別の方法として、 2022 年 9 月現在、Application Gateway SKU v2 をご利用いただくことで Key Vault に格納された App Service 証明書をエクスポートせずに Application Gateway に直接紐づけることが可能となっております。
 
@@ -246,7 +246,7 @@ Application Gateway と App Service 証明書を直接紐づけることで、�
 
 [Application Gateway を使用した App Service の構成 &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/application-gateway/configure-web-app?tabs=customdomain%2Cazure-portal)
 
-[App service 証明書をエクスポートしてパスワードを設定し、他の Azure サービスにインポートする方法 - Japan PaaS Support Team Blog](https://jpazpaas.github.io/blog/2020/09/23/how-to-export-appservice-certificate.html)  
+[App service 証明書をエクスポートしてパスワードを設定し、他の Azure サービスにインポートする方法 - Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2020/09/23/how-to-export-appservice-certificate.html)  
 
 [Azure Application Gateway の証明書を更新する &#124; Microsoft Docs](https://learn.microsoft.com/ja-jp/azure/application-gateway/renew-certificates#certificates-on-azure-key-vault)
 

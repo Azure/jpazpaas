@@ -9,7 +9,7 @@ tags:
 # はじめに
 お世話になっております。App Service サポート担当の押田です。
 
-この記事は [Azure Resource Graph を用いた App Service 証明書の管理](https://jpazpaas.github.io/blog/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html)の続編となります。
+この記事は [Azure Resource Graph を用いた App Service 証明書の管理](https://azure.github.io/jpazpaas/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html)の続編となります。
 前回の記事投稿時点では、Azure Resource Graph (以降 ARG 表記)から直接アラートを実行することができなかったため、Azure Functions のタイマートリガーを利用することで App Service 証明書の有効期限とステータスを定期管理する方法を紹介しました。
 
 2023年11月時点でプレビューではありますが、[Azure Monitor から Azure Data Explorer と Azure Resource Graph のデータに対するクエリ](https://learn.microsoft.com/ja-jp/azure/azure-monitor/logs/azure-monitor-data-explorer-proxy#query-data-in-azure-resource-graph-preview)を実行することが可能となっており、Japan Azure Monitoring Support Blog の下記の記事でも紹介されています。
@@ -41,7 +41,7 @@ arg("").Resources
 ```
 
 残念ながら、ポータル上ではテーブル定義の先読みができないため警告で真っ赤になってしまいますが、クエリの実行は可能です。
-また、下記画像では閾値を `90d` としていますが、証明書の更新は、自動更新の場合は 31 日前から、手動で更新する場合には、有効期限の 60 日前から更新が可能となります。詳細は[こちら](https://jpazpaas.github.io/blog/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html)。
+また、下記画像では閾値を `90d` としていますが、証明書の更新は、自動更新の場合は 31 日前から、手動で更新する場合には、有効期限の 60 日前から更新が可能となります。詳細は[こちら](https://azure.github.io/jpazpaas/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html)。
 必要に応じて適宜変更してください。
 
 
@@ -61,7 +61,7 @@ Azure Monitor から ARG に対してクエリを実行しアラートルール�
 
 関連記事
 
-- [Azure Resource Graph を用いた App Service 証明書の管理](https://jpazpaas.github.io/blog/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html)
-- [App Service 証明書の自動更新に伴うドメイン検証 \(有効期間 395 日\) 作業の必要について](https://jpazpaas.github.io/blog/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html)
+- [Azure Resource Graph を用いた App Service 証明書の管理](https://azure.github.io/jpazpaas/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html)
+- [App Service 証明書の自動更新に伴うドメイン検証 \(有効期間 395 日\) 作業の必要について](https://azure.github.io/jpazpaas/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html)
 - [App Service 証明書の有効期限を Azure Functions を使用して監視する\(2022年12月版\)](https://qiita.com/shogo-ohe/items/fd1ae6f66644f246edfd)
 - [App Service 証明書の有効期限を Azure Functions を使用して監視する](https://qiita.com/shogo-ohe/items/b25e3a322b6f32ce1530)

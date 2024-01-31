@@ -16,7 +16,7 @@ tags:
 Kudu の機能そのものについては下記記事もご参考ください。
 
 - [Kudu サービスの概要 - Azure App Service](https://learn.microsoft.com/ja-jp/azure/app-service/resources-kudu)
-- [Kudu サイトの使い方 (Tips 4 選) - Japan PaaS Support Team Blog](https://jpazpaas.github.io/blog/2022/11/28/How-to-use-Kudu-site.html)
+- [Kudu サイトの使い方 (Tips 4 選) - Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2022/11/28/How-to-use-Kudu-site.html)
 
 # Kudu へ認証について
 

@@ -73,7 +73,7 @@ Azure Functions の関数へアクセスする場合は、[概要] から対象�
 ![image-f527a4ea-b5c6-4c7e-81c0-40e507ee4572.png]({{site.baseurl}}/media/2023/10/image-f527a4ea-b5c6-4c7e-81c0-40e507ee4572.png)
 
 (ご参考) ブラウザークライアントからアクセスする場合の認証フローは、[認証と承認 - Azure App Service](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#authentication-flow)で "プロバイダーの SDK を使わない場合" のシナリオとして記載しております。また、仕組みの詳細については
-[App Service 認証の概要と仕組みについて - Japan PaaS Support Team Blog](https://jpazpaas.github.io/blog/2023/05/11/what-is-appserviceauthentication.html)にもご紹介しておりますので必要に応じてご参照ください。
+[App Service 認証の概要と仕組みについて - Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication.html)にもご紹介しておりますので必要に応じてご参照ください。
 
 ## 2 ) デーモンクライアント(ログインユーザーなし)から App Service 認証が有効な App Service/Azure Functions のサイトへアクセスする
 
@@ -176,7 +176,7 @@ $getResponse = Invoke-WebRequest -Method Get -UseBasicParsing -Uri $siteURI  -He
 ```
 
 HTTP 401 や 403 などの応答が返却される場合、アクセストークンを取得する際の scope に正しいクライアント ID が指定されていない、App Service 認証の構成が正しくない、または [組み込み承認ポリシー](https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant#use-a-built-in-authorization-policy)が有効になっていることがよくある原因として考えられます。
-組み込みの承認ポリシーが有効である場合には allowedApplications にデーモンアプリケーションのクライアント ID を構成いただくことでエラーが解消する可能性がございます。対応方法は、[ご参考: エラーになったときのデバッグ方法](https://jpazpaas.github.io/blog/2023/05/11/what-is-appserviceauthentication.html#%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%81%A8%E3%81%8D%E3%81%AE%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E6%96%B9%E6%B3%95) と本記事シナリオ 3 の手順 4 をご参照ください。
+組み込みの承認ポリシーが有効である場合には allowedApplications にデーモンアプリケーションのクライアント ID を構成いただくことでエラーが解消する可能性がございます。対応方法は、[ご参考: エラーになったときのデバッグ方法](https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication.html#%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%81%A8%E3%81%8D%E3%81%AE%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E6%96%B9%E6%B3%95) と本記事シナリオ 3 の手順 4 をご参照ください。
 
 
 ## 3 ) マネージドID を使用したサービス(Logic Apps)(ログインユーザーなし)から App Service 認証が有効な App Service/Azure Functions のサイトへアクセスする

@@ -10,7 +10,7 @@ tags:
 
 <h1>パート II - 5xx エラーのトラブルシューティング</h1>
 
-本記事は、5xx エラーのトラブルシューティングシリーズの続きです。4xx エラーに関する記事は[こちら](https://jpazpaas.github.io/blog/2023/03/07/Troubleshooting-204xx-20and-205xx-20Errors-20with-20Azure-20APIM-20services-20Part-201.html)です。
+本記事は、5xx エラーのトラブルシューティングシリーズの続きです。4xx エラーに関する記事は[こちら](https://azure.github.io/jpazpaas/2023/03/07/Troubleshooting-204xx-20and-205xx-20Errors-20with-20Azure-20APIM-20services-20Part-201.html)です。
 
 以下のセクションの「診断/ゲートウェイ ログ」とは、Log Analytics の 「Logs related to ApiManagement Gateway」(ApiManagementGatewayLogs) のことです。
 

@@ -215,7 +215,7 @@ Controller:
     }
 ```
 
-アプリコードから ユーザー クレームにアクセスする方法の詳細は、[App Service 認証機能（Easy Auth）の Tips のご紹介](https://jpazpaas.github.io/blog/2022/12/02/Tips-for-App-Service-authentication.html#3-%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B3%E3%83%BC%E3%83%89%E3%81%8B%E3%82%89%E3%83%88%E3%83%BC%E3%82%AF%E3%83%B3%E3%82%92%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95) をご確認ください。
+アプリコードから ユーザー クレームにアクセスする方法の詳細は、[App Service 認証機能（Easy Auth）の Tips のご紹介](https://azure.github.io/jpazpaas/2022/12/02/Tips-for-App-Service-authentication.html#3-%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B3%E3%83%BC%E3%83%89%E3%81%8B%E3%82%89%E3%83%88%E3%83%BC%E3%82%AF%E3%83%B3%E3%82%92%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95) をご確認ください。
 
 
 ### クライアントから自身の認証情報にアクセスする
@@ -262,7 +262,7 @@ JWT 検証に失敗しました: 発行者の検証に失敗しました - 予�
 #### 2 ) App Service と、その前段に配置している Application Gateway のドメインに相違がある
 よくある例として、App Service の前段に Application Gateway を配置し、その Application Gateway 経由でクライアントからのリクエストを受け付ける構成がございます。左記構成の場合については、以下ブログにご紹介がございますため、少しでもご参考となりましたら幸いです。
 
-[App Service の前段に ApplicationGateway を配置した際の Azure AD 認証](https://jpazpaas.github.io/blog/2022/03/09/Application-Gateway-front-of-App-Service-auth.html)
+[App Service の前段に ApplicationGateway を配置した際の Azure AD 認証](https://azure.github.io/jpazpaas/2022/03/09/Application-Gateway-front-of-App-Service-auth.html)
 
 -------
 <br>App Service 認証に関する概要を以上の通りおまとめいたしました。少しでもご参考となりましたら幸いです。

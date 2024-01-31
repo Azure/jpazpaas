@@ -37,7 +37,7 @@ AAD 認証でストレージ アカウントを利用する Azure AD ユーザ�
 - 少なくとも Azure Resource Manager 閲覧者ロール
 
 が必要となります。詳細につきましては
-[こちら](https://jpazpaas.github.io/blog/2021/01/29/storage-permission-mismatch.html)をご参照ください。
+[こちら](https://azure.github.io/jpazpaas/2021/01/29/storage-permission-mismatch.html)をご参照ください。
 
 これらの設定に加え、アクセスキーの使用についての制限を加える必要がございます。
 

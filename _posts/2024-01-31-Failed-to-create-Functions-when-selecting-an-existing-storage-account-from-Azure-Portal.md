@@ -32,7 +32,7 @@ Creation of storage file share failed with: 'The remote server returned an error
 
 いいえ、 Function App 作成時に選択するストレージアカウントのファイアウォールにおいて、 「Function App の VNet 統合を有効にしてサービスエンドポイントを有効にする」 ことや 「Azure Portal を操作するクライアント PC のグローバル IP アドレスをファイアウォールで許可する」 ことで事象を回避することは叶いません。
 
-これは、ファイル共有を Function App 自身や Portal を操作するクライアント PC ではなく [Functions (App Service) プラットフォーム内部のコンポーネント](https://jpazpaas.github.io/blog/2023/05/10/Inside-the-Azure-App-Service-Architecture.html#api-controllers) が作成しているためです。
+これは、ファイル共有を Function App 自身や Portal を操作するクライアント PC ではなく [Functions (App Service) プラットフォーム内部のコンポーネント](https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html#api-controllers) が作成しているためです。
 
 上記コンポーネントが使用する IP アドレスの範囲は公開されておらず、また仮想ネットワークを経由してストレージアカウントに接続することも叶いませんので、ストレージアカウントでファイアウォールを有効にしていると Function App リソースの作成に失敗いたします。
 
