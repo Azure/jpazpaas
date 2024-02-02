@@ -1,1 +1,1 @@
-https://jpazpaas.github.io/blog/
+https://azure.github.io/jpazpaas/

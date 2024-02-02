@@ -16,7 +16,7 @@ Application Gateway と App Service 証明書を直接紐づけることによ�
 詳しくは以下の記事をご確認ください。
 
 [Azure Key Vault 証明書を使用した TLS 終端 \| Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/application-gateway/key-vault-certs)
-[Application Gateway のリスナーに Key Vault に格納された App Service 証明書を表示させる方法 \- Japan PaaS Support Team Blog](https://jpazpaas.github.io/blog/2022/09/16/How-to-import-ASC-to-AppGW.html)
+[Application Gateway のリスナーに Key Vault に格納された App Service 証明書を表示させる方法 \- Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2022/09/16/How-to-import-ASC-to-AppGW.html)
 
 ---
 

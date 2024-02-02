@@ -12,7 +12,7 @@ tags:
 2023年11月時点でプレビューではありますが、Azure Monitor から Azure Resource Graph に対してクエリを実行、アラートルールすることが可能となっています。
 下記記事に本記事の続編を記載しています。
 
-[Azure Resource Graph を用いた App Service 証明書の管理 その2](https://jpazpaas.github.io/blog/2023/11/29/check-app-service-certificate-expiration-with-azure-resource-graph-part2.html)
+[Azure Resource Graph を用いた App Service 証明書の管理 その2](https://azure.github.io/jpazpaas/2023/11/29/check-app-service-certificate-expiration-with-azure-resource-graph-part2.html)
 
 ---
 
@@ -25,7 +25,7 @@ App Service 証明書の有効期間は既定では 1 年です。 有効期限�
 手動更新に設定している場合や、自動更新に設定している場合においても、ドメイン検証のために App Service 証明書の有効期間を把握しておくことが重要となります。
 当ブログや、弊社エンジニアによる Qiita 記事でもご紹介させていただいております。
 
-- [App Service 証明書の自動更新に伴うドメイン検証 \(有効期間 395 日\) 作業の必要について](https://jpazpaas.github.io/blog/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html)
+- [App Service 証明書の自動更新に伴うドメイン検証 \(有効期間 395 日\) 作業の必要について](https://azure.github.io/jpazpaas/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html)
 - [App Service 証明書の有効期限を Azure Functions を使用して監視する\(2022年12月版\)](https://qiita.com/shogo-ohe/items/fd1ae6f66644f246edfd)
 - [App Service 証明書の有効期限を Azure Functions を使用して監視する](https://qiita.com/shogo-ohe/items/b25e3a322b6f32ce1530)
 

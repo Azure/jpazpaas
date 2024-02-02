@@ -64,7 +64,7 @@ App Service on Linux のファイルシステムにおいて、標準では大�
 
 #### Web UI でダウンロードする方法
 
-[Kudulite newUI](https://jpazpaas.github.io/blog/2022/11/28/How-to-use-Kudu-site.html#tips-2-new-ui-kudulite) を利用してダウンロード可能となっています。
+[Kudulite newUI](https://azure.github.io/jpazpaas/2022/11/28/How-to-use-Kudu-site.html#tips-2-new-ui-kudulite) を利用してダウンロード可能となっています。
 
 ![image-9910b12a-80da-41a9-a530-2f1dbc5e2378.png]({{site.baseurl}}/media/2023/07/image-9910b12a-80da-41a9-a530-2f1dbc5e2378.png)
 

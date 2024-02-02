@@ -9,7 +9,7 @@ tags:
 # はじめに
 お世話になっております。App Service サポート担当の押田です。
 
-App Service では組み込みの [File Servers](https://jpazpaas.github.io/blog/2023/05/10/Inside-the-Azure-App-Service-Architecture.html#file-servers)のほかに、独自のストレージアカウントをマウントすることが可能となっています。
+App Service では組み込みの [File Servers](https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html#file-servers)のほかに、独自のストレージアカウントをマウントすることが可能となっています。
 
 [App Service でローカル共有として Azure Storage をマウントする](https://learn.microsoft.com/ja-jp/azure/app-service/configure-connect-to-azure-storage?tabs=basic%2Cportal&pivots=code-windows)
 

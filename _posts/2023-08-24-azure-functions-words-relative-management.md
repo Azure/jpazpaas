@@ -15,9 +15,9 @@ Azure Functions の ワーカープロセスは App Service の Worker インス
 
 [Inside the Azure App Service Architecture](https://learn.microsoft.com/ja-jp/archive/msdn-magazine/2017/february/azure-inside-the-azure-app-service-architecture)
  
-[[日本語訳] Inside the Azure App Service Architecture](https://jpazpaas.github.io/blog/2023/05/10/Inside-the-Azure-App-Service-Architecture.html)
+[[日本語訳] Inside the Azure App Service Architecture](https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html)
 
-[App Service を構成する主要な要素とそれぞれの役割](https://jpazpaas.github.io/blog/2023/05/10/Appservice-components.html)
+[App Service を構成する主要な要素とそれぞれの役割](https://azure.github.io/jpazpaas/2023/05/10/Appservice-components.html)
 
 
 Azure Functions は ホストプロセス と呼ばれる関数アプリを制御するプロセスと 言語ワーカープロセス と呼ばれる関数アプリにて指定されたランタイムスタックの関数コードを動作するプロセスに分かれております。Azure Functions 開発部門では複数のプロジェクトとして各 GitHub リポジトリとして公開をしております。以下に Azure Functions プロジェクトの GitHub リポジトリ一覧、Function host リポジトリと一例として .NET の Language Worker のリポジトリの内容がございますためご参考ください。
@@ -99,7 +99,7 @@ Elastic Premium プランのスケーリング設定の例として、以下の�
 
 Elastic Premium Plan にて割り当て済みのインスタンス数を確認する方法としては弊社サポートチームブログより公開をしておりますためご参照ください。
 
-[Function App の Elastic Premium Plan にて割り当て済みのインスタンス数を確認する方法](https://jpazpaas.github.io/blog/2022/08/09/how-to-check-elastic-premium-plan-function-app-allocated-instance-counts-history.html)
+[Function App の Elastic Premium Plan にて割り当て済みのインスタンス数を確認する方法](https://azure.github.io/jpazpaas/2022/08/09/how-to-check-elastic-premium-plan-function-app-allocated-instance-counts-history.html)
 
 
 ---
