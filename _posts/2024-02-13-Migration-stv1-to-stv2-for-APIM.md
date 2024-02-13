@@ -47,16 +47,15 @@ API Management ( 以降 APIM と表記 ) の stv1 プラットフォームが 20
 
 * **stv2 へ移行後、すぐに stv1 がデプロイされていた元の Vnet と サブネット に戻せますか？**
     * いいえ、stv2 移行後、既定で約 15 ～ 45 分 （ 最大 48 時間まで Azure ポータルからの [サポートリクエスト](https://learn.microsoft.com/ja-jp/azure/api-management/migrate-stv1-to-stv2?tabs=cli#help-and-support) 発行により事前に延長申請可能 ）は、 元の Vnet と サブネットには戻すことはできません。<br>
-もし元の Vnet とサブネットに変更して更新しようとすると以下の[Resource Navigation Link が存在することによるエラー](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-using-with-vnet?tabs=stv2#resource-navigation-links)が発生しますので、時間を空けてから再度実行するようにしてください。<br><br>
->エラーメッセージ：<br>
-API Management service stv2 platform deployment into /subscriptions/<subscription id>/resourcegroups/<resource group name>/providers/microsoft.network/virtualnetworks/<vnet name>/subnets/<subnet name> is not supported, as it already contains API Management service(s) with stv1 platform in it as suggested by presence of "/subscriptions/<subscription id>/resourceGroups/<resource group name>/providers/Microsoft.Network/virtualNetworks/<vnet name>/subnets/<subnet name>/resourceNavigationLinks/<Navigation Link Name>". Please select a different subnet and try again. Refer to https://aka.ms/apim-infrastructure for definition of stv1 vs stv2.
+もし元の Vnet とサブネットに変更して更新しようとすると以下の[Resource Navigation Link が存在することによるエラー](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-using-with-vnet?tabs=stv2#resource-navigation-links)が発生しますので、時間を空けてから再度実行するようにしてください。<br>
+    >エラーメッセージ：<br>
+    >API Management service stv2 platform deployment into /subscriptions/<subscription id>/resourcegroups/<resource group name>/providers/microsoft.network/virtualnetworks/<vnet name>/subnets/<subnet name> is not supported, as it already contains API Management service(s) with stv1 platform in it as suggested by presence of "/subscriptions/<subscription id>/resourceGroups/<resource group name>/providers/Microsoft.Network/virtualNetworks/<vnet name>/subnets/<subnet name>/resourceNavigationLinks/<Navigation Link Name>". Please select a different subnet and try again. Refer to https://aka.ms/apim-infrastructure for definition of stv1 vs stv2.<br>
 
-<br><br>
-元のサブネットにて Resource Navigation Link が削除されたかどうかは以下の REST API を実行することで確認できます。<br>
+    元のサブネットにて Resource Navigation Link が削除されたかどうかは以下の REST API を実行することで確認できます。<br>
 https://learn.microsoft.com/en-us/rest/api/virtualnetwork/resource-navigation-links/list
 <br><br>
 該当サブネットに Resource Navigation Link が存在する場合は以下の内容が返却されます。
-```
+    ```
     {
       "name": "Navigation Link Name",
       "id": "/subscriptions/<subscription id>/resourceGroups/<resource group name>/providers/Microsoft.Network/virtualNetworks/<vnet name>/subnets/<subnet name>/resourceNavigationLinks/<navigation link name>",
@@ -68,7 +67,7 @@ https://learn.microsoft.com/en-us/rest/api/virtualnetwork/resource-navigation-li
         "link": "/subscriptions/<subscription id>/providers/Microsoft.ApiManagement/service?vnetResourceGuid=<resource gu id>&subnet=<subnet name>&api-version=2016-07-07"
       }
     }
-```
+    ```
 * **移行時に一時的には新旧２つのインスタンスが存在することになるが、stv2にアップグレードすることも含め追加コストは発生しますか？**
     * いいえ、移行中ならびに移行後において追加コストは発生しません。
 <br><br>
