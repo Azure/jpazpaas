@@ -5,14 +5,12 @@ tags:
     - "Storage"
 ---
 
-[[_TOC_]]
-
 ---
 
 # はじめに
 お客様が Shared Access Signatures ( SAS ) をご利用になる際には SAS トークンを取得する必要があります。
 
-なお前提として、権限は最小特権の原則に従うべきものとなります。
+なお前提として、権限は最小特権の原則に従うべきものとなります。<br>
 ご参考： [SAS を使用する際のベスト プラクティス](https://learn.microsoft.com/ja-jp/azure/storage/common/storage-sas-overview?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json#best-practices-when-using-sas)
 
 ## Shared Access Signatures ( SAS ) とは
@@ -25,7 +23,7 @@ SAS を使用すると、クライアントがデータにアクセスする方�
 - アカウント SAS
   - ご参考：本記事
 
-ご参考：[Shared Access Signatures (SAS) でデータの制限付きアクセスを付与する - Azure Storage | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/storage/common/storage-sas-overview)
+ご参考：[Shared Access Signatures (SAS) でデータの制限付きアクセスを付与する](https://learn.microsoft.com/ja-jp/azure/storage/common/storage-sas-overview)
 
 この Blog 記事は **アカウント SAS** について、Azure Portal、Azure Storage Explorer、PowerShell、Azure CLI を使用した 4 通りの作成方法を紹介します。
 
@@ -103,8 +101,10 @@ SAS トークンの生成と検証に使用されます。key1 または key2 �
 
 # アカウント SAS の作成手順
 下記では以下の4つの条件を許可する設定の例をご案内します。
-|- ストレージ アカウント内の <span style="color: red; ">Blob</span> に対して - 使用できるリソースの種類は <span style="color: red; ">オブジェクト</span> のみ- <span style="color: red; ">読み取り</span>のみ、- 有効期限が「<span style="color: red; ">現在～ 30 分後</span>」 |
-|--|
+- **ストレージ アカウント内の <span style="color: red; ">Blob</span> に対して**
+- **使用できるリソースの種類は<span style="color: red; ">オブジェクト</span> のみ**
+- **<span style="color: red; ">読み取り</span>のみ、**
+- **有効期限が「<span style="color: red; ">現在～ 30 分後</span>」** 
 
 ## Azure Portal を使用してアカウント SAS を作成する
 1. Azure Portalにログインし、ポータル上部の検索欄に該当のストレージ アカウント名を入力・検索し、選択します。
@@ -135,13 +135,17 @@ SAS トークンの生成と検証に使用されます。key1 または key2 �
 ## PowerShell を使用してアカウント SAS を作成する
 
 1. サブスクリプションへ接続します。
+
 ```
+
 Connect-AzAccount -Subscription <Subscription Id>
+
 ```
 
 2. SAS トークンの作成に必要な各種パラメータの変数を設定していきます。
 
 ```
+
 $storageAccount = Get-AzStorageAccount `
     -ResourceGroupName "<resource-group>" `
     -Name "<storage-account>"
@@ -150,12 +154,16 @@ $resourceTypes = "Object"
 $permissions ="r"
 $startTime = Get-Date
 $expiryTime = $startTime.AddMinutes(30)
+
 ```
+
 - 上記では省略されているパラメータもご利用可能です。
-  - ご参考：[New-AzStorageAccountSASToken (Az.Storage) | Microsoft Learn](https://learn.microsoft.com/ja-jp/powershell/module/az.storage/new-azstorageaccountsastoken?view=azps-11.2.0)
+  - ご参考：[New-AzStorageAccountSASToken (Az.Storage)](https://learn.microsoft.com/ja-jp/powershell/module/az.storage/new-azstorageaccountsastoken?view=azps-11.2.0)
 
 3. SAS トークンを作成します。
+
 ```
+
 New-AzStorageAccountSASToken `
    -Service $services `
    -ResourceType $resourceTypes `
@@ -163,13 +171,16 @@ New-AzStorageAccountSASToken `
    -StartTime $startTime `
    -ExpiryTime $expiryTime `
    -Context $storageAccount.Context
+
 ```
 
 4. 上記を実行すると SAS トークンが表示されます。
 ![image-c57ac90e-8b67-4a8f-816a-5fd433cf7bfc.png]({{site.baseurl}}/media/2024/02/image-c57ac90e-8b67-4a8f-816a-5fd433cf7bfc.png)
 
 また、本コマンドを変数に格納することで後から容易に SAS トークンを確認することが可能となります。
+
 ```
+
 $sas = New-AzStorageAccountSASToken `
     -Service $services `
     -ResourceType $resourceTypes `
@@ -177,44 +188,59 @@ $sas = New-AzStorageAccountSASToken `
     -StartTime $startTime `
     -ExpiryTime $expiryTime `
     -Context $storageAccount.Context
+
 ```
 
 SAS トークンの表示は「 $sas 」を入力します。
 
 ## Azure CLI を使用してアカウント SAS を作成する
 1. Azure にログインします。
+
 ```
+
 az login
+
 ```
 
 2. サブスクリプションへ接続します。
+
 ```
+
 az account set --subscription <Subscription Id>
+
 ```
 
 3. SAS トークンの作成に必要な各種パラメータの変数を設定していきます。
+
 ```
+
 resourceGroup="<resource-group>"
 storageAccount="<storage-account>"
 services="b"
 resourceTypes="o"
 permissions="r"
 expiry=$(date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ')
+
 ```
+
 - 上記では省略されているパラメータもご利用可能です。
-  - ご参考：[az storage account | Microsoft Learn](https://learn.microsoft.com/ja-jp/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-generate-sas)
+  - ご参考：[az storage account](https://learn.microsoft.com/ja-jp/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-generate-sas)
 
 4. ストレージ アカウントの接続文字列を取得します。
+
 ```
+
 connectionString=$(az storage account show-connection-string \
     --name $storageAccount \
     --resource-group $resourceGroup \
     --output tsv)
-```
 
+```
 
 5. SAS トークンを作成します。
+
 ```
+
 az storage account generate-sas \
     --connection-string $connectionString \
     --services $services \
@@ -222,7 +248,9 @@ az storage account generate-sas \
     --permissions $permissions \
     --expiry $expiry \
     --https-only
+
 ```
+
 6. 生成された SAS トークンが表示されます。
 ![image-29c34067-597f-46b1-a540-747bd226eb5e.png]({{site.baseurl}}/media/2024/02/image-29c34067-597f-46b1-a540-747bd226eb5e.png)
 
