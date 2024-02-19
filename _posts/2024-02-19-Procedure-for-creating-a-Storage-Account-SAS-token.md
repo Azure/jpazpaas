@@ -37,7 +37,6 @@ SAS を使用すると、クライアントがデータにアクセスする方�
 
   - ご参考： [アカウント SAS の作成 ( REST API )](https://learn.microsoft.com/ja-jp/rest/api/storageservices/create-account-sas)
 
----
 ## SAS 利用上のご注意
 
 - SAS トークンの保存について
@@ -51,6 +50,7 @@ SAS URL を作成するには、SAS トークン ( URI ) をストレージ サ�
  - SAS の失効について
 有効な SAS を所有するすべてのクライアントは、その SAS で許可されているストレージ アカウントのデータにアクセスできます。 SAS を悪意のある、または意図しない用途から保護することが重要です。 **SAS の配布は慎重に行い、侵害された SAS を失効させるための計画を用意しておいてください。**
    - ご参考： [Shared Access Signature (SAS) トークンの失効方法](https://azure.github.io/jpazpaas/2023/06/15/How-To-Expire-SAS-Token.html#gsc.tab=0)
+
 
 ---
 
@@ -98,6 +98,8 @@ SAS トークンの生成と検証に使用されます。key1 または key2 �
 サービス上のデータを暗号化するために使用される定義済みの暗号化スコープです。PowerShell、Azure CLI のみ使用可能です。
   - ご参考：[BLOB ストレージの暗号化スコープ](https://learn.microsoft.com/ja-jp/azure/storage/blobs/encryption-scope-overview)
 
+
+---
 
 # アカウント SAS の作成手順
 下記では以下の4つの条件を許可する設定の例をご案内します。
@@ -261,6 +263,7 @@ az storage account generate-sas \
 
 (6) 生成された SAS トークンが表示されます。
 ![image-29c34067-597f-46b1-a540-747bd226eb5e.png]({{site.baseurl}}/media/2024/02/image-29c34067-597f-46b1-a540-747bd226eb5e.png)
+
 
 ---
 
