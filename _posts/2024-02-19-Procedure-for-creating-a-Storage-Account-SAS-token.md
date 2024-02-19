@@ -107,34 +107,42 @@ SAS トークンの生成と検証に使用されます。key1 または key2 �
 - **有効期限が「<span style="color: red; ">現在～ 30 分後</span>」** 
 
 ## Azure Portal を使用してアカウント SAS を作成する
-1. Azure Portalにログインし、ポータル上部の検索欄に該当のストレージ アカウント名を入力・検索し、選択します。
-1. 左側のメニューから「 Shared Access Signature 」を選択します。
+(1) Azure Portalにログインし、ポータル上部の検索欄に該当のストレージ アカウント名を入力・検索し、選択します。
+
+(2) 左側のメニューから「 Shared Access Signature 」を選択します。
 ![image-3ce44da6-8318-4030-a5eb-984cc4b2bdab.png]({{site.baseurl}}/media/2024/02/image-3ce44da6-8318-4030-a5eb-984cc4b2bdab.png)
-1. 「 Shared Access Signature 」ブレードが開きます。
+
+(3) 「 Shared Access Signature 」ブレードが開きます。
 特定のストレージ サービスやリソースへのアクセス許可を制御する設定をします。
 開始日時と有効期限の日時はデフォルトで現在時刻から 8 時間後までとなります。必要に応じてご変更ください。
 ![image-caecc0e7-6ba6-4842-bd60-64a7cce60c71.png]({{site.baseurl}}/media/2024/02/image-caecc0e7-6ba6-4842-bd60-64a7cce60c71.png)
-1. 「 SAS と接続文字列を生成する」を押下します。
+
+(4) 「 SAS と接続文字列を生成する」を押下します。
 ![image-e184f7a2-cc95-420b-abbf-f59bd8d397cd.png]({{site.baseurl}}/media/2024/02/image-e184f7a2-cc95-420b-abbf-f59bd8d397cd.png)
-1. SAS トークンが生成されます。
+
+(5) SAS トークンが生成されます。
 ![image-d71fe66b-68f1-44a8-a6cd-1b3365cdac06.png]({{site.baseurl}}/media/2024/02/image-d71fe66b-68f1-44a8-a6cd-1b3365cdac06.png)
 
 ## Azure Storage Explorer を使用してアカウント SAS を作成する
-1. Azure Storage Explorer を起動します。
-1. 左側のパネルで対象のストレージ アカウントを右クリックし、「 Shared Access Signatureの取得… 」を選択します。
+(1) Azure Storage Explorer を起動します。
+
+(2) 左側のパネルで対象のストレージ アカウントを右クリックし、「 Shared Access Signatureの取得… 」を選択します。
 ![image-b7730612-7c7e-4c61-b825-7b7f5e4a0181.png]({{site.baseurl}}/media/2024/02/image-b7730612-7c7e-4c61-b825-7b7f5e4a0181.png)
-1. Shared Access Signature ダイアログ ボックスが表示されます。
+
+(3) Shared Access Signature ダイアログ ボックスが表示されます。
 特定のストレージ サービスやリソースへのアクセス許可を制御する設定をします。
 開始日時と有効期限の日時はデフォルトで現在時刻から 24 時間後までとなります。
 ![image-e5990e88-aaee-4729-8581-64c6c49b1de9.png]({{site.baseurl}}/media/2024/02/image-e5990e88-aaee-4729-8581-64c6c49b1de9.png)
-1. 「作成」を押下します。
+
+(4) 「作成」を押下します。
 ![image-d63e4e01-b857-4b9f-928a-53e166055ba8.png]({{site.baseurl}}/media/2024/02/image-d63e4e01-b857-4b9f-928a-53e166055ba8.png)
-1. SAS トークンが生成されます。
+
+(5) SAS トークンが生成されます。
 ![image-a7c415c3-df88-4122-a25c-fc776f8b577f.png]({{site.baseurl}}/media/2024/02/image-a7c415c3-df88-4122-a25c-fc776f8b577f.png)
 
 ## PowerShell を使用してアカウント SAS を作成する
 
-1. サブスクリプションへ接続します。
+(1) サブスクリプションへ接続します。
 
 ```
 
@@ -142,7 +150,7 @@ Connect-AzAccount -Subscription <Subscription Id>
 
 ```
 
-2. SAS トークンの作成に必要な各種パラメータの変数を設定していきます。
+(2) SAS トークンの作成に必要な各種パラメータの変数を設定していきます。
 
 ```
 
@@ -160,7 +168,7 @@ $expiryTime = $startTime.AddMinutes(30)
 - 上記では省略されているパラメータもご利用可能です。
   - ご参考：[New-AzStorageAccountSASToken (Az.Storage)](https://learn.microsoft.com/ja-jp/powershell/module/az.storage/new-azstorageaccountsastoken?view=azps-11.2.0)
 
-3. SAS トークンを作成します。
+(3) SAS トークンを作成します。
 
 ```
 
@@ -174,7 +182,7 @@ New-AzStorageAccountSASToken `
 
 ```
 
-4. 上記を実行すると SAS トークンが表示されます。
+(4) 上記を実行すると SAS トークンが表示されます。
 ![image-c57ac90e-8b67-4a8f-816a-5fd433cf7bfc.png]({{site.baseurl}}/media/2024/02/image-c57ac90e-8b67-4a8f-816a-5fd433cf7bfc.png)
 
 また、本コマンドを変数に格納することで後から容易に SAS トークンを確認することが可能となります。
@@ -194,7 +202,7 @@ $sas = New-AzStorageAccountSASToken `
 SAS トークンの表示は「 $sas 」を入力します。
 
 ## Azure CLI を使用してアカウント SAS を作成する
-1. Azure にログインします。
+(1) Azure にログインします。
 
 ```
 
@@ -202,7 +210,7 @@ az login
 
 ```
 
-2. サブスクリプションへ接続します。
+(2) サブスクリプションへ接続します。
 
 ```
 
@@ -210,7 +218,7 @@ az account set --subscription <Subscription Id>
 
 ```
 
-3. SAS トークンの作成に必要な各種パラメータの変数を設定していきます。
+(3) SAS トークンの作成に必要な各種パラメータの変数を設定していきます。
 
 ```
 
@@ -226,7 +234,7 @@ expiry=$(date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ')
 - 上記では省略されているパラメータもご利用可能です。
   - ご参考：[az storage account](https://learn.microsoft.com/ja-jp/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-generate-sas)
 
-4. ストレージ アカウントの接続文字列を取得します。
+(4) ストレージ アカウントの接続文字列を取得します。
 
 ```
 
@@ -237,7 +245,7 @@ connectionString=$(az storage account show-connection-string \
 
 ```
 
-5. SAS トークンを作成します。
+(5) SAS トークンを作成します。
 
 ```
 
@@ -251,7 +259,7 @@ az storage account generate-sas \
 
 ```
 
-6. 生成された SAS トークンが表示されます。
+(6) 生成された SAS トークンが表示されます。
 ![image-29c34067-597f-46b1-a540-747bd226eb5e.png]({{site.baseurl}}/media/2024/02/image-29c34067-597f-46b1-a540-747bd226eb5e.png)
 
 ---
@@ -259,9 +267,10 @@ az storage account generate-sas \
 # SAS を使用する
 上記の手順で作成した SAS トークンの簡単な使い方をご案内いたします。
 
-1. 該当のBLOBのURLを取得します。
+(1) 該当のBLOBのURLを取得します。
 ![image-af21a938-8e19-4728-a273-ba0d6572c274.png]({{site.baseurl}}/media/2024/02/image-af21a938-8e19-4728-a273-ba0d6572c274.png)
-1. ブラウザのアドレス欄に、コピーしたURLに区切り文字「 ? 」および SAS トークンを加えた文字列を入力し、BLOBにアクセスします。
+
+(2) ブラウザのアドレス欄に、コピーしたURLに区切り文字「 ? 」および SAS トークンを加えた文字列を入力し、BLOBにアクセスします。
 
 ブラウザのアドレス欄には以下のような内容を貼り付けています。
 ![image-86ba456f-3430-479e-b02f-b57f71037121.png]({{site.baseurl}}/media/2024/02/image-86ba456f-3430-479e-b02f-b57f71037121.png)
