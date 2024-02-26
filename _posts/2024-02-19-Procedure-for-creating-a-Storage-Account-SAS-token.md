@@ -19,7 +19,7 @@ SAS を使用すると、クライアントがデータにアクセスする方�
 なお、SAS トークンは以下の 3 つの種類がございます。
 - ユーザー委任 SAS
 - サービス SAS
-  - ご参考：[サービス SAS を作成する](https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token.html#gsc.tab=0)
+  - ご参考：[Storage サービス SAS の作成手順 (Azure Portal, Azure Storage Explorer, PowerShell, Azure CLI)	](https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token.html#gsc.tab=0)
 - アカウント SAS
   - ご参考：本記事
 
