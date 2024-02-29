@@ -25,8 +25,7 @@ App Service における外部接続のトラブルシューティングにつ�
 
 [Kudu サイトの使い方 (Tips 4 選)](https://azure.github.io/jpazpaas/2022/11/28/How-to-use-Kudu-site.html#gsc.tab=0)
 
-[API を用いた App Service のネットワークトラブルシューティング
-](https://azure.github.io/jpazpaas/2024/01/26/Howto-troubleshoot-network-connectivity-with-api.html#gsc.tab=0)
+[API を用いた App Service のネットワークトラブルシューティング](https://azure.github.io/jpazpaas/2024/01/26/Howto-troubleshoot-network-connectivity-with-api.html#gsc.tab=0)
 
 # Network Troubleshooter の利用方法
 
@@ -60,8 +59,8 @@ Network Troubleshooter は入力に基づいた解決策を提供するため、
 
 
 
+[仮想ネットワークとAzure App Serviceの統合のトラブルシューティング](https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps#network-troubleshooter)
 
-https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps#network-troubleshooter
 
 ![image-1c0271d4-c713-4da1-bad8-0e3469c785fc.png]({{site.baseurl}}/media/2024/02/image-1c0271d4-c713-4da1-bad8-0e3469c785fc.png)
 
