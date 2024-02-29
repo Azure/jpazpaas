@@ -11,7 +11,7 @@ tags:
 <br>
 <br>
 
-#はじめに
+# はじめに
 
 お世話になっております。App Service サポート担当の森です。
 
@@ -28,7 +28,7 @@ App Service における外部接続のトラブルシューティングにつ�
 [API を用いた App Service のネットワークトラブルシューティング
 ](https://azure.github.io/jpazpaas/2024/01/26/Howto-troubleshoot-network-connectivity-with-api.html#gsc.tab=0)
 
-#Network Troubleshooter の利用方法
+# Network Troubleshooter の利用方法
 
 本ツールを利用するには、App Service の [問題の診断と解決] ブレードから検索バーを使用して検索するか、[Troubleshooting categories] セクションから [Diagnostic Tools] ページへ移動し、Network/Connectivity Troubleshooter へのクイックリンクを選択します。
 
@@ -41,11 +41,11 @@ Network Troubleshooter は入力に基づいた解決策を提供するため、
 
 ![image-ea8b26f9-a209-40b7-9816-3eceb8639a9d.png]({{site.baseurl}}/media/2024/02/image-ea8b26f9-a209-40b7-9816-3eceb8639a9d.png)
 
-#トラブルシュート
+# トラブルシュート
 
 ## 1. Connection issues
 
----
+
 
 
 このメニューでは以下の問題について確認することができます。
@@ -74,11 +74,11 @@ https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/troubleshoot-vn
 [仮想ネットワークと Azure App Service の統合のトラブルシューティング](https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps#network-troubleshooter)
 
 ### 特定のエンドポイントへの接続テスト
----
+
 App Service から特定のエンドポイントへの接続を確認するには、以下のいずれかの形式でエンドポイントを指定します。
 
-- <接続先 URL>:<ポート番号> 
-- <接続先 IP アドレス>:<ポート番号>
+- `<"接続先 URL">:<"ポート番号">` 
+- `<"接続先 IP アドレス">:<"ポート番号">`
 
 URL とポート番号で確認を行った場合、 Ip analysis の欄で、DNS 解決後の IP アドレスを確認することができます。
 また、プライベート接続、VNET 経由のルーティングの有無も併せて表示されます。
@@ -92,7 +92,7 @@ TCP ping に成功すると以下のように出力されます。ただし、�
 ![image-3e54f408-d00a-442c-bbb9-d5758db092ed.png]({{site.baseurl}}/media/2024/02/image-3e54f408-d00a-442c-bbb9-d5758db092ed.png)
 
 ### 接続に失敗する場合
----
+
 接続テストに失敗した場合、結果とともに推奨の手順が表示されます。
 
 
@@ -126,7 +126,7 @@ Azure Portal から Route All の設定を有効にしたい場合、 [ネット
 ![image-1dc493bd-813f-46d5-b33b-1b487a18cea8.png]({{site.baseurl}}/media/2024/02/image-1dc493bd-813f-46d5-b33b-1b487a18cea8.png)
 
 ## 2. Configuration issues
----
+
 
 サブスクリプション、VNET とそのサブネットを選択することで、App Service が指定のサブネットと仮想ネットワーク統合しているか確認することができます。統合できていない場合、下図のようなエラーメッセージが表示されます。
 
@@ -136,14 +136,15 @@ Azure Portal から Route All の設定を有効にしたい場合、 [ネット
 
 
 ## 3.  Learn more about VNet integration
----
+
 
 ここでは App Service と仮想ネットワークの統合や Azure VNET についての基本的なコンセプトについて参照できるドキュメントへのリンクが提供されています。
 
 ![image-0e4adc10-6363-4724-be3f-4fb9d366a0dc.png]({{site.baseurl}}/media/2024/02/image-0e4adc10-6363-4724-be3f-4fb9d366a0dc.png)
 
 # 参考ドキュメント
-https://azure.github.io/AppService/2021/04/13/Network-and-Connectivity-Troubleshooting-Tool.html
+[Troubleshoot Network/Connectivity issues on App Service & Functions](https://azure.github.io/AppService/2021/04/13/Network-and-Connectivity-Troubleshooting-Tool.html
+)
 
 <br>
 <br>
