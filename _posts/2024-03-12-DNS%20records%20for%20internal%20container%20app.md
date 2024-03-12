@@ -26,7 +26,7 @@ tags:
 
 > **VNet スコープのイングレス**: 内部環境で VNet スコープのイングレスを使う予定の場合は、次のいずれかの方法でドメインを構成します。
 > 
-> 1. **非カスタム ドメイン**: カスタム ドメインを使わない場合は、Container Apps 環境の既定のドメインを Container Apps 環境の静的 IP アドレスに解決するプライベート DNS ゾーンを作成します。 Azure プライベート DNS または独自の DNS サーバーを使用できます。 Azure プライベート DNS を使う場合は、コンテナー アプリ環境の既定のドメイン \(<UNIQUE_IDENTIFIER>.<REGION_NAME>.azurecontainerapps.io\) として名前が指定されたプライベート DNS ゾーンと、A レコードを作成します。 A レコードには、Container Apps 環境の名前 \*<DNS Suffix> と静的 IP アドレスが含まれています。
+> 1. **非カスタム ドメイン**: カスタム ドメインを使わない場合は、Container Apps 環境の既定のドメインを Container Apps 環境の静的 IP アドレスに解決するプライベート DNS ゾーンを作成します。 Azure プライベート DNS または独自の DNS サーバーを使用できます。 Azure プライベート DNS を使う場合は、コンテナー アプリ環境の既定のドメイン （`<UNIQUE_IDENTIFIER>.<REGION_NAME>.azurecontainerapps.io`） として名前が指定されたプライベート DNS ゾーンと、A レコードを作成します。 A レコードには、Container Apps 環境の名前 `*<DNS Suffix>` と静的 IP アドレスが含まれています。
 
 
 
@@ -63,7 +63,7 @@ Container App にはアプリケーション URLとして、`https://internal-ap
 
 ## VNet からのアクセスできるように DNS を構成する
 
-> Azure プライベート DNS を使う場合は、コンテナー アプリ環境の既定のドメイン \(<UNIQUE_IDENTIFIER>.<REGION_NAME>.azurecontainerapps.io\) として名前が指定されたプライベート DNS ゾーンと、A レコードを作成します。 A レコードには、Container Apps 環境の名前 \*<DNS Suffix> と静的 IP アドレスが含まれています。
+> Azure プライベート DNS を使う場合は、コンテナー アプリ環境の既定のドメイン （`<UNIQUE_IDENTIFIER>.<REGION_NAME>.azurecontainerapps.io`） として名前が指定されたプライベート DNS ゾーンと、A レコードを作成します。 A レコードには、Container Apps 環境の名前 `*<DNS Suffix>` と静的 IP アドレスが含まれています。
 
 上記に従って構成します。
 
