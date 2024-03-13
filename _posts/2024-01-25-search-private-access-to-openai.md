@@ -22,7 +22,8 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
 
 # 回答
 現時点では以下の 2 点の選択肢がございます。<br/>
-それぞれ長所と短所を記載いたしましたので、ご検討いただけますと幸いです。
+それぞれ長所と短所を記載いたしましたので、ご検討いただけますと幸いです。<br/>
+恐れ入りますが、2 つ目のマネージド ID を利用する方法は、Azure OpenAI Service がパブリックアクセスを無効としているとご利用することがかないませんのでご注意ください。
 
 1. **Azure AI Search の Azure OpenAI Service への共有プライベートリンク経由でアクセスするように設定します。(プレビュー)**
    - 長所
@@ -35,6 +36,7 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
      - マネージド ID は Azure AI Search の Basic プランから利用可能であるため、共有プライベートリンクを使用する場合と比較してご利用料金は低くなります。 
    - 短所
      - Azure AI Search から Azure OpenAI Service へのアクセスは Microsoft バックボーンネットワークを経由するため、パブリックインターネットを経由することはございませんが、プライベート接続とはなりません。
+     - Azure OpenAI Service 側でパブリックアクセスを無効とした場合はご利用することがかないません。
 
 1 の選択肢が可能となった 2024 年 1 月以前は、以下に記載の Azure Functions をご利用する方法もございました。<br/>
 ただし、Azure OpenAI Service への共有プライベートリンクがプレビューでサポートされたことで、わざわざ同様にプレビュー機能である Azure Functions への共有プライベートリンクを利用する意義は薄くなりました。
@@ -99,7 +101,34 @@ Azure OpenAI Service のドキュメントに以下の記載がございます�
 ### 設定手順
 以下に設定手順を記載いたします。
 
-#### 1. Azure OpenAI Service 側でネットワーク規則の例外を許可します。以下画面の「Allow Azure services on the trusted services list to access this cognitive services account.」にチェックを入れ保存します。<br/>![image-d5d9a5a4-305e-49dc-a54e-7130e3f058e2.png]({{site.baseurl}}/media/2024/01/image-d5d9a5a4-305e-49dc-a54e-7130e3f058e2.png)
+#### 1. Azure OpenAI Service 側でネットワーク規則の例外を許可します。
+Azure Portal の Azure OpenAI Service の「ネットワーク」ブレードより、「選択したネットワークとプライベートエンドポイント」にチェックを入れて保存します。
+
+以下のドキュメントにしたがい、対象の Azure OpenAI Service に対して REST API を使用してネットワーク規則の例外を作成します。<br/>
+※恐れ入りますが、現時点で Azure Portal 上でネットワーク規則の例外を作成することはかないませんのでご注意ください。
+
+
+```
+accessToken=$(az account get-access-token --resource https://management.azure.com --query "accessToken" --output tsv)
+rid="/subscriptions/<your subscription id>/resourceGroups/<your resource group>/providers/Microsoft.CognitiveServices/accounts/<your Azure AI resource name>"
+
+curl -i -X PATCH https://management.azure.com$rid?api-version=2023-10-01-preview \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer $accessToken" \
+-d \
+'
+{
+    "properties":
+    {
+        "networkAcls": {
+            "bypass": "AzureServices"
+        }
+    }
+}
+'
+```
+[Azure OpenAI の信頼された Azure サービスへのアクセス権を付与する](https://learn.microsoft.com/ja-jp/azure/ai-services/cognitive-services-virtual-networks?tabs=portal#grant-access-to-trusted-azure-services-for-azure-openai)
+
 #### 2. Azure AI Search 側で [システム マネージド ID を作成する](https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys%2Cportal-user#create-a-system-managed-identity) を参考に、システム割り当てマネージドIDを有効化します。
 #### 3. Azure OpenAI Service リソースのスコープで、手順 2 で作成したシステム割り当てマネージド ID に対して「Cognitive Services OpenAI ユーザー」ロールを割り当てます。[ロールの割り当て](https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys%2Cportal-user#assign-a-role) の手順をご確認ください。
 
@@ -166,7 +195,7 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
-2024 年 01 月 29 日時点の内容となります。<br>
+2024 年 03 月 13 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
