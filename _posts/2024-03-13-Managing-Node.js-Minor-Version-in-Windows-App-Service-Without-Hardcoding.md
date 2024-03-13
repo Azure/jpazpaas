@@ -43,7 +43,8 @@ Windows App Service では、Node.js のバージョンは WEBSITE_NODE_DEFAULT_
 
 Azure ポータルから該当の Web アプリを開き左側の[環境変数]ブレードをクリックします。
 
-![スクリーンショット%202024-02-15%20165024-de6d0b47-4557-4c32-af0a-1051d483dc16.png]({{site.baseurl}}/media/2024/03/スクリーンショット%202024-02-15%20165024-de6d0b47-4557-4c32-af0a-1051d483dc16.png)
+![202024-02-15-01-75b18799-4b61-4d42-bc50-9527cb9de4a0.png]({{site.baseurl}}/media/2024/03/202024-02-15-01-75b18799-4b61-4d42-bc50-9527cb9de4a0.png)
+
 ## Azure CLI
 
 PowerShell を開き Azure にログイン後、以下のコマンドを実行します。
@@ -60,8 +61,7 @@ App Service は Node.js の過去のマイナーバージョンを削除して�
 
 **Azure ポータル** 
 
-![2024-02-15%20165412-660e5d29-812f-4a64-8eb3-8787a07ceff5.png]({{site.baseurl}}/media/2024/03/2024-02-15%20165412-660e5d29-812f-4a64-8eb3-8787a07ceff5.png)
-
+![202024-02-15-02-2154e7ec-9d61-42e1-bc49-8f5c62310903.png]({{site.baseurl}}/media/2024/03/202024-02-15-02-2154e7ec-9d61-42e1-bc49-8f5c62310903.png)
 
 nodeProcessCommandLine で、node.exe のバージョンを指定した際、以下は非推奨の書き方になります。
 
@@ -114,14 +114,12 @@ nodeProcessCommandLine にて、絶対パスで特定のマイナーバージョ
 
 Azure ポータルから [高度なツール] ブレードを選択、[移動] をクリックすると新しいページが開き、そのページ上部の Enviroment をクリックすると WEBSITE_NODE_DEFAULT_VERSION の値をご確認いただけます。
 
-![スクリーンショット%202024-03-07%20172342-c516d837-1303-45db-a4fd-49d4d40e36e5.png]({{site.baseurl}}/media/2024/03/スクリーンショット%202024-03-07%20172342-c516d837-1303-45db-a4fd-49d4d40e36e5.png)
-
+![202024-03-07-01-68367c00-66d5-40c9-bba9-f7b1b483f26b.png]({{site.baseurl}}/media/2024/03/202024-03-07-01-68367c00-66d5-40c9-bba9-f7b1b483f26b.png)
 
 同じページの上部の Debug Console からも マイナーバージョンを含んだ WEBSITE_NODE_DEFAULT_VERSION の値を確認することができます。
 
-![スクリーンショット%202024-03-07%20172425-784c886d-fbfb-4b5a-b3b0-8c37ab47c9c5.png]({{site.baseurl}}/media/2024/03/スクリーンショット%202024-03-07%20172425-784c886d-fbfb-4b5a-b3b0-8c37ab47c9c5.png)
+![202024-03-07-02-fefd6fa3-9d1f-47dc-bd9b-1559ca8b0d99.png]({{site.baseurl}}/media/2024/03/202024-03-07-02-fefd6fa3-9d1f-47dc-bd9b-1559ca8b0d99.png)
 
- 
 注) Node.js のバージョンを変更すると、アプリケーションが再起動されます。ダウンタイムを最小限にするために、スロットのスワップやデプロイメントセンターなどの機能を利用することが推奨されます。
 
 
