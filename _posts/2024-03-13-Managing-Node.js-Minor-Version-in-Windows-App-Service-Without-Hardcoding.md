@@ -2,12 +2,9 @@
 title: "Windows App ServiceでNode.jsマイナーバージョンまでハードコーディングしないように"
 author_name: "a-yhamada"
 tags:
-    - app-service
+    - App Service
 ---
 ---
-
-
-[[_TOC_]] 
 
 ---
 #  はじめに
@@ -28,7 +25,7 @@ App Service では、Node.js のバージョンを管理し定期的に更新し
 
  `az webapp list-runtimes --os windows | grep NODE`
 
-ご参考: [Node.js アプリの構成 - Azure App Service | Microsoft Learn　Node.js のバージョンを表示する](https://learn.microsoft.com/ja-jp/azure/app-service/configure-language-nodejs?pivots=platform-windows#show-nodejs-version)
+ご参考: [Node.js アプリの構成 - Azure App Service Microsoft - Learn Node.js のバージョンを表示する](https://learn.microsoft.com/ja-jp/azure/app-service/configure-language-nodejs?pivots=platform-windows#show-nodejs-version)
 
 ご参考: [Azure コマンド ライン インターフェイス (CLI) ドキュメント - az webapp list-runtimes](https://learn.microsoft.com/ja-jp/cli/azure/webapp?view=azure-cli-latest#az-webapp-list-runtimes)
 
@@ -55,7 +52,7 @@ PowerShell を開き Azure にログイン後、以下のコマンドを実行�
 
 `az webapp config appsettings list --name <アプリ名> --resource-group  <リソースグループ名> --query "[?name=='WEBSITE_NODE_DEFAULT_VERSION'].value"`
 
-ご参考: [Node.js アプリの構成 - Azure App Service | Microsoft Learn　Node.js のバージョンを表示する](https://learn.microsoft.com/ja-jp/azure/app-service/configure-language-nodejs?pivots=platform-linux#set-nodejs-version)
+ご参考: [Node.js アプリの構成 - Azure App Service Microsoft Learn - Node.js のバージョンを表示する](https://learn.microsoft.com/ja-jp/azure/app-service/configure-language-nodejs?pivots=platform-linux#set-nodejs-version)
 
 # Windows App Service で Node.js のマイナーバージョンをハードコーディングした場合の問題
 
