@@ -71,18 +71,21 @@ traces
 ![image-d01e8a43-615a-4d57-824e-2579c50f7770.png]({{site.baseurl}}/media/2022/08/image-d01e8a43-615a-4d57-824e-2579c50f7770.png)
 
 
-また、スケールコントローラーのログを有効にしていない場合には以下のクエリを用いて Application Insights の trace テーブルから cloud_RoleInstance プロパティより summarize 構文を使用してインスタンス数も確認をすることが出来ます。
+また、スケールコントローラーのログを有効にしていない場合には以下のクエリを用いて Application Insights の traces テーブルから cloud_RoleInstance カラムの値を dcount() を使用して重複を排除して数え上げることで、インスタンス数の経時変化を確認をすることが出来ます。
 
-**Application Insights のログ内での summarize 構文クエリ例**
+**Application Insights の traces ログを用いたクエリ例**
 
 ```
+// 直近 3 日間について 5 分おきに割り当てられているインスタンス数を集計しグラフとして描画する
 traces
-| summarize count() by cloud_RoleInstance
+| where timestamp > ago(3d)
+| make-series AllocatedWorkerInstances = dcount(cloud_RoleInstance) on timestamp from ago(3d) to now() step 5m
+| render timechart
 ```
 
-**Application Insights のログ内での summarize 構文出力例**
+**Application Insights の traces ログを用いたクエリの出力例**
 
-![image-97ea69c5-a891-4574-8c79-997902ab4ca6.png]({{site.baseurl}}/media/2022/08/image-97ea69c5-a891-4574-8c79-997902ab4ca6.png)
+![image-0329cb1c-64bb-4ef6-99a5-ba808df4fdd1.png]({{site.baseurl}}/media/2022/08/image-0329cb1c-64bb-4ef6-99a5-ba808df4fdd1.png)
 
 
 ## まとめ
@@ -97,7 +100,7 @@ Elastic Premium Plan は、自身の関数アプリを占有インスタンス�
 <br>
 <br>
 
-2023 年 11 月 07 日時点の内容となります。<br>
+2024 年 03 月 13 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
