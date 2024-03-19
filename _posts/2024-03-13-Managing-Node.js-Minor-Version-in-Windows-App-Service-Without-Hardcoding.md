@@ -1,5 +1,5 @@
 ---
-title: "Windows App Service で Node.js マイナーバージョンまでハードコーディングしないように"
+title: "Windows App Service で Node.js マイナーバージョンまでハードコーディングすることは非推奨です"
 author_name: "a-yhamada"
 tags:
     - App Service
