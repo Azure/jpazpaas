@@ -35,8 +35,8 @@ must only appear once per config file. See the help topic <location> for excepti
 1. NewRelic  
 2. Composer  
   
-上記 Site Extension は一例ですが、カスタム XDT 変換や、**InsertIfMissing** の代わりに **Insert** を使用して XDT 変換を行っているその他の Site Extension を使用しているときに、エラーが発生する可能性があることに注意してください。
-
+上記 Site Extension は一例ですが、カスタム XDT 変換や、**InsertIfMissing** の代わりに **Insert** を使用して XDT 変換を行っているその他の Site Extension を使用しているときに、エラーが発生する可能性があることに注意してください。  
+<br>
 # 解決方法
 
 この問題を解決するには、次の手順を実行します。  
@@ -50,7 +50,7 @@ must only appear once per config file. See the help topic <location> for excepti
 >注意: 上記の症状で説明されている問題が発生していることを確認した場合にのみ、上記の手順を実行してください。
 
 アプリで[カスタム XDT 変換](https://github.com/projectkudu/kudu/wiki/Xdt-transform-samples)を利用している場合は、**Insert** ではなく **InsertIfMissing** を使用してください。  
-
+<br>
 # 追加情報
 この問題は、App Service による Diagnostic as a Service (DaaS) Site Extension の更新に伴って発生するようになりました。  
 2024 年 2 月に展開が開始された DaaS Site Extension の更新においては DaaS が診断目的で使用する新しい環境変数が導入されています。DaaS Site Extension は適切に InsertIfMissing 変換を使用していましたが、system.webServer/runtime セクションを挿入したことで、他の Insert 変換を使用する XDT 変換が存在する場合は競合し、エラーが発生するようになりました。
