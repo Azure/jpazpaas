@@ -21,6 +21,7 @@ tags:
 本記事では、App Service / Azure Functions (以下、アプリと呼称します) において、お客様がカスタム XDT 変換、または古いバージョンの Site Extension (拡張機能) を使用していた場合に発生する可能性のある問題について説明します。症状は以下のとおりです。  
 1. Kudu (SCM) サイトがクラッシュし、復旧しません。(Kudu サイトにアクセスした際、"HTTP Error 503. The service is unavailable." によりアクセスに失敗します)  
 2. EventLog.xml ファイル (%HOME%\LogFilesフォルダにあります) を開くと以下の様に、「'**system.webServer/runtime**' already defined」というエラーが記録されています。  
+
 ```
 <Data>~1YourSiteName</Data>
 <Data>Config section 'system.webServer/runtime' already defined. Sections 
