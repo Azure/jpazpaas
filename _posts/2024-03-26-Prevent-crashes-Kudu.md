@@ -12,6 +12,8 @@ tags:
 本記事は 2024 年 3 月 20 日に公開されました [Prevent crashes due to ‘system.webServer/runtime’ already defined](https://azure.github.io/AppService/2024/03/20/Azure-WebApp-crashing-due-to-duplicate-runtime-section.html) の日本語訳です。  
 翻訳内容には細心の注意を払っておりますが、もし原文内容と齟齬がある場合は、原文の内容を優先ください。  
   
+  
+---
 本記事では、App Service / Azure Functions (以下、アプリと呼称します) において、お客様がカスタム XDT 変換、または古いバージョンの Site Extension (拡張機能) を使用していた場合に発生する可能性のある問題について説明します。症状は以下のとおりです。  
 1. Kudu (SCM) サイトがクラッシュし、復旧しません。(Kudu サイトにアクセスした際、"HTTP Error 503. The service is unavailable." によりアクセスに失敗します)  
 2. EventLog.xml ファイル (%HOME%\LogFilesフォルダにあります) を開くと以下の様に、「'**system.webServer/runtime**' already defined」というエラーが記録されています。  
@@ -53,6 +55,7 @@ must only appear once per config file. See the help topic <location> for excepti
 この問題は、App Service による Diagnostic as a Service (DaaS) Site Extension の更新に伴って発生するようになりました。  
 2024 年 2 月に展開が開始された DaaS Site Extension の更新においては DaaS が診断目的で使用する新しい環境変数が導入されています。DaaS Site Extension は適切に InsertIfMissing 変換を使用していましたが、system.webServer/runtime セクションを挿入したことで、他の Insert 変換を使用する XDT 変換が存在する場合は競合し、エラーが発生するようになりました。
 
+---
 <br>
 <br>
 
