@@ -5,14 +5,11 @@ tags:
     - App Service
 ---
 
-<br>
-<br>
-
 # はじめに
 お世話になっております。App Service サポート担当の森です。
 
 
-本記事は [Apps on Azure Blog](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/bg-p/AppsonAzureBlog)で2023年11月に公開されている [Troubleshoot intermittent connectivity issue in azure app service](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/troubleshoot-intermittent-connectivity-issue-in-azure-app/ba-p/3969841#user-content-tcpping) の日本語抄訳としてご案内いたします。
+本記事は [Apps on Azure Blog](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/bg-p/AppsonAzureBlog) にて2023 年 11 月に公開されている [Troubleshoot intermittent connectivity issue in azure app service](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/troubleshoot-intermittent-connectivity-issue-in-azure-app/ba-p/3969841#user-content-tcpping) の日本語抄訳としてご案内いたします。
 
 # App Service における断続的な接続問題のトラブルシューティング
 
@@ -20,7 +17,7 @@ Azure App Service 上で動作しているアプリケーションでは、断�
 
 ## Linux
 
-Kudu サイト（例 : `https://<appname>.scm.azurewebsites.net`）にログインし、SSH メニューへ移動すると SSH Shell を確認できます。カスタムイメージを使用している場合は、このドキュメントに従ってSSHを有効にする必要があります：[Azure App Service のカスタム コンテナーを構成する](https://learn.microsoft.com/ja-jp/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#enable-ssh)
+Kudu サイト（例 : `https://<appname>.scm.azurewebsites.net`）にログインし、SSH メニューへ移動すると SSH Shell を確認できます。カスタムイメージを使用している場合は、次のドキュメントに従ってSSHを有効にする必要があります：[Azure App Service のカスタム コンテナーを構成する](https://learn.microsoft.com/ja-jp/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#enable-ssh)
 
 ### nslookup
 
@@ -466,18 +463,17 @@ PowerShell スクリプト内で、`Write-Host` を `Write-Output` に変更す�
 
 継続的な Webjob を作成する方法については、以下のドキュメントを参照してください。
 
-https://learn.microsoft.com/en-us/azure/app-service/webjobs-create#CreateContinuous
+[Web ジョブでバックグラウンド タスクを実行する - Azure App Service](https://learn.microsoft.com/ja-jp/azure/app-service/webjobs-create#CreateContinuous)
 
 Webjob が作成されると、以下のようなログが確認できます。
 
 ![image-d33b9201-5168-4481-9235-5d59e574cceb.png]({{site.baseurl}}/media/2024/03/image-d33b9201-5168-4481-9235-5d59e574cceb.png)
 
 ## 参考資料
-- [Azure App Service virtual network integration troubleshooting guide - Azure | Microsoft Learn](https://learn.microsoft.com/en-us/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps#troubleshoot-outbound-connectivity-on-windows-apps)
-
+- [Azure App Service仮想ネットワーク統合のトラブルシューティング ガイド - Azure ](https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/troubleshoot-vnet-integration-apps#troubleshoot-outbound-connectivity-on-windows-apps)
 - [Quickly test connectivity from Azure Website to SQL DB - Microsoft Community Hub](https://techcommunity.microsoft.com/t5/azure-database-support-blog/quickly-test-connectivity-from-azure-website-to-sql-db/ba-p/368868)
 - [Networking Related Commands for Azure App Services - Microsoft Community Hub](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/networking-related-commands-for-azure-app-services/ba-p/392410)
-- [Installing TcpPing on Azure App Service Linux - (azureossd.github.io)](https://azureossd.github.io/2021/06/17/installing-tcpping-linux/)
+- [Installing TcpPing on Azure App Service Linux](https://azureossd.github.io/2021/06/17/installing-tcpping-linux/)
 - [https://gist.github.com/cnDelbert/5fb06ccf10c19dbce3a7](https://gist.github.com/cnDelbert/5fb06ccf10c19dbce3a7 ) 
 
 
