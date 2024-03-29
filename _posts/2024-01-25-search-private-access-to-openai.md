@@ -20,6 +20,14 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
 ~~~
 ![image-afddb292-ce11-42dc-a5d6-c25aeb92e136.png]({{site.baseurl}}/media/2024/01/image-afddb292-ce11-42dc-a5d6-c25aeb92e136.png)
 
+また、Azure OpenAI Service のパブリックアクセスを無効化せず、「選択したネットワークとプライベート エンドポイント」からのアクセスに制限している場合は以下のエラーが発生します。 
+~~~
+メッセージ
+Could not execute skill because the Web Api request failed.
+詳細
+Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code":"403","message": "Access denied due to Virtual Network/Firewall rules."}}'
+~~~
+
 # 回答
 現時点では以下の 2 点の選択肢がございます。<br/>
 それぞれ長所と短所を記載いたしましたので、ご検討いただけますと幸いです。<br/>
@@ -97,6 +105,8 @@ Azure OpenAI Service のドキュメントに以下の記載がございます�
 もちろん、プライベート接続はできないものの、[マイクロソフトのグローバル ネットワーク](https://learn.microsoft.com/ja-jp/azure/networking/microsoft-global-network#get-the-premium-cloud-network) のドキュメントに記載がある通り、Microsoft のサービス間の通信はパブリックインターネットを経由することはございませんので、その点はご安心ください。<br/>
 
 共有プライベートリンクのご利用がコストの都合上難しい場合の代替案として、ご検討いただけますと幸いです。
+
+また、質問に記載の 2 番目のエラーメッセージ `Access denied due to Virtual Network/Firewall rules.` を解消する方法にもなっています。
 
 ### 設定手順
 以下に設定手順を記載いたします。
@@ -195,7 +205,7 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
-2024 年 03 月 13 日時点の内容となります。<br>
+2024 年 03 月 29 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
