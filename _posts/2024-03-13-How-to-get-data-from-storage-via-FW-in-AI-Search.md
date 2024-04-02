@@ -24,7 +24,13 @@ For more information on troubleshooting connection issues to Azure Storage accou
 Azure AI Search サービスとストレージアカウントが同じリージョンにあり、ストレージアカウントが選択されたネットワークからのアクセスを許可しているためです。
 
 # 回避策
-BLOB、Table ストレージそれぞれ設定方法が多少異なります。
+BLOB、Table ストレージそれぞれ設定方法が多少異なりますが、いずれもマネージド ID での認証が必要になります。<br/>
+ただし、マネージド ID での認証は Basic レベル以上でのみ利用できるためご注意ください。
+
+>前提条件
+>- Basic レベル以上の検索サービス。
+
+[Azure AI Search で マネージド ID 利用時の前提条件](https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys%2Cportal-user#prerequisites)
 
 ## 1. Blob ストレージの場合
 最初の手順は、以下の 1-1 と 1-2 いずれかの方法をご活用ください。
@@ -84,7 +90,7 @@ RBAC 設定が反映されるまで数分かかる場合がございますので
 ### 手順2. Azure AI Search サービスのマネージド ID を有効にし、RBAC 権限を設定
 Azure AI Search サービスのマネージド ID を有効にし、ストレージアカウントに対して適宜権限を付与して頂く必要がございます。<br>
 下記の画像の通り Azure AI Search サービスの ID → システム割り当て済みで「状態」を「オン」にする → アクセス許可の Azure ロールの割り当てをクリックしてください。<br>
-![image-6af3f275-5940-48c1-af50-78c6cf50e11c.png]({{site.baseurl}}/media/2024/03/image-6af3f275-5940-48c1-af50-78c6cf50e11c.png)<br>
+![image-6af3f275-5940-48c1-af50-78c6cf50e11c.png]({{site.baseurl}}/media/2024/04/image-6af3f275-5940-48c1-af50-78c6cf50e11c.png)<br>
 
 ロールの割り当ての追加（プレビュー）で当該ストレージアカウントに対して「閲覧者とデータ アクセス」役割を追加してください。<br>
 [前提条件 - データおよび閲覧者](https://learn.microsoft.com/ja-jp/azure/search/search-howto-indexing-azure-tables#prerequisites)<br>
