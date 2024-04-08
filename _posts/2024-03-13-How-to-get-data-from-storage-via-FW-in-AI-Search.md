@@ -90,7 +90,7 @@ RBAC 設定が反映されるまで数分かかる場合がございますので
 ### 手順2. Azure AI Search サービスのマネージド ID を有効にし、RBAC 権限を設定
 Azure AI Search サービスのマネージド ID を有効にし、ストレージアカウントに対して適宜権限を付与して頂く必要がございます。<br>
 下記の画像の通り Azure AI Search サービスの ID → システム割り当て済みで「状態」を「オン」にする → アクセス許可の Azure ロールの割り当てをクリックしてください。<br>
-![image-6af3f275-5940-48c1-af50-78c6cf50e11c.png]({{site.baseurl}}/media/2024/04/image-6af3f275-5940-48c1-af50-78c6cf50e11c.png)<br>
+![image-50fe6e67-1d4d-4f36-b55d-158ce6ac0daa.png]({{site.baseurl}}/media/2024/03/image-50fe6e67-1d4d-4f36-b55d-158ce6ac0daa.png)<br>
 
 ロールの割り当ての追加（プレビュー）で当該ストレージアカウントに対して「閲覧者とデータ アクセス」役割を追加してください。<br>
 [前提条件 - データおよび閲覧者](https://learn.microsoft.com/ja-jp/azure/search/search-howto-indexing-azure-tables#prerequisites)<br>
