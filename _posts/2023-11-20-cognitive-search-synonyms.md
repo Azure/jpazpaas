@@ -1,19 +1,19 @@
 ---
-title: "Cognitive Search のシノニム（同意語）検索機能を使用する方法"
+title: "AI Search のシノニム（同意語）検索機能を使用する方法"
 author_name: "Chansik Lee"
 tags:
-    - Cognitive Search
+    - "AI Search"
 ---
 
 # はじめに
 お世話になっております。PaaS Dev サポート担当の李です。<br>
-Cognitive Search にはインデックス検索時にそのキーワードと共に事前に登録した同意語を一緒に検索する、シノニム検索機能をサポートしております。<br>
+AI Search にはインデックス検索時にそのキーワードと共に事前に登録した同意語を一緒に検索する、シノニム検索機能をサポートしております。<br>
 本日はシノニム検索の使用方法をご案内致します。手順の一部やシノニムの詳細に関しては以下の弊社公式ドキュメントからもご参照頂けます。<br>
-[Azure Cognitive Search でのシノニム](https://learn.microsoft.com/ja-jp/azure/search/search-synonyms)<br>
+[Azure AI Search でのシノニム](https://learn.microsoft.com/ja-jp/azure/search/search-synonyms)<br>
 
 # サンプル環境の用意
-Cognitive Search にデータソース・インデックスなどを Azure ポータルの UI で簡単に登録する手順は以下のページをご参照ください。<br>
-[Azure Cognitive Search のデータのインポート ウィザード](https://learn.microsoft.com/ja-jp/azure/search/search-import-data-portal)<br>
+AI Search にデータソース・インデックスなどを Azure ポータルの UI で簡単に登録する手順は以下のページをご参照ください。<br>
+[Azure AI Search のデータのインポート ウィザード](https://learn.microsoft.com/ja-jp/azure/search/search-import-data-portal)<br>
 今回のデータソースである BLOB ストレージには以下のテキストファイルを用意して検索結果を検証します。<br>
 
 |ファイル名|本文|
@@ -30,7 +30,7 @@ Cognitive Search にデータソース・インデックスなどを Azure ポ�
 # シノニムマップの登録と確認
 冒頭でご案内致しました公式ドキュメントにも記載されておりますが、本記事が投稿された現時点では Azure ポータル UI でのシノニムマップの登録はサポートされておらず、REST API または C#・Python などで登録を行う必要がございます。本記事では REST API を用いて登録する手順をご案内致します。<br>
 
-① Cognitive Search の「キー」から API キーを取得します。<br>
+① AI Search の「キー」から API キーを取得します。<br>
 ![image-e8e933ff-9cf9-4bae-a4e4-e9f75fdc84c6.png]({{site.baseurl}}/media/2023/11/image-e8e933ff-9cf9-4bae-a4e4-e9f75fdc84c6.png)<br>
 
 ② 下記の内容で POST します。201 応答が返されます。<br>
@@ -91,10 +91,10 @@ PUT/DELETE https://[service name].search.windows.net/synonymmaps/[synonymmap nam
 ```
 
 各REST APIの詳細は以下のページをご参照ください。<br>
-[シノニム マップの作成 (REST API Azure Cognitive Search)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/create-synonym-map)<br>
-[シノニム マップの一覧表示 (Azure Cognitive Search REST API)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/list-synonym-maps)<br>
-[シノニム マップの更新 (REST API Azure Cognitive Search)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/update-synonym-map)<br>
-[シノニム マップの削除 (Azure Cognitive Search REST API)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/delete-synonym-map)<br>
+[シノニム マップの作成 (REST API Azure AI Search)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/create-synonym-map)<br>
+[シノニム マップの一覧表示 (Azure AI Search REST API)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/list-synonym-maps)<br>
+[シノニム マップの更新 (REST API Azure AI Search)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/update-synonym-map)<br>
+[シノニム マップの削除 (Azure AI Search REST API)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/delete-synonym-map)<br>
 
 
 # 登録可能なシノニムマップ数
@@ -104,7 +104,7 @@ PUT/DELETE https://[service name].search.windows.net/synonymmaps/[synonymmap nam
 [シノニムの制限](https://learn.microsoft.com/ja-jp/azure/search/search-limits-quotas-capacity#synonym-limits)<br>
 
 
-以上、Cognitive Search のシノニム検索機能を紹介いたしました。<br>
+以上、AI Search のシノニム検索機能を紹介いたしました。<br>
 
 
 <br>
