@@ -21,11 +21,11 @@ Terraform で Azure リソースを管理したいのですが、既に Azure �
 #### PowerShell でエクスポート
 エクスポートしたいサブスクリプションにログインしてから、下記のコマンドでリソースグループやリソースをエクスポートできます。
 
-```
-// resource group
+```powershell
+# リソースグループを指定してエクスポート
 aztfexport resource-group myResourceGroup
 
-// resource
+# リソースを個別に指定してエクスポート
 aztfexport resource <resourceId>
 ```
 
@@ -87,9 +87,9 @@ provider "azurerm" {
 
 ![main_provider-722e5119-5522-40d2-af49-1663a9c7249c.png]({{site.baseurl}}/media/2024/04/main_provider-722e5119-5522-40d2-af49-1663a9c7249c.png)
 
-#### リソースが存在しない新しいサブスクリプションに Terraform を導入します
+#### 他のサブスクリプションに Terraform を導入します
 
-リソースが存在しない新しいサブスクリプションを Terraform で管理する場合、新しいフォルダで `main.tf`、`provider.tf`、`terraform.tf` を作成します。
+他のサブスクリプションを Terraform で管理する場合、新しいフォルダで `main.tf`、`provider.tf`、`terraform.tf` を作成します。
 理由としては、エクスポート時に生成された `.tfstate` ファイルはエクスポート時のリソース状態を記録しているので、新しいサブスクリプションの空の状態から導入する際に、`.tfstate` で記録されているリソース状態と現在の状態とコンフリクトしてしまうためです。
 
 さらに前述した [**依存関係**](#dependency) を導入時に注意します。
@@ -103,7 +103,7 @@ provider "azurerm" {
 
 依存関係について修正したら、新しいフォルダで以下のコマンドでサブスクリプションに導入します。
 
-```shell
+```powershell
 terraform init
 
 # 作成、変更されるリソースを確認します。
