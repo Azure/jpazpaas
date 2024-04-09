@@ -2,7 +2,7 @@
 title: "AI Search の設定やインデックスデータをバックアップしたい"
 author_name: "Takumi Nagaya"
 tags:
-    - Search
+    - "AI Search"
 ---
 
 # 質問
@@ -214,7 +214,7 @@ SAFEGUARD CHECK: Source and target index counts should match
 <br>
 <br>
 
-2024 年 01 月 25 日時点の内容となります。<br>
+2024 年 04 月 09 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
