@@ -1,8 +1,8 @@
 ---
-title: "Cognitive Search の検索で意図しない検索結果になる"
+title: "AI Search の検索で意図しない検索結果になる"
 author_name: "Takumi Nagaya"
 tags:
-    - Cognitive Search
+    - "AI Search"
 ---
 
 # 質問
@@ -15,7 +15,7 @@ tags:
 
 >存在するとわかっている用語でも一致数が 0 件なのはなぜですか?<br/><br/>
 よくあるケースは、クエリの型ごとにサポートされる検索ビヘイビアーと言語分析のレベルが異なることを把握していない場合です。 主要なワークロードである全文検索には、用語を原形に分解する言語分析フェーズが含まれています。 トークン化された用語は、より多くの数の変形と一致するため、このようなクエリ分析はより広い網を一致候補にかけます。<br/><br/>
-[Cognitive Search についてよく寄せられる質問](https://learn.microsoft.com/ja-jp/azure/search/search-faq-frequently-asked-questions#--------------------0-----------)
+[AI Search についてよく寄せられる質問](https://learn.microsoft.com/ja-jp/azure/search/search-faq-frequently-asked-questions#--------------------0-----------)
 
 <br/>
 
@@ -31,7 +31,7 @@ tags:
 ## 1. ご利用の言語アナライザーでの検索文字列の字句解析結果の確認
 まず、現状ご利用いただいている言語アナライザーの検索文字列に対する挙動を確認します。<br/>
 
-一般的に Cognitive Search のインデックスの検索時には、以下のドキュメントに記載の4つの手順が実行されます。
+一般的に AI Search のインデックスの検索時には、以下のドキュメントに記載の4つの手順が実行されます。
 
 
 >クエリの実行には次の 4 つの段階があります。
@@ -40,7 +40,7 @@ tags:
 >- 文書検索
 >- ポイントの計算<br/>
 >
->[Azure Cognitive Search でのフルテキスト検索](https://learn.microsoft.com/ja-jp/azure/search/search-lucene-query-architecture)
+>[Azure AI Search でのフルテキスト検索](https://learn.microsoft.com/ja-jp/azure/search/search-lucene-query-architecture)
 
 2 番目の「字句解析」の段階では、検索文字列 (例えば「ねこ」) をインデックスのフィールドの言語アナライザーの設定値に応じてトークン化します。<br/>
 例えばインデックスの content というフィールドの定義が以下のように `"analyzer": "standard.lucene"` なっていれば、言語アナライザーは `standard.lucene` というものになります。
@@ -66,13 +66,13 @@ tags:
 ```
 
 トークン化の挙動の確認については、ドキュメント [アナライザーの動作テスト](https://learn.microsoft.com/ja-jp/azure/search/search-lucene-query-architecture#testing-analyzer-behaviors) に記載がございます。<br/>
-挙動確認には [テキストの分析 (REST API Azure Cognitive Search)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/test-analyzer) を利用しますが、事前に Cognitive Search サービスと、インデックスを用意し、認証のため [API キーの取得](https://learn.microsoft.com/ja-jp/azure/search/search-security-api-keys?tabs=portal-use%2Cportal-find%2Cportal-query#find-existing-keys) をしておく必要があります。
+挙動確認には [テキストの分析 (REST API Azure AI Search)](https://learn.microsoft.com/ja-jp/rest/api/searchservice/test-analyzer) を利用しますが、事前に AI Search サービスと、インデックスを用意し、認証のため [API キーの取得](https://learn.microsoft.com/ja-jp/azure/search/search-security-api-keys?tabs=portal-use%2Cportal-find%2Cportal-query#find-existing-keys) をしておく必要があります。
 
 例えば「ねこ」が言語アナライザー `standard.lucene` によってどのように解析されるか確認するために、
 以下のようにリクエストを送信します。
 
 ```bash
-# <searchName> にご利用の Cognitive Search 名
+# <searchName> にご利用の AI Search 名
 # <index-name> にご利用のインデックス名
 # api-key: <***> に API キーを指定します。
 
@@ -192,9 +192,9 @@ curl --location 'https://<searchName>.search.windows.net/indexes/<index-name>/an
 ![image-2d095939-6f5f-4e13-93e1-7443f0a0c80e.png]({{site.baseurl}}/media/2023/06/image-2d095939-6f5f-4e13-93e1-7443f0a0c80e.png)
 
 # 参考ドキュメント
-- [Cognitive Search についてよく寄せられる質問](https://learn.microsoft.com/ja-jp/azure/search/search-faq-frequently-asked-questions#--------------------0-----------)
-- [Azure Cognitive Search でのフルテキスト検索](https://learn.microsoft.com/ja-jp/azure/search/search-lucene-query-architecture)
-- [Azure Cognitive Search でのテキスト処理のためのアナライザー](https://learn.microsoft.com/ja-jp/azure/search/search-analyzers)
+- [AI Search についてよく寄せられる質問](https://learn.microsoft.com/ja-jp/azure/search/search-faq-frequently-asked-questions#--------------------0-----------)
+- [Azure AI Search でのフルテキスト検索](https://learn.microsoft.com/ja-jp/azure/search/search-lucene-query-architecture)
+- [Azure AI Search でのテキスト処理のためのアナライザー](https://learn.microsoft.com/ja-jp/azure/search/search-analyzers)
 - [アナライザーの動作テスト](https://learn.microsoft.com/ja-jp/azure/search/search-lucene-query-architecture#testing-analyzer-behaviors)
 
 <br>
@@ -205,7 +205,7 @@ curl --location 'https://<searchName>.search.windows.net/indexes/<index-name>/an
 <br>
 <br>
 
-2023 年 06 月 20 日時点の内容となります。<br>
+2024 年 04 月 09 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
