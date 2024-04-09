@@ -1,5 +1,5 @@
 ---
-title: "Azure Export for Terraform で Azure リソースの管理に管理に Terraform を導入する"
+title: "Azure Export for Terraform で Azure リソースの管理に Terraform を導入する"
 author_name: "yiwenchen"
 tags:
     - ARM
