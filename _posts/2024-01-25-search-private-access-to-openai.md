@@ -39,7 +39,8 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
      - 手順として共有プライベートリンクの作成とインデクサーの設定を変更すればよく、管理が容易です。
    - 短所
      - スキルセットを利用する場合、Azure AI Search のプランは Standard 2 以上が必要となり、Standard 以下のプランと比較して、ご利用料金が高くなります。
-2. **Azure AI Search から Azure OpenAI Service に対してマネージド ID 認証を利用して接続します。**
+2. **Azure AI Search から Azure OpenAI Service に対してマネージド ID 認証を利用して接続します。**  
+**注意: 2024/04/02 時点で Basic プランでのみ動作する挙動となっております。**
    - 長所
      - マネージド ID は Azure AI Search の Basic プランから利用可能であるため、共有プライベートリンクを使用する場合と比較してご利用料金は低くなります。 
    - 短所
@@ -205,7 +206,7 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
-2024 年 03 月 29 日時点の内容となります。<br>
+2024 年 04 月 09 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
