@@ -2,7 +2,7 @@
 title: "Microsoft Entra 認証でログインする Web アプリケーションで、ユーザーの権限に応じて AI Search を検索させたい"
 author_name: "Takumi Nagaya"
 tags:
-    - Search
+    - "AI Search"
 ---
 
 # 質問
@@ -175,7 +175,7 @@ export const Search = () => {
 <br>
 <br>
 
-2024 年 01 月 29 日時点の内容となります。<br>
+2024 年 04 月 09 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
