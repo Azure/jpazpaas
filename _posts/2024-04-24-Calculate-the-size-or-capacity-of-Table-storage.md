@@ -2,7 +2,7 @@
 title: "Table ストレージのエンティティ数と容量の確認方法"
 author_name: "a-yukiarai"
 tags:
-    - storage
+    - Storage
 ---
 
 
