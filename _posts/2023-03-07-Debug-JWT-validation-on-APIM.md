@@ -2,7 +2,7 @@
 title: "HTTP リクエストを利用して Azure Active Directory からアクセストークンを発行して、APIM で JWT 検証を実行する"
 author_name: "hmachida"
 tags:
-    - api-management
+    - API Management
 ---
 
 # 質問
