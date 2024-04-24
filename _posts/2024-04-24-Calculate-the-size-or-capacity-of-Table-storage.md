@@ -5,7 +5,6 @@ tags:
     - storage
 ---
 
-# Table ストレージのエンティティ数と容量の確認方法
 
 この Blog 記事では Table ストレージ について、 Azure Storage Explorer と PowerShell を使用してTable 内のエンティティの数を確認する方法とTable 内の各エンティティの容量の計算方法をご紹介いたします。
 
@@ -173,7 +172,7 @@ Table 内のエンティティごとに消費されるストレージの容量�
 ### ご注意ください：
 個々のエンティティの容量を計算する機能は、標準では組み込まれておりませんので、容量計算を行う際にはスクリプトをお客様にてご作成いただく等のご対応が必要となります。なお、Table に対するあらゆる種類の操作 (読み取り、書き込み、削除を含む) はトランザクションとしてカウントされ、課金の対象となります。
 
-ご参考：[Azure Tables Storage の料金 | Microsoft Azure](https://azure.microsoft.com/ja-jp/pricing/details/storage/tables/)
+ご参考： [Azure Tables Storage の料金](https://azure.microsoft.com/ja-jp/pricing/details/storage/tables/)
 
 
 <br>
