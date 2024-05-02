@@ -22,6 +22,8 @@ Creation of storage file share failed with: 'The remote server returned an error
 - Function App の作成時、一時的にストレージアカウントのファイアウォール (パブリックネットワークアクセス) を `すべてのネットワークから有効` に変更する
 - Function App の作成時には一旦、新規にストレージアカウントを作成し、リソースの作成後に [ストレージアカウントを入れ替える](https://learn.microsoft.com/ja-jp/azure/azure-functions/configure-networking-how-to?tabs=portal#existing-function-app)
 
+本記事は Function App で [デプロイスロットアプリを作成するシナリオ](https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-deployment-slots?tabs=azure-portal#create-a-deployment-setting) にも該当します。
+
 # エラーが発生する原因
 
 [従量課金プランならびに Elastic Premium プランの Function App は、既定で Azure Files を使用し](https://learn.microsoft.com/ja-jp/azure/azure-functions/storage-considerations?tabs=azure-cli#storage-account-requirements) 、ファイル共有をマウントしてお客様にてデプロイされたアプリケーションコードなどを格納します。当該エラーは、ストレージアカウントでファイル共有の作成に失敗したことに起因しております。
@@ -52,7 +54,7 @@ Creation of storage file share failed with: 'The remote server returned an error
 <br>
 <br>
 
-2024 年 01 月 31 日時点の内容となります。<br>
+2024 年 05 月 02 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
