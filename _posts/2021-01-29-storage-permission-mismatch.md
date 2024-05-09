@@ -2,7 +2,7 @@
 title: "Storage Account へのアクセスで AuthorizationPermissionMismatch エラーが発生した場合の対処方法"
 author_name: "Takumi Nagaya"
 tags:
-    - Storage Account
+    - Storage
 ---
 
 # 質問

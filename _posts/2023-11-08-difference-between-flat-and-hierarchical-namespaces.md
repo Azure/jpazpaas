@@ -2,7 +2,7 @@
 title: "フラット型名前空間と階層型名前空間が有効な BLOB の違いについて"
 author_name: "Eiji Mocihda"
 tags:
-    - Azure Storage
+    - Storage
 ---
 
 # 質問
