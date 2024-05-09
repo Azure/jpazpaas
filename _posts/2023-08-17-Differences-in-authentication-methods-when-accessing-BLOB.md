@@ -2,7 +2,7 @@
 title: "Azure ポータルで BLOB にアクセスするときの認証方法の違いについて"
 author_name: "eijimoch"
 tags:
-    - BLOB Storage
+    - Storage
 ---
 
 # 質問

@@ -2,7 +2,7 @@
 title: Queueストレージのメッセージの33件目以降を確認する方法
 author_name: "chansiklee"
 tags:
-    - Storage Account
+    - Storage
 ---
 
 # はじめに

@@ -2,7 +2,6 @@
 title: "診断設定のログ (追加 BLOB) をアーカイブ層に移動する方法"
 author_name: "hamatsum"
 tags:
-    - Storage Account
     - Storage
 ---
 

@@ -2,7 +2,7 @@
 title: "Azure Storageのアクセス ログの有効化手順について"
 author_name: "Rui Hiraoka"
 tags:
-    - Azure Storage
+    - Storage
 ---
 
 # 質問

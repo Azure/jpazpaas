@@ -2,7 +2,7 @@
 title: ストレージアカウント → Event Grid → Service Bus → Functions の経路で可能な限りプライベートでイベントを配信する設定手順
 author_name: "chansiklee"
 tags:
-    - Storage Account
+    - Storage
     - Event Grid
     - Service Bus
 ---

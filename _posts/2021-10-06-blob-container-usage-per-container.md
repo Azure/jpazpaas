@@ -2,7 +2,7 @@
 title: "Blobコンテナーのコンテナーごとの容量確認方法"
 author_name: "Haruka Matsumura"
 tags:
-    - Storage Account
+    - Storage
 ---
 - 2023/02/21: GUI (Azure ポータル) を用いる方法の機能廃止に伴い、内容を更新いたしました。<br>
 - 2024/01/19: Azure PowerShell のスクリプトを用いる方法でご紹介のリンク先のスクリプトが、単一コンテナーのサンプルからストレージ アカウント内の全コンテナー対象のサンプルへの変更に伴い、内容を更新いたしました。<br>

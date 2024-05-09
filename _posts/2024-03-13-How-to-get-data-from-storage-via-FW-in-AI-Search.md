@@ -2,8 +2,8 @@
 title: ファイアウォールを有効にしたストレージアカウントに対して、 Azure AI Search のインデクサーを作成したいがエラーが発生する
 author_name: "chansiklee"
 tags:
-    - "AI Search"
-    - "Storage Account"
+    - AI Search
+    - Storage
 ---
 
 # はじめに
