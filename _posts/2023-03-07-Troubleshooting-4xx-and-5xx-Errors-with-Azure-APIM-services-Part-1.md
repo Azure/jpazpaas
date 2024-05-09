@@ -2,7 +2,7 @@
 title: "Azure APIM services の 4xx や 5xx のトラブルシューティング パート 1"
 author_name: "hmachida"
 tags:
-    - api-management
+    - API Management
 ---
 
 このポストは、2021 年 3 月 1 日に投稿された [Troubleshooting 4xx and 5xx Errors with Azure APIM services
