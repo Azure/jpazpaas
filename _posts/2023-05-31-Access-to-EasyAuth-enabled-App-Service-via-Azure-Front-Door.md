@@ -2,7 +2,9 @@
 title: "Azure Front Door を経由してAzure AD 認証を有効にしたApp Serviceへのアクセス"
 author_name: "<trangmai>"
 tags:
-    - Azure Front Door, App Service, Azure AD認証
+    - Azure Front Door
+    - App Service
+    - Azure AD認証
 ---
 
 # 質問[]()
@@ -101,7 +103,7 @@ App Service にアクセス制限を構成していないシナリオでも、�
 
 本ブログは App Service の前段に FrontDoor を構成する場合のシナリオについて記載されましたが、App Service の前段に Application Gateway を構成する場合の Azure AD 認識について以下のブログをご参考までにご参照ください。
 
-[App Service の前段に ApplicationGateway を配置した際の Azure AD 認証](https://azure.github.io/jpazpaas/2022/03/09/Application-Gateway-front-of-App-Service-auth.html)
+[App Service の前段に ApplicationGateway を配置した際の Azure AD 認証](https://jpazpaas.github.io/blog/2022/03/09/Application-Gateway-front-of-App-Service-auth.html)
 
 ------------------
 <br>
