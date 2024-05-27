@@ -19,18 +19,18 @@ AppServiceConsoleLogs は [標準出力 (stdout) と標準エラー (stderr) を
 
 ![image-e71f70b1-bbe7-48a3-bbc2-f5a4567c3115.png]({{site.baseurl}}/media/2024/05/image-e71f70b1-bbe7-48a3-bbc2-f5a4567c3115.png)
 
-参考：[診断ログの有効化 - Azure App Service | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#supported-log-types)
+参考：[診断ログの有効化 - Azure App Service](https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-diagnostic-logs#supported-log-types)
 
 一方で、 Python logging ライブラリは [ログ出力先としてファイルパスを指定せず、既定のままとした場合、 StreamHandler が使用](https://docs.python.org/3.10/library/logging.html#logging.basicConfig)され、[StreamHandler は既定で 標準エラー (stderr) にログを出力](https://docs.python.org/3.10/library/logging.handlers.html#logging.StreamHandler)いたします。
 
 ![image-3-0f2e4f63-aa4e-4451-814a-379ac19b20c8.png]({{site.baseurl}}/media/2024/05/image-3-0f2e4f63-aa4e-4451-814a-379ac19b20c8.png)
 
-参考：https://docs.python.org/3.10/library/logging.html#logging.basicConfig
+参考：<https://docs.python.org/3.10/library/logging.html#logging.basicConfig>
 
 
 ![image-2-e9ace92a-46d8-4e7a-b3c9-b73a13638f7d.png]({{site.baseurl}}/media/2024/05/image-2-e9ace92a-46d8-4e7a-b3c9-b73a13638f7d.png)
 
-参考：https://docs.python.org/3.10/library/logging.handlers.html#logging.StreamHandler
+参考：<https://docs.python.org/3.10/library/logging.handlers.html#logging.StreamHandler>
 
 そのため、 logging の設定が既定だった場合、ログレベルに依らず全てのログが標準エラーへ出力され、 AppServiceConsoleLogs にて Error レベルと記録されますので、App Service としては想定された正常な動作となります。
 
