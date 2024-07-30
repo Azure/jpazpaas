@@ -21,7 +21,7 @@ title_separator          : "-"
 subtitle                 : # site tagline that appears below site title in masthead
 name                     : "[Preview]Japan Paas Support Team"
 description              : "Hello! We're Japan Azure Japan PaaS Support Team and provide usuful infromtion. Any Feedback is welcome."
-url                      : "https://ashy-ocean-0b702d800.3.azurestaticapps.net/" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+url                      : "https://black-rock-0bf15af00.5.azurestaticapps.net/" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  :  # the subpath of your site, e.g. "/blog"
 repository               : "azure/jpazpaas" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
@@ -105,7 +105,7 @@ author:
     #   # url: "mailto:your.name@email.com"
     - label: "Website"
       # icon: "fas fa-fw fa-link"
-      url: "https://ashy-ocean-0b702d800.3.azurestaticapps.net/"
+      url: "https://black-rock-0bf15af00.5.azurestaticapps.net/"
     # - label: "Twitter"
     #   icon: "fab fa-fw fa-twitter-square"
     #   # url: "https://twitter.com/"
@@ -124,7 +124,7 @@ footer:
   links:
     - label: "Website"
       # icon: "fas fa-fw fa-link"
-      url: "https://ashy-ocean-0b702d800.3.azurestaticapps.net/"
+      url: "https://black-rock-0bf15af00.5.azurestaticapps.net/"
     # - label: "Twitter"
     #   icon: "fab fa-fw fa-twitter-square"
     #   # url:
