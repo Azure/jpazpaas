@@ -120,6 +120,7 @@ Get-AzRedisCache | Where-Object { $_.MinimumTlsVersion -ne '1.2' } | Select-Obje
 Azure CLI 及び Azure PowerShell を使用して Redis キャッシュ インスタンスの TLS 最小バージョンを変更するには、以下のコマンド例をご利用ください。  
 
 ※ <RedisCacheName>(Redis キャッシュ インスタンスの名前)、<ResourceGroupName>(リソースグループ名)、<subscriptionId>(サブスクリプションID) はご利用環境に応じてご変更ください。  
+ 
 ※ **TLS 1.2 から TLS 1.0、1.1 への変更はできません。** 本記事内「[0. 注意事項](#index0)」をご参照ください。
 
 ### ◆ Azure CLI
@@ -177,7 +178,9 @@ Redis キャッシュ インスタンスの TLS のバージョンを変更す�
 フェールオーバーについては通常の Azure Cache for Redis のご利用の中でも発生する動作となりますので、普段の運用で特に問題がないようでしたら、影響はないと言えます。  
 
 フェールオーバーの詳細は以下の資料にてご確認ください。  
-■ ご参考：[Azure Cache for Redis のフェールオーバーと修正プログラムの適用](https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-failover)  
+■ ご参考：  
+・ [Azure Cache for Redis のフェールオーバーと修正プログラムの適用](https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-failover)  
+・ [Azure Cache for Redis のフェールオーバーについて - Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2020/12/02/cache-failover.html)  
 <br>
 
 <a id="faq4"></a>
@@ -204,7 +207,7 @@ Redis キャッシュ インスタンスの接続元のクライアント側に�
 <br>
 <br>
 
-2024 年 09 月 25 日時点の内容となります。<br>
+2024 年 09 月 26 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
