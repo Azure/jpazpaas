@@ -191,7 +191,7 @@ Redis キャッシュ インスタンスの接続元のクライアント側に�
 実際にクライアント側がどの TLS バージョンで接続しているか、Azure Cache for Redis の側から判断するログなどはございません。  
 クライアント側が利用している TLS バージョンが不明な場合、お手元の環境で TLS 1.2 の検証用の Redis キャッシュ インスタンスをご用意いただき、実際にクライアント側からの接続に問題がないか、事前のテストをご検討ください。
  
-■ご参考：[アプリケーションが既に準拠しているかどうかを確認する](　https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-remove-tls-10-11#check-whether-your-application-is-already-compliant)  
+■ご参考：[アプリケーションが既に準拠しているかどうかを確認する](https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-remove-tls-10-11#check-whether-your-application-is-already-compliant)  
 上記ドキュメントより  
 ～～～ 引用ここから ～～～  
 アプリケーションが TLS 1.2 で機能するかどうかを確認するには、テストまたはステージング キャッシュで TLS のバージョン要件を 1.2 以上に設定して、テストを実行します。 [TLS の最小バージョン] 設定は、Azure portal 内のキャッシュ インスタンスの [詳細設定] にあります。 この変更後もアプリケーションが期待どおりに機能する場合、そのアプリは TLS 1.2 以降を使っています。  
@@ -199,7 +199,7 @@ Redis キャッシュ インスタンスの接続元のクライアント側に�
 
 以下の資料内では、いくつかのプログラミング言語について、TLS バージョンに関する言及の記載がございます。
 
-■ご参考：[TLS 1.2 以降を使うようにアプリケーションを構成する](　https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-remove-tls-10-11#configure-your-application-to-use-tls-12-or-later)  
+■ご参考：[TLS 1.2 以降を使うようにアプリケーションを構成する](https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-remove-tls-10-11#configure-your-application-to-use-tls-12-or-later)  
 <br>
 
 ---
