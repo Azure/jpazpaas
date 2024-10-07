@@ -29,17 +29,17 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
 ~~~
 
 # 回答
-現時点では以下の 2 点の選択肢がございます。<br/>
+現在は以下の 2 点の選択肢がございます。<br/>
 それぞれ長所と短所を記載いたしましたので、ご検討いただけますと幸いです。<br/>
 恐れ入りますが、2 つ目のマネージド ID を利用する方法は、Azure OpenAI Service がパブリックアクセスを無効としているとご利用することがかないませんのでご注意ください。
 
-1. **Azure AI Search の Azure OpenAI Service への共有プライベートリンク経由でアクセスするように設定します。(プレビュー)**
+1. **Azure AI Search の Azure OpenAI Service への共有プライベートリンク経由でアクセスするように設定します。**
    - 長所
      - Azure AI Search から Azure OpenAI Service へプライベート接続ができます。
      - 手順として共有プライベートリンクの作成とインデクサーの設定を変更すればよく、管理が容易です。
    - 短所
      - スキルセットを利用する場合、Azure AI Search のプランは Standard 2 以上が必要となり、Standard 以下のプランと比較して、ご利用料金が高くなります。
-2. **Azure AI Search から Azure OpenAI Service に対してマネージド ID 認証を利用して接続します。**
+2. **Azure AI Search から Azure OpenAI Service に対してマネージド ID 認証を利用して接続します。**  
    - 長所
      - マネージド ID は Azure AI Search の Basic プランから利用可能であるため、共有プライベートリンクを使用する場合と比較してご利用料金は低くなります。 
    - 短所
@@ -47,14 +47,14 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
      - Azure OpenAI Service 側でパブリックアクセスを無効とした場合はご利用することがかないません。
 
 1 の選択肢が可能となった 2024 年 1 月以前は、以下に記載の Azure Functions をご利用する方法もございました。<br/>
-ただし、Azure OpenAI Service への共有プライベートリンクがプレビューでサポートされたことで、わざわざ同様にプレビュー機能である Azure Functions への共有プライベートリンクを利用する意義は薄くなりました。
+ただし、Azure OpenAI Service への共有プライベートリンクがサポートされたことで、Azure OpenAI Service への接続で、わざわざ Azure Functions への共有プライベートリンクを利用する意義は薄くなりました。
 
 >パブリック ネットワークを無効にする必要がある場合は、 プライベート エンドポイント をサポートする Azure Functionを実装したカスタム Web API スキルを構成し、 同じ VNETに Azure AI サービス リソースを追加します。 この方法では、プライベート エンドポイントを使用して、カスタム スキルから直接 Azure AI サービス リソースを呼び出すことができます。<br/>
 >[キーの使用方法](https://learn.microsoft.com/ja-jp/azure/search/cognitive-search-attach-cognitive-services?tabs=portal%2Cportal-remove#how-the-key-is-used)
 
 以下に 2 つの選択肢の詳細を記載いたします。
 
-## 1. Azure AI Search の Azure OpenAI Service への共有プライベートリンク経由でアクセスするように設定します。(プレビュー)
+## 1. Azure AI Search の Azure OpenAI Service への共有プライベートリンク経由でアクセスするように設定します。
 [共有プライベートリンク](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create) は、Azure AI Search から別の Azure サービスへのプライベート接続が必要な場合に利用します。<br/>
 共有プライベートリンクを作成し、インデクサーでプライベート接続を利用する設定を追加するだけでご利用可能になります。また、共有プライベートリンクによって作成されるプライベートエンドポイントリソースは Microsoft で管理されるため、お客様にてプライベートエンドポイントやプライベート DNS ゾーン等を管理する必要はございません。<br/>
 
@@ -67,12 +67,12 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
 
 > AI エンリッチメントとスキルセットを使用している場合、レベルは Standard 2 (S2) 以上である必要があります。 
 
-あくまで参考情報となりますが、以前は Azure OpenAI Service への共有プライベートリンク経由の接続はサポートされておりませんでしたが、2024 年 1 月 16 日 に[ドキュメントが更新](https://github.com/MicrosoftDocs/azure-docs/commit/b60428329ec81d25e770d5696a15bc6fb6c16b02)され、Azure OpenAI Service への共有プライベートリンクがプレビューでご利用可能となりました。<br/>
-[サポートされているリソースの種類](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#supported-resource-types) の項目に以下のように追加されております。<br/>
+あくまで参考情報となりますが、以前は Azure OpenAI Service への共有プライベートリンク経由の接続はサポートされておりませんでしたが、2024 年 1 月 16 日 に[ドキュメントが更新](https://github.com/MicrosoftDocs/azure-docs/commit/b60428329ec81d25e770d5696a15bc6fb6c16b02)され、Azure OpenAI Service への共有プライベートリンクがプレビューでご利用可能となりました。現在は一般利用可能になっております。<br/>
+[サポートされているリソースの種類](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#supported-resource-types) の項目に以下のように記載されております。<br/>
 
 |リソースの種類 | サブリソース (またはグループ ID) |
 |---|---|
-|Microsoft.CognitiveServices/accounts (プレビュー) | openai_account|
+|Microsoft.CognitiveServices/accounts | openai_account|
 
 ### 設定手順
 以下に設定手順について参考となるドキュメントと、手順実施の際の参考情報を記載いたします。
@@ -118,6 +118,7 @@ Azure OpenAI Service のドキュメントに以下の記載がございます�
 「Allow Azure services on the trusted services list to access this cognitive services account.」をチェックします。<br/>
 以下のスクリーンショットが参考になれば幸いです。<br/>
 ![image-207eddb1-ca9f-4ab0-bf38-69ff93f63c0b.png]({{site.baseurl}}/media/2024/01/image-207eddb1-ca9f-4ab0-bf38-69ff93f63c0b.png)
+
 
 #### 2. Azure AI Search 側で [システム マネージド ID を作成する](https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys%2Cportal-user#create-a-system-managed-identity) を参考に、システム割り当てマネージドIDを有効化します。
 #### 3. Azure OpenAI Service リソースのスコープで、手順 2 で作成したシステム割り当てマネージド ID に対して「Cognitive Services OpenAI ユーザー」ロールを割り当てます。[ロールの割り当て](https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys%2Cportal-user#assign-a-role) の手順をご確認ください。
@@ -185,7 +186,7 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
-2024 年 03 月 29 日時点の内容となります。<br>
+2024 年 10 月 07 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
