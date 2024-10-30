@@ -5,7 +5,7 @@ tags:
     - Function App
 ---
 Azure Functions の利用では、ストレージアカウントの使用が必須とされており、該当のストレージアカウントの保護についてお問い合わせを頂くことがあります。この記事では、Functions が使用するストレージアカウントにおけるアクセス制限方法についてご紹介します。<br />
-※この記事は、過去に公開した [Azure Functions が使用するストレージアカウントに対するアクセス制限の方法](https://jpazpaas.github.io/blog/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html) のアップデートになります。
+※この記事は、過去に公開した [Azure Functions が使用するストレージアカウントに対するアクセス制限の方法](https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html) のアップデートになります。
 
 # はじめに
 Azure Functions では [最大 200 インスタンス](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-scale#scale) をサポートするため、アプリケーションのコードやログは各インスタンス (仮想マシン内部) に格納せず、外部のストレージアカウントを通じてデータを共有する仕組みが採用されています。
@@ -23,7 +23,7 @@ Azure Functions では、[Functions Host](https://github.com/Azure/azure-functio
 Functions では、大きく分けて 3 種類のストレージが使用されます。
  1. アプリケーションコードを格納するストレージ (アプリケーション設定の [WEBSITE_CONTENTAZUREFILECONNECTIONSTRING](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#website_contentazurefileconnectionstring) で指定する Azure Files)
  2. HTTP Trigger の実行キー、Event Hub のチェックポイントを記録するストレージ (アプリケーション設定の [AzureWebJobsStorage](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#azurewebjobsstorage) で指定する Azure Files)
- 3. Blob Trigger により参照されるストレージ
+ 3. Blob Trigger や Queue Trigger により参照されるストレージ
 
 Azure Functions とストレージの接続、特に 1 と 2 に関して、接続元の制限を行いたいというお問い合わせをいただくことが多く、ここではその参考となる情報をご案内いたします。
 
@@ -37,7 +37,7 @@ Azure Functions とストレージの接続、特に 1 と 2 に関して、接�
 
 
 ## 案2. ストレージアカウントからの接続で IP 制限を適用する
-参考記事: [Azure Functions が使用するストレージアカウントに対するアクセス制限の方法](https://jpazpaas.github.io/blog/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html) <br />
+参考記事: [Azure Functions が使用するストレージアカウントに対するアクセス制限の方法](https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html) <br />
 こちらにも記載がございますが、同一リージョン内の App Service, Functions から ストレージアカウントに対する接続では、データセンター内で使用されるプライベート IP アドレスが使用されます。
 ストレージアカウントの [ネットワーク] > [許可するアクセス元: 選択されたネットワーク] を指定した場合、ファイアウォール にて接続を許可する IP アドレスを指定頂けますが、2021年5月現在では [プライベート IP アドレスはご指定頂くことは叶いません](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-network-security?tabs=azure-portal#grant-access-from-an-internet-ip-range)。
 また、App Service, Functions がストレージアカウントに接続する際に使用するプライベート IP アドレスは不定であり、特定することは困難であるため、同一リージョンに配置されたストレージアカウントではご利用頂くことは叶いません。
@@ -49,11 +49,11 @@ Azure Functions とストレージの接続、特に 1 と 2 に関して、接�
 ![image-6ba438e0-df32-496c-9e3d-68bca9b03bfa.png]({{site.baseurl}}/media/2022/05/image-6ba438e0-df32-496c-9e3d-68bca9b03bfa.png)
 
 ## 案3. VNet 統合とプライベートエンドポイントを使用する
-2020年2月ごろより、Functions が使用するストレージアカウントについて、[サービスエンドポイントやプライベートエンドポイントを使用した接続のサポート](https://docs.microsoft.com/ja-jp/azure/azure-functions/configure-networking-how-to#restrict-your-storage-account-to-a-virtual-network) が追加されております。
+2021年2月ごろより、Functions が使用するストレージアカウントについて、[サービスエンドポイントやプライベートエンドポイントを使用した接続のサポート](https://docs.microsoft.com/ja-jp/azure/azure-functions/configure-networking-how-to#restrict-your-storage-account-to-a-virtual-network) が追加されております。
 特にプライベートエンドポイントを構成し、パブリックエンドポイントからのアクセスを制限することで、ストレージアカウントに対するアクセス経路を制御することが可能となります。
 - [Azure Storage のプライベート エンドポイントを使用する](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-private-endpoints)
 
-こちらの方法を使用する場合、Functions における VNet 統合は Elastic Premium プラン または Standard 以上の App Service Plan の場合ご利用いただけます。
+こちらの方法を使用する場合、Functions における VNet 統合は Elastic Premium プラン または Basic 以上の App Service Plan の場合ご利用いただけます。
 
 構成手順は [ドキュメント](https://docs.microsoft.com/ja-jp/azure/azure-functions/configure-networking-how-to#restrict-your-storage-account-to-a-virtual-network) にも記載がございますが、以下のように実施します。
 
@@ -93,7 +93,7 @@ VNet 統合が行えない都合上、Premium プラン (または、VNet 統合
 <br>
 <br>
 
-XXXX 年 XX 月 xX 日時点の内容となります。<br>
+2024 年 10 月 30 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
