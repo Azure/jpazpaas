@@ -180,16 +180,19 @@ API Management インスタンスは、Microsoft Entra ID によって生成さ�
 ● ご参考： [Azure API Management でマネージド ID を使用する](https://learn.microsoft.com/ja-jp/azure/api-management/api-management-howto-use-managed-service-identity)  
 ● ご参考： [Azure リソースのマネージド ID とは](https://learn.microsoft.com/ja-jp/entra/identity/managed-identities-azure-resources/overview)
 
-● ご参考： (例) システム割り当てマネージド ID の有効化
+● ご参考： (例) システム割り当てマネージド ID の有効化  
+
 ![image-442857f6-d5c8-47c6-8d62-be4e770353cf.png]({{site.baseurl}}/media/2024/08/image-442857f6-d5c8-47c6-8d62-be4e770353cf.png)
 
 
-## ( 2 ) 権限「キー コンテナー シークレット ユーザー」を付与する
-カスタムドメインを作成及び証明書の更新をする場合は、使用するユーザー割り当てマネージド ID や API Management のリソース の システム割り当てマネージド ID に対して「**キー コンテナー シークレット ユーザー (キーコンテナー証明書ユーザー)**」の権限(ロール)を予め付与します。
+## ( 2 ) 権限「キー コンテナー証明書ユーザー」を付与する
+カスタムドメインを作成及び証明書の更新をする場合は、使用するユーザー割り当てマネージド ID や API Management のリソース の システム割り当てマネージド ID に対して「****キー コンテナー証明書ユーザー****」の権限(ロール)を予め付与します。
 
-● ご参考： (例) システム割り当てマネージド ID に 「キー コンテナー シークレット ユーザー」 のロールを付与する手順  
+● ご参考： (例) システム割り当てマネージド ID に 「キー コンテナー証明書ユーザー」 のロールを付与する手順  
+
 ![image-c5efdaee-bead-41fd-b69d-2c45d0991a8d.png]({{site.baseurl}}/media/2024/08/image-c5efdaee-bead-41fd-b69d-2c45d0991a8d.png)
 
+※ 役割の選択項目から「キー コンテナー証明書ユーザー」または「キー コンテナー シークレット ユーザー」を選択してください。  
 ![image-2e79173d-a611-4d8e-8a40-b1884afad8d0.png]({{site.baseurl}}/media/2024/08/image-2e79173d-a611-4d8e-8a40-b1884afad8d0.png)
 
 ### ◆ ユーザー割り当てマネージド ID の設定手順は以下のドキュメントをご覧ください。
@@ -218,14 +221,14 @@ Azure Key Vault の証明書を使って API Management サービスに対する
 Failed to access KeyVault Secret https://xxxxxxxxxxxx using Managed Service Identity (http://aka.ms/apimmsi) of Api Management service. **Check if Managed Identity of Type: SystemAssigned,** ClientId: xxxxxxxxxx and ObjectId: xxxxxxxxxx has GET permissions on secrets in the KeyVault Access Policies.`
 
 - このエラーが発生する原因： Azure Key Vault のキー コンテナーに対するアクセス許可を API Managementの **システム割り当てマネージドID** に権限を付与する設定がされていない場合にこのエラーが発生します。
-- 対応策：本ブログ記事の [4. カスタム ドメイン設定の作成及び証明書の更新時のご注意点](#attention) をご覧いただき、システム割り当てマネージド ID の設定と、ロール ( キー コンテナー シークレット ユーザー ) の付与を行ってください。
+- 対応策：本ブログ記事の [4. カスタム ドメイン設定の作成及び証明書の更新時のご注意点](#attention) をご覧いただき、システム割り当てマネージド ID の設定と、ロール ( キー コンテナー証明書ユーザー ) の付与を行ってください。
 
 ## エラーメッセージ 2
 `API Management サービスのホスト名を更新できませんでした  
 Failed to access KeyVault Secret https://xxxxxxxxxxxx using Managed Service Identity ( http://aka.ms/apimmsi) of Api Management service. **Check if Managed Identity of Type: UserAssigned,** ClientId: xxxxxxxxxx and ObjectId: xxxxxxxxxx has GET permissions on secrets in the KeyVault Access Policies. `
 
 - このエラーが発生する原因： Azure Key Vault のキー コンテナーに対するアクセス許可を API Managementの **ユーザー割り当てマネージド ID** に権限を付与する設定がされていない場合にこのエラーが発生します。
-- 対応策：以下のドキュメントをご覧いただき、ユーザー割り当てマネージド IDの設定と、ロール (キー コンテナー シークレット ユーザー) の付与を行ってください。  
+- 対応策：以下のドキュメントをご覧いただき、ユーザー割り当てマネージド IDの設定と、ロール (キー コンテナー証明書ユーザー) の付与を行ってください。  
 ● ご参考： [ユーザー割り当てマネージド ID の管理](
 https://learn.microsoft.com/ja-jp/entra/identity/managed-identities-azure-resources/how-manage-user-assigned-managed-identities?pivots=identity-mi-methods-azp)
 
@@ -234,7 +237,7 @@ https://learn.microsoft.com/ja-jp/entra/identity/managed-identities-azure-resour
 <br>
 <br>
 
-2024 年 08 月 30 日時点の内容となります。<br>
+2024 年 11 月 05 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
