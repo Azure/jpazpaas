@@ -112,13 +112,19 @@ Azure OpenAI Service のドキュメントに以下の記載がございます�
 以下に設定手順を記載いたします。
 
 #### 1. Azure OpenAI Service 側でネットワーク規則の例外を許可します。
-[Azure OpenAI の信頼された Azure サービスへのアクセス権を付与する - Azure Portal の使用](https://learn.microsoft.com/ja-jp/azure/ai-services/cognitive-services-virtual-networks?tabs=portal#using-the-azure-portal) のドキュメントにしたがい、対象の Azure OpenAI Service に対して REST API を使用してネットワーク規則の例外を作成します。<br/>
+[Azure OpenAI の信頼された Azure サービスへのアクセス権を付与する - Azure Portal の使用](https://learn.microsoft.com/ja-jp/azure/ai-services/cognitive-services-virtual-networks?tabs=portal#using-the-azure-portal) のドキュメントにしたがい、対象の Azure OpenAI Service に対してネットワーク規則の例外を作成します。<br/>
 
 具体的には、Azure OpenAI の「ネットワーク」ブレードから、「選択したネットワークとプライベートエンドポイント」を選択し、
 「Allow Azure services on the trusted services list to access this cognitive services account.」をチェックします。<br/>
 以下のスクリーンショットが参考になれば幸いです。<br/>
 ![image-207eddb1-ca9f-4ab0-bf38-69ff93f63c0b.png]({{site.baseurl}}/media/2024/01/image-207eddb1-ca9f-4ab0-bf38-69ff93f63c0b.png)
 
+また、[Azure CLI の使用](https://learn.microsoft.com/ja-jp/azure/ai-services/cognitive-services-virtual-networks?tabs=portal#using-the-azure-cli) の「Azure portal から信頼できるサービスが有効になっているかどうかを確認する」の手順にしたがい、`bypass: AzureServices` となっており、ネットワーク規則の例外が設定されているか念のため確認しておきましょう。
+
+1. Azure OpenAI リソースの概要ページから **[JSON ビュー]** を使用します。<br/>
+![image-344d3179-b354-4978-8281-966606aaea45.png]({{site.baseurl}}/media/2024/01/image-344d3179-b354-4978-8281-966606aaea45.png)    
+2. **[API バージョン]** で最新の API バージョンを選択します。<br/>
+![image-e3a414bd-d40d-48ea-bfd6-e21fb1b4140c.png]({{site.baseurl}}/media/2024/01/image-e3a414bd-d40d-48ea-bfd6-e21fb1b4140c.png)
 
 #### 2. Azure AI Search 側で [システム マネージド ID を作成する](https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys%2Cportal-user#create-a-system-managed-identity) を参考に、システム割り当てマネージドIDを有効化します。
 #### 3. Azure OpenAI Service リソースのスコープで、手順 2 で作成したシステム割り当てマネージド ID に対して「Cognitive Services OpenAI ユーザー」ロールを割り当てます。[ロールの割り当て](https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys%2Cportal-user#assign-a-role) の手順をご確認ください。
@@ -186,7 +192,7 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
-2024 年 10 月 07 日時点の内容となります。<br>
+2024 年 11 月 06 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
