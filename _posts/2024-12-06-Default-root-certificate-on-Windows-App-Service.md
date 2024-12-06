@@ -21,11 +21,11 @@ App Serviceサポート担当の谷津です。
 
 Windows のみならず、既定でインストールされている証明書については開発元のセキュリティポリシーや OS のセキュリティ要件に依存します。各 OS の開発元はそれぞれ異なる基準でルート証明書を評価し、各々のセキュリティポリシーに基づいて信頼するルート証明書を選定します。また、各 OS はそれぞれ異なるセキュリティ要件があるため、各 OS のセキュリティ要件（特定の業界標準や規制など）に応じて信頼するルート証明書が選定されます。弊社の信頼するルート証明書における具体的な要件については以下の公開情報にて詳細な解説がございますので、こちらをご参照ください。
 
-[プログラム要件 - Microsoft の信頼できるルートプログラム | Microsoft Learn](https://learn.microsoft.com/ja-jp/security/trusted-root/program-requirements)
+[プログラム要件 - Microsoft の信頼できるルートプログラム - Microsoft Learn](https://learn.microsoft.com/ja-jp/security/trusted-root/program-requirements)
 
 また、弊社にて信頼しているルート証明書の一覧は以下の公開情報にて確認が可能です。
 
-[参加者リスト - Microsoft の信頼されたルート プログラム | Microsoft Learn](https://learn.microsoft.com/ja-jp/security/trusted-root/participants-list)
+[参加者リスト - Microsoft の信頼されたルート プログラム - Microsoft Learn](https://learn.microsoft.com/ja-jp/security/trusted-root/participants-list)
 
 [ccadb.my.salesforce-sites.com/microsoft/IncludedCACertificateReportForMSFT](https://ccadb.my.salesforce-sites.com/microsoft/IncludedCACertificateReportForMSFT)
 
@@ -42,7 +42,7 @@ Windows のみならず、既定でインストールされている証明書に
 
 前述のとおり、 Microsoft の信頼できるルートプログラムによって選定されたルート証明書であればユーザーが自身でインストールを行う必要はありません。もしそれ以外のルート証明書をご自身でインストールしたい場合はマルチテナントの App Service では対応していないため、専有環境である App Service Environment をご利用いただく必要があります。インストール手順の詳細は以下の公開情報にて解説がございますので、こちらのドキュメントがお役に立ちますと幸いでございます。
 
-[証明書のバインド - Azure App Service Environment | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/app-service/environment/certificates#private-client-certificate)
+[証明書のバインド - Azure App Service Environment - Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/app-service/environment/certificates#private-client-certificate)
 
 もしくは Windows コンテナを利用する Web App for Containers (カスタムコンテナ) をご利用いただくことでもユーザーが自由に Windows の証明書ストアをカスタマイズいただけますので、こちらの案もご検討くださいませ。
 
