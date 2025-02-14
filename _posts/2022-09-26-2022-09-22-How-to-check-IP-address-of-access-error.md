@@ -26,9 +26,9 @@ tags:
 1. 対象の Storage Account にサインインし、[監視 (Monitoring)] から [診断設定 (Diagnostic settings)] に移動します。その後、[blob] を選択します。
 <br><br>
 ![image-03f77c91-add3-4d23-a65f-bff8fb9afd53.png]({{site.baseurl}}/media/2022/09/image-03f77c91-add3-4d23-a65f-bff8fb9afd53.png)<br>
-2. [診断設定を追加する] をクリックすると、写真のようなページが現れます。診断設定名を入力し、左側の [メトリック (Metrics)] では [Transaction] を選択します。右側の [宛先の詳細 (Destination Details)] では [Log Analytics ワークスペースへの送信 (Send to Log Analytics workspace)] を選択し、ワークスペースを指定します。最後に、左上の[保存 (Save)] をクリックすると、診断設定は完了です。
+2. [診断設定を追加する] をクリックすると、写真のようなページが現れます。診断設定名を入力し、左側の [カテゴリ (Categories)] では [Storage Read]、[Storage Write]、[Storage Delete] を選択します。右側の [宛先の詳細 (Destination Details)] では [Log Analytics ワークスペースへの送信 (Send to Log Analytics workspace)] を選択し、ワークスペースを指定します。最後に、左上の[保存 (Save)] をクリックすると、診断設定は完了です。
 <br><br>
-![image-a77de7b7-dfb0-4584-adea-15dcb2cd9475.png]({{site.baseurl}}/media/2022/09/image-a77de7b7-dfb0-4584-adea-15dcb2cd9475.png)<br>
+![image-f745447c-5e2d-49db-8562-62eda713f727.png]({{site.baseurl}}/media/2022/09/image-f745447c-5e2d-49db-8562-62eda713f727.png)<br>
 3. 次に、エラーとなったアクセスを再現し、要求 ID を確認します。<br>
 <br><br>
 ![image-7a4af3e9-545e-4ba1-ac22-fa05c31ceb35.png]({{site.baseurl}}/media/2022/09/image-7a4af3e9-545e-4ba1-ac22-fa05c31ceb35.png)<br>
@@ -80,7 +80,7 @@ tags:
 <br>
 <br>
 
-2022 年 9 月 22 日時点の内容となります。<br>
+2025 年 2 月 14 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
