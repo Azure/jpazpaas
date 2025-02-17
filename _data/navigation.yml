@@ -29,7 +29,7 @@ default:
         url: "https://docs.microsoft.com/ja-jp/azure/event-grid/"
       - title: "Notification Hubs"
         url: "https://docs.microsoft.com/ja-jp/azure/notification-hubs/"
-      - title: "Cognitive Search"
+      - title: "AI Search"
         url: "https://docs.microsoft.com/ja-jp/azure/search/"
       - title: "Policy"
         url: "https://docs.microsoft.com/ja-jp/azure/governance/policy/"
