@@ -68,7 +68,7 @@ Queue に格納されたメッセージの中身をみると、以下の JSON �
 
 ## Event Grid を用いた BLOB トリガー
 
-前述のクラシックな BLOB トリガーの課題を解決するために考案されたのが Event Grid を用いた BLOB トリガーとなります。動作のアイディアは[こちら](https://github.com/Azure/azure-sdk-for-net/pull/17137)に記載がございます。また、構成方法は[Azure Functions で Event Grid トリガーとバインドを使用する方法 | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/azure-functions/event-grid-how-tos?tabs=v2%2Cportal)を参照ください。
+前述のクラシックな BLOB トリガーの課題を解決するために考案されたのが Event Grid を用いた BLOB トリガーとなります。動作のアイディアは[こちら](https://github.com/Azure/azure-sdk-for-net/pull/17137)に記載がございます。また、構成方法は[Azure Functions で Event Grid トリガーとバインドを使用する方法](https://learn.microsoft.com/ja-jp/azure/azure-functions/event-grid-how-tos?tabs=v2%2Cportal)を参照ください。
 
 Event Grid を用いた BLOB トリガーの動作をログから確認します。host.json の logging で下記のカテゴリのログを出力するように設定します。デバッグ用となるため、運用状況によって有効/無効化を検討ください。
 
