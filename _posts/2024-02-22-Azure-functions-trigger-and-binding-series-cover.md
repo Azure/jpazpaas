@@ -15,7 +15,7 @@ Azure Functions はイベントドリブンな処理を実装する手段を提�
 
 | 項番 | 種類 |
 |--|--|
-| 1 | Blob Storage |
+| 1 | [ Blob Storage ](https://azure.github.io/jpazpaas/2025/02/26/Azure-functions-trigger-and-binding-series-blob.html) |
 | 2 | Azure Cosmos DB |
 | 3 | Azure Data Explorer |
 | 4 | Azure SQL |
@@ -23,11 +23,11 @@ Azure Functions はイベントドリブンな処理を実装する手段を提�
 | 6 | Event Grid |
 | 7 | [Event Hubs](https://azure.github.io/jpazpaas/2024/02/22/Azure-functions-trigger-and-binding-series-eventhubs.html) |
 | 8 | HTTP と Webhook |
-| 9 | IoT Hub |
+| 9 | [IoT Hub](https://azure.github.io/jpazpaas/2025/02/26/Azure-functions-trigger-and-binding-series-iothub.html) |
 | 10 | Kafka |
 | 11 | Mobile Apps |
 | 12 | Notification Hubs |
-| 13 | Queue Storage |
+| 13 | [ Queue Storage ](https://azure.github.io/jpazpaas/2025/02/26/Azure-functions-trigger-and-binding-series-queue.html) |
 | 14 | Redis |
 | 15 | RabbitMQ |
 | 16 | SendGrid |
@@ -51,7 +51,7 @@ Azure Functions はイベントドリブンな処理を実装する手段を提�
 <br>
 <br>
 
-2024 年 02 月 22 日時点の内容となります。<br>
+2025 年 02 月 26 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
