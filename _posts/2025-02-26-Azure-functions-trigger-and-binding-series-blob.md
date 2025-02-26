@@ -164,7 +164,7 @@ traces
 # 参考ドキュメント
 [Azure Functions（関数アプリ）の内部アーキテクチャ概要や関連する用語について](https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management.html)
 
-[Azure Functions における Azure Blob Storage のトリガーとバインド | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-storage-blob?tabs=isolated-process%2Cextensionv5%2Cextensionv3&pivots=programming-language-csharp)
+[Azure Functions における Azure Blob Storage のトリガーとバインド](https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-storage-blob?tabs=isolated-process%2Cextensionv5%2Cextensionv3&pivots=programming-language-csharp)
 
 
 <br>
