@@ -16,7 +16,8 @@ TLS バージョン 1.0 と 1.1 は、BEAST や POODLE などの攻撃を受け�
 - [英語版 - Remove TLS 1.0 and 1.1 from use with Azure Cache for Redis - Azure Cache for Redis](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-remove-tls-10-11)  
 
 ■ 上記ドキュメントより表を引用  
-![2025-02-19%20093408-19f98e4b-2474-4ae2-a234-9da39d1f2102.png]({{site.baseurl}}/media/2024/09/2025-02-19%20093408-19f98e4b-2474-4ae2-a234-9da39d1f2102.png)
+
+![image-0e903103-73b0-4207-9d76-1b36e84f130a.png]({{site.baseurl}}/media/2024/09/image-0e903103-73b0-4207-9d76-1b36e84f130a.png)
 
 本記事では、Azure Cache for Redis のキャッシュ インスタンスの最小 TLS バージョンの確認方法、及び TLS 1.0 と 1.1 を設定していた場合に、TLS 1.2 への変更の手順をご案内いたします。  
 <br>
