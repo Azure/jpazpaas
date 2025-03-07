@@ -45,7 +45,6 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
      - マネージド ID は Azure AI Search の Basic プランから利用可能であるため、共有プライベートリンクを使用する場合と比較してご利用料金は低くなります。 
    - 短所
      - Azure AI Search から Azure OpenAI Service へのアクセスは Microsoft バックボーンネットワークを経由するため、パブリックインターネットを経由することはございませんが、プライベート接続とはなりません。
-     - Azure OpenAI Service 側でパブリックアクセスを無効とした場合はご利用することがかないません。
 
 以下に 2 つの選択肢の詳細を記載いたします。
 
@@ -92,6 +91,8 @@ Azure OpenAI Service へ接続するため、以下の画像のように「リ�
 ![image-582712e4-1123-4e50-89a3-999ae9bc1223.png]({{site.baseurl}}/media/2024/01/image-582712e4-1123-4e50-89a3-999ae9bc1223.png)
 
 ## 2. Azure AI Search から Azure OpenAI Service に対してマネージドID認証を利用して接続します。
+Azure AI Search サービスの作成日、リージョン、およびスキルの構成によっては、Standard 2 以上のプランが必要となり、ご利用料金が高くなる可能性があります。また、Standard 2 以上のプランでなくとも、共有プライベートリンクを利用する以上、プライベート エンドポイントの料金が追加で発生いたします。<br/>
+
 一方で、プライベート接続はできないものの、Azure OpenAI Service のアクセス制限を構成しつつ、Azure AI Search からアクセスする方法として、マネージド ID 認証を利用する方法がございます。プライベート エンドポイントの料金がないため、共有プライベートリンクを利用する場合と比較して安くなります。<br/>
 Azure OpenAI Service のドキュメントに以下の記載がございますので、参考になれば幸いです。
 
@@ -193,7 +194,7 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
-2025 年 1 月 20 日時点の内容となります。<br>
+2025 年 03 月 07 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
