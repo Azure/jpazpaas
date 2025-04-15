@@ -64,8 +64,8 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
 |他の[組み込み](https://learn.microsoft.com/ja-jp/azure/search/cognitive-search-predefined-skills)またはカスタム スキルを使うスキルセット|Standard 2 (S2) 以上|なし|[2024 年 4 月 3 日より後](https://learn.microsoft.com/ja-jp/azure/search/vector-search-index-size#how-to-check-service-creation-date)|
 
 つまり、まとめると以下になります。
-- Azure OpenAI の 埋め込みスキル**以外の Azure AI サービスの組み込みスキルおよびカスタムスキルを使用しない**、かつ 2024 年 4 月 3 日より後に作成された Azure AI Search サービス、かつ大容量リージョンであれば、Basic 以上のレベルで共有プライベートリンクが利用可能です。
-- Azure OpenAI の 埋め込みスキル**以外の Azure AI サービスの組み込みスキルを使用する、またはカスタムスキルを使用する**場合、Azure AI Search サービスのレベルが Standard 2 以上である必要があります。
+- [垂直統合](https://learn.microsoft.com/ja-jp/azure/search/vector-search-integrated-vectorization) を利用し、Azure OpenAI の 埋め込みスキルを含むスキルセットを利用し、かつ 2024 年 4 月 3 日より後に作成された Azure AI Search サービス、かつ大容量リージョンであれば、Basic 以上のレベルで共有プライベートリンクが利用可能です。
+- [垂直統合](https://learn.microsoft.com/ja-jp/azure/search/vector-search-integrated-vectorization) を使わない、Azure OpenAI の 埋め込みスキル**以外の Azure AI サービスの組み込みスキルのみを使用する、またはカスタムスキルを使用する**場合、Azure AI Search サービスのレベルが Standard 2 以上である必要があります。
 
 恐れながら、サービス作成日およびリージョンの要件があるため、例えば Basic レベルで共有プライベートリンクとAzure OpenAI の 埋め込みスキルを両立させたい場合、2024 年 4 月 3 日以前の古いリソースをご利用の場合は新しいリソースを作成し、移行することをご検討いただけますと幸いです。<br/>
 
@@ -194,7 +194,7 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
-2025 年 03 月 07 日時点の内容となります。<br>
+2025 年 04 月 15 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
