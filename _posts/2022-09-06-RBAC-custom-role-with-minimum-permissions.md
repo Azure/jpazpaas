@@ -63,13 +63,6 @@ Azure ロールを割り当てる手順については以下の記事をご参�
 1. 画面または表示されるエラーメッセージを確認し、次に必要なアクセス許可を[アクセス許可一覧](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/resource-provider-operations#microsoftweb)から探してロールへ付与する。
 1. 2.に戻り必要最低限のアクセス許可が特定できるまで繰り返す。
 
-#### サポートリクエストを作成する
-
-上記の操作で必要最低限のアクセス許可を特定できない場合は、サポートリクエストを作成してください。
-
-[Azure サポート要求を作成する](https://docs.microsoft.com/ja-jp/azure/azure-portal/supportability/how-to-create-azure-support-request)
-
-
 
 
 #### アクセス許可を削除しながら試す
@@ -164,7 +157,7 @@ Web App は [Azure で Node.js Web アプリを作成する
 [Azure ロールを割り当てる手順](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/role-assignments-steps)に記載の通り、[Azure 組み込みロール](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/built-in-roles)から適切なロールがないか探します。<br />
 [Website Contributor](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/built-in-roles#website-contributor)が一番近いようですが、アクセス許可をもう少し減らしたいです。カスタム ロールを検討します。
 
-![RBAC-custom-role-with-minimum-permissions5-68e2fff9-64b5-4663-b7e1-20df4accaa02.png]({{site.baseurl}}/media/2022/09/RBAC-custom-role-with-minimum-permissions5-68e2fff9-64b5-4663-b7e1-20df4accaa02.png)
+![RBAC-custom-role-with-minimum-permissions5-68e2fff9-64b5-4663-b7e1-20df4accaa02.png]({{site.baseurl}}/media/2025/04/RBAC-custom-role-with-minimum-permissions5-68e2fff9-64b5-4663-b7e1-20df4accaa02.png)
 
 ### 手順2-2: カスタム ロールを作成する
 [Azure ロールを割り当てる手順](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/role-assignments-steps)に記載の通り、[カスタム ロールの作成手順](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/custom-roles#steps-to-create-a-custom-role)を参考に Website Contributor をクローンしたカスタム ロールを作成し、ユーザーに割り当てます。
