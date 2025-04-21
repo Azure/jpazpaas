@@ -63,13 +63,6 @@ Azure ロールを割り当てる手順については以下の記事をご参�
 1. 画面または表示されるエラーメッセージを確認し、次に必要なアクセス許可を[アクセス許可一覧](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/resource-provider-operations#microsoftweb)から探してロールへ付与する。
 1. 2.に戻り必要最低限のアクセス許可が特定できるまで繰り返す。
 
-#### サポートリクエストを作成する
-
-上記の操作で必要最低限のアクセス許可を特定できない場合は、サポートリクエストを作成してください。
-
-[Azure サポート要求を作成する](https://docs.microsoft.com/ja-jp/azure/azure-portal/supportability/how-to-create-azure-support-request)
-
-
 
 
 #### アクセス許可を削除しながら試す
