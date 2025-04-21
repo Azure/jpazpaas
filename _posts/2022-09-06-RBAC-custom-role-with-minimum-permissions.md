@@ -157,7 +157,7 @@ Web App は [Azure で Node.js Web アプリを作成する
 [Azure ロールを割り当てる手順](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/role-assignments-steps)に記載の通り、[Azure 組み込みロール](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/built-in-roles)から適切なロールがないか探します。<br />
 [Website Contributor](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/built-in-roles#website-contributor)が一番近いようですが、アクセス許可をもう少し減らしたいです。カスタム ロールを検討します。
 
-![RBAC-custom-role-with-minimum-permissions5-68e2fff9-64b5-4663-b7e1-20df4accaa02.png]({{site.baseurl}}/media/2025/04/RBAC-custom-role-with-minimum-permissions5-68e2fff9-64b5-4663-b7e1-20df4accaa02.png)
+![RBAC-custom-role-with-minimum-permissions5-68e2fff9-64b5-4663-b7e1-20df4accaa02.png]({{site.baseurl}}/media/2022/09/RBAC-custom-role-with-minimum-permissions5-68e2fff9-64b5-4663-b7e1-20df4accaa02.png)
 
 ### 手順2-2: カスタム ロールを作成する
 [Azure ロールを割り当てる手順](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/role-assignments-steps)に記載の通り、[カスタム ロールの作成手順](https://docs.microsoft.com/ja-jp/azure/role-based-access-control/custom-roles#steps-to-create-a-custom-role)を参考に Website Contributor をクローンしたカスタム ロールを作成し、ユーザーに割り当てます。
