@@ -90,6 +90,6 @@ Keyword アナライザーはドキュメントを分割せずにそのまあ一
 ただし、Keyword アナライザーを使用することで、逆に正規表現を使用しないクエリで検索すると、トークナイズされた検索語句で分割されていないトークンと一致しなくなるため、使用の場面を考慮してどのアナライザーを使用するかを検討する必要があります。
 
 ※また、正規表現のクエリや正規表現は特にコストがかかります。 高度な検索には非常に便利ですが、正規表現が複雑な場合や大量のデータを検索する場合は特に、実行に多くの処理能力が必要になる場合があります。 これらの要因に寄って、検索待ち時間が長くなる可能性があります。 軽減策として、正規表現を簡略化するか、複雑なクエリをより小さく管理しやすいクエリに分割してみてください。<br>
-[https://learn.microsoft.com/ja-jp/azure/search/search-performance-tips#tip-consider-alternatives-to-regular-expression-queries](https://learn.microsoft.com/ja-jp/azure/search/search-performance-tips#tip-consider-alternatives-to-regular-expression-queries)
+[パフォーマンスに関するヒント - Azure AI Search | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/search/search-performance-tips#tip-consider-alternatives-to-regular-expression-queries)
 
 
