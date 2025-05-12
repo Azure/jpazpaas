@@ -6,9 +6,14 @@ tags:
 ---
 
 # 質問
-AI Search では作成後にレベルの変更 (Basic から Standard 等) ができない認識です。  
+AI Search では作成後にレベルの変更 (Basic から Standard 等) が一般利用可能な機能ではできない認識です。  
 レベルの変更等に柔軟に対応できるようにするため、AI Search の設定やインデックスデータをバックアップ/リストアする方法はありますでしょうか。
+<br/>
+<br/>
+※ 2025 年 4 月時点では、価格レベルを　Basic と Standard 間で下位レベルから上位レベルに切り替えることが、プレビューではございますが可能となっております。
+>2025-02-01-preview では、Basic レベルと Standard レベル (S1、S2、S3) の間の変更がサポートされます。 現時点では、Basic から S1 に移行するなど、下位レベルから上位レベルにのみ切り替えることができます。 
 
+[価格レベルを変更する](https://learn.microsoft.com/ja-jp/azure/search/search-capacity-planning#change-your-pricing-tier)
 # 回答
 AI Search の設定とインデックスデータそれぞれのバックアップ/リストア方法をご案内いたします。
 
@@ -209,12 +214,16 @@ SAFEGUARD CHECK: Source and target index counts should match
  Target index contains 36 docs
 ~~~
 
+# 変更履歴
+
+- 2025 年 5 月 12 日 追記： 2025 年 4 月時点で、価格レベルを　Basic と Standard 間で下位レベルから上位レベルに切り替えることが、プレビューで可能となった旨追記しています。
+
 ---
 
 <br>
 <br>
 
-2024 年 04 月 09 日時点の内容となります。<br>
+2025 年 05 月 12 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
