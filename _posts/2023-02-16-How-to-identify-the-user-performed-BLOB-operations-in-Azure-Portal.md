@@ -94,7 +94,7 @@ Azure Portal では Microsoft Entra ユーザー認証をさせることで、�
 
 Azure Portal外においても厳密な統制を行う場合は、ユーザー委任キー発行に必要な権限Storage/storageAccounts/blobServices/generateUserDelegationKeyを当該ユーザーに与えないようにすることを推奨いたします。
 
-# 変更履歴
+# 変更履歴
 
 2025年5月12日 追記： AzureAD の表示名称が Microsoft Entra に変更されたことに伴い、表示名称および設定画像を修正しました。
 
