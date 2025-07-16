@@ -34,7 +34,7 @@ Azure Functions のアーキテクチャの詳細は、[こちらのブログ](h
 
 Azure Functions .NET Isolated を Application Insights と統合している場合には、Language Worker が Application Insights へログを送信するパイプラインは以下の二通りがあります。
 
-1) `Language Worker → Functions Host → Application Insights`
+1) `Language Worker → Functions Host → Application Insights`<br>
 2) `Language Worker → Application Insights`
 
 詳細については、[こちらのブログ](https://azure.github.io/jpazpaas/2025/05/07/Azure-functions-dotnet-isolated-application-insights-key-considerations.html)をご参照ください。
@@ -200,9 +200,11 @@ ITelemetryProcessor で `if (telemetry is DependencyTelemetry dependency && dep
 上記の通り、ITelemetryProcessor を用いてフィルタリングを追加することで、特定の target や type のみを Application Insights に送信しないことを実現可能ですが、本番や運用環境でお試しいただく前に、検証環境でお客様想定通りとなるかを確認してご利用いただくようにお願いいたします。
 また、Application Insights にログを送信しないと、問題発生時のトラブルシューティングが難しくなる場合もございますので、どのログをフィルタリングするかは要検討いただく必要がございます。
 
-## 参考リンク
 
-* [Application Insights SDK におけるフィルター処理および前処理 - Azure Monitor | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/azure-monitor/app/api-filtering-sampling?tabs=dotnetcore%2Cjavascriptwebsdkloaderscript)
+
+## 参考リンク
+* [Application Insights SDK におけるフィルター処理および前処理](https://learn.microsoft.com/ja-jp/azure/azure-monitor/app/api-filtering-sampling?tabs=dotnetcore%2Cjavascriptwebsdkloaderscript)
+
 
 
 <br>
