@@ -38,11 +38,12 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
      - Azure AI Search から Azure OpenAI Service へプライベート接続ができます。
      - 手順として共有プライベートリンクの作成とインデクサーの設定を変更すればよく、管理が容易です。
    - 短所
-     - Azure AI Search サービスの作成日、リージョン、およびスキルの構成によっては、Standard 2 以上のプランが必要となり、ご利用料金が高くなる可能性があります。詳細は後述いたします。
+     - Azure AI Search サービスの作成日、リージョン、およびスキルの構成によっては、Standard 1 以上のプランが必要となり、ご利用料金が高くなる可能性があります。
      - プライベートエンドポイントを利用することによる料金が追加で請求されます。
 2. **Azure AI Search から Azure OpenAI Service に対してマネージド ID 認証を利用して接続します。**  
    - 長所
-     - マネージド ID は Azure AI Search の Basic プランから利用可能であるため、共有プライベートリンクを使用する場合と比較してご利用料金は低くなります。 
+     - マネージド ID は Azure AI Search の Basic プランから利用可能であるため、垂直統合以外のスキルを利用する場合、Basic プランを選択でき、料金が安くなります。
+       - 垂直統合以外のスキルを利用する場合、さらに共有プライベートリンクを利用するには Standard 1 が必要です。
    - 短所
      - Azure AI Search から Azure OpenAI Service へのアクセスは Microsoft バックボーンネットワークを経由するため、パブリックインターネットを経由することはございませんが、プライベート接続とはなりません。
 
@@ -56,27 +57,12 @@ Web Api response status: 'Forbidden', Web Api response details: '{"error":{"code
 ![search-private-access-9a3051ea-003c-4767-9d32-88cc714bb4ca.jpg]({{site.baseurl}}/media/2024/01/search-private-access-9a3051ea-003c-4767-9d32-88cc714bb4ca.jpg)
 <br/>
 <br/>
-ただし、共有プライベートリンクの[前提条件](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#prerequisites) に以下の記載がございます。
+ただし、共有プライベートリンクを利用する上で [前提条件](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#prerequisites) がありますため、予め前提条件を満たすかご確認ください。
 
-|ワークロード|階層の要件|リージョンの要件|サービス作成の要件|
-|---|---|---|---|
-|埋め込みスキルを含むスキルセット ([垂直統合](https://learn.microsoft.com/ja-jp/azure/search/vector-search-integrated-vectorization))|Basic 以上|[大容量リージョン](https://learn.microsoft.com/ja-jp/azure/search/search-limits-quotas-capacity#partition-storage-gb)|[2024 年 4 月 3 日より後](https://learn.microsoft.com/ja-jp/azure/search/vector-search-index-size#how-to-check-service-creation-date)|
-|他の[組み込み](https://learn.microsoft.com/ja-jp/azure/search/cognitive-search-predefined-skills)またはカスタム スキルを使うスキルセット|Standard 2 (S2) 以上|なし|[2024 年 4 月 3 日より後](https://learn.microsoft.com/ja-jp/azure/search/vector-search-index-size#how-to-check-service-creation-date)|
 
-つまり、まとめると以下になります。
-- [垂直統合](https://learn.microsoft.com/ja-jp/azure/search/vector-search-integrated-vectorization) を利用し、Azure OpenAI の 埋め込みスキルを含むスキルセットを利用し、かつ 2024 年 4 月 3 日より後に作成された Azure AI Search サービス、かつ大容量リージョンであれば、Basic 以上のレベルで共有プライベートリンクが利用可能です。
-- [垂直統合](https://learn.microsoft.com/ja-jp/azure/search/vector-search-integrated-vectorization) を使わない、Azure OpenAI の 埋め込みスキル**以外の Azure AI サービスの組み込みスキルのみを使用する、またはカスタムスキルを使用する**場合、Azure AI Search サービスのレベルが Standard 2 以上である必要があります。
-
-恐れながら、サービス作成日およびリージョンの要件があるため、例えば Basic レベルで共有プライベートリンクとAzure OpenAI の 埋め込みスキルを両立させたい場合、2024 年 4 月 3 日以前の古いリソースをご利用の場合は新しいリソースを作成し、移行することをご検討いただけますと幸いです。<br/>
-
-あくまで参考情報となりますが、以前は Azure OpenAI Service への共有プライベートリンク経由の接続はサポートされておりませんでしたが、2024 年 1 月 16 日 に[ドキュメントが更新](https://github.com/MicrosoftDocs/azure-docs/commit/b60428329ec81d25e770d5696a15bc6fb6c16b02)され、Azure OpenAI Service への共有プライベートリンクがプレビューでご利用可能となりました。現在は一般利用可能になっております。<br/>
-[サポートされているリソースの種類](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#supported-resource-types) の項目に以下のように記載されております。<br/>
-
-|リソースの種類 | サブリソース (またはグループ ID) |
-|---|---|
-|Microsoft.CognitiveServices/accounts | openai_account|
-
-また、同じく参考情報となりますが、以前はスキルセットが必要な場合は Standard 2 以上のレベルの Azure AI Search サービスが必要でした。2024 年 11 月以降、上記の条件を満たせば、Basic レベルでも Azure OpenAI の埋め込みスキルをプライベート環境で実行することが可能となりました。
+あくまで参考情報となりますが、以前はスキルセットが必要な場合は Standard 2 以上のレベルの Azure AI Search サービスが必要でした。  
+2024 年 11 月以降、上記の前提条件を満たせば、Basic レベルでも Azure OpenAI の埋め込みスキルをプライベート環境で実行することが可能となりました。  
+さらに、2025 年 5 月以降、Standard 1 レベルでもカスタムスキルをプライベート環境で実行することが可能となりました。
 
 ### 設定手順
 以下に設定手順について参考となるドキュメントと、手順実施の際の参考情報を記載いたします。
@@ -91,7 +77,7 @@ Azure OpenAI Service へ接続するため、以下の画像のように「リ�
 ![image-582712e4-1123-4e50-89a3-999ae9bc1223.png]({{site.baseurl}}/media/2024/01/image-582712e4-1123-4e50-89a3-999ae9bc1223.png)
 
 ## 2. Azure AI Search から Azure OpenAI Service に対してマネージドID認証を利用して接続します。
-1 の共有プライベートリンクを利用する方法は、Azure AI Search サービスの作成日、リージョン、およびスキルの構成によっては、Standard 2 以上のプランが必要となり、ご利用料金が高くなる可能性があります。また、Standard 2 以上のプランでなくとも、共有プライベートリンクを利用する以上、プライベート エンドポイントの料金が追加で発生いたします。<br/>
+1 の共有プライベートリンクを利用する方法は、Azure AI Search サービスの作成日、リージョン、およびスキルの構成によっては、Standard 1 以上のプランが必要となり、ご利用料金が高くなる可能性があります。また、Standard 1 以上のプランでなくとも、共有プライベートリンクを利用する以上、プライベート エンドポイントの料金が追加で発生いたします。<br/>
 
 一方で、プライベート接続はできないものの、Azure OpenAI Service のアクセス制限を構成しつつ、Azure AI Search からアクセスする方法として、マネージド ID 認証を利用する方法がございます。プライベート エンドポイントの料金がないため、共有プライベートリンクを利用する場合と比較して安くなります。<br/>
 Azure OpenAI Service のドキュメントに以下の記載がございますので、参考になれば幸いです。
@@ -189,12 +175,15 @@ Azure Portal では以下のように変更し、保存します。<br/>
 <br>
 <br>
 
+# 変更履歴  
+2025 年 07 月 25 日：Standard1 でも共有プライベートリンクでカスタムスキルを利用できるようになったため、前提条件の記載を修正しました。
+
 ---
 
 <br>
 <br>
 
-2025 年 04 月 15 日時点の内容となります。<br>
+2025 年 07 月 25 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
