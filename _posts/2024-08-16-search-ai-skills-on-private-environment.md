@@ -28,18 +28,7 @@ AI マルチサービス リソースのパブリックネットワークアク�
 [キーレス接続での課金](https://learn.microsoft.com/ja-jp/azure/search/cognitive-search-attach-cognitive-services?tabs=portal%2Cportal-remove#bill-through-a-keyless-connection) の手順にしたがいます。
 
 ## 2.  AI Search から AI マルチサービス リソースへの共有プライベートリンクを利用する設定
-共有プライベートリンクの利用には以下の[前提条件](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#prerequisites) があります。
-
-|ワークロード|階層の要件|リージョンの要件|サービス作成の要件|
-|---|---|---|---|
-|埋め込みスキルを含むスキルセット ([垂直統合](https://learn.microsoft.com/ja-jp/azure/search/vector-search-integrated-vectorization))|Basic 以上|[大容量リージョン](https://learn.microsoft.com/ja-jp/azure/search/search-limits-quotas-capacity#partition-storage-gb)|[2024 年 4 月 3 日より後](https://learn.microsoft.com/ja-jp/azure/search/vector-search-index-size#how-to-check-service-creation-date)|
-|他の[組み込み](https://learn.microsoft.com/ja-jp/azure/search/cognitive-search-predefined-skills)またはカスタム スキルを使うスキルセット|Standard 2 (S2) 以上|なし|[2024 年 4 月 3 日より後](https://learn.microsoft.com/ja-jp/azure/search/vector-search-index-size#how-to-check-service-creation-date)|
-
-つまり、[垂直統合](https://learn.microsoft.com/ja-jp/azure/search/vector-search-integrated-vectorization) を利用し、Azure OpenAI の 埋め込みスキルを含むスキルセットを利用し、2024 年 4 月 3 日より後に作成された Azure AI Search サービス、かつ大容量リージョンであれば、Basic 以上のレベルで共有プライベートリンクが利用可能ですが、<br/>
-そうでない場合は、Standard 2 (S2) 以上のご利用が必要となりますので、ご注意ください。
-<br/>
-<br/>
-<br/>
+共有プライベートリンクの利用には [前提条件](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#prerequisites) があります。
 前提条件を満たしていれば、
 [1 - 共有プライベート リンクを作成する](https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#1---create-a-shared-private-link) の手順にて、リソースの種類を `Microsoft.CognitiveServices/accounts`、サブリソースを `cognitiveservices_account` とします。
 
@@ -54,12 +43,15 @@ AI マルチサービス リソースのパブリックネットワークアク�
 <br>
 <br>
 
+# 変更履歴  
+2025 年 07 月 25 日：Standard1 でも共有プライベートリンクでカスタムスキルを利用できるようになったため、前提条件の記載を修正しました。
+
 ---
 
 <br>
 <br>
 
-2025 年 04 月 16 日時点の内容となります。<br>
+2025 年 07 月 25 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
