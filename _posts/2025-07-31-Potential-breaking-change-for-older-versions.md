@@ -1,5 +1,5 @@
 ---
-title: "Azure Functions ランタイムにおける潜在的な重大変更（2025年10月）"
+title: "Azure Functions の古いランタイム バージョンに対する潜在的な破壊的変更（2025年10月）"
 author_name: "Shota Nakano"
 tags:
     - Function App
