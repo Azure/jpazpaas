@@ -6,7 +6,7 @@ tags:
 ---
 
 
-# 目次<br>
+#目次<br>
 • はじめに<br>
 • 自動でログを削除するライフサイクル管理ポリシーの作成方法<br>
 • 作成したライフサイクル管理ポリシーの確認方法<br>
@@ -14,7 +14,7 @@ tags:
 • 3行要約<br>
 <br><br>
 
-# はじめに<br>
+#はじめに<br>
 　
    Azure Monitor の出力するログ（以下の写真参照、[insights-logs-XXXX] ）を一定期間が経った後に消すために Azure Storage の Blob のライフサイクル管理の規則を入れたけれど、想定していた通りに消えないというお問い合わせをいただくことが時々あります。<br>
 
@@ -33,7 +33,7 @@ tags:
    では、診断設定を変えずに、このようなログを自動で削除するためのライフサイクル管理ポリシーを実際に構成してみましょう。<br><br>
 <br>
  
-# 自動でログを削除するライフサイクル管理ポリシーの作成方法 <br>
+#自動でログを削除するライフサイクル管理ポリシーの作成方法 <br>
 
 1. Azure Portal からログ出力対象のストレージ アカウントに移動します。<br>
 2. [データ管理] の [ライフサイクル管理] を選択し、[規則を追加 (Add a rule)] をクリックします。<br><br>
@@ -54,7 +54,7 @@ tags:
 [ライフサイクル管理ポリシーを構成する](https://docs.microsoft.com/ja-jp/azure/storage/blobs/lifecycle-management-policy-configure?tabs=azure-portal)
 <br><br>
 
-　＊ライフサイクル ポリシーは、プラットフォームによって 1 日に 1 回実行されます。 新規ポリシーを作成した後、アクションによっては、初回実行時に最大 24 時間かかる場合がありますのでご注意ください。<br>
+　＊ライフサイクル管理のポリシーを作成・更新してから有効になるまで最大 24 時間、さらに実行されるまでに 24 時間以上かかる場合がありますのでご注意ください。<br>
 <br><br>
 
 
@@ -78,25 +78,34 @@ Azure Monitor で Metrics に移動します。ストレージ アカウント�
 	
 ###	• 詳細に確認する場合<br>
 <br>
-Log Analytics を使用し Delete Blob のオペレーションを列挙することが可能です。この方法は予めログの出力先として設定したストレージ アカウントの Log Analytics を作成する必要があります。<br>
-	
-<br>先ず、対象 Log Analytics ワーク スペース（写真では、「workspacefordeleteblob」）に移動します。[全般 (General)] の項目より[ログ (Logs)] を選択し、以下のクエリを実行した結果が BLOB の削除が成功したログとなります。
-	
-	   StorageBlobLogs
-	   | where OperationName == "DeleteBlob"
-	   | where StatusText == "Success"
-	   | where UserAgentHeader contains "ObjectLifeCycleScanner"
+$logs コンテナーに出力された診断ログから Delete Blob のオペレーションを確認することが可能です。この方法は、予め [診断ログ (クラシック)] から、ログの出力を有効化しておく必要があります。<br>
 
-	
+<br>[診断設定 (クラシック)] ログ出力設定例
+![image-81d44b47-c906-4ff6-8615-7da8e25e5210.png]({{site.baseurl}}/media/2022/09/image-81d44b47-c906-4ff6-8615-7da8e25e5210.png)
+
+<br>      
+下記出力例のように、<user-agent-header> フィールドに、"ObjectLifeCycleScanner" が出力されたエントリを確認することで、
+　　ライフサイクル管理によって行われたリクエストのログをご確認いただけます。
+<br>
+<br>凡例 (バージョン 2.0 の場合)：
+		
+	<version-number>;<request-start-time>;<operation-type>;<request-status>;<http-status-code>;<end-to-end-latency-in-ms>;<server-latency-in-ms>;<authentication-type>;<requester-account-name>;<owner-account-name>;<service-type>;<request-url>;<requested-object-key>;<request-id-header>;<operation-count>;<requester-ip-address>;<request-version-header>;<request-header-size>;<request-packet-size>;<response-header-size>;<response-packet-size>;<request-content-length>;<request-md5>;<server-md5>;<etag-identifier>;<last-modified-time>;<conditions-used>;<user-agent-header>;<referrer-header>;<client-request-id>;<user-object-id>;<tenant-id>;<application-id>;<audience>;<issuer>;<user-principal-name>;<reserved-field>;<authorization-detail>
 	 
-<br>![image-7f3e9845-e834-44ed-94e6-8978b4ac4d5a.png]({{site.baseurl}}/media/2022/09/image-7f3e9845-e834-44ed-94e6-8978b4ac4d5a.png)
-<br>各項目をクリックすると、テナント ID や URI などの詳細情報が更に確認出来ます。
+<br>出力例 (バージョン 2.0 の場合)：
+	
+	2.0;2025-07-18T19:17:16.5043171Z;DeleteBlob;TrustedAccessSasSuccess;202;13;13;TrustedAccessSas;;XXXXX;blob;"https://XXXXX.blob.core.windows.net:443/insights-logs-storageread/resourceId%3D/subscriptions/XXXXX/resourceGroups/XXXXX/providers/Microsoft.Storage/storageAccounts/XXXXX/blobServices/default/y%3D2024/m%3D10/d%3D18/h%3D12/m%3D00/PT1H.json?sv=2020-06-12&amp;ss=b&amp;srt=sco&amp;sp=rwdlacuptx&amp;se=2025-08-01T18%3A36%3A35.4416023Z&amp;spr=https&amp;sk=system-1&amp;sig=XXXXX&amp;timeout=10";"/XXXXX/insights-logs-storageread/resourceId=/subscriptions/XXXXX/resourceGroups/XXXXX/providers/Microsoft.Storage/storageAccounts/XXXXX/blobServices/default/y=2024/m=10/d=18/h=12/m=00/PT1H.json";4ec85451-801e-0041-1218-f86f9d000000;0;XXX.XXX.XXX.XXX:59234;2019-12-12;869;0;271;0;0;;;;;;"xAzure/1.0 AzureStorage/1.0 ObjectLifeCycleScanner/0.50";;"XXXXX_ms-tyo31prdstr02a_2025-07-18T18:34:57.4214940Z_2faabfc8-9051-4f24-ace5-1a95ceb43ee9_";;;;;;;;
+
+
+<br>![image-2bf8a9cb-0c9f-49ee-83c5-c4c36cb5cde1.png]({{site.baseurl}}/media/2022/09/image-2bf8a9cb-0c9f-49ee-83c5-c4c36cb5cde1.png)
+
+<br>出力されるログの項目内訳につきましては、下記をご参照ください。
+<br>[Storage Analytics ログ形式 (REST API) - Azure Storage | Microsoft Learn](https://learn.microsoft.com/ja-jp/rest/api/storageservices/storage-analytics-log-format)
 
 <br><br>	
 	
 # まとめ<br>
 
-   ファイル ベースの方法で簡単に確認できるため、診断設定を利用しストレージ アカウントのログを出力するように設定した場合でも、そのログが多くなると確認しづらくなります。このようなジレンマを解決するため、ライフサイクル管理ポリシーを構成し一定期間が経過した後自動的にログが削除されるように設定することが出来ます。また、このポリシーの実行状況をメトリックや Log Analytics などを利用し確認することが出来ます。<br>
+   ファイル ベースの方法で簡単に確認できるため、診断設定を利用しストレージ アカウントのログを出力するように設定した場合でも、そのログが多くなると確認しづらくなります。このようなジレンマを解決するため、ライフサイクル管理ポリシーを構成し一定期間が経過した後自動的にログが削除されるように設定することが出来ます。また、このポリシーの実行状況をメトリックや $logs コンテナーへ出力したログ などを利用し確認することが出来ます。<br>
 
 ![image-61c17501-e9f6-4112-9367-42dea6dedaf3.png]({{site.baseurl}}/media/2022/09/image-61c17501-e9f6-4112-9367-42dea6dedaf3.png)
 <br>
@@ -104,8 +113,12 @@ Log Analytics を使用し Delete Blob のオペレーションを列挙する�
 # 3行要約<br>
 1. 診断設定でログの出力が出来る<br>
 2. ライフサイクル管理ポリシーで対象の Blob 種類を [追加 BLOB (Append blobs)] に設定することで、一定期間が経過した後ログを自動的に削除することが出来る<br>
-3. メトリックや Log Analytics などでログの自動削除を確認することが出来る<br>
+3. メトリックや $logs コンテナーなどでログの自動削除を確認することが出来る<br>
 
 <br><br><br>
-2022 年 9 月 9 日時点の内容となります。<br>
+2025 年 8 月 4 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
+
+# 変更履歴  
+2022 年 9 月 9 日：公開
+<br>2025 年 8 月 4 日：「詳細に確認する場合」の確認方法を Log Analytics → [診断設定 (クラシック)] で出力したログ ($logs) から確認する方法に変更
