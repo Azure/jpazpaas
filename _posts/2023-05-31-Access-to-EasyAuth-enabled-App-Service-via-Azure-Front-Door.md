@@ -59,26 +59,35 @@ App Service の受信トラフィックにおいて、Azure Front Door のトラ
 App Service の proxy を設定することにより、上記の事象を解消することが可能となります。
 App Service や Azure Front Door は製品ごとに異なるヘッダーが使用され、異なる forwardProxy 設定となっているため、proxy 設定し直す必要がございます。
 
-<br>詳細は下記のドキュメンにて記載がございます。
-<br>[Azure Front Door を使用する場合の考慮事項](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#considerations-when-using-azure-front-door)
+<br>詳細は下記のドキュメントおよび弊社 App Service チームのブログ記事にて記載がございます。
+<br>[Azure Front Door を使用する場合の考慮事項](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#considerations-for-using-azure-front-door)<br>
+[Alter authentication settings](https://azure.github.io/AppService/2021/03/26/Secure-resilient-site-with-custom-domain.html#alter-authentication-settings)
 
 **設定の詳細：**
-<br>1. Azure Resource Explorer (https://resources.azure.com)　へ接続をしていただき、サブスクリプション> リソースグループ> providers > Microsoft.Web > sites > 対象のApp Service > config > authsettingsV2 へ移動をします。
+<br>1. az rest コマンドを使用して、App Service 認証機能の構成情報を JSON 形式でエクスポートします。
 
-<br>2.上部メニューにて、Edit ボタンを押下してauthsettingsV2 の編集を行います。
-![image-8f3d7177-c12d-4ee2-bda0-33bb70a3a7e6.png]({{site.baseurl}}/media/2023/05/image-8f3d7177-c12d-4ee2-bda0-33bb70a3a7e6.png)
+[設定のエクスポート](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#export-settings)
 
-<br>3. 編集する内容といたしましては、forwardProxy の要素内にて以下の内容を記述します。
+```
+az rest --uri /subscriptions/REPLACE-ME-SUBSCRIPTIONID/resourceGroups/REPLACE-ME-RESOURCEGROUP/providers/Microsoft.Web/sites/REPLACE-ME-APPNAME/config/authsettingsV2?api-version=2020-09-01 --method get > auth.json
+```
+
+<br>2.  JSON 形式でエクスポートした構成内容を編集します。
+編集する内容といたしましては、`forwardProxy` の要素内にて以下の内容を記述します。
+
 ```
  "forwardProxy": {
     "convention": "Standard"
  }
 ```
-![image-4062b8c1-e0b8-48ad-b1c5-e9d40d1fe8db.png]({{site.baseurl}}/media/2023/05/image-4062b8c1-e0b8-48ad-b1c5-e9d40d1fe8db.png)
 
-4.上部メニューにて、PUT ボタンを押下することで設定が反映されます。
+<br>3. 編集した JSON 形式の構成内容を App Service リソースへ適用（インポート）します。
 
-![image-9c72ca0f-7476-4080-a3df-bfe2907f6ecc.png]({{site.baseurl}}/media/2023/05/image-9c72ca0f-7476-4080-a3df-bfe2907f6ecc.png)
+[設定のインポート](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#import-settings)
+
+```
+az rest --uri /subscriptions/REPLACE-ME-SUBSCRIPTIONID/resourceGroups/REPLACE-ME-RESOURCEGROUP/providers/Microsoft.Web/sites/REPLACE-ME-APPNAME/config/authsettingsV2?api-version=2020-09-01 --method put --body @auth.json
+```
 
 <br>上述の手順で実施した結果として以下のように Azure Front Door からアクセスして、正常に認証が完了し、App Service に正常にアクセスすることを確認することが出来ます。
 
@@ -103,12 +112,12 @@ App Service にアクセス制限を構成していないシナリオでも、�
 
 本ブログは App Service の前段に FrontDoor を構成する場合のシナリオについて記載されましたが、App Service の前段に Application Gateway を構成する場合の Azure AD 認識について以下のブログをご参考までにご参照ください。
 
-[App Service の前段に ApplicationGateway を配置した際の Azure AD 認証](https://jpazpaas.github.io/blog/2022/03/09/Application-Gateway-front-of-App-Service-auth.html)
+[App Service の前段に ApplicationGateway を配置した際の Azure AD 認証](https://azure.github.io/jpazpaas/2022/03/09/Application-Gateway-front-of-App-Service-auth.html)
 
 ------------------
 <br>
 <br>
-2023 年 02 月 16 日時点の内容となります。<br>
+2025 年 09 月 09 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 <br>
 <br>
