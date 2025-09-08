@@ -100,7 +100,7 @@ az rest --uri /subscriptions/REPLACE-ME-SUBSCRIPTIONID/resourceGroups/REPLACE-ME
 az rest --uri /subscriptions/REPLACE-ME-SUBSCRIPTIONID/resourceGroups/REPLACE-ME-RESOURCEGROUP/providers/Microsoft.Web/sites/REPLACE-ME-APPNAME/config/authsettingsV2?api-version=2020-09-01 --method put --body @auth.json
 ```
 
-弊社 App Service チームのブログにてこちらの詳細な内容が記載されておりますためご参照ください。
+弊社 App Service 開発チームのブログにてこちらの詳細な内容が記載されておりますためご参照ください。
 
 [Application Gateway](https://azure.github.io/AppService/2021/03/26/Secure-resilient-site-with-custom-domain.html#application-gateway)
 
