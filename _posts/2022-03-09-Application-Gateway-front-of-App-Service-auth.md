@@ -14,7 +14,7 @@ App Service の前段に Application Gateway の配置をしています。そ�
 ### 構成
 Application Gateway に、App Service をバックエンド プールとして追加している状況です。また、Application Gateway と App Service が異なるホスト名で公開をしています。
 
-![2022-03-09-1-1-auth-architecturew]({{site.baseurl}}/media/2022/03/2022-03-09-1-1-auth-architecture.png)
+![1-1-auth-architecture.png]({{site.baseurl}}/media/2022/03/1-1-auth-architecture.png)
 
 ### 発生しているエラー
 Azure AD の Azure ポータル画面より アプリの登録 から対象のアプリを選択し、左ブレードメニューの 認証 にて、リダイレクト URI を Application Gateway にて設定しているホスト名を追加いたしました。
@@ -22,7 +22,7 @@ Azure AD の Azure ポータル画面より アプリの登録 から対象の�
 
 > AADSTS50011: The reply URL specified in the request does not match the reply URLs configured for the application:"
 
-![2022-03-09-1-2-auth-faild]({{site.baseurl}}/media/2022/03/2022-03-09-1-2-auth-faild.png)
+![1-2-auth-faild.png]({{site.baseurl}}/media/2022/03/1-2-auth-faild.png)
 
 ## 回答
 結論から申し上げますと、Application Gateway と App Service 間の URL にて FQDN やドメインの違いにより、Azure AD 側にて認証が失敗していることが想定されます。
@@ -30,7 +30,7 @@ Azure AD の Azure ポータル画面より アプリの登録 から対象の�
 ### 認証フローについて
 App Service と Azure AD 間の通信では、App Service 認証を用いて Azure AD のアクセス トークンを取得する際に、Authorization Code Grant と呼ばれる認証フローを利用します。詳細な AzureAD での認証フローにつきましては以下の弊社提供の公開情報がございます。
 
-[Microsoft ID プラットフォームと OAuth 2.0 認証コード フロー](https://docs.microsoft.com/ja-jp/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+[Microsoft ID プラットフォームと OAuth 2.0 認証コード フロー](https://learn.microsoft.com/ja-jp/entra/identity-platform/v2-oauth2-auth-code-flow)
 
 
 1. App Service は未認証のユーザーがアクセスしてきた場合、ユーザーを認証するため Azure AD の Authorize エンドポイントに、認可リクエストを送信します。
@@ -68,18 +68,37 @@ App Service と Azure AD 間の通信では、App Service 認証を用いて Azu
 
 Application Gateway の場合、X-Original-Host というヘッダーにて、Application Gateway  が受け取った HOST ヘッダーが格納されるということで、App Service 認証がこのヘッダーを読み取り、redirect_uri を適切に構成することで、認証が正常に行えるようになります。
 
-[Azure Resource Explorer](https://resources.azure.com) へ接続をしていただき、  
-  サブスクリプション > リソースグループ > providers > Microsoft.Web > sites > 対象の App Service > config > authsettingsV2 へ移動をします。
 
-以下のスクリーンショットにございます内容となり、上部メニューにて、`Edit` ボタンを押下して authsettingsV2 の編集を行います。編集する内容といたしましては、`forwardProxy` の要素内にて以下の内容を記述します。その後上部メニューにて、`PUT` ボタンを押下することで設定が反映されます。
- 
-      "forwardProxy": {
-        "convention": "Custom",
-        "customHostHeaderName": "X-Original-Host"
-      }
+以下の弊社検証環境の公開情報に従って、App Service 認証機能の設定を構成します。
 
-![2022-03-09-1-3-resource-explorer]({{site.baseurl}}/media/2022/03/2022-03-09-1-3-resource-explorer.png)
+[App Service で適切なリダイレクト URI が使用されていることを確認する](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#ensure-that-app-service-is-using-the-right-redirect-uri)
 
+
+#### 1. az rest コマンドを使用して、App Service 認証機能の構成情報を JSON 形式でエクスポートします。
+
+[設定のエクスポート](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#export-settings)
+
+```
+az rest --uri /subscriptions/REPLACE-ME-SUBSCRIPTIONID/resourceGroups/REPLACE-ME-RESOURCEGROUP/providers/Microsoft.Web/sites/REPLACE-ME-APPNAME/config/authsettingsV2?api-version=2020-09-01 --method get > auth.json
+```
+
+#### 2.  JSON 形式でエクスポートした構成内容を編集します。
+編集する内容といたしましては、`forwardProxy` の要素内にて以下の内容を記述します。
+
+```
+"forwardProxy": {
+    "convention": "Custom",
+    "customHostHeaderName": "X-Original-Host"
+}
+```
+
+#### 3. 編集した JSON 形式の構成内容を App Service リソースへ適用（インポート）します。
+
+[設定のインポート](https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#import-settings)
+
+```
+az rest --uri /subscriptions/REPLACE-ME-SUBSCRIPTIONID/resourceGroups/REPLACE-ME-RESOURCEGROUP/providers/Microsoft.Web/sites/REPLACE-ME-APPNAME/config/authsettingsV2?api-version=2020-09-01 --method put --body @auth.json
+```
 
 弊社 App Service 開発チームのブログにてこちらの詳細な内容が記載されておりますためご参照ください。
 
@@ -93,7 +112,7 @@ Application Gateway の場合、X-Original-Host というヘッダーにて、Ap
 <br>
 <br>
 
-2022 年 3 月 9 日時点の内容となります。<br>
+2025 年 09 月 08 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
