@@ -31,7 +31,7 @@ Azure Functions はイベントドリブンな処理を実装する手段を提�
 | 14 | Redis |
 | 15 | RabbitMQ |
 | 16 | SendGrid |
-| 17 | Service Bus |
+| 17 | [Service Bus](https://azure.github.io/jpazpaas/2025/09/08/Azure-functions-trigger-and-binding-series-servicebus.html) |
 | 18 | SignalR |
 | 19 | Table Storage |
 | 20 | [Timer](https://azure.github.io/jpazpaas/2024/02/22/Azure-functions-trigger-and-binding-series-timer.html) |
@@ -51,7 +51,7 @@ Azure Functions はイベントドリブンな処理を実装する手段を提�
 <br>
 <br>
 
-2025 年 02 月 26 日時点の内容となります。<br>
+2025 年 09 月 08 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
