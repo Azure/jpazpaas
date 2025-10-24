@@ -1,4 +1,6 @@
 <!-- begin _includes/seo.html -->
+{% include /analytics-providers/azure-application-insights.html %}
+
 {%- if site.url -%}
   {%- assign seo_url = site.url | append: site.baseurl -%}
 {%- endif -%}
