@@ -101,7 +101,7 @@ az storage account list --query "[].{name:name,minimumTlsVersion:minimumTlsVersi
 <br>
 <br>
 
-2026 年 01 月 15 日時点の内容となります。<br>
+2026 年 01 月 19 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
