@@ -79,7 +79,6 @@ az storage account list --query "[].{name:name,minimumTlsVersion:minimumTlsVersi
 
 [最小許容バージョンとして TLS 1.2 を適用する](https://learn.microsoft.com/ja-jp/azure/storage/common/transport-layer-security-configure-migrate-to-tls2?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json#enforce-tls-12-as-the-minimum-allowed-version)
 
-
 # まとめ
 
 本記事ではストレージアカウントの 最小 TLS バージョンの確認手順について説明しました。ストレージアカウントの最小 TLS バージョンの確認自体はシンプルな方法でできますが、TLS 1.0、1.1 を使っているクライアントがいた場合に、そのクライアントが TLS 1.2 を利用できるのか、ということの確認はクライアント側での確認が必要となります。
@@ -93,6 +92,7 @@ az storage account list --query "[].{name:name,minimumTlsVersion:minimumTlsVersi
 
 (2026/1/19) 質問の節で引用しているサイトに記載のあった移行の期限が 2026 年 1 月 31 日だったものの、2026 年 2 月 3 日に変更されたため、その部分を修正しました。
 
+
 <br>
 <br>
 
@@ -101,7 +101,7 @@ az storage account list --query "[].{name:name,minimumTlsVersion:minimumTlsVersi
 <br>
 <br>
 
-2025 年 09 月 24 日時点の内容となります。<br>
+2026 年 01 月 15 日時点の内容となります。<br>
 本記事の内容は予告なく変更される場合がございますので予めご了承ください。
 
 <br>
