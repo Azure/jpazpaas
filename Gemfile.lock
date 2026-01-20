@@ -15,8 +15,8 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2, >= 2.2.2)
-    addressable (2.7.0)
-      public_suffix (>= 2.0.2, < 5.0)
+    addressable (2.8.1)
+      public_suffix (>= 2.0.2, < 6.0)
     algolia_html_extractor (2.6.4)
       json (~> 2.0)
       nokogiri (~> 1.10)
@@ -28,6 +28,7 @@ GEM
     em-websocket (0.5.2)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
+    eventmachine (1.2.7)
     eventmachine (1.2.7-x64-mingw32)
     faraday (1.4.1)
       faraday-excon (~> 1.1)
@@ -38,6 +39,7 @@ GEM
     faraday-excon (1.1.0)
     faraday-net_http (1.0.1)
     faraday-net_http_persistent (1.1.0)
+    ffi (1.15.0)
     ffi (1.15.0-x64-mingw32)
     filesize (0.2.0)
     forwardable-extended (2.6.0)
@@ -113,13 +115,15 @@ GEM
     multipart-post (2.1.1)
     nokogiri (1.11.3-x64-mingw32)
       racc (~> 1.4)
+    nokogiri (1.11.3-x86_64-linux)
+      racc (~> 1.4)
     octokit (4.21.0)
       faraday (>= 0.9)
       sawyer (~> 0.8.0, >= 0.5.3)
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
     progressbar (1.11.0)
-    public_suffix (4.0.6)
+    public_suffix (5.0.0)
     racc (1.5.2)
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
@@ -128,6 +132,8 @@ GEM
     rouge (3.26.0)
     ruby2_keywords (0.0.4)
     safe_yaml (1.0.5)
+    sassc (2.4.0)
+      ffi (~> 1.9)
     sassc (2.4.0-x64-mingw32)
       ffi (~> 1.9)
     sawyer (0.8.2)
@@ -147,6 +153,7 @@ GEM
 
 PLATFORMS
   x64-mingw32
+  x86_64-linux
 
 DEPENDENCIES
   jekyll
