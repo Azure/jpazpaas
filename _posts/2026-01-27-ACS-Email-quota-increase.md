@@ -11,13 +11,13 @@ tags:
 
 Azure Communication Services で Email を送信には規定でクォータが設けられております。
 
-[Azure Communication Services のサービス制限 - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email)
+[Azure Communication Services のサービス制限 - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email)
 
 > 送信できる電子メール メッセージの数には制限があります。 サブスクリプションに応じた[メールのレート制限](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#rate-limits-for-email)を超えた場合、要求が拒否されます。 再試行までの時間が経過した後に、これらの要求をもう一度試すことができるようになります。 必要に応じて、送信ボリュームの制限を引き上げるリクエストを行って、制限に達する前に対処してください。
 
 クォータの緩和はサポートリクエストを起票いただき申請いただく必要がございます。
 
-[メール ドメインのクォータの引き上げ - An Azure Communication Services concept document | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase)
+[メール ドメインのクォータの引き上げ - An Azure Communication Services concept document](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase)
 
 クォータの引き上げは申請いただいた内容ならびに、当該リソースの状況に応じて審査されます。
 
@@ -36,7 +36,7 @@ Azure Communication Services で Email を送信には規定でクォータが�
 
 クォータの緩和対象はカスタムドメインのみとなります。申請にあったってはカスタムドメインを構成ください。
 
-[カスタム検証済みメール ドメインを追加する - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/add-custom-verified-domains?pivots=platform-azp)
+[カスタム検証済みメール ドメインを追加する - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/add-custom-verified-domains?pivots=platform-azp)
 
 - [Azure Communication Services メール機能でよく頂くご質問 - Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2025/09/08/ACS-Email-Onboarding-FAQ.html) 
   > * 送信数の制限は引き上げられますか？
@@ -65,7 +65,7 @@ Azure Communication Service から送信されたメールを受信するサー
 そのため、Azure Communication Serviceとして、 MX レコードに登録可能な正当なメールサーバーの IP や FQDN について提供できるものはございません。
 `<お客様のカスタムドメイン>` 宛てのメールをどのサーバーへ転送すべきかについては、お客様次第となるものとなり、弊社側から具体的なレコードをお出しするものではございません。
 
-- [メール ドメインのクォータの引き上げ - An Azure Communication Services concept document | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase#3-configure-a-mail-exchange-record-for-your-custom-domain)
+- [メール ドメインのクォータの引き上げ - An Azure Communication Services concept document](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase#3-configure-a-mail-exchange-record-for-your-custom-domain)
 
   > メール交換 (MX) レコードは、ドメイン名に代わって電子メール メッセージを受信する電子メール サーバーを指定します。 MX レコードは、ドメイン ネーム システム (DNS) のリソース レコードです。 基本的に、MX レコードは、ドメインが電子メールを受信できることを示します。
   >
@@ -76,9 +76,9 @@ Azure Communication Service から送信されたメールを受信するサー
 
 MX レコードと同様にカスタムドメイン利用時に DMARC レコードは必須ではございませんが、DMARC レコードを設定いただくことで送信者ドメインの評判を向上に寄与します。
 
-- [送信者認証のサポートに関するベスト プラクティス - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-authentication-best-practice#implementing-dmarc)
+- [送信者認証のサポートに関するベスト プラクティス - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-authentication-best-practice#implementing-dmarc)
 
-- [DMARC を使用してメールを検証する、セットアップ手順 - Microsoft Defender for Office 365 | Microsoft Learn](https://learn.microsoft.com/ja-jp/defender-office-365/email-authentication-dmarc-configure?preserve-view=true&view=o365-worldwide#syntax-for-dmarc-txt-records)
+- [DMARC を使用してメールを検証する、セットアップ手順 - Microsoft Defender for Office 365](https://learn.microsoft.com/ja-jp/defender-office-365/email-authentication-dmarc-configure?preserve-view=true&view=o365-worldwide#syntax-for-dmarc-txt-records)
 
 
 ## 送信成功率の維持
@@ -86,7 +86,7 @@ MX レコードと同様にカスタムドメイン利用時に DMARC レコー�
 メールの失敗率は 1% 未満であることが求められます。
 検証目的であったとしても、当該のドメインからの失敗率が高い場合、申請は却下される可能性が高くございます。
 
-- [Azure Communication Services 電子メールの送信者の評判を理解する - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/sender-reputation-managed-suppression-list#managing-sender-reputation-and-email-complaints-to-enhance-email-delivery)
+- [Azure Communication Services 電子メールの送信者の評判を理解する - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/sender-reputation-managed-suppression-list#managing-sender-reputation-and-email-complaints-to-enhance-email-delivery)
 
   > **送信者の評判と電子メールの苦情を管理してメール配信を強化する**
   >
@@ -110,9 +110,9 @@ MX レコードと同様にカスタムドメイン利用時に DMARC レコー�
 そのため、現在の制限を大幅に上回るような申請をいただいてもご希望に沿える可能性は低くございます。
 目安として、現在の制限に抵触する状態が続くようであればその倍の容量をご申請いただければと存じます。
 
-- [メール送信層の制限に達したときに例外をスローする - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/send-email-advanced/throw-exception-when-tier-limit-reached?pivots=programming-language-javascript)
+- [メール送信層の制限に達したときに例外をスローする - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/send-email-advanced/throw-exception-when-tier-limit-reached?pivots=programming-language-javascript)
 
-- [Azure Communication Services のサービス制限 - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email)
+- [Azure Communication Services のサービス制限 - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email)
 
   > メールの配信状態を注意深く監視しながら、2 週間から 4 週間かけて、Azure Communication Services Email を使用するメールの量を少しずつ増やすことをお勧めします。 このように段階的に増やすと、サード パーティのメール サービス プロバイダーはドメインのメール トラフィック用の IP の変更に適応できます。 少しずつ変更すると、送信者評価を保護し、メール配信の信頼性を維持する時間が得られます。
 
@@ -122,7 +122,7 @@ MX レコードと同様にカスタムドメイン利用時に DMARC レコー�
 ## 弊社からのヒアリング事項
 ドキュメントに沿ってサポートリクエスト起票時に記入くださいませ。
 
-[メール ドメインのクォータの引き上げ - An Azure Communication Services concept document | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase)
+[メール ドメインのクォータの引き上げ - An Azure Communication Services concept document](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase)
 
 日本語で記載いただいてもかまいません。
 未記載の項目がございますと、審査プロセスを進めるまでに時間がかかってしまうことになります。ご注意くださいませ。
@@ -158,7 +158,7 @@ MX レコードと同様にカスタムドメイン利用時に DMARC レコー�
 - MXレコードが未設定の場合、MX レコードの追加を実施くださいませ。
 
 - 低い失敗率と良好なNDR（配信不能通知）は、高いメールクォータを維持するために重要です。以下の2つの重要なガイダンスに従っていることを確認してください。
-  [Azure Communication Services のサービス制限 - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email)
+  [Azure Communication Services のサービス制限 - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email)
 
   - 1. 移行アプローチ
     > メールの配信状態を注意深く監視しながら、2 週間から 4 週間かけて、Azure Communication Services Email を使用するメールの量を少しずつ増やすことをお勧めします。 このように段階的に増やすと、サード パーティのメール サービス プロバイダーはドメインのメール トラフィック用の IP の変更に適応できます。 少しずつ変更すると、送信者評価を保護し、メール配信の信頼性を維持する時間が得られます。
@@ -171,10 +171,10 @@ MX レコードと同様にカスタムドメイン利用時に DMARC レコー�
       > クォータの引き上げ後に失敗率が上がった場合、Azure Communication Services はお客様に連絡して、直ちに対処することを求め、解決のタイムラインを確認します。 極端なケースでは、指定されたタイムライン内で失敗率が管理されない場合、Azure Communication Services は、問題が解決されるまでサービスを減らしたり中断したりする可能性があります。
 
 下記のドキュメント群もご参考にしていただけますと幸いです。
-- [Azure Communication Services 電子メールの送信者の評判を理解する - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/sender-reputation-managed-suppression-list)
-- [メールの分析情報 - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/analytics/insights/email-insights)
-- [Azure Monitor でログ記録を有効にする - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/analytics/enable-logging)
-- [メールイベントを処理する - Azure Communication Services | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/handle-email-events)
-- [Azure Communication Services - Email イベント - Azure Event Grid | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/event-grid/communication-services-email-events)
-- [Management SDK を使用してドメイン抑制リストを管理する - An Azure Communication Services article | Microsoft Learn](https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/manage-suppression-list-management-sdks?pivots=programming-language-javascript)
+- [Azure Communication Services 電子メールの送信者の評判を理解する - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/sender-reputation-managed-suppression-list)
+- [メールの分析情報 - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/analytics/insights/email-insights)
+- [Azure Monitor でログ記録を有効にする - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/analytics/enable-logging)
+- [メールイベントを処理する - Azure Communication Services](https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/handle-email-events)
+- [Azure Communication Services - Email イベント - Azure Event Grid](https://learn.microsoft.com/ja-jp/azure/event-grid/communication-services-email-events)
+- [Management SDK を使用してドメイン抑制リストを管理する - An Azure Communication Services article](https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/manage-suppression-list-management-sdks?pivots=programming-language-javascript)
 - [Azure Communication Services メール機能でよく頂くご質問 - Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2025/09/08/ACS-Email-Onboarding-FAQ.html)
