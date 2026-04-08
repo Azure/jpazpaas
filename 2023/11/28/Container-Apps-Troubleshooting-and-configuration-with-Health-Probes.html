@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Container Apps で正常性プローブを使用した際のトラブルシューティングと構成 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="※本記事は Azure OSS Developer Support ブログ Container Apps: Troubleshooting and configuration with Health Probes の日本語抄訳版です。 Container Apps サポート担当の谷津です。 この投稿では、Container Apps でホストされているアプリケーションに正常性プローブを使用する場合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Container Apps で正常性プローブを使用した際のトラブルシューティングと構成">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/11/28/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="※本記事は Azure OSS Developer Support ブログ Container Apps: Troubleshooting and configuration with Health Probes の日本語抄訳版です。 Container Apps サポート担当の谷津です。 この投稿では、Container Apps でホストされているアプリケーションに正常性プローブを使用する場合">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2023-11-27T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.713Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Container Apps">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/11/28/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Container Apps で正常性プローブを使用した際のトラブルシューティングと構成
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-11-27T15:00:00.000Z" itemprop="datePublished">2023-11-28</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+e36f4c5f-6b67-5558-a5e9-0da69b5054b6%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BContainer+Apps+%E3%81%A7%E6%AD%A3%E5%B8%B8%E6%80%A7%E3%83%97%E3%83%AD%E3%83%BC%E3%83%96%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E9%9A%9B%E3%81%AE%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E3%82%B7%E3%83%A5%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E3%81%A8%E6%A7%8B%E6%88%90%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F11%2F28%2FContainer-Apps-Troubleshooting-and-configuration-with-Health-Probes.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F11%2F28%2FContainer-Apps-Troubleshooting-and-configuration-with-Health-Probes.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F11%2F28%2FContainer-Apps-Troubleshooting-and-configuration-with-Health-Probes.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/11/28/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes.html" data-id="cuidod5B30BUwRvrHzsLIgqu9" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>※本記事は Azure OSS Developer Support ブログ <a href="https://azureossd.github.io/2023/08/23/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes/index.html">Container Apps: Troubleshooting and configuration with Health Probes</a> の日本語抄訳版です。</p>
+<p>Container Apps サポート担当の谷津です。</p>
+<p>この投稿では、Container Apps でホストされているアプリケーションに正常性プローブを使用する場合のトラブルシューティングと構成について説明します。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/container-apps/compare-options#container-option-comparisons">Azure Container Apps</a> は Kubernetes 上に構築されているため、Kubernetes に存在する機能と概念的に非常に密接にマップされた Container Apps 機能がかなり多くあります。</p>
+<p>そのうちの 1 つが正常性プローブで、pod の移動が発生したときや、正常に実行中のアプリケーションで時間の経過とともに、アプリケーションの<a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template">正常性</a>を判断する優れた方法です。これらの正常性プローブは <a href="https://kubernetes.io/ja/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">Kubernetes 正常性プローブ</a><br>の上に構築されているため、Kubernetes の公式ドキュメントを読むと、知見が深まる可能性があります。<br>正常性プローブは、コンテナーの起動時のタイムアウト、コンテナー実行時のデッドロック、コンテナーがトラフィックを受け入れる準備ができていない場合のトラフィックの処理に関連するパフォーマンスの問題を回避するのに役立ちます。</p>
+<p>以下では、Container Apps に関する一般的なプローブ情報と、いくつかのトラブルシューティング シナリオについて説明します。</p>
+<blockquote>
+<p><strong>注</strong>: 全体として、プローブ構成をいろいろ試したうえでアプリケーションに必要な最適な設定とユースケースを確認することをお勧めします。</p>
+</blockquote>
+<h1 id="リクエストのフロー"><a href="#リクエストのフロー" class="headerlink" title="リクエストのフロー"></a>リクエストのフロー</h1><p>プローブは、一般的な Kubernetes (<a href="https://kubernetes.io/ja/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">kubelet</a>) と同様に、Container Apps 環境内から発生します。これは、イングレスを介して送信されるブラウザーやその他のアプリケーションなどの外部クライアントからのリクエストとは別のフローです。</p>
+<h1 id="プローブのメカニズムと制約事項"><a href="#プローブのメカニズムと制約事項" class="headerlink" title="プローブのメカニズムと制約事項"></a>プローブのメカニズムと制約事項</h1><p>サポートされているメカニズムは次のとおりです。</p>
+<ul>
+<li>HTTP(s) と TCP</li>
+</ul>
+<p>現在の制限は次のとおりです。</p>
+<ul>
+<li>gRPC、名前付きポート、および exec コマンドはサポートされていません。<a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template#restrictions">こちらをご覧下さい</a></li>
+<li>コンテナごとに追加できるプローブの種類はプローブの種類（liveness&#x2F;readiness&#x2F;startup）毎に 1 つだけです。</li>
+</ul>
+<p>HTTP プローブが成功したと見なされるには、設定されたエンドポイントからの応答が HTTP 200 から HTTP 399 の間である必要があります。</p>
+<h1 id="構成"><a href="#構成" class="headerlink" title="構成"></a>構成</h1><h2 id="デフォルト設定"><a href="#デフォルト設定" class="headerlink" title="デフォルト設定"></a>デフォルト設定</h2><hr>
+<p>アプリケーションでイングレスを有効にする場合、Container Apps プラットフォームには、既定の TCP 正常性プローブ構成が設定されています。公開ドキュメントについては、<a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template#default-configuration">こちら</a>を参照してください。TCP プローブで設定されるポート (<code>Port</code>) は、イングレスのポートとして指定されたポートに設定されます。</p>
+<p>このため、Log Analytics の <code>ContainerAppSystemLogs_CL</code> テーブルには、さまざまなプローブ メッセージが表示される場合があります（デフォルトでプローブが設定されるため）。プローブは、pod の正常性を判断する Kubernetes (ならびに Container Apps の拡張機能) の機能の一部です。</p>
+<p>正常性プローブを明示的に有効にしていない場合に、 [<strong>Containers (コンテナー)</strong>] &gt; 対象のコンテナーを選択 &gt; [<strong>Health Probes (正常性プローブ)</strong>] ブレードを表示すると、次のように表示されます。</p>
+<IMG  src="https://azureossd.github.io/media/2023/08/aca-health-probe-1.png"  alt="既定の正常性プローブ"/>
+
+<p>TCP over HTTP が設定される理由は、TCP が推定される公開ポート (プローブ設定自体で特に設定されていない限り、イングレスを有効にするときに設定されるポート) のみをチェックするためです。HTTP が使用されていた場合、アプリケーションに ping を実行するために “推測” されたルートは、200 から 400 以外の HTTP ステータス コードを返す可能性があるため、常にコンテナーに失敗が表示されます。</p>
+<h2 id="一般的な構成"><a href="#一般的な構成" class="headerlink" title="一般的な構成"></a>一般的な構成</h2><hr>
+<p>HTTP(s) と TCP の正常性プローブは、Container Apps の “Containers (コンテナー)” セクション内の “Health Probes (正常性プローブ)” セクションで構成されます</p>
+<p>正常性プローブの構成スキーマとサポートされている設定については、<a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template#restrictions">この</a>例を参照してください。さらに、プローブ メカニズムとして HTTP を使用する場合は、正常性状態を確認するロジックを含むアプリケーション コード内に HTTP エンドポイントを実装する必要があります。<a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template#http-probes">こちら</a> に例を示します。</p>
+<p>TCP 正常性プローブの場合、アクセス可能なポートがあなたの <code>Dockerfile</code> の中で exposed されているべきです。</p>
+<h2 id="リクエストヘッダーと-User-Agent"><a href="#リクエストヘッダーと-User-Agent" class="headerlink" title="リクエストヘッダーと User-Agent"></a>リクエストヘッダーと User-Agent</h2><hr>
+<p>HTTP 正常性プローブ用に Kubelet によって送信される既定の user-agent とヘッダーは、こちらで定義されています - <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes">Kubernetes - HTTP probes</a>。</p>
+<p>これをプログラムで確認したい場合は、リクエストヘッダーを console&#x2F;stdout&#x2F;stderr にログ出力できます。これは、<code>ContainerAppConsoleLogs_CL</code> で確認可能です。</p>
+<p>たとえば、node.js では、<code>req.headers</code> を <code>console.log(req.headers)</code> のようにログ出力します。Kubelet によって実行されるプローブのヘッダーは、次のようになります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  host: &#x27;100.100.0.23:3000&#x27;,</span><br><span class="line">  &#x27;user-agent&#x27;: &#x27;kube-probe/1.25&#x27;,</span><br><span class="line">  accept: &#x27;*/*&#x27;,</span><br><span class="line">  connection: &#x27;close&#x27;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>host</code>: ポッドの IP アドレスと一致する必要があります - このアドレスのポートは、既定の正常性プローブまたは使用されている場合はイングレス ポートで構成されている必要があり、正常性プローブまたは明示的に使用されている場合は、上記の正常性プローブの種類に設定されたポートである必要があります。</li>
+<li><code>user-agent</code>: これは、クラスターで使用されているバージョンと一致する必要があります。これはKubeletによって設定されます。<br>このヘッダーは、正常性プローブの [追加設定] セクションにカスタム ヘッダーを追加することでオーバーライドできます。目的のエージェント名の値を持つキーを <code>User-Agent</code> で追加します。</li>
+</ul>
+<h2 id="HTTPS-プローブ"><a href="#HTTPS-プローブ" class="headerlink" title="HTTPS プローブ"></a>HTTPS プローブ</h2><hr>
+<p><strong>各種ランタイムでの HTTP および HTTPS プローブの使用例のソース コード例については、</strong> <a href="https://github.com/azureossd/container-apps-health-probe-examples">azureossd - container-apps-health-probe-examples</a>を参照してください。</p>
+<p>HTTPS プローブを設定する必要がある場合は、アプリケーションもしくはコンテナが HTTPS トラフィック用に設定されたサーバー経由のトラフィックを受け入れる必要があります。また、HTTP トラフィックと HTTPS トラフィックの両方を受け入れるアプリケーションを実行できます。</p>
+<p>こちらは最初にローカル環境でテストを行い、これが Container Apps でも動作することを検証できます。自己署名証明書を生成してこれらを使用し、<code>https://localhost:&lt;port&gt;</code> 上でテストすることができます。</p>
+<p>Python と Gunicorn の例は以下です。HTTP と HTTPS の両方のトラフィックを受け入れています。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gunicorn -b 0.0.0.0:8000 app:app --timeout 600 --access-logfile &quot;-&quot; --error-logfile &quot;-&quot; &amp; \</span><br><span class="line">    gunicorn -b 0.0.0.0:8443 app:app --timeout 600 --access-logfile &quot;-&quot; --error-logfile &quot;-&quot; --certfile /app/certs/example.com.crt --keyfile /app/certs/example.com.key</span><br></pre></td></tr></table></figure>
+
+
+<p>これらのプローブは Kubernetes プローブに基づいているため、<a href="https://kubernetes.io/ja/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes">ここで</a>説明するように証明書の検証はスキップされ、自己署名証明書からの警告も無視する必要があります。</p>
+<p>アプリケーションが HTTPS 経由でリッスンするように適切に構成されていない場合は、正常性プローブから <code>Connection Refused</code> もしくは <code>Get &quot;https://x.x.x.x:&lt;port&gt;/&quot;: http: server gave HTTP response to HTTPS client</code> が発生します。</p>
+<p><strong>注</strong>: これにより、リビジョンが失敗として表示されますので、詳細については以下のトラブルシューティングの項を参照してください。</p>
+<h1 id="トラブルシューティング"><a href="#トラブルシューティング" class="headerlink" title="トラブルシューティング"></a>トラブルシューティング</h1><h2 id="ログ分析クエリ"><a href="#ログ分析クエリ" class="headerlink" title="ログ分析クエリ"></a>ログ分析クエリ</h2><hr>
+<p>正常性プローブ関連のメッセージは、<code>ContainerAppSystemLogs_CL</code> で確認できます。</p>
+<p>これは、ポータルのコンテナー アプリの [ログ] ブレードで実行する必要があります。これらのメッセージのほとんどは、正常性プローブに直接関連するものの場合、警告またはエラー関連の情報のみが表示されます。成功したプローブが呼び出されるたびに表示される<strong>わけではありません。</strong></p>
+<p>次の表は、この表に表示される出力の例です - TCP と HTTP の両方の正常性プローブのエラーがこの表に表示されます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Liveness probe failed: HTTP probe failed with statuscode: 500</span><br><span class="line">Container some-http-probe-node failed liveness probe, will be restarted</span><br></pre></td></tr></table></figure>
+
+<p>プローブが HTTP 正常性プローブの指定されたパスにヒットしたときにログ出力される stdout&#x2F;stderr がある場合、これは <code>ContainerAppConsoleLogs_CL</code> にログ出力されます</p>
+<p>指定したエンドポイントに対してプローブ要求がいつ開始されたかを知る場合、最も簡単な方法は、関連するアプリケーションのエンドポイントのロジックに何らかのコンソール出力または print ステートメントを追加することです。</p>
+<h2 id="プローブが失敗しているときに見られる動作"><a href="#プローブが失敗しているときに見られる動作" class="headerlink" title="プローブが失敗しているときに見られる動作"></a>プローブが失敗しているときに見られる動作</h2><hr>
+<p>プローブが指定された基準で 200 から 399 の間のステータスコードを返さない場合、または指定されたポートにアクセスできない場合、これは失敗として表示されます。表示される内容は使用されているプローブによって異なります。</p>
+<h2 id="ポータル"><a href="#ポータル" class="headerlink" title="ポータル"></a>ポータル</h2><hr>
+<p>この動作は、HTTP(s) プローブと TCP プローブの両方で表れます。</p>
+<blockquote>
+<p><strong>注</strong>:以下で解説されているリビジョンの失敗に関する表示では、プロビジョニングと実行のステータスが更新されるまでに数分かかる場合があります。さらに、「失敗」に変わる前に短い期間だけ「成功」と表示される場合があります。</p>
+</blockquote>
+<p><strong>liveness (稼働)</strong>: 失敗している liveness プローブ は、失敗したプローブがあるリビジョンの [<strong>リビジョン</strong>] ブレードに次のように表示される場合があります。</p>
+<IMG  src="https://azureossd.github.io/media/2023/08/aca-health-probe-2.png"  alt="Liveness Probe の動作"/>
+
+
+<p>[<strong>概要</strong>] ブレードでは、リビジョンは次のように失敗と表示されます。</p>
+<IMG  src="https://azureossd.github.io/media/2023/08/aca-health-probe-3.png"  alt="Liveness Probe の動作"/>
+
+<p><strong>startup (スタートアップ)</strong>: 失敗しているスタートアッププローブは、失敗したプローブがあるリビジョンの [リビジョン] ブレードに次のように表示される場合があります。</p>
+<IMG  src="https://azureossd.github.io/media/2023/08/aca-health-probe-4.png"  alt="スタートアップ プローブの動作"/>
+
+<p>[<strong>概要</strong>] ブレードでは、リビジョンは次のように失敗と表示されます。</p>
+<IMG  src="https://azureossd.github.io/media/2023/08/aca-health-probe-5.png"  alt="スタートアップ プローブの動作"/>
+
+<p><strong>readiness (準備)</strong>: 失敗している readiness プローブは、失敗したプローブがあるリビジョンの [リビジョン] ブレードに次のように表示される場合があります。</p>
+<IMG  src="https://azureossd.github.io/media/2023/08/aca-health-probe-6.png"  alt="スタートアップ プローブの動作"/>
+
+<p>[<strong>概要</strong>] ブレードでは、リビジョンは次のように失敗と表示されます。</p>
+<IMG  src="https://azureossd.github.io/media/2023/08/aca-health-probe-7.png"  alt="スタートアップ プローブの動作"/>
+
+
+<p>liveness プローブと startup プローブはコンテナの再起動に失敗し続けますが、readiness プローブは実行を継続し、pod で障害が発生したコンテナを明示的に再起動しません。</p>
+<p>この動作は、<a href="https://kubernetes.io/ja/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">Kubernetes - Configure Probes</a><br> で解説されています。このドキュメントによって振舞の違いを理解することができます。</p>
+<h2 id="外部"><a href="#外部" class="headerlink" title="外部"></a>外部</h2><hr>
+<p>失敗したリビジョンの FQDN にアクセスしようとすると、Envoy から <code>stream timeout</code> エラーが表示されることがあります。</p>
+<h2 id="一般的なエラー"><a href="#一般的なエラー" class="headerlink" title="一般的なエラー"></a>一般的なエラー</h2><hr>
+<h3 id="Connection-refused"><a href="#Connection-refused" class="headerlink" title="Connection refused"></a>Connection refused</h3><p>これはさまざまな理由で発生する可能性があり、必ずしも実際のエラーを示しているわけではありません。例えば、これは通常、コンテナーが pod で開始しているときに表示されます。</p>
+<p>新しいリビジョンを作成する Container Apps の更新、ポッドやレプリカの移動など、多数のイベントによってこのエラーはトリガーされる可能性があります。このような場合はノイズと見なすことができます。</p>
+<p>また、デフォルトのプローブは TCP を使用しており、TCP プローブが一般的に使用されているめ、通常、<a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template#default-configuration">デフォルトプローブ</a> が有効な場合にも見られます。</p>
+<p>コンテナーが TCP ポートからのリクエストを受け入れる準備がまだ整っていない場合は、接続が例えば以下のように拒否されます。</p>
+<p><code>Startup probe failed: dial tcp 100.100.0.18:3000: connect: connection refused</code></p>
+<p>同様な問題は、実際にはリストされていない、もしくは公開されていない指定された HTTP ポートでも発生する可能性がありますが、根本的には異なる問題ならびに原因です(以下で説明します)。</p>
+<ul>
+<li><p><strong>TCP</strong> プローブは、pod の IP と公開されているコンテナーのポートで ping を実行します。このチェックは <a href="https://kubernetes.io/ja/docs/concepts/workloads/pods/pod-lifecycle/#probe-check-methods">Kubernetes - Pod Lifecycle - チェックメカニズム</a>  で呼び出されます。</p>
+</li>
+<li><p><strong>HTTP(s)</strong> プローブは、pod の IP とポートで、指定されたパス (存在する場合) とともに ping を実行します。TCP プローブには、パスを指すオプションはありません。</p>
+</li>
+</ul>
+<p>これは、特にデフォルト設定を使用している場合や、「Initial delay seconds (初期遅延秒数)」が非常に低い値に設定されている場合に発生する可能性があります。</p>
+<p>独自のプローブを指定しない場合、Startup、Liveness、および Readiness TCP プローブの<a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template#default-configuration">デフォルトの</a>「初期遅延秒数」は 1 秒です。また、最小の0秒も許容値です。こちらを踏まえると、<code>connection refused</code> メッセージを表示したくない場合は、「初期遅延秒数」をより長い値に設定してみてください。</p>
+<p>起動が遅いアプリケーションを確認する場合は、Startup プローブを使用することで Liveness プローブと Readiness プローブの実行開始を延期する方法、または <code>initialDelaySeconds</code> を同様に Startup プローブと組み合わせる方法をて使用することができます。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template#default-configuration">Container Apps - 正常性プローブ - 既定の構成</a></li>
+<li><a href="https://kubernetes.io/ja/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes">Kubernetes - 起動が遅いアプリケーションの保護</a></li>
+</ul>
+<hr>
+<p><code>connection refused</code> のように表示される実際の問題は、HTTP(s) または TCP プローブポートを、アプリケーションコンテナによって実際には公開されていないポートに設定した場合です。例えば、アプリケーションがポート 3000 のみを公開しているが、HTTP プローブのポートが 3001 に指定されている場合などです。</p>
+<p><code>Liveness probe failed: Get &quot;http://100.100.0.37:3001/probe/http&quot;: dial tcp 100.100.0.37:3001: connect: connection refused</code></p>
+<p>pod が単に起動中のために発生する connection refused メッセージとは対照的に、ここにはいくつかの重要な違いがあります。</p>
+<ul>
+<li>起動中の pod とコンテナに関連する <code>connection refused</code> の場合と比較すると、これは数回しか表示されない場合があり、その後、ポッドは実行中として表示され、アプリケーションがアクセス可能になります。</li>
+<li>HTTP(s)&#x2F;TCP プローブに正しくない&#x2F;公開されていないポートが設定されている場合、このメッセージが表示され続けることがあります。最終的に、リビジョンは「失敗」状態として表示されることがあります</li>
+</ul>
+<p>HTTP プローブではパスを設定する必要があるため、HTTP ポートのエラーメッセージと TCP ポートのエラーメッセージは何らかの方法で区別できます。例えば、公開されていないポートを対象とする HTTP プローブが以下であるように、何らかの方法で区別できます (このようにして、正常性プローブは失敗します)。</p>
+<p><code>Startup probe failed: Get &quot;http://100.100.0.53:3001/&quot;: dial tcp 100.100.0.53:3001: connect: connection refused</code></p>
+<p>一方で、以下は同じ問題を抱えている TCP である可能性があります。</p>
+<p><code>startup probe failed: connection refused</code></p>
+<h3 id="プローブがステータスコード-404-で失敗しました"><a href="#プローブがステータスコード-404-で失敗しました" class="headerlink" title="プローブがステータスコード 404 で失敗しました"></a>プローブがステータスコード 404 で失敗しました</h3><p>HTTP プローブのいずれかにて statuscode: 404 で失敗することがあります。<code>ContainerAppSystemLogs_CL</code>には以下のように表示されます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Readiness probe failed: HTTP probe failed with statuscode: 404</span><br><span class="line">Startup probe failed: HTTP probe failed with statuscode: 404</span><br><span class="line">Liveness probe failed: HTTP probe failed with statuscode: 404</span><br></pre></td></tr></table></figure>
+
+
+<p>プローブの失敗による影響は、Log Analytics の <code>ContainerAppSystemLogs_CL</code> テーブルで記録されさます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Container some-container failed startup probe, will be restarted</span><br><span class="line">Container some-container failed liveness probe, will be restarted</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>トラブルシューティング:</strong></p>
+<ul>
+<li>404 を返す指定されたパスが実際に存在するかどうかを確認して確認します<ul>
+<li>サイトが公開されている場合は、アプリケーションの FQDN にアクセスし、指定されたパスを追加して、404 が返されるかどうかを確認できます。</li>
+<li>これが存在しないパスに設定されている場合は、アプリケーションが 200 から 399 のステータス コードを返す必要があるので、<a href="https://learn.microsoft.com/ja-jp/azure/container-apps/health-probes?tabs=arm-template#http-probes">ドキュメント</a>を確認してください。</li>
+</ul>
+</li>
+<li>一部のランタイム(たとえば、.jar を使用している組み込み Tomcat、または war を実行している Tomcat)では、404 は実際にはアプリケーション関連のエラーを示す可能性があります。これは nginx の場合も同じです。その場合は、 <code>ContainerAppConsoleLogs_CL</code> もしくはアプリケーションログを確認して、書き込まれているアプリケーションに stderr があるかどうかを確認します。</li>
+</ul>
+<h3 id="プローブがステータスコード-500-で失敗しました"><a href="#プローブがステータスコード-500-で失敗しました" class="headerlink" title="プローブがステータスコード 500 で失敗しました"></a>プローブがステータスコード 500 で失敗しました</h3><p>設定可能な HTTP プローブのいずれかに <code>HTTP probe failed with statuscode: 500</code> が表示される場合があります。<code>ContainerAppSystemLogs_CL</code>には以下のように表示されます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Readiness probe failed: HTTP probe failed with statuscode: 500</span><br><span class="line">Startup probe failed: HTTP probe failed with statuscode: 500</span><br><span class="line">Liveness probe failed: HTTP probe failed with statuscode: 500</span><br></pre></td></tr></table></figure>
+
+
+<p>プローブの失敗による影響は、Log Analytics の <code>ContainerAppSystemLogs_CL</code> テーブルで呼び出されます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Container some-container failed startup probe, will be restarted</span><br><span class="line">Container some-container failed liveness probe, will be restarted</span><br></pre></td></tr></table></figure>
+
+<p><strong>トラブルシューティング:</strong></p>
+<ul>
+<li><p>500 が継続的に発生する場合は、指定されたエンドポイントのロジックを確認します。HTTP 500 は通常、アプリケーション エラーを示します。</p>
+</li>
+<li><p>まだ実装されていない場合は、指定されたエンドポイントにログを追加します (特に、様々なテストのために外部呼び出しを行ったり、内部ロジックを実行したりするロジックがある場合)。このログは <code>ContainerAppConsoleLogs_CL</code> 内に表示されます。</p>
+</li>
+<li><p>例として、500をスローする存在しないエンドポイントへの呼び出しを次に示します。</p>
+<p><code>const res = await axios.get(&quot;https://g00gle.com&quot;)</code></p>
+</li>
+<li><p>すると、<code>ContainerAppConsoleLogs_CL</code> に <code>AxiosError: getaddrinfo ENOTFOUND g00gle.com</code> が表示されます。</p>
+</li>
+<li><p>このコンソールへのログ記録を実装し、正常性プローブに指定されたパスのロジックを理解しておくと、トラブルシューティングを迅速化できます。</p>
+</li>
+</ul>
+<h3 id="プローブがステータスコード-502-で失敗しました"><a href="#プローブがステータスコード-502-で失敗しました" class="headerlink" title="プローブがステータスコード 502 で失敗しました"></a>プローブがステータスコード 502 で失敗しました</h3><p>設定可能な HTTP プローブのいずれかに <code>HTTP probe failed with statuscode: 502</code> が表示される場合があります。<code>ContainerAppSystemLogs_CL</code>には以下のように表示されます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Readiness probe failed: HTTP probe failed with statuscode: 502</span><br><span class="line">Startup probe failed: HTTP probe failed with statuscode: 502</span><br><span class="line">Liveness probe failed: HTTP probe failed with statuscode: 502</span><br></pre></td></tr></table></figure>
+
+<p>プローブの失敗による影響は、Log Analytics の<code>ContainerAppSystemLogs_CL</code>テーブルで記録されます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Container some-container failed startup probe, will be restarted</span><br><span class="line">Container some-container failed liveness probe, will be restarted</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>トラブルシューティング:</strong></p>
+<ul>
+<li>指定されたプローブ エンドポイントのロジックを確認します。他の依存関係（アウトバウンド）があるかどうか、およびそれらが到達可能かどうかを確認します。</li>
+<li>ステータスコードの返却がエンドポイントのロジックで処理されているかどうかを確認します。<ul>
+<li><blockquote>
+<p><strong>注</strong>: 事前定義された内部タイムアウトの後に Web サーバーにこれを実行させる代わりに、アプリケーション コードを介して 502 (またはその他のステータス コード) を返すことは可能です。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="プローブが失敗しました-http-サーバーが-HTTPS-クライアントに-HTTP-応答を返しました"><a href="#プローブが失敗しました-http-サーバーが-HTTPS-クライアントに-HTTP-応答を返しました" class="headerlink" title="プローブが失敗しました: http: サーバーが HTTPS クライアントに HTTP 応答を返しました"></a>プローブが失敗しました: http: サーバーが HTTPS クライアントに HTTP 応答を返しました</h3><p>表示されるメッセージ全文は、<code>Liveness probe failed: Get &quot;https://xxx.xxx.x.xx:xxxx/some/path&quot;: http: server gave HTTP response to HTTPS client</code> です。</p>
+<p>基本的に、このエラーは、HTTPS リクエストを受け入れないパスに HTTPS プローブが指定されたことを意味します。ほとんどのアプリケーションランタイムとそれに関連するサービスでは、HTTPS リクエストを受け入れるには、これを適切に有効にするための証明書を使用してサーバーを設定する必要があります。</p>
+<p><strong>問題の理解:</strong></p>
+<ul>
+<li>アプリケーションで実際に HTTPS サーバーが有効になっていることを確認します。ほとんどのランタイムと Web サーバーでは、HTTP サーバーと HTTPS サーバーの両方を同時に実行するように指定したり、1 つのサーバーで HTTP リクエストと HTTPS リクエストの両方を処理できるようにしたりできます</li>
+<li>Web サーバーが HTTPS 用に適切に設定されていることを確認します。これはローカルで<strong>簡単に検証できるため、最初にアプリケーションが HTTP と HTTPS の両方でローカルに実行できることをテストすることをお勧めします。</strong><ul>
+<li>自己署名証明書を使用している場合、証明書の使用に関する「警告」がブラウザに表示されることがありますが、これはバイパスでき、localhost は HTTPS 経由でアクセスできます。</li>
+</ul>
+</li>
+</ul>
+<p><strong>注</strong>: 上記の「HTTPS プローブ」セクションで説明したように、Kubelet は証明書の検証をスキップするため、自己署名証明書を使用できます。</p>
+<h3 id="3501-v1-0-healthz-の接続が拒否されました"><a href="#3501-v1-0-healthz-の接続が拒否されました" class="headerlink" title="3501&#x2F;v1.0&#x2F;healthz の接続が拒否されました"></a>3501&#x2F;v1.0&#x2F;healthz の接続が拒否されました</h3><p>このメッセージは、<code>[some probe] failed: Get &quot;http://xxx.xxx.xx.xx:3501/v1.0/healthz&quot;: dial tcp xxx.xxx.xx.xx:3501: connect: connection refused</code> を表します。</p>
+<p>これが表示される場合は、<a href="https://dapr.io/">Dapr</a> が有効になっている場合にのみ表示されます。「接続が拒否されました」というメッセージは、Dapr が有効になっている場合における、Dapr サイドカー コンテナーへのプローブ用です。これが表示される場合、通常はポッドの移動またはその他のアクティビティがある場合です。そのため、このメッセージは通常はノイズであり、一般的には問題を示す<strong>ものではありません。</strong></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2023 年 11 月 28 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/11/28/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../29/check-app-service-certificate-expiration-with-azure-resource-graph-part2.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Azure Resource Graph を用いた App Service 証明書の管理 その2
+        
+      </div>
+    </a>
+  
+  
+    <a href="../20/cognitive-search-synonyms.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">AI Search のシノニム（同意語）検索機能を使用する方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

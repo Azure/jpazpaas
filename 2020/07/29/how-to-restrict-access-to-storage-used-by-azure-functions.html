@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Functions が使用するストレージアカウントに対するアクセス制限の方法 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="2022 年 5 月 20 日更新：プライベートエンドポイントを使用したストレージアカウントがサポートされるようになりました。最新の情報は [こちらの記事](&#x2F;2022&#x2F;05&#x2F;20&#x2F;protect-functions-storage.html) を参照してください。 「Azure Functions が使用するストレージアカウントの接続制限を行いたい」という">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Functions が使用するストレージアカウントに対するアクセス制限の方法">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="2022 年 5 月 20 日更新：プライベートエンドポイントを使用したストレージアカウントがサポートされるようになりました。最新の情報は [こちらの記事](&#x2F;2022&#x2F;05&#x2F;20&#x2F;protect-functions-storage.html) を参照してください。 「Azure Functions が使用するストレージアカウントの接続制限を行いたい」という">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions/2020-07-29-functions-config1.jpg">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions/2020-07-29-functions-property.jpg">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions/2020-07-29-functions-ip-cli.jpg">
+<meta property="article:published_time" content="2020-07-28T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.303Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function App">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions/2020-07-29-functions-config1.jpg">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Functions が使用するストレージアカウントに対するアクセス制限の方法
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2020-07-28T15:00:00.000Z" itemprop="datePublished">2020-07-29</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+eafc47f7-35f2-5611-9b52-7ad00043987e%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Functions+%E3%81%8C%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88%E3%81%AB%E5%AF%BE%E3%81%99%E3%82%8B%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E5%88%B6%E9%99%90%E3%81%AE%E6%96%B9%E6%B3%95%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2020%2F07%2F29%2Fhow-to-restrict-access-to-storage-used-by-azure-functions.html%29%0A*+Content+Source%3A+%5Barticles%2F2020%2F07%2F29%2Fhow-to-restrict-access-to-storage-used-by-azure-functions.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2020%2F07%2F29%2Fhow-to-restrict-access-to-storage-used-by-azure-functions.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html" data-id="cuidHnCerzjoYVDBFmMBTZv7Q" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><em><strong>2022 年 5 月 20 日更新</strong></em>：プライベートエンドポイントを使用したストレージアカウントがサポートされるようになりました。最新の情報は [こちらの記事](&#x2F;2022&#x2F;05&#x2F;20&#x2F;protect-functions-storage.html) を参照してください。</p>
+<p>「Azure Functions が使用するストレージアカウントの接続制限を行いたい」というご質問を多くのお客様より頂戴しております。<br>Azure Functions は従量課金プランまたは Premium (Elastic Premium) プランでご利用頂く場合、アプリケーションコードはストレージアカウントに保存頂く必要がございます (App Service Plan 上でご利用頂く場合は不要)。</p>
+<p>今回は、こちらについて、ご紹介します。</p>
+<p>Azure Functions を従量課金プランまたは Premium (Elastic Premium) プランで利用しており、ストレージアカウントを構成する際、下記の構成を取りたい。</p>
+<ul>
+<li>ストレージアカウントのファイアウォールを有効にして、接続元 IP を制限したい</li>
+<li>Functions が使用するストレージアカウントの接続元を Functions に限定したい</li>
+</ul>
+<h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>ストレージアカウントのファイヤーウォールを有効にすることで、ストレージアカウントへの接続を特定の IP または仮想ネットワークからの接続に限定することが出来ます。<br>しかし、Functions と組み合わせて使用する際に以下の制約があるため、組み合わせには注意が必要です。</p>
+<ul>
+<li>Functions からストレージアカウントへ接続する際、同一リージョン内での通信はリージョン内で使用される、プライベート IP での通信となります。</li>
+<li>Azure Storage のファイアウォールでは、仮想ネットワークへの通信許可 IP としてパブリック IP は追加いただけますが、RFC 1918 で定義されるプライベート IP (10.* 、172.16.* - 172.31.* 、192.168.*) からの通信は許可リストに登録頂くことが出来ません。<br /><br>参考: <a href="https://docs.microsoft.com/ja-jp/azure/storage/common/storage-network-security#grant-access-from-an-internet-ip-range">インターネットの IP 範囲からのアクセスを許可する</a> <br/></li>
+</ul>
+<p>参考：<br><a href="https://docs.microsoft.com/ja-jp/archive/blogs/jpcie/azure-web-apps-azure-functions-%E3%81%8B%E3%82%89%E5%90%8C%E3%81%98%E3%83%AA%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E3%81%AE-azure-storage-account-%E3%81%B8%E6%8E%A5%E7%B6%9A%E3%81%99%E3%82%8B%E6%99%82#%E5%88%A5%E3%83%AA%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E3%81%A7%E3%81%82%E3%82%8C%E3%81%B0%E5%95%8F%E9%A1%8C%E3%81%AA%E3%81%8F%E8%A8%AD%E5%AE%9A%E3%81%A7%E3%81%8D%E3%82%8B">Azure Web Apps &#x2F; Azure Functions から同じリージョンの Azure Storage Account へ接続する時の注意点</a> <br /></p>
+<h1 id="回避策"><a href="#回避策" class="headerlink" title="回避策"></a>回避策</h1><p>2020 年 7 月時点でご案内可能な回避策は、以下の 2 点となります。</p>
+<ol>
+<li>ストレージアカウントにデータを保持しない、App Service プランを使う</li>
+<li>Functions とストレージアカウントの配置されるリージョンを別リージョンにする</li>
+</ol>
+<p>回避策 1. に関して、従量課金プランおよび Premium プランでは、Azure で準備しているインスタンス (仮想マシン) が実行時またはスケールアウト時に動的に割り当てられる関係上、全てのデータはストレージアカウントに保存いただいておりました。<br>しかし、App Serivice プランでは、お客様のアプリケーションコードはお客様専用に確保されたリソースの上で実行されますため、通常の関数アプリ実行に関しては、ストレージアカウントには依存しなくなります (Durable Functions や拡張機能によってはストレージアカウントを使用しますため、こちらでの回避は出来ません)。</p>
+<p>回避策 2. に関して、別リージョンのストレージアカウントへのアクセスはパブリック IP によるアクセスとなります。<br>ストレージアカウントを Functions とは別リージョンにご準備頂き、Functions が使用するストレージアカウントを変更頂けますと、ストレージアカウント側からのアクセス IP 制限がご利用いただけます。</p>
+<p>仮想ネットワーク統合に関しては、リソースが別リージョンに作成される関係上、ご利用頂くことが出来ません。</p>
+<p>Functions が使用するストレージアカウントに関する要件につきましては以下のドキュメントをご確認ください。<br /><br><a href="https://docs.microsoft.com/ja-jp/azure/azure-functions/storage-considerations">Azure Functions のストレージに関する考慮事項</a> <br /></p>
+<h1 id="具体的な構成方法"><a href="#具体的な構成方法" class="headerlink" title="具体的な構成方法"></a>具体的な構成方法</h1><p>こちらで、異なるリージョンにストレージアカウントを配置された場合の構成方法をご案内いたします。<br>まず、使用するストレージアカウントを変更後に、ストレージアカウントのファイアウォール制限を行うという順番で設定します。</p>
+<h2 id="Functions-に異なるリージョンのストレージアカウントを設定する方法"><a href="#Functions-に異なるリージョンのストレージアカウントを設定する方法" class="headerlink" title="Functions に異なるリージョンのストレージアカウントを設定する方法"></a>Functions に異なるリージョンのストレージアカウントを設定する方法</h2><p>Functions とストレージアカウントを異なるリージョンに作成される際、下記の操作をお客様自身にて行っていただく必要がございます。</p>
+<ol>
+<li>ストレージアカウントをリージョン A に作成する。</li>
+<li>Functions をリージョン B に作成する。</li>
+<li>リージョン A に作成したストレージアカウントから、接続文字列を取得します。<br /><br><a href="https://docs.microsoft.com/ja-jp/azure/storage/common/storage-configure-connection-string#view-and-copy-a-connection-string">接続文字列を表示およびコピーする</a> <br /></li>
+<li>リージョン B に作成した Functions の [構成] より、アプリケーション設定のストレージアカウントを指定している箇所を変更します。 <br /><br>具体的には “AzureWebJobsStorage” , “WEBSITE_CONTENTAZUREFILECONNECTIONSTRING” の値として指定されている接続文字列を (3) で取得した接続文字列と入れ替えます。 <br /><br><img src="/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions/2020-07-29-functions-config1.jpg" alt="2020-07-29-functions-config1.jpg"> <br /></li>
+</ol>
+ <br />
+![2020-07-29-functions-config2.jpg](/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions/2020-07-29-functions-config2.jpg) <br />
+    <br />
+    参考ですが WEBSITE_CONTENTSHARE には Azure Files のファイル共有名が入り、こちらで指定したコンテナに Functions で使用するお客様のアプリケーションコードやログと行った情報が格納されます。 <br />
+    ファイル共有名は既定で Functions の名前が使用されているため基本的には重複は発生しないためそのままで問題ございませんが、必要に応じて調整ください。
+  5. リージョン B に作成した Functions にアプリケーションをデプロイします。
+  6. (5) でデプロイした内容が、リージョン A に作成したストレージアカウントに作成されていることを確認します。<br/>
+具体的には リージョン B のストレージアカウントの ファイル共有 ("WEBSITE_CONTENTSHARE" で指定した名前) を参照し、 "site/wwwroot/" 配下にデプロイした関数アプリがあるかご確認ください。
+
+
+<h2 id="Functions-の送受信-IP-アドレスの調べ方"><a href="#Functions-の送受信-IP-アドレスの調べ方" class="headerlink" title="Functions の送受信 IP アドレスの調べ方"></a>Functions の送受信 IP アドレスの調べ方</h2><p>ストレージアカウントへのアクセスに使用する (&#x3D;ファイアウォールに登録が必要な) パブリック IP として、Functions の受信 IP と送信 IP があります。</p>
+<p>受信 IP は Functions の [プロパティ] に記載がございます。 <br /><br><img src="/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions/2020-07-29-functions-property.jpg" alt="2020-07-29-functions-property.jpg"></p>
+<p>送信 IP に関しまして、一番簡単な方法は Azure CLI により取得する方法です。<br>下記コマンドにより、取得いただくことができます。<br>カンマ区切りで複数の IP が列挙されますので、それぞれストレージアカウントの接続を許可する IP にご登録ください。</p>
+<p><code>az webapp show --resource-group &lt;group_name&gt; --name &lt;app_name&gt; --query possibleOutboundIpAddresses --output tsv</code></p>
+<p>実行例：<br> <img src="/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions/2020-07-29-functions-ip-cli.jpg" alt="2020-07-29-functions-ip-cli.jpg"></p>
+<p>上記で取得しました、パブリック IP アドレスを異なるリージョンに作成されたストレージアカウントのファイアウォールに許可する IP としてご登録いただくいただくことで、Functions からの接続を許可することができます。</p>
+<p>送受信に使用します IP アドレスの取得方法につきましては、ドキュメントの下記に記載されておりますので、ご参考いただけると幸いです。</p>
+<p>  <a href="https://docs.microsoft.com/ja-jp/azure/azure-functions/ip-addresses#function-app-inbound-ip-address">関数アプリの着信 IP アドレス</a> <br /><br>  <a href="https://docs.microsoft.com/ja-jp/azure/azure-functions/ip-addresses#function-app-outbound-ip-addresses">関数アプリの送信 IP アドレス</a> <br /></p>
+<p>送信 IP アドレスに関しましては、将来的にリージョン内で提供する Functions 実行基盤の規模が拡大した際に追加される (お客様のアプリケーションも新しい IP から送信される) こともございます。<br>必要に応じて、各リージョンで使用している IP アドレス範囲での登録につきましてもご検討ください。<br /></p>
+<p><a href="https://docs.microsoft.com/ja-jp/azure/azure-functions/ip-addresses#data-center-outbound-ip-addresses">データ センターの送信 IP アドレス</a><br /></p>
+<h1 id="注意事項"><a href="#注意事項" class="headerlink" title="注意事項"></a>注意事項</h1><h2 id="異なるリージョンに配置する事について"><a href="#異なるリージョンに配置する事について" class="headerlink" title="異なるリージョンに配置する事について"></a>異なるリージョンに配置する事について</h2><p>上記の通り、手動で構成することで異なるリージョンのストレージアカウントをご利用いただくことができますが、Azure Functions は既定で同一リージョンのストレージアカウントを利用することが前提として構築されております。<br/><br>ストレージアカウントを異なるリージョンに配置することは、推奨できる構成ではなく、リージョン間通信の遅延などに起因するパフォーマンスの影響が出る可能性がございますため、その点をご理解いただいた上でご利用いただけますと幸いです。</p>
+<h2 id="IP-制限について"><a href="#IP-制限について" class="headerlink" title="IP 制限について"></a>IP 制限について</h2><p>「業務上の機密を含むデータを保持するために、他のユーザーからアクセスを禁止を目的として、ストレージアカウントの接続元を制限したい」という背景の元、お問い合わせ頂いている場合がございます。<br>今回、ストレージアカウントのアクセスを許可として指定した IP アドレスは、各リージョンに配置された App Service &#x2F; Functions の実行基盤 (スケールユニット) 全体となります。<br>そのため、パブリックなインターネットからの接続は出来ないものの、該当リージョンの別の App Service &#x2F; Functions インスタンスからのアクセスは可能な設定となっております。<br>そのため、お客様側におきましても、ユーザー名やパスワードの管理と同様、データの暗号化や接続文字列の適切な管理などを心がけて頂く必要がございます。</p>
+<hr>
+<br>
+<br>
+
+<p>2020 年 7 月 29 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../08/26/nhub-ip-address.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Notification Hubs の IP アドレスについて
+        
+      </div>
+    </a>
+  
+  
+    <a href="../20/avoid-deleting-resource-group.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">リソースグループごと各種リソースを削除してしまった場合について</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

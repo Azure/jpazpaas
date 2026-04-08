@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Functions（関数アプリ）の内部アーキテクチャ概要や関連する用語について | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="お世話になっております。App Service サポート担当の間山です。いつも Azure Functions（関数アプリ）をご利用いただきましてありがとうございます。関数アプリをご利用いただく中で関連する多くの単語が存在しております。類似している単語があることや、使用されている単語は関数アプリではどのような部分に属しているのか混乱をしてしまう場面に遭遇することがございます。本ブログでは、関数アプ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Functions（関数アプリ）の内部アーキテクチャ概要や関連する用語について">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="お世話になっております。App Service サポート担当の間山です。いつも Azure Functions（関数アプリ）をご利用いただきましてありがとうございます。関数アプリをご利用いただく中で関連する多くの単語が存在しております。類似している単語があることや、使用されている単語は関数アプリではどのような部分に属しているのか混乱をしてしまう場面に遭遇することがございます。本ブログでは、関数アプ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management/function-app-arcitecture-15a96720-2a65-44d4-86f9-cdd283d46393.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management/image-c1efd3de-705b-4b22-831f-ba70c1eaaaf5.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management/image-cd98e905-002a-44c0-a84e-74a021d3b3c0.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management/image-7504a461-0a49-496a-a5e4-feab3dfef5b5.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management/function-app-scaleout-0ae2eb6c-c46d-471f-a9dd-35cdf78f8d0e.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management/function-app-process-count-7d6c0834-69ac-4e20-8f53-e11d08ce581a.png">
+<meta property="article:published_time" content="2023-08-23T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.683Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function Apps">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management/function-app-arcitecture-15a96720-2a65-44d4-86f9-cdd283d46393.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/08/24/azure-functions-words-relative-management" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Functions（関数アプリ）の内部アーキテクチャ概要や関連する用語について
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-08-23T15:00:00.000Z" itemprop="datePublished">2023-08-24</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+8ae0580a-b7e3-56ad-acea-fd6330ae97b2%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Functions%EF%BC%88%E9%96%A2%E6%95%B0%E3%82%A2%E3%83%97%E3%83%AA%EF%BC%89%E3%81%AE%E5%86%85%E9%83%A8%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E6%A6%82%E8%A6%81%E3%82%84%E9%96%A2%E9%80%A3%E3%81%99%E3%82%8B%E7%94%A8%E8%AA%9E%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F08%2F24%2Fazure-functions-words-relative-management.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F08%2F24%2Fazure-functions-words-relative-management.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F08%2F24%2Fazure-functions-words-relative-management.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management.html" data-id="cuidcCtxOYr5isYzy7NrVX4jX" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>お世話になっております。App Service サポート担当の間山です。いつも Azure Functions（関数アプリ）をご利用いただきましてありがとうございます。関数アプリをご利用いただく中で関連する多くの単語が存在しております。類似している単語があることや、使用されている単語は関数アプリではどのような部分に属しているのか混乱をしてしまう場面に遭遇することがございます。本ブログでは、関数アプリ内部アーキテクチャの概要や関数アプリにて使用される用語の説明や関数アプリ内で使用されるコンポーネントについてご紹介して参ります。</p>
+<h1 id="App-Service-Azure-Functions-アーキテクチャについて"><a href="#App-Service-Azure-Functions-アーキテクチャについて" class="headerlink" title="App Service &#x2F; Azure Functions アーキテクチャについて"></a>App Service &#x2F; Azure Functions アーキテクチャについて</h1><p>Azure Functions は App Service プラットフォーム上にて動作が行われております。App Service は 単独の VM（Virtual Machine）で構成されているのではなく、大きく分けて FrontEnd と呼ばれるクライアント側のリクエストを受け付けるコンポーネントと FrontEnd からのリクエストを Worker インスタンス と呼ばれるお客様のアプリケーションを実行するコンポーネントに分けられております。</p>
+<p>Azure Functions の ワーカープロセスは App Service の Worker インスタンスコンポーネント上にて動作をいたします。App Service のアーキテクチャーについては下記資料も併せてご参照ください。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/archive/msdn-magazine/2017/february/azure-inside-the-azure-app-service-architecture">Inside the Azure App Service Architecture</a></p>
+<p><a href="https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html">[日本語訳] Inside the Azure App Service Architecture</a></p>
+<p><a href="https://azure.github.io/jpazpaas/2023/05/10/Appservice-components.html">App Service を構成する主要な要素とそれぞれの役割</a></p>
+<p>Azure Functions は ホストプロセス と呼ばれる関数アプリを制御するプロセスと 言語ワーカープロセス と呼ばれる関数アプリにて指定されたランタイムスタックの関数コードを動作するプロセスに分かれております。Azure Functions 開発部門では複数のプロジェクトとして各 GitHub リポジトリとして公開をしております。以下に Azure Functions プロジェクトの GitHub リポジトリ一覧、Function host リポジトリと一例として .NET の Language Worker のリポジトリの内容がございますためご参考ください。</p>
+<ul>
+<li><a href="https://github.com/Azure/Azure-Functions#github-repositories">GitHub repositories</a></li>
+<li><a href="https://github.com/Azure/azure-functions-host">Azure&#x2F;azure-functions-host</a></li>
+<li><a href="https://github.com/Azure/azure-functions-dotnet-worker">Azure&#x2F;azure-functions-dotnet-worker</a></li>
+</ul>
+<p>以下に App Service の Worker インスタンス内のAzure Functions の構成（Function Host, Language Worker）の概略図を記載をいたします。（.NET in-process の場合には、FunctionsHost と Language Worker は同じプロセスにて動作します。）</p>
+<p><img src="/jpazpaas/2023/08/24/azure-functions-words-relative-management/function-app-arcitecture-15a96720-2a65-44d4-86f9-cdd283d46393.png" alt="function-app-arcitecture-15a96720-2a65-44d4-86f9-cdd283d46393.png"></p>
+<hr>
+<h1 id="関数アプリに関連する基本的な用語"><a href="#関数アプリに関連する基本的な用語" class="headerlink" title="関数アプリに関連する基本的な用語"></a>関数アプリに関連する基本的な用語</h1><p>前述の App Service &#x2F; Azure Functions アーキテクチャより、以下に使用される用語の説明や関数アプリ内で使用されるコンポーネントについて解説します。</p>
+<h2 id="関数アプリ、FunctionApp"><a href="#関数アプリ、FunctionApp" class="headerlink" title="関数アプリ、FunctionApp"></a>関数アプリ、FunctionApp</h2><p>関数アプリ、FunctionApp は Azure Functions 製品そのものを指しており、関数コードを実行をホストする Azure リソースを指します。HTTP トリガー や Blob トリガーなどのイベント検知や各種ログの記録といった共通処理を行います。関数アプリでは、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-function-app-portal#create-a-function-app">Function App を作成する</a> 際に、使用するランタイムスタック（言語）やバージョンを選択します。</p>
+<h2 id="ワーカープロセス、worker-process"><a href="#ワーカープロセス、worker-process" class="headerlink" title="ワーカープロセス、worker process"></a>ワーカープロセス、worker process</h2><p>この言葉はすべて同じものを指していて、FunctionsHost や 関数コードを動作するためのプロセスとなります。Kudu と呼ばれるデバッグツールの Process Explorer や SSH より確認することができ、以下のスクリーンショットでは .NET isolated のランタイムスタックであるため、ホストプロセス と 言語ワーカープロセス が分離しております。なお、.NET in-process の場合には、ホストプロセス と 言語ワーカープロセス は同じプロセスにて動作します。</p>
+<p><strong>Windows 版 のワーカープロセス</strong></p>
+<p>高度なツール &gt; Process Explorer へ移動しプロセス情報を確認します。</p>
+<p><img src="/jpazpaas/2023/08/24/azure-functions-words-relative-management/image-c1efd3de-705b-4b22-831f-ba70c1eaaaf5.png" alt="image-c1efd3de-705b-4b22-831f-ba70c1eaaaf5.png"></p>
+<p><strong>Linux 版 のワーカープロセス</strong></p>
+<p>高度なツール &gt; SSH へ移動し <code>ps -ax</code> コマンドにてプロセス情報を確認します。</p>
+<p><img src="/jpazpaas/2023/08/24/azure-functions-words-relative-management/image-cd98e905-002a-44c0-a84e-74a021d3b3c0.png" alt="image-cd98e905-002a-44c0-a84e-74a021d3b3c0.png"></p>
+<h2 id="ホストプロセス、FunctionsHost"><a href="#ホストプロセス、FunctionsHost" class="headerlink" title="ホストプロセス、FunctionsHost"></a>ホストプロセス、FunctionsHost</h2><p>ワーカープロセス の一部である ホストプロセスは、HTTP Trigger や Blob トリガーなどのイベント検知や各種ログの記録といった共通処理を担います。 Azure Functions のランタイムとして動作するワーカープロセスへ処理を要求します。動作している ホストプロセスは、上記の Kudu スクリーンショットでは Windows: w3wp.exe、Linux: &#x2F;azure-functions-host&#x2F;Microsoft.Azure.WebJobs.Script.WebHost となります。</p>
+<h2 id="言語ワーカー-プロセス、LanguageWorker"><a href="#言語ワーカー-プロセス、LanguageWorker" class="headerlink" title="言語ワーカー プロセス、LanguageWorker"></a>言語ワーカー プロセス、LanguageWorker</h2><p>ワーカープロセス の一部である <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/supported-languages#languages-by-runtime-version">言語ワーカー プロセス（LanguageWorker）</a> は各言語に応じた関数コードを実行するプロセスとなります。動作している ホストプロセスは、上記の Kudu スクリーンショットでは Windows: dotnet.exe、Linux: dotnet となります。なお、2023 年 7 月 現在にて Azure Functions でサポートしている主な言語ワーカーとプロセスは以下となります。</p>
+<table>
+<thead>
+<tr>
+<th align="center">言語ワーカー</th>
+<th align="center">プロセス名 (Windows 版)</th>
+<th align="center">プロセス名 (Linux 版)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">.NET (isolated)</td>
+<td align="center">dotnet.exe</td>
+<td align="center">dotnet</td>
+</tr>
+<tr>
+<td align="center">Node.js</td>
+<td align="center">node.exe</td>
+<td align="center">node</td>
+</tr>
+<tr>
+<td align="center">Java</td>
+<td align="center">java.exe</td>
+<td align="center">java</td>
+</tr>
+<tr>
+<td align="center">PowerShell</td>
+<td align="center">dotnet.exe</td>
+<td align="center">dotnet</td>
+</tr>
+<tr>
+<td align="center">Python</td>
+<td align="center">未対応</td>
+<td align="center">python</td>
+</tr>
+</tbody></table>
+<p>また、関数コードを実行する 言語ワーカー プロセス数は <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#functions_worker_process_count">FUNCTIONS_WORKER_PROCESS_COUNT</a> のアプリケーション設定により制御する設定となりますため、上記の Kudu スクリーンショットにございますdotnet.exe のプロセス数となります。</p>
+<h2 id="関数、関数コード"><a href="#関数、関数コード" class="headerlink" title="関数、関数コード"></a>関数、関数コード</h2><p>実際のイベントに対する処理を実施するアプリケーションコードとなります。イベントに対する処理を実施する関数コードはトリガー（HTTP, タイマー）と呼ばれるイベントのテンプレートを設定することができ、イベントが検知されると関数コードのアプリケーションが動作します。以下は関数コードトリガーの一例として <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-function-app-portal#create-function">HTTP トリガー関数の作成</a> 方法がございます。</p>
+<h2 id="インスタンス、Worker-インスタンス、VM-インスタンス"><a href="#インスタンス、Worker-インスタンス、VM-インスタンス" class="headerlink" title="インスタンス、Worker インスタンス、VM インスタンス"></a>インスタンス、Worker インスタンス、VM インスタンス</h2><p>関数アプリを動作するための VM インスタンス（Worker インスタンス）となります。</p>
+<h2 id="Plan-Scale-Out（プランのスケールアウト）、App-Scale-Out（アプリのスケールアウト）"><a href="#Plan-Scale-Out（プランのスケールアウト）、App-Scale-Out（アプリのスケールアウト）" class="headerlink" title="Plan Scale Out（プランのスケールアウト）、App Scale Out（アプリのスケールアウト）"></a>Plan Scale Out（プランのスケールアウト）、App Scale Out（アプリのスケールアウト）</h2><p>Plan Scale Out（プランのスケールアウト）は、Elastic Premium プランで制御するインスタンス数の定義となり Elastic Premium プランでのインスタンスの最大スケールアウト(Maximum Burst)のインスタンス数と最小のインスタンス数(Minimum Instances)を設定します。 App Scale Out（アプリのスケールアウト）は、1 つの Elastic Premium プラン上で動作する関数アプリが配置されるインスタンス数の定義を実施します。<br>例えば、Always Ready Instancesが 1 になりますと、最低でも関数アプリが 1 インスタンスで動作することを決定しており、関数コードのイベント数の負荷により、インスタンス は Elastic Premium Plan で設定された Maximum Burst である 20 インスタンスまで増加することが出来ます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-premium-plan?tabs=portal#plan-and-sku-settings">プランと SKU の設定</a></p>
+<blockquote>
+<p>プランを作成するときは、2 つのプラン サイズ設定があります。インスタンスの最小数 (またはプラン サイズ) と最大バースト制限です。</p>
+</blockquote>
+<blockquote>
+<p>常時使用可能なインスタンス数を超えるインスタンスがアプリに必要な場合、インスタンスの数が最大バースト制限に達するまでアプリのスケール アウトを続けることができます。</p>
+</blockquote>
+<p>Elastic Premium プランのスケーリング設定の例として、以下のスクリーンショットにございます内容では、Plan Scale out の Maximum Burst は 20 となっており、App Scale out の Always Ready Instances は 1 でございます。</p>
+<p><img src="/jpazpaas/2023/08/24/azure-functions-words-relative-management/image-7504a461-0a49-496a-a5e4-feab3dfef5b5.png" alt="image-7504a461-0a49-496a-a5e4-feab3dfef5b5.png"></p>
+<p>Elastic Premium Plan にて割り当て済みのインスタンス数を確認する方法としては弊社サポートチームブログより公開をしておりますためご参照ください。</p>
+<p><a href="https://azure.github.io/jpazpaas/2022/08/09/how-to-check-elastic-premium-plan-function-app-allocated-instance-counts-history.html">Function App の Elastic Premium Plan にて割り当て済みのインスタンス数を確認する方法</a></p>
+<hr>
+<h1 id="付録：Azure-Functions-のスケーリングについて"><a href="#付録：Azure-Functions-のスケーリングについて" class="headerlink" title="付録：Azure Functions のスケーリングについて"></a>付録：Azure Functions のスケーリングについて</h1><p>上記の App Service&#x2F;Azure Functions の簡単なアーキテクチャや各用語の紹介から付録として Azure Functions のスケーリングについてご紹介をいたします。<br>Azure Functions では Worker インスタンスをスケーリング方法と 1 Worker インスタンス内に Azure Functions の 言語ワーカープロセスの増加方法がございます。Azure Functions でのパフォーマンスを向上するために必要な 1 つの要因となりますが、本ブログでは用語についてのご紹介となりアプリケーションのパフォーマンスチューニングについては、負荷テストを実施していただき以下の項目箇所のチューニングをご検討いただけると幸いです。</p>
+<h2 id="Worker-インスタンスのスケーリング（スケールアウト）"><a href="#Worker-インスタンスのスケーリング（スケールアウト）" class="headerlink" title="Worker インスタンスのスケーリング（スケールアウト）"></a>Worker インスタンスのスケーリング（スケールアウト）</h2><p><strong>従量課金プランまたは Elastic Premium プラン</strong> での Azure Functions の Worker インスタンスのスケーリングは HTTP リクエスト数や Queue メッセージ数によるイベントベースとなりますため、専用プラン（App Service プラン）の CPU 使用率、メモリ使用量などのメトリクスを監視しているわけではございません。例えば、HTTP トリガーでは、 HTTP リクエストが増加すると、関数アプリへのイベントレートも増え、より多くのインスタンスが関数アプリに割り当てられる動作となっております。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/event-driven-scaling">Azure Functions でのイベント ドリブン スケーリング</a></p>
+<blockquote>
+<p>従量課金プランと Premium プランでは、Azure Functions は、Functions ホストのインスタンスを追加することによって CPU およびメモリ リソースをスケーリングします。 インスタンスの数は、関数をトリガーするイベントの数に基づいて決定されます。</p>
+</blockquote>
+<p>以下の図のように Worker インスタンスのスケーリング（1 台から 2 台へ増加）が行われると Worker インスタンス内にて Functions Host と Language Worker がセットで作成されます。</p>
+<p><img src="/jpazpaas/2023/08/24/azure-functions-words-relative-management/function-app-scaleout-0ae2eb6c-c46d-471f-a9dd-35cdf78f8d0e.png" alt="function-app-scaleout-0ae2eb6c-c46d-471f-a9dd-35cdf78f8d0e.png"></p>
+<h2 id="Language-Worker-プロセスの増加"><a href="#Language-Worker-プロセスの増加" class="headerlink" title="Language Worker プロセスの増加"></a>Language Worker プロセスの増加</h2><p>Worker インスタンスのスケーリング以外にも、1 つの Worker インスタンス内にて関数コードを実行するためのプロセスである 言語ワーカー数を増加する方法として、アプリケーション設定 <code>FUNCTIONS_WORKER_PROCESS_COUNT</code> より設定が実施できます。 1 Worker インスタンス上で動作する Language Workerの最大数を指定する値です。この値は最大で 10 まで設定できます。</p>
+<p>言語ワーカー数を増加することで、処理するプロセス数が増えるため、CPU リソースを集中的に使用する関数コードが、他の関数コードの実行をブロックする可能性が低くなります。複数の言語ワーカープロセスで動作すことから、関数アプリ上の関数コードの実行が分散されることになるため、同一言語ワーカープロセス上で実行される関数コードの数が減少することが期待されます。例えば、4 つの関数コード (A,B,C,D) 実行が 2 つの言語ワーカープロセス X (AとB), Y (CとD) へ分散されてる状況で、関数コード A の処理にてタイムアウトが発生した場合、タイムアウトが発生したプロセス X のみが再起動されるため、他の関数コード (C、D)への影響を避けることができます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#functions_worker_process_count">FUNCTIONS_WORKER_PROCESS_COUNT</a></p>
+<blockquote>
+<p>言語ワーカー プロセスの最大数を指定します。既定値は 1 です。 許容される最大値は 10 です。 関数呼び出しは、言語ワーカー プロセス間で均等に分散されます。 言語ワーカー プロセスは、WORKER_PROCESS_COUNT によって設定されたカウントに達するまで、10 秒ごとに生成されます。 複数の言語ワーカー プロセスの使用は、スケーリングと同じではありません。</p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/performance-reliability#use-multiple-worker-processes">複数のワーカー プロセスを使用する</a></p>
+<blockquote>
+<p>既定では、Functions のどのホスト インスタンスでも、単一のワーカー プロセスが使用されます。 特に Python などのシングルスレッド ランタイムによってパフォーマンスを向上させるには、FUNCTIONS_WORKER_PROCESS_COUNT を使用して、ホストあたりのワーカープロセス数を増やします (最大 10 まで)。 次に、Azure Functions は、これらのワーカー間で同時関数呼び出しを均等に分散しようとします。</p>
+</blockquote>
+<p>以下の図のように Language Worker プロセスのスケーリング（1 から 2 へ増加）が行われると、1 Worker インスタンス内にて Functions Host としては 1 となりますが、Language Worker が 2 となります。</p>
+<p><img src="/jpazpaas/2023/08/24/azure-functions-words-relative-management/function-app-process-count-7d6c0834-69ac-4e20-8f53-e11d08ce581a.png" alt="function-app-process-count-7d6c0834-69ac-4e20-8f53-e11d08ce581a.png"></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2023 年 08 月 24 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/08/24/azure-functions-words-relative-management.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../10/18/Singleton-lock-renewal-failed-for-blob-logs-in-Functions.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Functions の 「Singleton lock renewal failed for blob &#39;***/host&#39; with error code 409 …」 ログについて
+        
+      </div>
+    </a>
+  
+  
+    <a href="../17/Differences-in-authentication-methods-when-accessing-BLOB.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure ポータルで BLOB にアクセスするときの認証方法の違いについて</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

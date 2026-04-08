@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Storage サービス SAS の作成手順 (Azure Portal, Azure Storage Explorer, PowerShell, Azure CLI) | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="お客様がShared Access Signatures ( SAS ) をご利用になる際には SASトークンを取得する必要があります。 なお前提として、権限は最小特権の原則に従うべきものとなります。  ご参考： SAS を使用する際のベスト プラクティス  Shared Access Signatures ( SAS ) とはShared Access Signature ( SAS ) とは、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Storage サービス SAS の作成手順 (Azure Portal, Azure Storage Explorer, PowerShell, Azure CLI)">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="お客様がShared Access Signatures ( SAS ) をご利用になる際には SASトークンを取得する必要があります。 なお前提として、権限は最小特権の原則に従うべきものとなります。  ご参考： SAS を使用する際のベスト プラクティス  Shared Access Signatures ( SAS ) とはShared Access Signature ( SAS ) とは、">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-3fc8d291-d87b-4b31-a831-d5e9c1ca3805.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-310dff2c-d9c5-4b2e-9890-57380767a0d9.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-c30ee357-6939-42ae-8099-ae306a685dfd.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-0b8aa289-6633-43a2-b841-31353f443bf2.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-8e80e05f-3b34-4b57-998d-4188e26e9765.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-941d1688-b426-4e9d-a457-5fb3bfc21b62.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-74f0dcb7-1853-4ba6-bf59-4e0721414d3f.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-8445032b-b0d8-45b3-9c92-05753a6d99ea.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-7184614a-51d7-46b7-96b1-ad400a649d72.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-5554483e-cbef-4d95-ac9a-7080fb0c6916.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-0787f3e6-08ca-412a-bc0d-3c8d8a8394f6.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-ffd296a9-aefe-456b-864f-2916bdae039b.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-37d23e35-b4c5-4d18-bf65-ffdabb5f0a5f.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-bac60b36-9b52-4212-89dc-04f0cabf4592.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-288b86dd-e4d5-41e9-8663-32dc57607903.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-36851203-f533-46dc-bf26-135231c2e106.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-422cabc2-f92f-48f6-b467-34dc540479a3.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-f91add2e-b850-4982-91f6-dea37d69dc22.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-86ba456f-3430-479e-b02f-b57f71037121.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-de574f43-8cf1-4214-ac54-c6f18aa978f4.png">
+<meta property="article:published_time" content="2024-02-25T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.751Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Storage">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-3fc8d291-d87b-4b31-a831-d5e9c1ca3805.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Storage サービス SAS の作成手順 (Azure Portal, Azure Storage Explorer, PowerShell, Azure CLI)
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2024-02-25T15:00:00.000Z" itemprop="datePublished">2024-02-26</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+3ebca9bf-adf8-59c7-9af4-b8e261e6d019%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BStorage+%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9+SAS+%E3%81%AE%E4%BD%9C%E6%88%90%E6%89%8B%E9%A0%86+%28Azure+Portal%2C+Azure+Storage+Explorer%2C+PowerShell%2C+Azure+CLI%29%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2024%2F02%2F26%2FProcedure-for-creating-a-Storage-Service-SAS-token.html%29%0A*+Content+Source%3A+%5Barticles%2F2024%2F02%2F26%2FProcedure-for-creating-a-Storage-Service-SAS-token.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2024%2F02%2F26%2FProcedure-for-creating-a-Storage-Service-SAS-token.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token.html" data-id="cuid8GF0CpilvGcmlrW2avIa8" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>お客様がShared Access Signatures ( SAS ) をご利用になる際には SASトークンを取得する必要があります。</p>
+<p>なお前提として、権限は最小特権の原則に従うべきものとなります。</p>
+<ul>
+<li>ご参考： <a href="https://learn.microsoft.com/ja-jp/azure/storage/common/storage-sas-overview?toc=/azure/storage/blobs/toc.json&bc=/azure/storage/blobs/breadcrumb/toc.json#best-practices-when-using-sas">SAS を使用する際のベスト プラクティス</a></li>
+</ul>
+<h2 id="Shared-Access-Signatures-SAS-とは"><a href="#Shared-Access-Signatures-SAS-とは" class="headerlink" title="Shared Access Signatures ( SAS ) とは"></a>Shared Access Signatures ( SAS ) とは</h2><p>Shared Access Signature ( SAS ) とは、ストレージ アカウント内のリソースへのセキュリティで保護された、署名された URL を介した制限付きの委任アクセス機能です。<br>SAS を使用すると、クライアントがデータにアクセスする方法をきめ細かく制御できます。<br>なお、SAS トークンは以下の 3 つの種類がございます。</p>
+<ul>
+<li>ユーザー委任 SAS</li>
+<li>サービス SAS<ul>
+<li>ご参考：本記事</li>
+</ul>
+</li>
+<li>アカウント SAS<ul>
+<li>ご参考：<a href="https://azure.github.io/jpazpaas/2024/02/19/Procedure-for-creating-a-Storage-Account-SAS-token.html#gsc.tab=0">Storage アカウント SAS の作成手順 (Azure Portal, Azure Storage Explorer, PowerShell, Azure CLI)</a></li>
+</ul>
+</li>
+</ul>
+<p>ご参考：<a href="https://learn.microsoft.com/ja-jp/azure/storage/common/storage-sas-overview">Shared Access Signatures (SAS) でデータの制限付きアクセスを付与する</a></p>
+<p>この Blog 記事では<strong>サービス SAS</strong> について、Azure portal、Azure Storage Explorer、PowerShell、およびAzure CLIを使用した 4 通りの作成方法を紹介します。</p>
+<h2 id="サービス-SAS-とは"><a href="#サービス-SAS-とは" class="headerlink" title="サービス SAS とは"></a>サービス SAS とは</h2><p>サービス SAS は、アカウント アクセス キーを使用して署名され、次のうち <strong>1 つだけ</strong>の Azure Storage サービスのリソースへのアクセスを委任します。</p>
+<ul>
+<li>Blob コンテナー・Blob</li>
+<li>ファイル共有</li>
+<li>キュー</li>
+<li>テーブル</li>
+</ul>
+<p>またサービス SAS は、<strong>アクセス ポリシー</strong>を使用して SAS のアクセス許可と期間を定義することができることが他の SAS との大きな違いとなります。</p>
+<p>ご参考：<a href="https://learn.microsoft.com/ja-jp/rest/api/storageservices/create-service-sas">サービス SAS の作成</a></p>
+<hr>
+<h1 id="SAS-利用上のご注意"><a href="#SAS-利用上のご注意" class="headerlink" title="SAS 利用上のご注意"></a>SAS 利用上のご注意</h1><ul>
+<li><p>SAS トークンの保存について<br>SAS トークンは、Azure Storage によって追跡されません。お客様側で計算して生成される署名文字列です。そのため、<strong>ウィンドウが閉じられると SAS トークンの値は取得できなくなるため、お客様にて生成された値をコピーして安全な場所に保存しておく必要があります。</strong> </p>
+<ul>
+<li>ご参考：<a href="https://learn.microsoft.com/ja-jp/azure/storage/common/storage-sas-overview?toc=/azure/storage/blobs/toc.json&bc=/azure/storage/blobs/breadcrumb/toc.json#sas-token">SAS トークンの保存</a></li>
+</ul>
+</li>
+<li><p>SAS URL について<br>SAS URL を作成するには、SAS トークン ( URI ) をストレージ サービスのリソース URL に追加します。作成時に各プラットホームから返される SAS トークンには、URL クエリ文字列に必要な区切り文字 ( “?” ) が含まれていません。<strong>SAS URL を作成する際は、必ずリソース URL と SAS トークンの間に区切り文字を追加してください。</strong></p>
+<ul>
+<li>ご参考：<a href="https://learn.microsoft.com/ja-jp/azure/storage/common/storage-sas-overview?toc=/azure/storage/blobs/toc.json&bc=/azure/storage/blobs/breadcrumb/toc.json#sas-token">SAS URL について</a></li>
+</ul>
+</li>
+<li><p>SAS の失効について<br>有効な SAS を所有するすべてのクライアントは、その SAS で許可されているストレージ アカウントのデータにアクセスできます。 SAS を悪意のある、または意図しない用途から保護することが重要です。 <strong>SAS の配布は慎重に行い、侵害された SAS を失効させるための計画を用意しておいてください。</strong></p>
+<ul>
+<li>ご参考 1 ： <a href="https://azure.github.io/jpazpaas/2023/06/15/How-To-Expire-SAS-Token.html#gsc.tab=0">Shared Access Signature (SAS) トークンの失効方法</a></li>
+<li>ご参考 2 ： <a href="https://learn.microsoft.com/ja-jp/rest/api/storageservices/create-service-sas#revoke-a-sas">SAS を取り消す</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="サービス-SAS-の作成を行う際に設定する主なパラメータについて"><a href="#サービス-SAS-の作成を行う際に設定する主なパラメータについて" class="headerlink" title="サービス SAS の作成を行う際に設定する主なパラメータについて"></a>サービス SAS の作成を行う際に設定する主なパラメータについて</h1><p>サービス SAS の作成に際しては、主に下記のパラメータを使用します。</p>
+<ul>
+<li><p><strong>署名方法 ( Signing method ):</strong><br>サービス SAS を作成する際は、「アカウント キー(Account key)」を選択します。</p>
+</li>
+<li><p><strong>保存されているアクセス ポリシー( Stored access policy ):</strong></p>
+<ul>
+<li>保存されているアクセス ポリシーを使用して、SAS のアクセス許可と期間を定義することができます。 既存の保存されているアクセス ポリシーの名前が指定されている場合、そのポリシーは、SAS に関連付けられます。 <ul>
+<li>ご参考： <a href="https://learn.microsoft.com/ja-JP/rest/api/storageservices/define-stored-access-policy">格納されているアクセス ポリシーを定義する</a></li>
+</ul>
+</li>
+<li>SAS が侵害された場合は、できるだけ早くその SAS を失効させることをお勧めします。 保存されているアクセス ポリシーに関連付けられているサービス SAS を失効させるには、保存されているアクセス ポリシーを削除するか、ポリシーの名前を変更するか、または有効期限を過去の時間に変更します。</li>
+<li>保存されているアクセス ポリシーを指定しない場合は、SAS のアクセス許可と期間を設定してご使用ください。保存されているアクセス ポリシーに関連付けられていないサービス SAS を失効させることはできません。 このため、SAS の有効期限が <strong>1 時間以下</strong>になるように制限することをお勧めします。<ul>
+<li>ご参考： <a href="https://learn.microsoft.com/ja-jp/azure/storage/blobs/security-recommendations#identity-and-access-management">ID 管理とアクセス管理</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>開始日時と有効期限の日時 ( Start and expiry date-time ):</strong><br>SAS トークンの有効期間を定義します。開始日時と終了日時を設定できます。指定を省略した場合は、それぞれの作成方法でデフォルトの有効期限が設定されます。</p>
+<ul>
+<li>SAS を発行する場合は、可能な限り短い有効期限を使用するようにします。<ul>
+<li>ご参考 1 ：<a href="https://learn.microsoft.com/ja-jp/azure/storage/blobs/security-recommendations">BLOB ストレージのセキュリティに関する推奨事項</a></li>
+<li>ご参考 2 ：<a href="https://learn.microsoft.com/ja-jp/azure/storage/common/storage-sas-overview#best-practices-when-using-sas">SAS を使用する際のベスト プラクティス</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>アクセス許可 ( Permissions ):</strong></p>
+<ul>
+<li>SAS が許可する操作を指定します。読み取り ( r ) 、書き込み ( w ) 、削除 ( d ) 、リスト表示 ( l ) 、追加 ( a ) 、作成 ( c ) 、更新 ( u ) 、処理 ( p ) などの操作を選択できます。</li>
+<li>選択できるアクセス許可はサービス SAS の対象となるリソースによって異なります。<ul>
+<li>ご参考：<a href="https://learn.microsoft.com/ja-jp/rest/api/storageservices/create-service-sas#specify-permissions">アクセス許可を指定する</a></li>
+</ul>
+</li>
+<li>サービス SAS では、特定の操作へのアクセスを許可できません。<ul>
+<li>コンテナー、キュー、およびテーブルを作成、削除、または一覧表示することはできません。</li>
+<li>コンテナーのメタデータとプロパティを読み取ったり書き込んだりすることはできません。</li>
+<li>キューをクリアすることはできません。また、そのメタデータを書き込むことができません。</li>
+<li>コンテナーをリースすることはできません。</li>
+</ul>
+</li>
+</ul>
+<p>   これらの操作へのアクセスを許可する SAS を構築するには、アカウント SAS をご使用ください。<br>          - ご参考：<a href="https://learn.microsoft.com/ja-jp/rest/api/storageservices/create-account-sas">アカウント SAS を作成する</a>
+  </p>
+</li>
+<li><p><strong>使用できる IP アドレス ( Allowed IP addresses ):</strong><br>SAS を使用できる IP アドレスを指定します。ただし、パブリック IP アドレスのみ設定可能、Azure リソースからのアクセスの場合は異なるリージョンのパブリック IP アドレスであることにご留意ください。</p>
+<ul>
+<li>ご参考：<a href="https://learn.microsoft.com/ja-jp/rest/api/storageservices/create-account-sas#specify-an-ip-address-or-ip-range">IP アドレスまたは IP 範囲を指定する</a></li>
+</ul>
+</li>
+<li><p><strong>許可されるプロトコル ( Allowed protocols ):</strong><br>SAS を使用できるプロトコルを指定します。「 HTTPS のみ( HttpsOnly ) 」または「 HTTPS と HTTP ( HttpsOrHttp ) 」を選択できます。</p>
+</li>
+<li><p><strong>署名キー ( Signing key ):</strong><br>SAS トークンの生成と検証に使用されます。key1 または key2 のどちらかを指定します。</p>
+</li>
+<li><p><strong>使用できるリソースの種類 ( SignedResource )：</strong><br>サービスSAS がアクセスを許可するリソースの種類を指定します。</p>
+<ul>
+<li><p>Blob Storage のみ<br>   BLOB ( b )    、BLOB バージョン ( Bv )、BLOB スナップショット ( bs )、コンテナー ( c )、ディレクトリ ( d ) のいずれか、または複数を選択できます。</p>
+<ul>
+<li>ご参考：<a href="https://learn.microsoft.com/ja-jp/rest/api/storageservices/create-service-sas#specify-the-signed-resource-blob-storage-only">署名されたリソースを指定する (Blob Storage のみ)</a></li>
+</ul>
+</li>
+<li><p>Azure Files<br>   共有リソースがファイルかどうかを指定 ( f )、 共有リソースが共有であるかどうかを指定 ( s ) のいずれか、または複数を選択できます。</p>
+<ul>
+<li>ご参考：<a href="https://learn.microsoft.com/ja-jp/rest/api/storageservices/create-service-sas#specify-the-signed-resource-azure-files">署名されたリソースを指定する (Azure Files)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Blob-のサービス-SAS-の作成手順"><a href="#Blob-のサービス-SAS-の作成手順" class="headerlink" title="Blob のサービス SAS の作成手順"></a>Blob のサービス SAS の作成手順</h1><p>下記では以下の4つの条件を許可する設定の例をご案内します。</p>
+<ul>
+<li><strong>あるコンテナー内の特定の <span style="color: red; ">Blob</span> に対して、</strong></li>
+<li><strong><span style="color: red; ">読み取り</span>のみ、</strong></li>
+<li><strong><span style="color: red; ">HTTPS 接続</span>のみ、</strong></li>
+<li><strong>有効期限が「<span style="color: red; ">現在～ 30 分後</span>」</strong></li>
+</ul>
+<h2 id="Azure-Portal-を使用してサービス-SAS-を作成する"><a href="#Azure-Portal-を使用してサービス-SAS-を作成する" class="headerlink" title="Azure Portal を使用してサービス SAS を作成する"></a>Azure Portal を使用してサービス SAS を作成する</h2><p>(1) Azure Portalにログインし、ポータル上部の検索欄に該当のストレージ アカウント名を入力・検索し、選択します。</p>
+<p>(2) サービス SAS を作成したい Blob の名称上で右クリックし、「SAS の作成」を選択します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-3fc8d291-d87b-4b31-a831-d5e9c1ca3805.png" alt="image-3fc8d291-d87b-4b31-a831-d5e9c1ca3805.png"></p>
+<p>(3) 必要なオプションを指定します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-310dff2c-d9c5-4b2e-9890-57380767a0d9.png" alt="image-310dff2c-d9c5-4b2e-9890-57380767a0d9.png"></p>
+<p>(4) 必要事項の設定後、「SAS トークンおよび URL を生成」を選択します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-c30ee357-6939-42ae-8099-ae306a685dfd.png" alt="image-c30ee357-6939-42ae-8099-ae306a685dfd.png"></p>
+<p>(5) SASトークンが生成されます。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-0b8aa289-6633-43a2-b841-31353f443bf2.png" alt="image-0b8aa289-6633-43a2-b841-31353f443bf2.png"></p>
+<h2 id="Azure-Storage-Explorer-を使用してサービス-SAS-を作成する"><a href="#Azure-Storage-Explorer-を使用してサービス-SAS-を作成する" class="headerlink" title="Azure Storage Explorer を使用してサービス SAS を作成する"></a>Azure Storage Explorer を使用してサービス SAS を作成する</h2><p>(1) Azure Storage Explorer を起動します。</p>
+<p>(2) 左側のパネルで対象のストレージ アカウント内の 該当の Blob の名称上で右クリックし、「Shared Access Signatureの取得…」 を選択します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-8e80e05f-3b34-4b57-998d-4188e26e9765.png" alt="image-8e80e05f-3b34-4b57-998d-4188e26e9765.png"></p>
+<p>(3) Shared Access Signature ダイアログ ボックスが表示されます。<br>必要なオプションを指定します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-941d1688-b426-4e9d-a457-5fb3bfc21b62.png" alt="image-941d1688-b426-4e9d-a457-5fb3bfc21b62.png"></p>
+<p>(4) 必要事項の設定後、「作成」を押下します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-74f0dcb7-1853-4ba6-bf59-4e0721414d3f.png" alt="image-74f0dcb7-1853-4ba6-bf59-4e0721414d3f.png"></p>
+<p>(5) SAS トークンが生成されます。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-8445032b-b0d8-45b3-9c92-05753a6d99ea.png" alt="image-8445032b-b0d8-45b3-9c92-05753a6d99ea.png"></p>
+<h2 id="PowerShellを使用してサービス-SAS-を作成する"><a href="#PowerShellを使用してサービス-SAS-を作成する" class="headerlink" title="PowerShellを使用してサービス SAS を作成する"></a>PowerShellを使用してサービス SAS を作成する</h2><p>(1) サブスクリプションへ接続します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Connect-AzAccount -Subscription &lt;Subscription Id&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(2) SASトークンの作成に必要な各種パラメータの変数を設定していきます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$accountName = &quot;&lt;storage-account&gt;&quot;</span><br><span class="line">$containerName = &quot;&lt;container-name&gt;&quot;</span><br><span class="line">$blobName = &quot;&lt;blob-name&gt;&quot;</span><br><span class="line">$permissions = &quot;r&quot;</span><br><span class="line">$protocol = &quot;HttpsOnly&quot;</span><br><span class="line">$startTime = Get-Date</span><br><span class="line">$expiryTime = $startTime.AddMinutes(30)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>上記では省略されているパラメータもご利用可能です。<ul>
+<li>ご参考：<a href="https://learn.microsoft.com/ja-jp/powershell/module/az.storage/new-azstorageblobsastoken?view=azps-11.2.0">New-AzStorageBlobSASToken (Az.Storage)</a></li>
+</ul>
+</li>
+</ul>
+<p>(3) Azure Storage に対する操作を行う際に認証情報や接続情報を保持するためのオブジェクトである Azure Storage コンテキストを作成します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ctx = New-AzStorageContext -StorageAccountName $accountName</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(4) SAS トークンを作成します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">New-AzStorageBlobSASToken `</span><br><span class="line">	-Container $containerName `</span><br><span class="line">	-Blob $blobName `</span><br><span class="line">	-Permission $permissions `</span><br><span class="line">	-Protocol $protocol `</span><br><span class="line">	-StartTime $startTime `</span><br><span class="line">	-ExpiryTime $expiryTime `</span><br><span class="line">	-Context $ctx</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(5) 生成された SAS トークンが表示されます。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-7184614a-51d7-46b7-96b1-ad400a649d72.png" alt="image-7184614a-51d7-46b7-96b1-ad400a649d72.png"></p>
+<h2 id="Azure-CLI-を使用してサービス-SAS-を作成する"><a href="#Azure-CLI-を使用してサービス-SAS-を作成する" class="headerlink" title="Azure CLI を使用してサービス SAS を作成する"></a>Azure CLI を使用してサービス SAS を作成する</h2><p>(1) Azure にログインします。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">az login</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(2) サブスクリプションへ接続します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">az account set --subscription &lt;Subscription Id&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(3) SASトークンの作成に必要な各種パラメータの変数を設定していきます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">storageAccount=&quot;&lt;storage-account&gt;&quot;</span><br><span class="line">containerName=&quot;&lt;container-name&gt;&quot;</span><br><span class="line">resourceGroup=&quot;&lt;resource-group&gt;&quot;</span><br><span class="line">blobName=&quot;&lt;blob-name&gt;&quot;</span><br><span class="line">expiry=$(date -u -d &quot;30 minutes&quot; &#x27;+%Y-%m-%dT%H:%MZ&#x27;)</span><br><span class="line">permissions=&quot;r&quot; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>上記では省略されているパラメータもご利用可能です。<ul>
+<li>ご参考： <a href="https://learn.microsoft.com/ja-jp/cli/azure/storage/blob?view=azure-cli-latest#az-storage-blob-generate-sas">az storage blob generate-sas</a></li>
+</ul>
+</li>
+</ul>
+<p>(4) ストレージ アカウントの接続文字列を取得します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">connectionString=$(az storage account show-connection-string \</span><br><span class="line">	--name $storageAccount \</span><br><span class="line">	--resource-group $resourceGroup \</span><br><span class="line">	--output tsv)</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+
+<p>(5) SAS トークンを作成します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">az storage blob generate-sas \</span><br><span class="line">	--account-name $storageAccount \</span><br><span class="line">	--connection-string $connectionString \</span><br><span class="line">	--container-name $containerName \</span><br><span class="line">	--name $blobName \</span><br><span class="line">	--permissions $permissions \</span><br><span class="line">	--expiry $expiry \</span><br><span class="line">	--https-only</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>(6) 生成された SAS トークンが表示されます。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-5554483e-cbef-4d95-ac9a-7080fb0c6916.png" alt="image-5554483e-cbef-4d95-ac9a-7080fb0c6916.png"></p>
+<hr>
+<h1 id="保存されているアクセス-ポリシーを使用したサービス-SAS-の作成例-Azure-Portal"><a href="#保存されているアクセス-ポリシーを使用したサービス-SAS-の作成例-Azure-Portal" class="headerlink" title="保存されているアクセス ポリシーを使用したサービス SAS の作成例 ( Azure Portal )"></a>保存されているアクセス ポリシーを使用したサービス SAS の作成例 ( Azure Portal )</h1><p>以下に、保存されているアクセス ポリシーを使用した、 Blob へのサービス SAS の作成で最も簡単なAzure Portal での作成方法をご案内します。</p>
+<ul>
+<li>ご参考： <a href="https://learn.microsoft.com/ja-JP/rest/api/storageservices/define-stored-access-policy">格納されているアクセス ポリシーを定義する</a></li>
+</ul>
+<p>(1) アクセス ポリシーを作成し、保存します。 (保存済みの場合は手順 (5) にお進みください。)<br>Blob のアクセス ポリシーはその Blob を内包するコンテナーに対して設定します。<br>該当のコンテナーの名称上で右クリックし、「アクセス ポリシー」を選択します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-0787f3e6-08ca-412a-bc0d-3c8d8a8394f6.png" alt="image-0787f3e6-08ca-412a-bc0d-3c8d8a8394f6.png"></p>
+<p>(2) アクセス ポリシー ブレード内の「＋ ポリシーの追加」を選択します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-ffd296a9-aefe-456b-864f-2916bdae039b.png" alt="image-ffd296a9-aefe-456b-864f-2916bdae039b.png"></p>
+<p>(3) ID 欄にアクセス ポリシー名を入力し、アクセス許可・開始時刻・有効期限を設定後「 OK 」を押下します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-37d23e35-b4c5-4d18-bf65-ffdabb5f0a5f.png" alt="image-37d23e35-b4c5-4d18-bf65-ffdabb5f0a5f.png"></p>
+<p>(4) リスト内に作成したアクセス ポリシーが表示されたことを確認したら、「保存」を選択します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-bac60b36-9b52-4212-89dc-04f0cabf4592.png" alt="image-bac60b36-9b52-4212-89dc-04f0cabf4592.png"></p>
+<p>以上でアクセス ポリシーの作成及び保存ができました。</p>
+<p>(5) 保存されているアクセス ポリシーを使用した SAS トークンを作成します。<br>サービス SAS を作成したい Blob の名称上で右クリックし、「 SAS の作成」を選択します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-288b86dd-e4d5-41e9-8663-32dc57607903.png" alt="image-288b86dd-e4d5-41e9-8663-32dc57607903.png"></p>
+<p>(6) 「保存されているアクセス ポリシー」欄で、使用したいアクセス ポリシー名を選択し、その他必要事項の設定後、「SAS トークンおよび URL を生成」を選択します。<br>「保存されているアクセス ポリシー」が選択されると、アクセス許可及び開始日時と有効期限の日時欄がグレーアウトして入力できなくなることをご確認ください。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-36851203-f533-46dc-bf26-135231c2e106.png" alt="image-36851203-f533-46dc-bf26-135231c2e106.png"></p>
+<p>(7) SASトークンが生成されます。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-422cabc2-f92f-48f6-b467-34dc540479a3.png" alt="image-422cabc2-f92f-48f6-b467-34dc540479a3.png"></p>
+<hr>
+<h1 id="SAS-を使用する"><a href="#SAS-を使用する" class="headerlink" title="SAS を使用する"></a>SAS を使用する</h1><p>上記の手順で作成した SAS トークンの簡単な使い方をご案内いたします。</p>
+<p>(1) 該当のBLOBのURLを取得します。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-f91add2e-b850-4982-91f6-dea37d69dc22.png" alt="image-f91add2e-b850-4982-91f6-dea37d69dc22.png"></p>
+<p>(2) ブラウザのアドレス欄に、コピーしたURLに区切り文字「 ? 」および SAS トークンを加えた文字列を入力し、BLOBにアクセスします。</p>
+<p>ブラウザのアドレス欄には以下のような内容を貼り付けています。</p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-86ba456f-3430-479e-b02f-b57f71037121.png" alt="image-86ba456f-3430-479e-b02f-b57f71037121.png"></p>
+<p><img src="/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token/image-de574f43-8cf1-4214-ac54-c6f18aa978f4.png" alt="image-de574f43-8cf1-4214-ac54-c6f18aa978f4.png"></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2024 年 02 月 26 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../29/Troubleshoot%20Network%20Connectivity%20issues%20using%20Network%20Troubleshooter.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Network Troubleshooter ツール を使用したネットワーク接続のトラブルシュートについて
+        
+      </div>
+    </a>
+  
+  
+    <a href="../22/Azure-functions-trigger-and-binding-series-cover.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure Functions トリガー・バインディング シリーズ</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

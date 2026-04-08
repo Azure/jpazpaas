@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Functions のトリガーの同期とは | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Azure Functions にトリガーの同期がありますが何の機能ですか。  トリガーのいずれかを変更する場合、Functions インフラストラクチャにその変更を認識させる必要があります。 同期は、多くのデプロイ テクノロジでは自動的に実行されます。 ただし、場合によっては、トリガーを手動で同期する必要があります。  回答Azure Functions にデプロイされたアプリケーションのトリガ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Functions のトリガーの同期とは">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Azure Functions にトリガーの同期がありますが何の機能ですか。  トリガーのいずれかを変更する場合、Functions インフラストラクチャにその変更を認識させる必要があります。 同期は、多くのデプロイ テクノロジでは自動的に実行されます。 ただし、場合によっては、トリガーを手動で同期する必要があります。  回答Azure Functions にデプロイされたアプリケーションのトリガ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-7da7eea6-9e7d-4aec-852d-34ac06f2cff2.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-46fd2f8a-e707-4450-8525-fe6f71bcebdc.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-b6c0a2a3-1896-4566-9365-d3d18a9650d6.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-63418e81-91c7-4edb-8fd0-148e98fa756d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-31938ab1-6302-4bfb-88ff-d50e2443ba5d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/==image_0==-1312773e-66c0-407a-84bd-45b9e99c9a7d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-6bb326fd-1d34-4c04-b4b5-7fae36e5233d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-6e6ef434-b0e5-460b-a33f-2e309c0cc4dd.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-a35a2e6f-f2bf-4437-ad5e-593fda0dabc9.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-c22289ef-2b81-459f-a953-57b9e050a74b.png">
+<meta property="article:published_time" content="2026-03-31T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.687Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function App">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger/image-7da7eea6-9e7d-4aec-852d-34ac06f2cff2.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/09/15/what-is-sync-trigger" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Functions のトリガーの同期とは
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2026-03-31T15:00:00.000Z" itemprop="datePublished">2026-04-01</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+e8c0cd37-dfce-56b2-b5f1-54c91e9eca7c%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Functions+%E3%81%AE%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%81%AE%E5%90%8C%E6%9C%9F%E3%81%A8%E3%81%AF%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F09%2F15%2Fwhat-is-sync-trigger.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F09%2F15%2Fwhat-is-sync-trigger.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F09%2F15%2Fwhat-is-sync-trigger.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger.html" data-id="cuidOf6Gc3NGKuz4dbLg6Seog" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Azure Functions に<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-deployment-technologies?tabs=windows#trigger-syncing">トリガーの同期</a>がありますが何の機能ですか。</p>
+<blockquote>
+<p>トリガーのいずれかを変更する場合、Functions インフラストラクチャにその変更を認識させる必要があります。 同期は、多くのデプロイ テクノロジでは自動的に実行されます。 ただし、場合によっては、トリガーを手動で同期する必要があります。</p>
+</blockquote>
+<h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>Azure Functions にデプロイされたアプリケーションのトリガーの情報を Azure Functions のバックエンドに同期するための機能です。</p>
+<h2 id="なぜトリガーの同期が必要か"><a href="#なぜトリガーの同期が必要か" class="headerlink" title="なぜトリガーの同期が必要か"></a>なぜトリガーの同期が必要か</h2><p>Azure Functions は、アプリケーション ルート(&#x2F;home&#x2F;site&#x2F;wwwroot&#x2F;)を基幹として複数のトリガーごとにフォルダを分割した構造となっています。下記は C#(インプロセス) の場合の<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-dotnet-class-library?tabs=v4,cmd#functions-class-library-project">フォルダ階層</a>の例です。</p>
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-7da7eea6-9e7d-4aec-852d-34ac06f2cff2.png" alt="image-7da7eea6-9e7d-4aec-852d-34ac06f2cff2.png"></p>
+<p>host.json と呼ばれる Azure Functions 全体の設定ファイルに加えて、ご利用の各トリガーごとに function.json と呼ばれる定義ファイルを保持しております。どういったバインディングを利用しているかの一覧などの情報を知るためにはファイル名などの表面的な情報では不足しており、すべての設定ファイルを読み込み・解釈する必要があります。</p>
+<p>例えば、Azure ポータルの関数一覧に実装したトリガーを表示することを考えます。下記のような複数のトリガーを実装した場合には、この Azure Functions リソースにデプロイされているアプリケーションには、BLOBTrigger~TimerTrigger まで 15 個のトリガーが実装されていますが、この一覧という情報はどの設定ファイルにも無く、それぞれのトリガーごとのフォルダに含まれている functions.json を確認する必要があります。</p>
+<p><strong>関数一覧</strong></p>
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-46fd2f8a-e707-4450-8525-fe6f71bcebdc.png" alt="image-46fd2f8a-e707-4450-8525-fe6f71bcebdc.png"></p>
+<p><strong>BLOBTrigger の function.json の例</strong></p>
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-b6c0a2a3-1896-4566-9365-d3d18a9650d6.png" alt="image-b6c0a2a3-1896-4566-9365-d3d18a9650d6.png"></p>
+<p>こういった情報(いわば Azure Functions のメタデータ)を更新するための契機としてトリガーの同期が存在しています。</p>
+<h2 id="動作シーケンス"><a href="#動作シーケンス" class="headerlink" title="動作シーケンス"></a>動作シーケンス</h2><p>前述の解説と<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-deployment-technologies?tabs=windows#trigger-syncing">こちら</a>にある通り、トリガーの同期はデプロイ時に実施する必要があります。Azure Functions での推奨としている ZIP デプロイの場合の動作を確認します。</p>
+<ol>
+<li><p><a href="https://github.com/projectkudu/kudu/wiki/Deploying-from-a-zip-file-or-url">ZIP デプロイ</a>とは、Kudu(SCM サイト) の <code>/api/zipdeploy</code> エンドポイントにアプリケーション コンテンツと一緒に POST 通信することです。このデプロイ時に、Kudu の PostDeploymentHelper クラスの中で Azure Functions の場合には<a href="https://github.com/projectkudu/kudu/blob/98d12cf400675bf0c5fefffd92c4dc6f36d6e33b/Kudu.Core/Helpers/PostDeploymentHelper.cs#L299-L300">トリガーの同期</a> (<code>/admin/host/synctriggers</code> へのリクエスト)が呼び出されています。</p>
+</li>
+<li><p>このトリガーの同期のエンドポイント <code>/admin/host/synctriggers</code> は Azure Functions がリスンしているエンドポイントです。<a href="https://github.com/Azure/azure-functions-host/blob/ed7e802e2e48d31754bf2ce9ee7033a4f0ab9c00/src/WebJobs.Script.WebHost/Management/FunctionsSyncManager.cs#L725-L726">FunctionsSyncManager クラス</a>で、<code>/admin/host/synctriggers</code> を受けたら <code>/operation/settriggers</code> を呼び出しています。</p>
+</li>
+</ol>
+<p>以上の2段の HTTP リクエストが発出されることでトリガーの同期が行われます。<code>/operation/settriggers</code> を受け付けた以降の処理は Azure Functions 内部動作となっており現時点で公開情報はございません。</p>
+<p>VNet 統合している場合の動作シーケンスのイメージは下記となります。<br><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-63418e81-91c7-4edb-8fd0-148e98fa756d.png" alt="image-63418e81-91c7-4edb-8fd0-148e98fa756d.png"></p>
+<h2 id="トリガーの同期失敗による影響と対策"><a href="#トリガーの同期失敗による影響と対策" class="headerlink" title="トリガーの同期失敗による影響と対策"></a>トリガーの同期失敗による影響と対策</h2><p>トリガーの同期が失敗するとどういった影響があるか解説します。<br>構成例として、ある Azure Functions が VNet 統合を設定しており、サブネットに適用された NSG で外部接続（Outbound）がすべて拒否されている場合を考えます。</p>
+<h3 id="1-Azure-ポータルにトリガーが表示されない"><a href="#1-Azure-ポータルにトリガーが表示されない" class="headerlink" title="1. Azure ポータルにトリガーが表示されない"></a>1. Azure ポータルにトリガーが表示されない</h3><p>Kudu から確認するとアプリケーション ルート(&#x2F;home&#x2F;site&#x2F;wwwroot&#x2F;)にアプリケーション コードは配置されていますが、Azure ポータルの関数には一切の関数が表示されず、あたかも何もデプロイされていないように見えてしまいます。この状態ではデプロイされているアプリケーション コードは起動するため、処理は行われます。画面表示との乖離が問題となります。</p>
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-31938ab1-6302-4bfb-88ff-d50e2443ba5d.png" alt="image-31938ab1-6302-4bfb-88ff-d50e2443ba5d.png"></p>
+<p>また関数は確認できるものの、エラーが発生した旨を警告するメッセージが出力される場合もあります。</p>
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/==image_0==-1312773e-66c0-407a-84bd-45b9e99c9a7d.png" alt="&#x3D;&#x3D;image_0&#x3D;&#x3D;-1312773e-66c0-407a-84bd-45b9e99c9a7d.png"> </p>
+<p>この時 Azure Functions のアクティビティ ログを確認すると、直前のトリガーの同期が失敗していることがわかります。</p>
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-6bb326fd-1d34-4c04-b4b5-7fae36e5233d.png" alt="image-6bb326fd-1d34-4c04-b4b5-7fae36e5233d.png"></p>
+<p>さらに、<a href="https://learn.microsoft.com/ja-jp/rest/api/appservice/web-apps/sync-function-triggers">こちら</a>から手動でトリガーの同期を実行することができます。実際にトリガーの同期を行ってみると 400 BadRequest が応答されます。</p>
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-6e6ef434-b0e5-460b-a33f-2e309c0cc4dd.png" alt="image-6e6ef434-b0e5-460b-a33f-2e309c0cc4dd.png"></p>
+<p>トリガーの同期の失敗については Application Insights 上でも以下のクエリを実行することで確認できます。<br>本確認手順の場合には、より詳細なエラー内容を確認することができ、下記の例の場合には、ネットワーク接続によるエラーであることまで確認できます。</p>
+<h2 id="Application-Insights-で利用するクエリ例"><a href="#Application-Insights-で利用するクエリ例" class="headerlink" title="Application Insights で利用するクエリ例"></a>Application Insights で利用するクエリ例</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exceptions</span><br><span class="line">| where customDimensions.FormattedMessage startswith &quot;SyncTrigger&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-a35a2e6f-f2bf-4437-ad5e-593fda0dabc9.png" alt="image-a35a2e6f-f2bf-4437-ad5e-593fda0dabc9.png"></p>
+<h3 id="2-従量課金プランまたは-EP-プランのスケーリングが動作しない"><a href="#2-従量課金プランまたは-EP-プランのスケーリングが動作しない" class="headerlink" title="2. 従量課金プランまたは EP プランのスケーリングが動作しない"></a>2. 従量課金プランまたは EP プランのスケーリングが動作しない</h3><p>従量課金プラン及び EP プランでは、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/event-driven-scaling?tabs=azure-cli#runtime-scaling">イベントドリブン スケーリング</a>と呼ばれる動作で Azure Functions プラットフォームにてスケール イン&#x2F;アウトが行われます。この際に Azure Functions のスケール コントローラーと呼ばれるコンポーネントが動作しスケール イン&#x2F;アウトの決定をしてますが、このスケール コントローラーも Azure Functions のメタデータを利用します。</p>
+<p>キュー トリガーを例とすると、対象のキューの長さを基にスケール コントローラーがスケール イン&#x2F;アウトの決定をします。トリガーの同期が失敗している場合には、そもそもスケール コントローラーが対象のキューの長さを参照するように動作せず、スケール イン&#x2F;アウトの決定を行いません。結果として、多量のキュー メッセージがあるにもかかわらず、スケール アウトされない(性能上のボトルネック)や、従量課金プランの場合には 0 インスタンスとなる場合があるため、いつまで経ってもキュー メッセージが処理されないことが発生し得ます。</p>
+<h3 id="3-アプリ-キーの更新が反映されない"><a href="#3-アプリ-キーの更新が反映されない" class="headerlink" title="3. アプリ キーの更新が反映されない"></a>3. アプリ キーの更新が反映されない</h3><p>更新したアプリ キーの反映にはキーを格納している Blob ストレージへの更新操作と、Azure Functions のキャッシュ情報を更新するためのトリガーの同期が行うことで実現しています。トリガーの同期が失敗している場合にはこの更新状態の不整合が生じ、更新したアプリ キーでアクセスするとアクセス エラーとなります。</p>
+<h3 id="対策"><a href="#対策" class="headerlink" title="対策"></a>対策</h3><p>動作シーケンスの通りトリガーの同期の通信が通るように通信許可設定を追加します。<br>前述の NSG によって通信が拒否されている場合には、AppService のサービスタグを通信許可ルールとして追加します。AzureFirewall などを利用の場合には、<code>*.azurewebsites.net</code> の FQDN で 80 番及び 443 番ポートの外部通信を許可します。<br>またプライベート エンドポイントをご利用いただいている場合には、サービス タグの許可ではなく、IP アドレスの許可にてプライベート エンドポイントに対する通信を許可ルールに追加します。</p>
+<p><strong>NSG の送信ルール例</strong></p>
+<p><img src="/jpazpaas/2023/09/15/what-is-sync-trigger/image-c22289ef-2b81-459f-a953-57b9e050a74b.png" alt="image-c22289ef-2b81-459f-a953-57b9e050a74b.png"></p>
+<p>また、一時的なネットワークによる失敗である場合には<a href="https://learn.microsoft.com/ja-jp/rest/api/appservice/web-apps/sync-function-triggers">手動にてトリガーの同期</a>を行うことも有効となります。</p>
+<p>以上が Azure Functions におけるトリガーの同期の解説となります。Azure Functions にアプリケーションをデプロイしたけど、ポータルで参照できないなどトラブルシューティングにお役に立てば幸いです。</p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2026 年 04 月 01 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/09/15/what-is-sync-trigger.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

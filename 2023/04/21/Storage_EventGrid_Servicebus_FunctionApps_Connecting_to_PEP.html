@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ストレージアカウント → Event Grid → Service Bus → Functions の経路で可能な限りプライベートでイベントを配信する設定手順 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="お世話になっております。PaaS Dev サポート担当の李です。本日はストレージアカウントから Event Grid 経由で Service Bus にイベントを配信し、Service Bus に届いたイベントをトリガーに Functions を動作する一連の手順を、パブリックインターネットを経由せずに可能な限りプライベートアクセスで行うための設定方法をご紹介いたします。尚、Service Bus">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ストレージアカウント → Event Grid → Service Bus → Functions の経路で可能な限りプライベートでイベントを配信する設定手順">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="お世話になっております。PaaS Dev サポート担当の李です。本日はストレージアカウントから Event Grid 経由で Service Bus にイベントを配信し、Service Bus に届いたイベントをトリガーに Functions を動作する一連の手順を、パブリックインターネットを経由せずに可能な限りプライベートアクセスで行うための設定方法をご紹介いたします。尚、Service Bus">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-5eaff32e-938e-4499-9fc6-79c300063a25.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-2b041c50-d659-4672-8bd2-0e99fa2674cc.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-c12773d3-c103-42ad-9b2e-e523ef2f27c3.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-eb83c770-642b-48b4-97e9-ff83ee494e11.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-1c624ba5-9f88-4e20-ac56-aa6d7e288354.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-154b8dec-ee0e-4256-b4d6-d64ffca94daa.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-06be48cd-5238-4681-ab05-5dbbcfe75271.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-be9e485b-40e4-4610-a2c9-c1f665784782.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-a1a97c80-9de5-42e1-85f0-54ecda52ca3c.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-15755bdf-f06f-4b35-8b0d-fef2ca9599da.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-0c81601e-573e-4c60-a221-f2b4c1c13b32.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-6c1e53e6-2f3e-4ce6-929f-b105c36aa459.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-79855275-3f30-4fc4-be54-10cc5794b430.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-74162b27-d7c9-4035-ab70-dd440fba84d8.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-a98a7e0d-f4b3-47f0-9691-91b54930af97.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-36885c61-bdb2-4e18-8b95-01075efe65ab.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-5d37a408-1eb2-4a9d-93ff-3a6b18d11f19.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-90267737-2a94-45b2-aaf7-9a0e3f996019.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-468a8bb9-de50-46ea-a562-601e4f998ce2.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-30842ad0-bbee-48d6-a425-07ae3db407a9.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-ca8757ae-44a7-4b9b-9fea-c21bab80338f.png">
+<meta property="article:published_time" content="2023-04-20T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.611Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Event Grid">
+<meta property="article:tag" content="Service Bus">
+<meta property="article:tag" content="Storage">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-5eaff32e-938e-4499-9fc6-79c300063a25.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ストレージアカウント → Event Grid → Service Bus → Functions の経路で可能な限りプライベートでイベントを配信する設定手順
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-04-20T15:00:00.000Z" itemprop="datePublished">2023-04-21</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+0f1caecc-9156-5a01-bf4c-6416aa6b7f87%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5B%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88+%E2%86%92+Event+Grid+%E2%86%92+Service+Bus+%E2%86%92+Functions+%E3%81%AE%E7%B5%8C%E8%B7%AF%E3%81%A7%E5%8F%AF%E8%83%BD%E3%81%AA%E9%99%90%E3%82%8A%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%81%A7%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B%E8%A8%AD%E5%AE%9A%E6%89%8B%E9%A0%86%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F04%2F21%2FStorage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F04%2F21%2FStorage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F04%2F21%2FStorage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP.html" data-id="cuidJ4tr2B6WRJSew1qiHuKA_" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>お世話になっております。PaaS Dev サポート担当の李です。<br><br>本日はストレージアカウントから Event Grid 経由で Service Bus にイベントを配信し、<br><br>Service Bus に届いたイベントをトリガーに Functions を動作する一連の手順を、パブリックインターネットを経由せずに可能な限りプライベートアクセスで行うための設定方法をご紹介いたします。<br><br>尚、Service Bus と Functions それぞれに Network Security Group(NSG) がついている場合どのようなポートを許可すれば良いかに関してもご紹介いたします。<br></p>
+<h2 id="全体の構成図"><a href="#全体の構成図" class="headerlink" title="全体の構成図"></a>全体の構成図</h2><p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-5eaff32e-938e-4499-9fc6-79c300063a25.png" alt="image-5eaff32e-938e-4499-9fc6-79c300063a25.png"><br><br>今回の構成を図で簡単に表現しますと上記の構成になります。<br><br>Service Busの代わりに、お客様のご要件に合わせてEvent Hubs若しくはキューストレージをご利用頂くことも可能ですが、今回の記事ではService Busを利用した設定手順をご案内させて頂きます。<br></p>
+<h2 id="Event-Grid-→-Functions-に直接繋げられないか？"><a href="#Event-Grid-→-Functions-に直接繋げられないか？" class="headerlink" title="Event Grid → Functions に直接繋げられないか？"></a>Event Grid → Functions に直接繋げられないか？</h2><p>シンプルな構成として ストレージ -&gt; Event Grid -&gt; Functions (プライベートエンドポイント経由) とされたい場合もあるかと存じますが、<br><br>大変恐れ入りますが、現時点では以下のドキュメント記載の通り、Event Grid からプライベートエンドポイント経由でのイベントの配信はサポートしておりません。<br><br><br></p>
+<blockquote>
+<p>現時点では、プライベート エンドポイントを使用してイベントを配信することはできません。 つまり、配信されたイベント トラフィックがプライベート IP 空間から外に出てはならないという、ネットワークの分離の厳格な要件がある場合はサポートされません。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/event-grid/managed-service-identity#private-endpoints">マネージド ID を使用したイベント配信</a><br></p>
+</blockquote>
+<p>したがって、Event Gridと Functions 間に Service Bus&#x2F;Event Hubs&#x2F;ストレージ を構成し、Functions がイベントをプルするという構成をする必要があるため、今回は一例として Service Busを間に挟んだ場合にどのように構成するか記載いたします。<br></p>
+<h1 id="ストレージアカウント-→-Event-Grid"><a href="#ストレージアカウント-→-Event-Grid" class="headerlink" title="ストレージアカウント → Event Grid"></a>ストレージアカウント → Event Grid</h1><p>ストレージアカウントから Service Bus へイベントを配信する場合は直接配信されるのではなく、Event Grid サービスを経由して Service Bus に配信する形となります。こちらの通信は常に Microsoft バックボーンネットワークでのアクセスになっているため、既にパブリックインターネット経由しない構成となっておりお客様側で何らかの設定を加える必要はございません。<br></p>
+<h1 id="Event-Grid-→-Service-Bus（若しくはEvent-Hubs、ストレージ）"><a href="#Event-Grid-→-Service-Bus（若しくはEvent-Hubs、ストレージ）" class="headerlink" title="Event Grid → Service Bus（若しくはEvent Hubs、ストレージ）"></a>Event Grid → Service Bus（若しくはEvent Hubs、ストレージ）</h1><p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-2b041c50-d659-4672-8bd2-0e99fa2674cc.png" alt="image-2b041c50-d659-4672-8bd2-0e99fa2674cc.png"><br><br>この手順に関しては上記の図の通り、Managed Id を利用して安全にイベントを送信することができます。今回は、Service Bus のキューに対してイベントを配信してみます。<br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-c12773d3-c103-42ad-9b2e-e523ef2f27c3.png" alt="image-c12773d3-c103-42ad-9b2e-e523ef2f27c3.png"><br><br>一般的には上記の画像の通りイベントブレードから「＋イベントサブスクリプション」ボタンを押下し、イベントサブスクリプションを作成することでシステムトピックも追加することができますが、Managed Id をご利用頂くためにはシステムトピックを先に作成して頂く必要がございます。<br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-eb83c770-642b-48b4-97e9-ff83ee494e11.png" alt="image-eb83c770-642b-48b4-97e9-ff83ee494e11.png"><br><br>「＋リソースの作成」からEvent Grid システムトピックを作成します。「システム割り当てIDを有効化する」は「有効」にします。<br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-1c624ba5-9f88-4e20-ac56-aa6d7e288354.png" alt="image-1c624ba5-9f88-4e20-ac56-aa6d7e288354.png"><br><br>Identity ブレードで状態が「オン」になっているか確認し、Azure ロールの割り当てボタンを押下します。<br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-154b8dec-ee0e-4256-b4d6-d64ffca94daa.png" alt="image-154b8dec-ee0e-4256-b4d6-d64ffca94daa.png"><br><br>ロールの割り当ての追加ボタンを押下しスコープをリソースグループ若しくはサブスクリプションにして頂き、役割には「Azure Service Bus のデータ送信者」を指定します。<br><br>※ 配信不能(Dead-Lettering)を有効にした場合はストレージコンテナーへの権限も必要となるため、「ストレージ BLOB データ共同作成者」も追加してください。<br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-06be48cd-5238-4681-ab05-5dbbcfe75271.png" alt="image-06be48cd-5238-4681-ab05-5dbbcfe75271.png"><br><br>なお、Service Bus のネットワークブレードでパブリックネットワークアクセスを全て無効にし、<br><br>例外-信頼された Microsoft サービスがこのファイアウォールをバイパスすることを許可しますか？項目に関して「はい」を選択します。<br></p>
+<p>その後ストレージのイベントブレードから「＋イベントサブスクリプション」ボタンを押下し、イベントサブスクリプション作成画面に遷移します。<br><br><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-be9e485b-40e4-4610-a2c9-c1f665784782.png" alt="image-be9e485b-40e4-4610-a2c9-c1f665784782.png"><br><br>上記の画像の通りそれぞれの入力値を入れ、最後に配信用の Managed Id の種類を「システム割り当て」に指定します。<br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-a1a97c80-9de5-42e1-85f0-54ecda52ca3c.png" alt="image-a1a97c80-9de5-42e1-85f0-54ecda52ca3c.png"><br><br>配信不能(Dead-Lettering)も有効にする場合は、同じく Managed Id の種類を「システム割り当て」に指定します。<br><br>これで Managed Id を設定したシステムトピック・イベントサブスクリプションの新規作成手順は完了です。<br></p>
+<p>既存のイベントサブスクリプションをご利用頂く場合は以下の追加機能から設定を変更することができます。<br><br><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-15755bdf-f06f-4b35-8b0d-fef2ca9599da.png" alt="image-15755bdf-f06f-4b35-8b0d-fef2ca9599da.png"><br></p>
+<p>上記の手順通り、システムトピックを作成・設定してイベントサブスクリプションを作成するのではなく、イベントブレードからイベントサブスクリプションとシステムトピックを一緒に作成する場合は、システムトピックのアクセス許可設定がされていないため以下の様な認証エラーが発生します。<br><br><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-0c81601e-573e-4c60-a221-f2b4c1c13b32.png" alt="image-0c81601e-573e-4c60-a221-f2b4c1c13b32.png"><br></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;code&quot;:&quot;Managed Identity Authorization Error&quot;...&quot;subscription does not have permission to perform Microsoft.ServiceBus/namespaces/messages/send/...&quot;&lt;br&gt;</span><br></pre></td></tr></table></figure>
+<p>この場合はシステムトピックの作成はできていますが、イベントサブスクリプションの作成で失敗になった状態で<br><br>リソースグループに戻り、ここで作成されたシステムトピックリソースに移動して上記の手順でシステムトピックにアクセス許可を付与する段階から進めてください。<br></p>
+<p>詳細の内容は以下の記事をご参照ください。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/event-grid/add-identity-roles">マネージド ID に Event Grid の配信先へのアクセスを許可する (Managed Id 権限設定方法)</a><br><br><a href="https://learn.microsoft.com/ja-jp/azure/event-grid/managed-service-identity">マネージド ID を使用したイベント配信 (Event Grid の設定方法)</a><br><br><a href="https://learn.microsoft.com/ja-jp/azure/event-grid/consume-private-endpoints">プライベート リンク サービスを使用してイベントを配信する</a><br><br><a href="https://learn.microsoft.com/ja-jp/azure/service-bus-messaging/service-bus-ip-filtering#trusted-microsoft-services">Service Bus - 信頼できる Microsoft サービス</a><br></p>
+<h1 id="Service-Bus-→-Functions"><a href="#Service-Bus-→-Functions" class="headerlink" title="Service Bus → Functions"></a>Service Bus → Functions</h1><p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-6c1e53e6-2f3e-4ce6-929f-b105c36aa459.png" alt="image-6c1e53e6-2f3e-4ce6-929f-b105c36aa459.png"><br><br>この手順に関しては同じく上記の図の通り、プライベートエンドポイントを利用してプライベートアクセスを実現することができます。<br><br>プライベートエンドポイントは、Service Bus の Premium SKU のみでサポートしておりますのでご了承ください。<br><br>こちらの設定に関しては、Service Bus と Functions それぞれ既に NSG がついている状況でご案内いたします。</p>
+<p>先ず通信経路に関して、正確には Service Bus → Functions ではなく Functions から VNET を経由し Service Bus のプライベートエンドポイントを通って Service Bus にイベントを取りに行くイメージとなります。<br><br><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-79855275-3f30-4fc4-be54-10cc5794b430.png" alt="image-79855275-3f30-4fc4-be54-10cc5794b430.png"><br><br>つまり、図で表現すると上記の様な構成になります。<br></p>
+<p>先ず仮想ネットワークを追加します。サブネットは Service Bus 用と Functions 用、２個が必要となります。<br><br>以下がFunctions 用サブネット作成の画面になります。<br><br><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-74162b27-d7c9-4035-ab70-dd440fba84d8.png" alt="image-74162b27-d7c9-4035-ab70-dd440fba84d8.png"><br><br><br><br>以下が Service Bus 用サブネット作成の画面になります。<br>※ Service Bus の場合、画像の通りプライベートエンドポイントネットワークポリシーの設定を NSG にする必要がございます。<br><br><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-a98a7e0d-f4b3-47f0-9691-91b54930af97.png" alt="image-a98a7e0d-f4b3-47f0-9691-91b54930af97.png"><br><br><br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-36885c61-bdb2-4e18-8b95-01075efe65ab.png" alt="image-36885c61-bdb2-4e18-8b95-01075efe65ab.png"><br><br>上記のサブネット追加が終わった後、Service Bus のネットワークブレードからプライベートエンドポイントを作成します。<br><br>プライベートエンドポイント作成の詳細手順は以下の記事をご参照ください。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/service-bus-messaging/private-link-service#configure-private-access-for-an-existing-namespace">既存の名前空間のプライベート アクセスを構成する</a><br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-5d37a408-1eb2-4a9d-93ff-3a6b18d11f19.png" alt="image-5d37a408-1eb2-4a9d-93ff-3a6b18d11f19.png"><br><br>上記のプライベートエンドポイント作成が終わった後、下記手順に従い Functions の VNET 統合を行います。<br><br><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-90267737-2a94-45b2-aaf7-9a0e3f996019.png" alt="image-90267737-2a94-45b2-aaf7-9a0e3f996019.png"><br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-468a8bb9-de50-46ea-a562-601e4f998ce2.png" alt="image-468a8bb9-de50-46ea-a562-601e4f998ce2.png"><br><br>その後上記の NSG 設定で Functions → Service Bus のアウトバウンド通信に対して関連ポートを許可する必要がございます。<br><br><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-30842ad0-bbee-48d6-a425-07ae3db407a9.png" alt="image-30842ad0-bbee-48d6-a425-07ae3db407a9.png"><br><br>上記の記載の通り Functions 側に設定されているNSGのアウトバウンド通信(送信セキュリティ規則)に AMQP の5671と5672、HTTPS の443の許可が必要です。同じく、Service Bus 側の NSG にも以下の内容通り設定してください。<br></p>
+<p>※ Functions のVNET統合されたサブネットに設定するネットワークセキュリティグループのルール<br></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>受信規則（設定必要なし）</th>
+<th>送信規則</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ソース</td>
+<td>x</td>
+<td>Any</td>
+</tr>
+<tr>
+<td>ソースポート範囲</td>
+<td>x</td>
+<td>＊</td>
+</tr>
+<tr>
+<td>宛先</td>
+<td>x</td>
+<td>Service Bus プライベートエンドポイントが設定されたサブネットの CIDR</td>
+</tr>
+<tr>
+<td>サービス</td>
+<td>x</td>
+<td>Custom</td>
+</tr>
+<tr>
+<td>宛先ポート範囲</td>
+<td>x</td>
+<td>443,5671,5672</td>
+</tr>
+<tr>
+<td>プロトコル</td>
+<td>x</td>
+<td>TCP</td>
+</tr>
+<tr>
+<td>アクション</td>
+<td>x</td>
+<td>許可</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>x</td>
+<td>適宜設定</td>
+</tr>
+</tbody></table>
+<p>※ Service Bus のサブネットに設定するネットワークセキュリティグループのルール<br></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>受信規則</th>
+<th>送信規則（設定必要なし）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ソース</td>
+<td>IP Addresses</td>
+<td>x</td>
+</tr>
+<tr>
+<td>└ ソース IP アドレス &#x2F; CIDR 範囲</td>
+<td>Functions で VNET 統合設定をしたサブネット ソース IP アドレス範囲<br>（例：10.3.2.0&#x2F;24）</td>
+<td>x</td>
+</tr>
+<tr>
+<td>ソースポート範囲</td>
+<td>*</td>
+<td>x</td>
+</tr>
+<tr>
+<td>宛先</td>
+<td>Any</td>
+<td>x</td>
+</tr>
+<tr>
+<td>サービス</td>
+<td>Custom</td>
+<td>x</td>
+</tr>
+<tr>
+<td>宛先ポート範囲</td>
+<td>443,5671,5672</td>
+<td>x</td>
+</tr>
+<tr>
+<td>プロトコル</td>
+<td>TCP</td>
+<td>x</td>
+</tr>
+<tr>
+<td>アクション</td>
+<td>許可</td>
+<td>x</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td>適宜設定</td>
+<td>x</td>
+</tr>
+</tbody></table>
+<p>許可するポートの情報の詳細は以下の記事をご参照ください。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/service-bus-messaging/service-bus-faq#----------------------------">ファイアウォールで開く必要があるのはどのポートですか。</a><br></p>
+<p>補足として、プライベート エンドポイントを使用して Azure Functions を Azure 仮想ネットワークに統合する手順に関しては以下のチュートリアル記事をご参照ください。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-vnet">プライベート エンドポイントを使用して Azure Functions を Azure 仮想ネットワークに統合する</a></p>
+<p>これで全ての設定手順が完了しました。<br></p>
+<p><img src="/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP/image-ca8757ae-44a7-4b9b-9fea-c21bab80338f.png" alt="image-ca8757ae-44a7-4b9b-9fea-c21bab80338f.png"><br><br>全てのリソースに対してパブリックアクセスを無効にしても、ストレージに BLOB が追加されると Functions で Service Bus キュートリガーが実行されることが確認できました。</p>
+<p>以上、ストレージアカウント → Event Grid → Service Bus → Functions をプライベートでアクセスする設定手順(NSG を含め)を紹介いたしました。</p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2023 年 04 月 21 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../25/how-to-check-azurefunctions-runtimeis-unreachable.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Azure Functions での「Azure Functions Runtime に到達できません」のよくある原因と対応策
+        
+      </div>
+    </a>
+  
+  
+    <a href="../17/AppService-will-no-longer-be-placed-in-DISASTER-RECOVERY-MODE.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">2025 年 3 月 31 日以降、Azure App Service は Disaster Recovery Mode にならなくなります</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

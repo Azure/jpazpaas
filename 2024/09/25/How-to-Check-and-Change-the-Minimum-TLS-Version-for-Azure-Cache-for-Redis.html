@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Cache for Redis の最小 TLS バージョンの確認、変更方法 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="トランスポート層セキュリティ (TLS) バージョン 1.2 以降の排他的使用に向けた業界全体の推進活動に対応するために、Azure Cache for Redis は、2025 年 4 月に TLS 1.2 の使用を求める方向に進んでいます。TLS バージョン 1.0 と 1.1 は、BEAST や POODLE などの攻撃を受けやすく、またその他の共通脆弱性識別子 (CVE) の弱点を持つこ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Cache for Redis の最小 TLS バージョンの確認、変更方法">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="トランスポート層セキュリティ (TLS) バージョン 1.2 以降の排他的使用に向けた業界全体の推進活動に対応するために、Azure Cache for Redis は、2025 年 4 月に TLS 1.2 の使用を求める方向に進んでいます。TLS バージョン 1.0 と 1.1 は、BEAST や POODLE などの攻撃を受けやすく、またその他の共通脆弱性識別子 (CVE) の弱点を持つこ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-0e903103-73b0-4207-9d76-1b36e84f130a.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-963d71c4-6a0f-47a6-99c9-b70adc4e0a3b.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-0d542c20-2240-43ee-9bf6-d7912532167b.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-f130514d-ce51-450a-9ac7-8ded82a1f599.png">
+<meta property="article:published_time" content="2024-09-24T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.811Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Azure Cache for Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-0e903103-73b0-4207-9d76-1b36e84f130a.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Cache for Redis の最小 TLS バージョンの確認、変更方法
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2024-09-24T15:00:00.000Z" itemprop="datePublished">2024-09-25</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+f389350d-baa0-5311-aeb2-1a9c7df67a0f%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Cache+for+Redis+%E3%81%AE%E6%9C%80%E5%B0%8F+TLS+%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E3%81%AE%E7%A2%BA%E8%AA%8D%E3%80%81%E5%A4%89%E6%9B%B4%E6%96%B9%E6%B3%95%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2024%2F09%2F25%2FHow-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html%29%0A*+Content+Source%3A+%5Barticles%2F2024%2F09%2F25%2FHow-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2024%2F09%2F25%2FHow-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html" data-id="cuidxcj7ZC3ukssKlPassKPC2" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<p>トランスポート層セキュリティ (TLS) バージョン 1.2 以降の排他的使用に向けた業界全体の推進活動に対応するために、Azure Cache for Redis は、2025 年 4 月に TLS 1.2 の使用を求める方向に進んでいます。<br>TLS バージョン 1.0 と 1.1 は、BEAST や POODLE などの攻撃を受けやすく、またその他の共通脆弱性識別子 (CVE) の弱点を持つことが知られています。<br>そのため、<strong>2025 年 4 月 1 日以降段階的に、Azure Cache for Redis の 最小 TLS バージョンの設定は自動的に 1.2となり、TLS 1.0 と 1.1 を使用した通信は接続できなくなります。</strong></p>
+<p>■ ご参考：  </p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-remove-tls-10-11">Azure Cache for Redis での使用から TLS 1.0 と 1.1 を削除する - Azure Cache for Redis</a> </li>
+<li><a href="https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-remove-tls-10-11">英語版 - Remove TLS 1.0 and 1.1 from use with Azure Cache for Redis - Azure Cache for Redis</a></li>
+</ul>
+<p>■ 上記ドキュメントより表を引用  </p>
+<p><img src="/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-0e903103-73b0-4207-9d76-1b36e84f130a.png" alt="image-0e903103-73b0-4207-9d76-1b36e84f130a.png"></p>
+<p>本記事では、Azure Cache for Redis のキャッシュ インスタンスの最小 TLS バージョンの確認方法、及び TLS 1.0 と 1.1 を設定していた場合に、TLS 1.2 への変更の手順をご案内いたします。<br><br></p>
+<hr>
+<p>(目次)<br><a href="#index0">0. 注意事項</a><br><a href="#index1">1. 最小 TLS バージョン設定の確認と変更手順 (Azure ポータル編)</a><br><a href="#index2">2. 最小 TLS バージョン設定の確認と変更手順 (コマンド使用編)</a><br><a href="#index3">3. よくいただくご質問</a><br><br></p>
+<hr>
+<p><a id="index0"></a></p>
+<h1 id="0-注意事項"><a href="#0-注意事項" class="headerlink" title="0. 注意事項"></a>0. 注意事項</h1><h2 id="※※-ご注意ください-※※"><a href="#※※-ご注意ください-※※" class="headerlink" title="※※ ご注意ください ※※"></a>※※ ご注意ください ※※</h2><p>冒頭でご紹介のドキュメントのタイムラインに記載の通り、2024 年 3 月 1 日以降は既存のキャッシュで minimumTLSVersion を 1.0 または 1.1 に変更することができなくなっております。そのため、<strong>現在の最小 TLS バージョンの設定が TLS 1.0、1.1 になっている状態から一度でも TLS 1.2 に変更しますと、再度 TLS 1.0、1.1 に戻すことはできません。</strong><br>現時点でリソースの最小 TLS バージョンが TLS 1.0、1.1 に設定されている場合、接続するクライアントが TLS 1.2 未満を利用していないことをご確認いただいた後、TLS 1.2 への設定変更を行ってください。</p>
+<p>クライアント側にて接続に使用している TLS バージョンの確認については、本記事内「3. よくいただくご質問」項目の「<a href="#faq4">質問4. クライアント側から通信に使用している TLS バージョンの確認方法</a>」をご参照ください。</p>
+<p>また、最小 TLS バージョンが TLS 1.2 に設定されている既存の Redis キャッシュ インスタンスに対しても、TLS 1.0、1.1 に設定変更することはできません。<br><br></p>
+<hr>
+<p><a id="index1"></a></p>
+<h1 id="1-最小-TLS-バージョン設定の確認と変更手順-Azure-ポータル編"><a href="#1-最小-TLS-バージョン設定の確認と変更手順-Azure-ポータル編" class="headerlink" title="1. 最小 TLS バージョン設定の確認と変更手順 (Azure ポータル編)"></a>1. 最小 TLS バージョン設定の確認と変更手順 (Azure ポータル編)</h1><p>最小 TLS バージョンの設定は Azure ポータルで該当の Redis キャッシュ インスタンスを選択後、[詳細設定] ブレードを表示いただき、[TLS の最小バージョン] 欄より確認・設定変更可能です。</p>
+<h2 id="TLS-の最小バージョンの確認"><a href="#TLS-の最小バージョンの確認" class="headerlink" title="TLS の最小バージョンの確認"></a>TLS の最小バージョンの確認</h2><p>[TLS の最小バージョン] 欄に表示されている値が現在の設定値です。</p>
+<p><img src="/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-963d71c4-6a0f-47a6-99c9-b70adc4e0a3b.png" alt="image-963d71c4-6a0f-47a6-99c9-b70adc4e0a3b.png"></p>
+<h2 id="TLS-の最小バージョンの変更"><a href="#TLS-の最小バージョンの変更" class="headerlink" title="TLS の最小バージョンの変更"></a>TLS の最小バージョンの変更</h2><p>[TLS の最小バージョン]欄にて「1.2」をご選択いただき、ブレード上部の「保存」をクリックしてください。<br>※ <strong>TLS 1.2 から TLS 1.0、1.1 への変更はできません。</strong> 本記事内「<a href="#index0">0. 注意事項</a>」をご参照ください。</p>
+<p><img src="/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-0d542c20-2240-43ee-9bf6-d7912532167b.png" alt="image-0d542c20-2240-43ee-9bf6-d7912532167b.png"></p>
+<p><a id="default"></a></p>
+<h2 id="TLS-最小バージョンの表示が-既定-と表示されている場合"><a href="#TLS-最小バージョンの表示が-既定-と表示されている場合" class="headerlink" title="TLS 最小バージョンの表示が [既定] と表示されている場合"></a>TLS 最小バージョンの表示が [既定] と表示されている場合</h2><p>以下のご参考画像のように、[TLS の最小バージョン]の表示が [既定] と表示されている場合、当該リソースが作成された時期により既定の最小 TLS バージョンが異なります。</p>
+<p>(ご参考画像)<br><img src="/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis/image-f130514d-ce51-450a-9ac7-8ded82a1f599.png" alt="image-f130514d-ce51-450a-9ac7-8ded82a1f599.png"></p>
+<ul>
+<li>Redis キャッシュ インスタンスを 2020 年以前に作成している場合は、最小 TLS バージョンが 1.0 として動作しております。</li>
+<li>Redis キャッシュ インスタンスを 2020 年以降に作成している場合は、最小 TLS バージョンが 1.2 として動作しております。</li>
+</ul>
+<p>もし、対象の Redis キャッシュ インスタンスの作成年が不明の場合、対象のサブスクリプション ID とリソース名をいただきましたら、サポート チームより Azure 基盤側の情報から作成年を確認することが可能でございますので、ご希望がございましたら対象のサブスクリプションとリソースを選択してお問合せください。</p>
+<p>■ ご参考：<a href="https://jpaztech.github.io/blog/information/Different-subscriptions-research/">お問い合わせ発行時と「異なる」サブスクリプションならびに AAD テナントの調査依頼に対してのセキュリティ チェックが強化されます</a><br><br> </p>
+<p>なお、[TLS の最小バージョン] の値を [既定] から 1.2 への変更は可能です。クライアント側の通信が TLS 1.2 以上で行われていることをご確認いただけましたら、Redis キャッシュ インスタンス の [TLS の最小バージョン] の値を 1.2 へご変更ください。<br><br></p>
+<hr>
+<p><a id="index2"></a></p>
+<h1 id="2-最小-TLS-バージョン設定の確認と変更手順-コマンド使用編"><a href="#2-最小-TLS-バージョン設定の確認と変更手順-コマンド使用編" class="headerlink" title="2. 最小 TLS バージョン設定の確認と変更手順 (コマンド使用編)"></a>2. 最小 TLS バージョン設定の確認と変更手順 (コマンド使用編)</h1><h2 id="コマンドで最小-TLS-バージョンを確認する"><a href="#コマンドで最小-TLS-バージョンを確認する" class="headerlink" title="コマンドで最小 TLS バージョンを確認する"></a>コマンドで最小 TLS バージョンを確認する</h2><p>Azure CLI 及び Azure PowerShell を使用して Redis キャッシュ インスタンスの TLS 最小バージョンを確認する際は、以下のコマンド例をご利用いただき、「minimumTlsVersion」の値をご確認ください。</p>
+<p><span style="color: red;">※以下のコマンドで最小 TLS バージョンご確認の際、「minimumTlsVersion」の値が「null」または空白の場合は、値に「既定」が設定されています。対応など詳しくは、本記事内「<a href="#default">TLS 最小バージョンの表示が [既定] と表示されている場合</a>」をご参照ください。</span><br><br></p>
+<h3 id="◆-Azure-CLI"><a href="#◆-Azure-CLI" class="headerlink" title="◆ Azure CLI"></a>◆ Azure CLI</h3><p>Azure にログインします。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">az login</span><br></pre></td></tr></table></figure>
+
+<p>以下のコマンド例にて、指定したサブスクリプション内で、TLS 1.2 <strong>以外</strong>のバージョンを設定している Redis キャッシュ インスタンスをリストアップし、それぞれの名前と最小 TLS バージョンを表示します。<br>※ <subscriptionId>(サブスクリプションID) はご利用環境に応じてご変更ください。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">az redis list --subscription &lt;subscriptionId&gt; --query &quot;[?minimumTlsVersion!=&#x27;1.2&#x27;].&#123;name:name, minimumTlsVersion:minimumTlsVersion&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>■ ご参考：<a href="https://learn.microsoft.com/ja-JP/cli/azure/redis?view=azure-cli-latest#az-redis-list">az redis list</a><br><br></p>
+<h3 id="◆-Azure-PowerShell"><a href="#◆-Azure-PowerShell" class="headerlink" title="◆ Azure PowerShell"></a>◆ Azure PowerShell</h3><p>サブスクリプションへ接続します。<br>※ <subscriptionId>(サブスクリプションID) はご利用環境に応じてご変更ください。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Connect-AzAccount -Subscription &lt;SubscriptionId&gt;</span><br></pre></td></tr></table></figure>
+<p>以下のコマンド例にて、現在のサブスクリプション内で TLS 1.2 <strong>以外</strong>のバージョンを設定している Redis キャッシュ インスタンスをリストアップし、それぞれの名前と最小 TLS バージョンを表示します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-AzRedisCache | Where-Object &#123; $_.MinimumTlsVersion -ne &#x27;1.2&#x27; &#125; | Select-Object Name, MinimumTlsVersion</span><br></pre></td></tr></table></figure>
+
+<p>■ ご参考：<a href="https://learn.microsoft.com/ja-jp/powershell/module/az.rediscache/get-azrediscache?view=azps-12.2.0">Get-AzRedisCache (Az.RedisCache)</a><br><br></p>
+<h2 id="コマンドで最小-TLS-バージョンを変更する"><a href="#コマンドで最小-TLS-バージョンを変更する" class="headerlink" title="コマンドで最小 TLS バージョンを変更する"></a>コマンドで最小 TLS バージョンを変更する</h2><p>Azure CLI 及び Azure PowerShell を使用して Redis キャッシュ インスタンスの TLS 最小バージョンを変更するには、以下のコマンド例をご利用ください。  </p>
+<p>※ <RedisCacheName>(Redis キャッシュ インスタンスの名前)、<ResourceGroupName>(リソースグループ名)、<subscriptionId>(サブスクリプションID) はご利用環境に応じてご変更ください。  </p>
+<p>※ <strong>TLS 1.2 から TLS 1.0、1.1 への変更はできません。</strong> 本記事内「<a href="#index0">0. 注意事項</a>」をご参照ください。</p>
+<h3 id="◆-Azure-CLI-1"><a href="#◆-Azure-CLI-1" class="headerlink" title="◆ Azure CLI"></a>◆ Azure CLI</h3><p>Azure にログインします。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">az login</span><br></pre></td></tr></table></figure>
+<p>以下のコマンド例にて、Redis キャッシュ インスタンスの TLS 最小バージョンを 1.2 に変更します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">az redis update --name &lt;RedisCacheName&gt; --resource-group &lt;ResourceGroupName&gt; --set minimumTlsVersion=1.2 </span><br><span class="line">```   </span><br><span class="line"> </span><br><span class="line">■ ご参考 : [az redis update](https://learn.microsoft.com/ja-jp/cli/azure/redis?view=azure-cli-latest#az-redis-update)  </span><br><span class="line">&lt;br&gt;</span><br><span class="line"></span><br><span class="line">### ◆ Azure PowerShell</span><br><span class="line">サブスクリプションへ接続します。  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Connect-AzAccount -Subscription <SubscriptionId></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">以下のコマンド例にて、Redis キャッシュ インスタンスの TLS 最小バージョンを 1.2 に変更します。</span><br></pre></td></tr></table></figure>
+<p>Set-AzRedisCache -ResourceGroupName <ResourceGroupName> -Name <RedisCacheName> -MinimumTlsVersion 1.2    </p>
+<pre><code>
+■ ご参考 : [Set-AzRedisCache (Az.RedisCache)](https://learn.microsoft.com/ja-jp/powershell/module/az.rediscache/set-azrediscache?view=azps-12.3.0&amp;viewFallbackFrom=azps-11.0.0)  
+&lt;br&gt;
+
+---
+&lt;a id=&quot;index3&quot;&gt;&lt;/a&gt;
+# 3. よくいただくご質問
+- [質問1. 最小 TLS バージョン設定が既に 1.2 だった場合](#faq1)  
+- [質問2. 最小 TLS バージョン設定で 1.2 以外のものをまとめて確認したい](#faq2)  
+- [質問3. 最小 TLS バージョンを 1.2 に変更した際の影響](#faq3)  
+- [質問4. クライアント側から通信に使用している TLS バージョンの確認方法](#faq4)
+
+&lt;a id=&quot;faq1&quot;&gt;&lt;/a&gt; 
+## [質問1]: 使用している Redis キャッシュ インスタンスの最小 TLS バージョンの設定を確認したところ、**最小 TLS バージョンが 1.2** となっていました。クライアント側からの接続も問題なく行えています。本件について何か対応は必要でしょうか。 
+  
+Redis キャッシュ インスタンスの最小 TLS バージョンの設定が 1.2 以上であれば、1.2 未満での通信についてはすでに Azure Cache for Redis側にてアクセスを拒否している状態です。現在クライアント側から該当の Redis キャッシュ インスタンスへの接続が問題なくご利用いただけている場合は、本件におけるこれ以上のご対応は不要となります。  
+&lt;br&gt;
+
+&lt;a id=&quot;faq2&quot;&gt;&lt;/a&gt;
+## [質問2]: Azure Cache for Redis において複数の Redis キャッシュ インスタンスを使用しています。最小 TLS バージョンの設定を一つずつ確認するのが大変なため、TLS 1.2 以外が設定されているものがないかをもっと簡単に確認する方法はありますか。
+
+あるサブスクリプション内にてご利用の全ての Redis キャッシュ インスタンスについて、最小 TLS バージョンの設定に 1.2 以外が設定されているものがないかのご確認は、本記事内「[2. 最小 TLS バージョン設定の確認と変更手順 (コマンド使用編)](#index2)」にてご案内しております、**Azure CLI または Azure PowerShell を使った確認方法** (サブスクリプション内で TLS 1.2 以外のバージョンを設定している Redis キャッシュ インスタンスをリストアップし、それぞれの名前と最小 TLS バージョンを表示します) をご活用ください。  
+&lt;br&gt;
+
+&lt;a id=&quot;faq3&quot;&gt;&lt;/a&gt;
+## [質問3]: 最小 TLS バージョンを 1.2 に変更した際の影響について知りたいです。
+ 
+Redis キャッシュ インスタンスの TLS のバージョンを変更する場合、通常のメンテナンスと同様にフェールオーバーが発生します。  
+フェールオーバーについては通常の Azure Cache for Redis のご利用の中でも発生する動作となりますので、普段の運用で特に問題がないようでしたら、影響はないと言えます。  
+
+フェールオーバーの詳細は以下の資料にてご確認ください。  
+■ ご参考：  
+・ [Azure Cache for Redis のフェールオーバーと修正プログラムの適用](https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-failover)  
+・ [Azure Cache for Redis のフェールオーバーについて - Japan PaaS Support Team Blog](https://azure.github.io/jpazpaas/2020/12/02/cache-failover.html)  
+&lt;br&gt;
+
+&lt;a id=&quot;faq4&quot;&gt;&lt;/a&gt;
+## [質問4]: 接続元のクライアント側から通信に使用している TLS バージョンの確認方法について知りたいです。
+
+Redis キャッシュ インスタンスの接続元のクライアント側にて TLS 1.0、1.1 の通信を利用している場合は、2025 年 4 月 1 日以降、それらのクライアントからはアクセスができなくなります。
+
+実際にクライアント側がどの TLS バージョンで接続しているか、Azure Cache for Redis の側から判断するログなどはございません。  
+クライアント側が利用している TLS バージョンが不明な場合、お手元の環境で TLS 1.2 の検証用の Redis キャッシュ インスタンスをご用意いただき、実際にクライアント側からの接続に問題がないか、事前のテストをご検討ください。
+ 
+■ご参考：[アプリケーションが既に準拠しているかどうかを確認する](https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-remove-tls-10-11#check-whether-your-application-is-already-compliant)  
+上記ドキュメントより  
+～～～ 引用ここから ～～～  
+アプリケーションが TLS 1.2 で機能するかどうかを確認するには、テストまたはステージング キャッシュで TLS のバージョン要件を 1.2 以上に設定して、テストを実行します。 [TLS の最小バージョン] 設定は、Azure portal 内のキャッシュ インスタンスの [詳細設定] にあります。 この変更後もアプリケーションが期待どおりに機能する場合、そのアプリは TLS 1.2 以降を使っています。  
+～～～ 引用ここまで ～～～  
+
+以下の資料内では、いくつかのプログラミング言語について、TLS バージョンに関する言及の記載がございます。
+
+■ご参考：[TLS 1.2 以降を使うようにアプリケーションを構成する](https://learn.microsoft.com/ja-jp/azure/azure-cache-for-redis/cache-remove-tls-10-11#configure-your-application-to-use-tls-12-or-later)  
+&lt;br&gt;
+
+---
+
+&lt;br&gt;
+&lt;br&gt;
+
+2025 年 02 月 26 日時点の内容となります。&lt;br&gt;
+本記事の内容は予告なく変更される場合がございますので予めご了承ください。
+
+&lt;br&gt;
+&lt;br&gt;
+</code></pre>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../12/06/Default-root-certificate-on-Windows-App-Service.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Windows 版の App Service にインストールされている既定のルート証明書
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">API Management カスタム ドメインの設定及び証明書の更新方法とその影響</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>App Service認証(easy auth)が有効な App Service に色々なクライアントからアクセスする方法 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="App Service では組み込みの認証機能を提供しており、App Service Authentication または Easy Auth と呼ばれています。この組み込みの認証機能により、App Service でホストしているアプリケーションでは認証&#x2F;認可用のコードを実装せずに、簡単に認証と認可の機能をアプリケーションで利用することが出来ます。 参考: 認証と承認 - Azure">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App Service認証(easy auth)が有効な App Service に色々なクライアントからアクセスする方法">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="App Service では組み込みの認証機能を提供しており、App Service Authentication または Easy Auth と呼ばれています。この組み込みの認証機能により、App Service でホストしているアプリケーションでは認証&#x2F;認可用のコードを実装せずに、簡単に認証と認可の機能をアプリケーションで利用することが出来ます。 参考: 認証と承認 - Azure">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-75ca95a4-1a06-41be-9e89-ec944ccee5a4.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-581c1900-3e06-480a-ba62-63425284dd6d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-56ef764c-1f74-45ed-b3d3-bda9323cb584.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-96147ca8-edd5-415b-87ac-25d6cad3244b.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-6b8cd62a-ba53-4816-8a38-03e5b4abd738.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-f527a4ea-b5c6-4c7e-81c0-40e507ee4572.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-1449da9e-87c7-4bf2-9183-4abcd4a3a4c9.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-a240d535-0899-4e7d-b29a-8780fc57ab24.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-e14594fe-a98f-4148-af1e-4928316886ea.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-ecb402b6-2470-4f8c-b902-29078c725a2a.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-7f10ed4b-940f-4ad0-8675-bcf9235fb572.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-4e24d6aa-1eb1-4855-964f-f7c72c505ebb.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-10c97881-8b07-46b5-bdd3-c478a28a55c3.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-838fe7fa-e628-4bda-ad36-ec99f6f3dc9a.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-83a357ff-4789-4fa3-b998-605a6f5d187a.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-a8541865-fa2c-4676-92af-a255eb955592.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-809493a5-7f9c-4666-a718-11be2d133552.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-a556ca9e-6079-4195-b6ec-3ff0736136da.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-78da0882-94f5-4241-a288-e27915bcb784.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-fc9737ce-6187-4a0c-b696-6709fe3161e4.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-d6a27057-152c-4a19-8208-4b4c466900ad.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-ddf5b9a3-cb71-4b54-83a9-811c502f5756.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-dd10d57f-43e2-4ea1-b7ab-590ed749b138.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-cdace94c-f74c-4e73-8c7d-cb4efcd565fe.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-80275503-3ac9-4fd4-9284-e5926ca3ff70.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-a594edbc-74c8-417d-997f-ff1434715d41.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-55fc36bf-adc8-45a1-89d5-6e777b6b25af.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-fb0ab1f4-136e-4010-8b7d-fb316476ef8f.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-b91570b8-f6c5-499e-b7da-928328b152c8.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-dd0f3398-2d55-4b3f-82e0-d1c7312f0b22.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-8399449f-655d-4515-b4ea-ab45db1e1f5d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-6641cca9-558e-49c6-917b-724d5ce2fca1.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-0e2df657-cdb1-4533-8bbf-81bba2dbe043.png">
+<meta property="article:published_time" content="2023-10-22T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.691Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="App Service">
+<meta property="article:tag" content="Function App">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-75ca95a4-1a06-41be-9e89-ec944ccee5a4.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/10/23/access-to-easyauth-enabled-appservice-or-functions" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      App Service認証(easy auth)が有効な App Service に色々なクライアントからアクセスする方法
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-10-22T15:00:00.000Z" itemprop="datePublished">2023-10-23</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+1b7585c6-b7de-537a-96a1-be875bdd4b13%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BApp+Service%E8%AA%8D%E8%A8%BC%28easy+auth%29%E3%81%8C%E6%9C%89%E5%8A%B9%E3%81%AA+App+Service+%E3%81%AB%E8%89%B2%E3%80%85%E3%81%AA%E3%82%AF%E3%83%A9%E3%82%A4%E3%82%A2%E3%83%B3%E3%83%88%E3%81%8B%E3%82%89%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F10%2F23%2Faccess-to-easyauth-enabled-appservice-or-functions.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F10%2F23%2Faccess-to-easyauth-enabled-appservice-or-functions.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F10%2F23%2Faccess-to-easyauth-enabled-appservice-or-functions.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions.html" data-id="cuid-oURxx5qAtveR0eWZt1r7" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>App Service では組み込みの認証機能を提供しており、App Service Authentication または Easy Auth と呼ばれています。この組み込みの認証機能により、App Service でホストしているアプリケーションでは認証&#x2F;認可用のコードを実装せずに、簡単に認証と認可の機能をアプリケーションで利用することが出来ます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization">参考: 認証と承認 - Azure App Service</a></p>
+<p>App Service 認証が有効な App Service(Azure Functions 含む) でホスティングされているお客様の Web アプリケーションや API (以下、まとめてサイトと表記します) へアクセスする方法はクライアントの種類により異なります。本記事では、代表的なクライアントからアクセスする例を 5 つご紹介します。</p>
+<p>イメージ:<br><br>Client –&gt; App Service 認証が有効な App Service&#x2F;Azure Functions のサイト</p>
+<p>1 ) Client: ブラウザー(ログインユーザーあり)<br><br><br>2 ) Client: デーモン(ログインユーザーなし)<br><br><br>3 ) Client: マネージドID を使用したサービス(Logic Apps)(ログインユーザーなし)<br><br><br>4 ) Client: AppService (ログインユーザーあり、AppService 認証でアクセストークンを取得する)<br><br><br>5 ) Client: SPA アプリケーション(ログインユーザーあり、MSAL でアクセストークンを取得する)　※ App Service のセッショントークンを使用するシナリオ<br><br></p>
+<p>前提として本記事では、特に断りがない場合、ID プロバイダーとして Microsoft Entra ID を使用し、以下のように App Service 認証の設定を構成した場合を想定しています。(※シナリオ 3 を除く)</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#authorization-behavior">認証と承認 - Azure App Service</a></p>
+<blockquote>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-75ca95a4-1a06-41be-9e89-ec944ccee5a4.png" alt="image-75ca95a4-1a06-41be-9e89-ec944ccee5a4.png"></p>
+</blockquote>
+<h2 id="1-ブラウザークライアントから-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする"><a href="#1-ブラウザークライアントから-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする" class="headerlink" title="1 ) ブラウザークライアントから App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする"></a>1 ) ブラウザークライアントから App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする</h2><p>クライアントがブラウザーの場合、App Service&#x2F;Azure Functions の URL(https:&#x2F;&#x2F;&lt;リソース名&gt;.azurewebsites.net) へアクセスすると、デフォルトでは自動的に App Service 認証で指定した ID プロバイダーと認証連携 (シングルサインオン) が自動的に行われ、認証に成功すると、App Service&#x2F;Azure Functions でホストしているサイトへアクセスすることが出来ます。</p>
+<p>実際に試してみると以下のような流れになります。<br><br><br>手順１：App Service&#x2F;Azure Functions のサイト URL を確認する<br><br><br>手順２：サイト URL へアクセスする</p>
+<h3 id="手順１：App-Service-Azure-Functions-のサイト-URL-を確認する"><a href="#手順１：App-Service-Azure-Functions-のサイト-URL-を確認する" class="headerlink" title="手順１：App Service&#x2F;Azure Functions のサイト URL を確認する"></a>手順１：App Service&#x2F;Azure Functions のサイト URL を確認する</h3><p>Azure ポータルから対象リソースを選択後、[概要] &gt; 既定のドメイン(URL) から App Service&#x2F;Azure Functions のサイト URL を確認します。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-581c1900-3e06-480a-ba62-63425284dd6d.png" alt="image-581c1900-3e06-480a-ba62-63425284dd6d.png"></p>
+<p>Azure Functions の関数へアクセスする場合は、[概要] から対象関数を選択後、[概要] &gt; 関数の URL の取得から実行対象の関数の URL を確認します。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-56ef764c-1f74-45ed-b3d3-bda9323cb584.png" alt="image-56ef764c-1f74-45ed-b3d3-bda9323cb584.png"></p>
+<h3 id="手順２：サイト-URL-へアクセスする"><a href="#手順２：サイト-URL-へアクセスする" class="headerlink" title="手順２：サイト URL へアクセスする"></a>手順２：サイト URL へアクセスする</h3><p>ブラウザーのアドレスバーに手順１で確認した URL を入力すると、認証が行われていないクライアントの場合、デフォルトの設定では自動的に App Service 認証で連携を行っている ID プロバイダー(Microsoft Entra ID など) へリダイレクトされます。<br>リダイレクトされない場合、認証の設定で “アクセスを制限する”が”認証が必要”、”認証されていない要求”が”HTTP 302 (検出) を返す (ID プロバイダーにリダイレクト)” 以外が構成されている可能性がございます。詳細については、<a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#authorization-behavior">認証と承認 - Azure App Service</a> をご参照ください。</p>
+<p>クライアントが ID プロバイダー(Microsoft Entra ID など) へリダイレクトされた後、連携対象の ID プロバイダーにユーザーが既にログイン済みであった場合、ID&#x2F;PW の入力画面が表示されることなく、そのまま認証が完了します。連携対象の ID プロバイダーにユーザーがログイン済みではない場合、ID&#x2F;PW などで ID プロバイダーにユーザーがログインを行い、認証を成功させます。<br>認証が完了した後、初回リクエストでは以下のようにアクセス許可が求められ、[Accept] ボタンよりアクセス許可を行います。<a href="https://jpazureid.github.io/blog/azure-active-directory/azure-ad-consent-framework/">ご参考:「管理者の承認が必要」のメッセージが表示された場合の対処法</a></p>
+<p>※ 初回リクエストのみ</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-96147ca8-edd5-415b-87ac-25d6cad3244b.png" alt="image-96147ca8-edd5-415b-87ac-25d6cad3244b.png"></p>
+<p>認証及びアクセス許可が完了すると、App Service&#x2F;Azure Functions のサイトが表示されます。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-6b8cd62a-ba53-4816-8a38-03e5b4abd738.png" alt="image-6b8cd62a-ba53-4816-8a38-03e5b4abd738.png"></p>
+<p>※ Azure Functions の HTTP トリガー関数の場合、以下のように実行結果が表示されます。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-f527a4ea-b5c6-4c7e-81c0-40e507ee4572.png" alt="image-f527a4ea-b5c6-4c7e-81c0-40e507ee4572.png"></p>
+<p>(ご参考) ブラウザークライアントからアクセスする場合の認証フローは、<a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#authentication-flow">認証と承認 - Azure App Service</a>で “プロバイダーの SDK を使わない場合” のシナリオとして記載しております。また、仕組みの詳細については<br><a href="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication.html">App Service 認証の概要と仕組みについて - Japan PaaS Support Team Blog</a>にもご紹介しておりますので必要に応じてご参照ください。</p>
+<h2 id="2-デーモンクライアント-ログインユーザーなし-から-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする"><a href="#2-デーモンクライアント-ログインユーザーなし-から-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする" class="headerlink" title="2 ) デーモンクライアント(ログインユーザーなし)から App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする"></a>2 ) デーモンクライアント(ログインユーザーなし)から App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする</h2><p>デーモンアプリケーションなど、ユーザーがいないクライアントを使用するシナリオで App Service&#x2F;Azure Functions でホストしているサイトへアクセスする場合には、アプリケーション内で ID プロバイダーからアクセストークンを取得し、そのトークンを Authorization リクエストヘッダーに付与することで、App Service&#x2F;Azure Functions でホストしているサイトへアクセスすることが出来ます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-provider-aad#daemon-client-application-service-to-service-calls">ご参考: デーモン クライアント アプリケーション (サービス間の呼び出し)</a></p>
+<blockquote>
+<p>アプリケーションは、(ユーザーの代わりではなく) それ自体の代わりに App Service または関数アプリでホストされる Web API を呼び出すトークンを取得できます。 このシナリオは、ログイン ユーザーなしでタスクを実行する非対話型デーモン アプリケーションに役立ちます。 これには標準の OAuth 2.0 クライアント資格情報の付与が使用されます。</p>
+</blockquote>
+<p>ID プロバイダーとして Microsoft Entra ID を選択した場合のイメージは以下の通りです。<br><br><br><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-1449da9e-87c7-4bf2-9183-4abcd4a3a4c9.png" alt="image-1449da9e-87c7-4bf2-9183-4abcd4a3a4c9.png"><br><br><br>具体的な手順は以下のような流れになります。<br><br><br>手順１：デーモンアプリケーションを Microsoft Entra ID に登録する (上図手順①)<br><br><br>手順２：Microsoft Entra ID からアクセストークンをするために必要な情報を確認する<br><br><br>手順３：Microsoft Entra ID からアクセストークンを取得する (上図手順②)<br><br><br>手順４：App Service 認証を有効にした App Service&#x2F;Azure Functions へリクエストを送信する (上図手順③)</p>
+<h3 id="手順１：デーモンアプリケーションを-Microsoft-Entra-ID-に登録する"><a href="#手順１：デーモンアプリケーションを-Microsoft-Entra-ID-に登録する" class="headerlink" title="手順１：デーモンアプリケーションを Microsoft Entra ID に登録する"></a>手順１：デーモンアプリケーションを Microsoft Entra ID に登録する</h3><p>クライアントとする デーモンアプリケーションを Microsoft Entra ID に登録します。手順は以下ドキュメントに記載がございますのでご参照ください。App Service&#x2F;Azure Functions は、App Service 認証を有効にした際に Microsoft Entra ID にアプリケーション登録が行われますので追加の構成は不要となります。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant#daemon-client-application-service-to-service-calls">Azure AD 認証を構成する - Azure App Service</a></p>
+<blockquote>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-a240d535-0899-4e7d-b29a-8780fc57ab24.png" alt="image-a240d535-0899-4e7d-b29a-8780fc57ab24.png"></p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/quickstart-register-app#register-an-application">ご参考: クイック スタート: Microsoft ID プラットフォームでアプリを登録する - Microsoft Entra</a></p>
+<h3 id="手順２：Microsoft-Entra-ID-からアクセストークンをするために必要な情報を確認する"><a href="#手順２：Microsoft-Entra-ID-からアクセストークンをするために必要な情報を確認する" class="headerlink" title="手順２：Microsoft Entra ID からアクセストークンをするために必要な情報を確認する"></a>手順２：Microsoft Entra ID からアクセストークンをするために必要な情報を確認する</h3><p>手順1を参考にデーモンアプリケーションのクライアント ID とクライアントシークレットを確認します。<br>次に、Azure ポータルから対象の App Service&#x2F;Azure Functions を選択後、[認証] ブレードより ID プロバイダー(Microsoft) のアプリ (クライアント) ID を確認します。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-e14594fe-a98f-4148-af1e-4928316886ea.png" alt="image-e14594fe-a98f-4148-af1e-4928316886ea.png"></p>
+<p>対象 App Service&#x2F;Azure Functions とデーモンアプリケーションを登録したテナントのテナント ID を確認します。テナント ID は、Azure ポータルから App Service&#x2F;Azure Functions を選択後、[認証] ブレード &gt; ID プロバイダーより対象プロバイダーのリンクをクリック &gt; [概要] の ディレクトリ(テナント) ID からご確認いただけます。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-ecb402b6-2470-4f8c-b902-29078c725a2a.png" alt="image-ecb402b6-2470-4f8c-b902-29078c725a2a.png"></p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-7f10ed4b-940f-4ad0-8675-bcf9235fb572.png" alt="image-7f10ed4b-940f-4ad0-8675-bcf9235fb572.png"></p>
+<h3 id="手順３：Microsoft-Entra-ID-からアクセストークンを取得する"><a href="#手順３：Microsoft-Entra-ID-からアクセストークンを取得する" class="headerlink" title="手順３：Microsoft Entra ID からアクセストークンを取得する"></a>手順３：Microsoft Entra ID からアクセストークンを取得する</h3><p>Microsoft Entra ID のアクセストークンは、<a href="https://login.microsoftonline.com/%7Btenant%7D/oauth2/v2.0/token">https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token</a> に POST 要求を送信することで取得できます。または、<a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/msal-acquire-cache-tokens">MSAL などの SDK を使用して取得します</a>。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow#first-case-access-token-request-with-a-shared-secret">ご参考: Microsoft ID プラットフォームの OAuth 2.0 クライアント資格情報フロー</a></p>
+<blockquote>
+<p>最初のケース:共有シークレットを使ったアクセス トークン要求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST /&#123;tenant&#125;/oauth2/v2.0/token HTTP/1.1</span><br><span class="line">Host: login.microsoftonline.com</span><br><span class="line">&gt;Content-Type: application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line">&gt;client_id=535fb089-9ff3-47b6-9bfb-4f1264799865</span><br><span class="line">&gt;&amp;scope=https%3A%2F%2Fgraph.microsoft.com%2F.default</span><br><span class="line">&gt;&amp;client_secret=sampleCredentia1s</span><br><span class="line">&gt;&amp;grant_type=client_credentials</span><br></pre></td></tr></table></figure></blockquote>
+<p>上記リクエスト例の値をそれぞれ 手順２で確認した値に置き換えます。<br>{tenant} はテナント ID、client_id は デーモンアプリケーションのクライアント ID、client_secret はデーモンアプリケーションのクライアントシークレット、scope は “{App Service&#x2F;Azure Functions のクライアント ID}&#x2F;.default” として指定します。<br>例: ID プロバイダー(Microsoft) のアプリ (クライアント) ID が 190XXX-XXX-XX だった場合、scope の値は 190XXX-XXX-XX&#x2F;.default （または、api:&#x2F;&#x2F;190XXX-XXX-XX&#x2F;.default）となります。</p>
+<p>PowerShell スクリプトでアクセストークンを取得する例は以下の通りです。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$tenantId</span> = <span class="string">&#x27;アプリケーションを登録したテナントのテナント ID&#x27;</span></span><br><span class="line"><span class="variable">$authBody</span>=<span class="selector-tag">@</span>&#123;</span><br><span class="line">    client_id = <span class="string">&#x27;デーモンアプリケーションのクライアント ID&#x27;</span></span><br><span class="line">    client_secret = <span class="string">&#x27;デーモンアプリケーションのクライアントシークレット&#x27;</span></span><br><span class="line">    scope = <span class="string">&#x27;&#123;App Service/Azure Functions のクライアント ID&#125;/.default&#x27;</span></span><br><span class="line">    grant_type = <span class="string">&#x27;client_credentials&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$tokenUri</span> = <span class="string">&quot;https://login.microsoftonline.com/<span class="variable">$tenantId</span>/oauth2/v2.0/token&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># アクセストークンを取得</span></span><br><span class="line"><span class="variable">$accessResponse</span> = <span class="built_in">Invoke-WebRequest</span> <span class="literal">-Uri</span> <span class="variable">$tokenUri</span> <span class="literal">-ContentType</span> <span class="string">&#x27;application/x-www-form-urlencoded&#x27;</span> <span class="literal">-Body</span> <span class="variable">$authBody</span> <span class="literal">-Method</span> Post <span class="literal">-ErrorAction</span> Stop <span class="literal">-Verbose</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 取得したアクセストークンを確認</span></span><br><span class="line"><span class="variable">$accessToken</span> = <span class="variable">$accessResponse</span>.content | <span class="built_in">ConvertFrom-Json</span></span><br><span class="line"><span class="variable">$accessToken</span>.access_token</span><br></pre></td></tr></table></figure>
+
+<p>$accessToken.access_token でアクセストークンが確認できます。 なお、jwt 形式のアクセストークンの場合、以下サイトからデコードができます。<br><a href="https://jwt.ms/">https://jwt.ms/</a></p>
+<h3 id="手順４：App-Service-認証を有効にした-App-Service-Azure-Functions-へリクエストを送信する"><a href="#手順４：App-Service-認証を有効にした-App-Service-Azure-Functions-へリクエストを送信する" class="headerlink" title="手順４：App Service 認証を有効にした App Service&#x2F;Azure Functions へリクエストを送信する"></a>手順４：App Service 認証を有効にした App Service&#x2F;Azure Functions へリクエストを送信する</h3><p>手順3で取得したアクセストークンを Authorization ヘッダーに付与し、App Service 認証を有効にした App Service&#x2F;Azure Functions へリクエストを送信します。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$authHeader</span> = <span class="selector-tag">@</span>&#123;</span><br><span class="line">    <span class="string">&#x27;Content-Type&#x27;</span> = <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    <span class="string">&#x27;Authorization&#x27;</span> = <span class="string">&#x27;Bearer &#x27;</span> + <span class="variable">$accessToken</span>.access_token</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="variable">$siteURI</span> = <span class="string">&#x27;https://&#123;App Service リソース名&#125;.azurewebsites.net/&#x27;</span></span><br><span class="line"><span class="variable">$getResponse</span> = <span class="built_in">Invoke-WebRequest</span> <span class="literal">-Method</span> Get <span class="literal">-UseBasicParsing</span> <span class="literal">-Uri</span> <span class="variable">$siteURI</span>  <span class="literal">-Headers</span> <span class="variable">$authHeader</span> <span class="literal">-SessionVariable</span> session <span class="literal">-Verbose</span></span><br></pre></td></tr></table></figure>
+
+<p>HTTP 401 や 403 などの応答が返却される場合、アクセストークンを取得する際の scope に正しいクライアント ID が指定されていない、App Service 認証の構成が正しくない、または <a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant#use-a-built-in-authorization-policy">組み込み承認ポリシー</a>が有効になっていることがよくある原因として考えられます。<br>組み込みの承認ポリシーが有効である場合には allowedApplications にデーモンアプリケーションのクライアント ID を構成いただくことでエラーが解消する可能性がございます。対応方法は、<a href="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication.html#%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%81%A8%E3%81%8D%E3%81%AE%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E6%96%B9%E6%B3%95">ご参考: エラーになったときのデバッグ方法</a> と本記事シナリオ 3 の手順 4 をご参照ください。</p>
+<h2 id="3-マネージドID-を使用したサービス-Logic-Apps-ログインユーザーなし-から-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする"><a href="#3-マネージドID-を使用したサービス-Logic-Apps-ログインユーザーなし-から-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする" class="headerlink" title="3 ) マネージドID を使用したサービス(Logic Apps)(ログインユーザーなし)から App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする"></a>3 ) マネージドID を使用したサービス(Logic Apps)(ログインユーザーなし)から App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする</h2><p>Logic Apps など、一部 Azure サービスではマネージドIDを使用して他サービスを呼び出す機能が組み込まれています。本シナリオでは、Logic Apps で公開されている以下ドキュメントに従って、Logic Apps から マネージド ID の認証を使用して App Service 認証が有効な Azure Functions の HTTP トリガー関数を呼び出す手順をご紹介します。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/logic-apps-azure-functions?tabs=consumption#enable-authentication-for-function-calls-consumption-workflows-only">関数呼び出しの認証を有効にする (従量課金ワークフローのみ) - Azure Logic Apps</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/create-managed-service-identity?tabs=consumption#example-authenticate-built-in-trigger-or-action-with-a-managed-identity">例:マネージド ID を使用して組み込みのトリガーまたはアクションを認証する</a></li>
+</ul>
+<p>本記事では上記ドキュメントの手順に記載していない情報もいくつか載せていますので参考までにご確認いただけますと幸いです。<br>具体的な手順は以下のような流れになります。<br><br><br>手順１：Logic Apps(従量課金) でシステム割り当てマネージド ID を有効にする<br><br><br>手順２：Azure Functions で HTTP トリガー関数を作成する<br><br><br>手順３：Azure Functions で App Service 認証を有効にし、CORS 設定を変更する<br><br><br>手順４：Logic Apps から関数の実行ができるように Azure Functions の App Servce 認証の設定を変更する<br><br><br>手順５：Logic Apps から HTTP トリガー関数を呼び出す</p>
+<h3 id="手順１：Logic-Apps-従量課金-でシステム割り当てマネージド-ID-を有効にする"><a href="#手順１：Logic-Apps-従量課金-でシステム割り当てマネージド-ID-を有効にする" class="headerlink" title="手順１：Logic Apps(従量課金) でシステム割り当てマネージド ID を有効にする"></a>手順１：Logic Apps(従量課金) でシステム割り当てマネージド ID を有効にする</h3><p>従量課金プランの Logic Apps を作成し、Azure ポータルの [ID] ブレードからシステム割り当てマネージド ID を有効にします。マネージドIDを有効にした後、表示されるオブジェクト ID をコピーします。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/create-managed-service-identity?tabs=consumption#enable-system-assigned-identity-in-azure-portal">マネージド ID を使用して接続を認証する - Azure Logic Apps</a></p>
+<blockquote>
+<p>Azure portal で、ロジック アプリ リソースに移動します。ロジック アプリのメニューの [設定] で、 [ID] を選択します。<br>[ID] ペインの [システム割り当て] で、[オン][保存] を選びます。 確認を求めるメッセージが表示されたら、 [はい] を選択します。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-4e24d6aa-1eb1-4855-964f-f7c72c505ebb.png" alt="image-4e24d6aa-1eb1-4855-964f-f7c72c505ebb.png"></p>
+</blockquote>
+<h3 id="手順２：Azure-Functions-で-HTTP-トリガー関数を作成する"><a href="#手順２：Azure-Functions-で-HTTP-トリガー関数を作成する" class="headerlink" title="手順２：Azure Functions で HTTP トリガー関数を作成する"></a>手順２：Azure Functions で HTTP トリガー関数を作成する</h3><p>Azure ポータルにて Azure Functions を選択後、[概要] ブレード &gt; 関数 &gt; “+作成” から HTTP トリガーの関数を作成します。<br>今回、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=python-v2,in-process,nodejs-v4,functionsv2&pivots=programming-language-csharp#http-auth">承認レベル</a> は Function とします。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-10c97881-8b07-46b5-bdd3-c478a28a55c3.png" alt="image-10c97881-8b07-46b5-bdd3-c478a28a55c3.png"></p>
+<p>関数を作成したら、下図赤枠のように [概要] ブレード &gt; 関数 から作成した関数を選択し、[概要] &gt; “関数の URL の取得” から default(function key) の URL をコピーします。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-838fe7fa-e628-4bda-ad36-ec99f6f3dc9a.png" alt="image-838fe7fa-e628-4bda-ad36-ec99f6f3dc9a.png"></p>
+<h3 id="手順３：Azure-Functions-で-App-Service-認証を有効にし、CORS-設定を変更する"><a href="#手順３：Azure-Functions-で-App-Service-認証を有効にし、CORS-設定を変更する" class="headerlink" title="手順３：Azure Functions で App Service 認証を有効にし、CORS 設定を変更する"></a>手順３：Azure Functions で App Service 認証を有効にし、CORS 設定を変更する</h3><p>App Service 認証の構成を行うために、テナント ID を確認します。Azure ポータル上部の検索ウィンドウから “Entra ID” と入力し、Microsoft Entra ID リソースを開きます。[概要] ブレード &gt; 概要タブの基本情報にテナント ID が記載されているのでコピーします。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-83a357ff-4789-4fa3-b998-605a6f5d187a.png" alt="image-83a357ff-4789-4fa3-b998-605a6f5d187a.png"></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/logic-apps-azure-functions?tabs=consumption#find-the-tenant-id-for-your-azure-ad">参考: Azure AD のテナント ID を特定する</a></p>
+<p>Azure ポータルから Azure Functions を選択後、[認証] ブレード &gt; [ID プロバイダーの追加] &gt; [Microsoft] を選択します。[アプリの登録] の [アプリの登録の種類] で、[既存アプリの登録の詳細を提供します] を選択し、前の手順でコピーした値を入力します。<a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/logic-apps-azure-functions?tabs=consumption#create-app-registration-for-your-function-app-consumption-workflows-only">参考: 関数アプリのアプリ登録を作成する (従量課金ワークフローのみ)  - Azure Logic Apps</a></p>
+<table>
+<thead>
+<tr>
+<th align="left">項目</th>
+<th align="left">値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">アプリケーション ID</td>
+<td align="left">手順１でコピーした Logic Apps のマネージド ID のオブジェクト ID</td>
+</tr>
+<tr>
+<td align="left">クライアントシークレット</td>
+<td align="left">※入力しません (マネージドIDを使用して Azure Functions を呼び出すため)</td>
+</tr>
+<tr>
+<td align="left">発行者の URL</td>
+<td align="left"><code>https://sts.windows.net/&lt;テナント ID&gt;</code></td>
+</tr>
+<tr>
+<td align="left">許可されるトークン対象ユーザー</td>
+<td align="left"><code>https://management.azure.com</code></td>
+</tr>
+</tbody></table>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-a8541865-fa2c-4676-92af-a255eb955592.png" alt="image-a8541865-fa2c-4676-92af-a255eb955592.png"></p>
+<p>App Service 認証の設定が完了したら、以下ドキュメントに従って Azure Functions の [CORS] ブレードから 許可対象のオリジンを * にします。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/logic-apps-azure-functions?tabs=consumption#find-functions-that-have-openapi-descriptions">ワークフローから Azure Functions を呼び出す - Azure Logic Apps</a></p>
+<blockquote>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-809493a5-7f9c-4666-a718-11be2d133552.png" alt="image-809493a5-7f9c-4666-a718-11be2d133552.png"></p>
+</blockquote>
+<h3 id="手順４：Logic-Apps-から関数の実行ができるように-Azure-Functions-の-App-Servce-認証の設定を変更する"><a href="#手順４：Logic-Apps-から関数の実行ができるように-Azure-Functions-の-App-Servce-認証の設定を変更する" class="headerlink" title="手順４：Logic Apps から関数の実行ができるように Azure Functions の App Servce 認証の設定を変更する"></a>手順４：Logic Apps から関数の実行ができるように Azure Functions の App Servce 認証の設定を変更する</h3><p>Azure Functions で <a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant#use-a-built-in-authorization-policy">組み込み承認ポリシーを有効にしている</a>場合は、Logic Apps からの実行を許可するように構成します。Logic Apps から関数を実行した際に HTTP 403 エラーが発生する場合には、組み込みの承認ポリシーでアクセスが拒否されている可能性があります。</p>
+<p>組み込み承認ポリシーを設定するため、手順１でコピーしたオブジェクト ID を Microsoft Entra ID で検索し、エンタープライズアプリケーション に表示されるアプリケーションをクリック &gt; アプリケーション ID から Logic Apps のマネージド ID のアプリケーション ID を確認します。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-a556ca9e-6079-4195-b6ec-3ff0736136da.png" alt="image-a556ca9e-6079-4195-b6ec-3ff0736136da.png"></p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-78da0882-94f5-4241-a288-e27915bcb784.png" alt="image-78da0882-94f5-4241-a288-e27915bcb784.png"></p>
+<p>Azure Resource Explorer <a href="https://resources.azure.com/">https://resources.azure.com/</a> にアクセスし、<code>Azure Functions が所属するサブスクリプション &gt; リソースグループ &gt; providers &gt; Microsoft.Web &gt; sites &gt; &quot;Azure Functions のリソース名&quot; &gt; config &gt; authsettingsV2</code> から、<code>identityProviders.azureActiveDirectory.validation.defaultAuthorizationPolicy</code> の <code>allowedApplications</code> に上記で確認した Logic Apps のマネージド ID のアプリケーション ID を入力します。左記設定により、組み込みの承認ポリシーで Logic Apps からマネージドIDを使用して関数の実行が許可されます。</p>
+<p><code>allowedApplications</code> のみ構成されている場合、アプリケーションは Logic Apps からのみ Azure Functions を実行できますが、同一テナントのユーザーは関数を実行できます。同一テナントのユーザーからも関数を実行できないようにする場合には、<code>allowedPrincipals.identities</code> にも Logic Apps のマネージド ID のオブジェクト ID を構成します。この設定により「対象オブジェクト ID を持つ Logic Apps」 以外のすべてのユーザー、アプリケーションからは関数を実行することが出来なくなります。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-provider-aad?tabs=workforce-tenant#use-a-built-in-authorization-policy">参考: Azure AD 認証を構成する - Azure App Service</a></p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-fc9737ce-6187-4a0c-b696-6709fe3161e4.png" alt="image-fc9737ce-6187-4a0c-b696-6709fe3161e4.png"></p>
+<h3 id="手順５：Logic-Apps-から-HTTP-トリガー関数を呼び出す"><a href="#手順５：Logic-Apps-から-HTTP-トリガー関数を呼び出す" class="headerlink" title="手順５：Logic Apps から HTTP トリガー関数を呼び出す"></a>手順５：Logic Apps から HTTP トリガー関数を呼び出す</h3><p><a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/create-managed-service-identity?tabs=consumption#authenticate-access-with-managed-identity">マネージド ID を使用して接続を認証する - Azure Logic Apps</a> を参考に、Azure Functions を呼び出す HTTP リクエストのアクションを構成します。</p>
+<table>
+<thead>
+<tr>
+<th align="left">項目</th>
+<th align="left">値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">方法</td>
+<td align="left">GET</td>
+</tr>
+<tr>
+<td align="left">URI</td>
+<td align="left">手順２でコピーした URL(?code&#x3D;~ の部分は クエリ セクションに入力します)</td>
+</tr>
+<tr>
+<td align="left">クエリ</td>
+<td align="left">手順２でコピーした URL の code とキーの値</td>
+</tr>
+<tr>
+<td align="left">認証の種類</td>
+<td align="left">マネージドID</td>
+</tr>
+<tr>
+<td align="left">マネージドID</td>
+<td align="left">システム割り当てマネージドID</td>
+</tr>
+<tr>
+<td align="left">対象ユーザー</td>
+<td align="left"><code>https://management.azure.com</code></td>
+</tr>
+</tbody></table>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-d6a27057-152c-4a19-8208-4b4c466900ad.png" alt="image-d6a27057-152c-4a19-8208-4b4c466900ad.png"></p>
+<p>アクションを保存して関数を実行すると、以下のように実行結果が返却され、関数を実行できていることが確認できます。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-ddf5b9a3-cb71-4b54-83a9-811c502f5756.png" alt="image-ddf5b9a3-cb71-4b54-83a9-811c502f5756.png"></p>
+<h2 id="４-App-Service-ログインユーザーあり、AppService-認証でアクセストークンを取得する-から-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする"><a href="#４-App-Service-ログインユーザーあり、AppService-認証でアクセストークンを取得する-から-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする" class="headerlink" title="４ ) App Service (ログインユーザーあり、AppService 認証でアクセストークンを取得する) から App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする"></a>４ ) App Service (ログインユーザーあり、AppService 認証でアクセストークンを取得する) から App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする</h2><p>App Service 認証が有効な App Service からさらに別の App Service 認証が有効な App Service&#x2F;Azure Funcitons を呼び出すシナリオについてご紹介します。</p>
+<p>Client(ユーザー) –&gt;  App Service 認証が有効な App Service –&gt;  App Service 認証が有効な App Service&#x2F;Azure Funcitons</p>
+<p>上記方法では、Client(ユーザー) が前段の App Service へアクセスする際に App Service 認証で取得したアクセストークンを使用して後続の App Service 認証が有効な App Service&#x2F;Azure Funcitons へアクセスします。本記事で紹介したシナリオ 1 と 2 の組み合わせのようなイメージです。</p>
+<ul>
+<li>例1: Client(ユーザー) –ブラウザーで認証–&gt;  App Service 認証が有効な App Service –Bearer トークンで認証–&gt;  App Service 認証が有効な App Service&#x2F;Azure Funcitons</li>
+</ul>
+<p>上記シナリオの詳細については、以下のドキュメントにおまとめがございますため本記事では省略いたします。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/tutorial-auth-aad?pivots=platform-windows">参考: チュートリアル:ユーザーを E2E で認証する - Azure App Service</a></p>
+<h2 id="５-）SPA-アプリケーション-ログインユーザーあり、MSAL-でアクセストークンを取得する-から-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする-※App-Service-のセッショントークンを使用するシナリオ"><a href="#５-）SPA-アプリケーション-ログインユーザーあり、MSAL-でアクセストークンを取得する-から-App-Service-認証が有効な-App-Service-Azure-Functions-のサイトへアクセスする-※App-Service-のセッショントークンを使用するシナリオ" class="headerlink" title="５ ）SPA アプリケーション(ログインユーザーあり、MSAL でアクセストークンを取得する) から App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする ※App Service のセッショントークンを使用するシナリオ"></a>５ ）SPA アプリケーション(ログインユーザーあり、MSAL でアクセストークンを取得する) から App Service 認証が有効な App Service&#x2F;Azure Functions のサイトへアクセスする ※App Service のセッショントークンを使用するシナリオ</h2><p>シナリオ 4 では、App Service&#x2F;Azure Functions 上でホストされているアプリケーションについての方法をご紹介しました。シナリオ 5 では App Serivce&#x2F;Azure Functions でホストされていない シングルページ アプリケーション (SPA) にて MSAL ライブラリによりユーザーをログインさせ、取得したアクセストークンを X-ZUMO-AUTH ヘッダーへ付与し App Service 認証が有効な App Service へアクセスするシナリオをご紹介いたします。</p>
+<br>
+手順１：Microsoft Entra ID（Azure AD）に SPA アプリケーションを登録する
+<br>
+手順２：JavaScript SPA アプリケーションのプロジェクトをダウンロードする
+<br>
+手順３：JavaScript SPA アプリケーションの構成ファイルを編集する
+<br>
+手順４：Microsoft Entra ID に登録された SPA アプリケーションに対して、App Service のアクセス許可を追加する
+<br>
+手順５：App Service 認証の ID プロバイダーを構成する
+<br>
+手順６：プロジェクトを実行してアクセストークンを取得する
+<br>
+手順７：取得したアクセストークンを App Service 認証に POST して App Service 独自の認証トークン(セッショントークン)を取得する
+<br>
+手順８：取得した App Service 独自の認証トークン(セッショントークン)を利用して、App Service にアクセスする
+
+<h3 id="手順１：Microsoft-Entra-ID（Azure-AD）に-SPA-アプリケーションを登録する"><a href="#手順１：Microsoft-Entra-ID（Azure-AD）に-SPA-アプリケーションを登録する" class="headerlink" title="手順１：Microsoft Entra ID（Azure AD）に SPA アプリケーションを登録する"></a>手順１：Microsoft Entra ID（Azure AD）に SPA アプリケーションを登録する</h3><p>以下の手順により、Microsoft Entra ID にアプリケーションを登録します。<br><br></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript#step-1-register-your-application">手順 1:アプリケーションの登録</a></p>
+<blockquote>
+<p>1.Azure portal にサインインします。<br><br>2.複数のテナントにアクセスできる場合は、トップ メニューの [ディレクトリとサブスクリプション] フィルター  を使用して、アプリケーションを登録するテナントに切り替えます。<br><br>3.Azure Active Directory を検索して選択します。<br><br>4.[管理] で [アプリの登録]&gt;[新規登録] の順に選択します。<br><br>5.アプリケーションの [名前] を入力します。 この名前は、アプリのユーザーに表示される場合があります。また、後で変更することができます。<br><br>6.[サポートされているアカウントの種類] で、 [Accounts in any organizational directory and personal Microsoft accounts](任意の組織のディレクトリ内のアカウントと個人用の Microsoft アカウント) を選択します。<br><br>7.[登録] を選択します。 後で使用するために、アプリの [概要] ページで、 [アプリケーション (クライアント) ID] の値を書き留めます。<br><br>8.[管理] で、 [認証] を選択します。<br><br>9.[プラットフォーム構成] で [プラットフォームを追加] を選択します。 表示されたウィンドウで [シングルページ アプリケーション] を選択します。<br><br>10.[リダイレクト URI] の値を <a href="http://localhost:3000/">http://localhost:3000/</a> に設定します。<br><br>11.[構成] をクリックします。</p>
+</blockquote>
+<p>Microsoft Entra ID に SPA アプリケーションを登録できた場合、以下のスクリーンショットのように Microsoft Entra ID のアプリの登録よりアプリケーション(クライアント) ID やテナント ID を確認できます。</p>
+<p> <img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-dd10d57f-43e2-4ea1-b7ab-590ed749b138.png" alt="image-dd10d57f-43e2-4ea1-b7ab-590ed749b138.png"></p>
+<h3 id="手順２：JavaScript-SPA-アプリケーションのプロジェクトをダウンロードする"><a href="#手順２：JavaScript-SPA-アプリケーションのプロジェクトをダウンロードする" class="headerlink" title="手順２：JavaScript SPA アプリケーションのプロジェクトをダウンロードする"></a>手順２：JavaScript SPA アプリケーションのプロジェクトをダウンロードする</h3><p>下記のリンクより SPA アプリケーションのプロジェクトをダウンロードします。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript#step-2-download-the-project">手順 2:プロジェクトのダウンロード</a></p>
+<blockquote>
+<p>Node.js を使用して Web サーバーでプロジェクトを実行するために、コア プロジェクト ファイルをダウンロードします。</p>
+</blockquote>
+<h3 id="手順３：JavaScript-SPA-アプリケーションの構成ファイルを編集する"><a href="#手順３：JavaScript-SPA-アプリケーションの構成ファイルを編集する" class="headerlink" title="手順３：JavaScript SPA アプリケーションの構成ファイルを編集する"></a>手順３：JavaScript SPA アプリケーションの構成ファイルを編集する</h3><p>app フォルダに格納された authConfig.js ファイルを開き、下記の項目を修正します。<br><br>・clientId　 ： Microsoft Entra ID に登録した SPA アプリケーションのアプリケーション (クライアント) ID<br><br>・authority　： <a href="https://login.microsoftonline.com/">https://login.microsoftonline.com/</a>&lt;Microsoft Entra ID に登録した SPA アプリケーションのテナント ID&gt;<br><br>・redirectUri： <a href="http://localhost:3000/">http://localhost:3000/</a></p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-cdace94c-f74c-4e73-8c7d-cb4efcd565fe.png" alt="image-cdace94c-f74c-4e73-8c7d-cb4efcd565fe.png"></p>
+<p><br>・loginRequest：<br><br>App Service 向けに SPA アプリケーションからアクセストークンを取得するため、loginRequest パラメータscopes を以下のように変更します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const loginRequest = &#123;</span><br><span class="line">scopes: [&quot;api://&#123;App Service 認証のアプリケーション(クライアント) ID&#125;/user_impersonation&quot;]</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-80275503-3ac9-4fd4-9284-e5926ca3ff70.png" alt="image-80275503-3ac9-4fd4-9284-e5926ca3ff70.png"></p>
+<p>※ {App Service 認証のアプリケーション(クライアント) ID} は以下のスクリーンショットのように App Service の認証メニューより確認することが出来ます。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-a594edbc-74c8-417d-997f-ff1434715d41.png" alt="image-a594edbc-74c8-417d-997f-ff1434715d41.png"></p>
+<p>上記の構成ファイルの修正は以下の公式ドキュメントにも記載がございます。<br><br>&lt;参考: JavaScript アプリの構成&gt;<br><br><a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript#step-3-configure-your-javascript-app">https://learn.microsoft.com/ja-jp/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript#step-3-configure-your-javascript-app</a></p>
+<h3 id="手順４：Microsoft-Entra-ID-に登録された-SPA-アプリケーションに対して、App-Service-のアクセス許可を追加する"><a href="#手順４：Microsoft-Entra-ID-に登録された-SPA-アプリケーションに対して、App-Service-のアクセス許可を追加する" class="headerlink" title="手順４：Microsoft Entra ID に登録された SPA アプリケーションに対して、App Service のアクセス許可を追加する"></a>手順４：Microsoft Entra ID に登録された SPA アプリケーションに対して、App Service のアクセス許可を追加する</h3><p>Microsoft Entra ID に登録された SPA アプリケーションの「API のアクセス許可」メニューより、「アクセス許可の追加」をクリックします。<br>「API アクセス許可の要求」画面にて、「自分のAPI」タブにてApp Service 認証で登録したアプリケーションを選択します。</p>
+<p><br><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-55fc36bf-adc8-45a1-89d5-6e777b6b25af.png" alt="image-55fc36bf-adc8-45a1-89d5-6e777b6b25af.png"></p>
+<p>アクセス許可で、「user_impersonation」を選択した上で、「アクセス許可の追加」をクリックします。</p>
+<p><br><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-fb0ab1f4-136e-4010-8b7d-fb316476ef8f.png" alt="image-fb0ab1f4-136e-4010-8b7d-fb316476ef8f.png"></p>
+<p>アクセス許可の追加が完了できましたら、以下のスクリーンショットのように　API&#x2F;アクセス許可一覧にて App Service が追加されます。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-b91570b8-f6c5-499e-b7da-928328b152c8.png" alt="image-b91570b8-f6c5-499e-b7da-928328b152c8.png"></p>
+<h3 id="手順５：App-Service-認証の-ID-プロバイダーを構成する"><a href="#手順５：App-Service-認証の-ID-プロバイダーを構成する" class="headerlink" title="手順５：App Service 認証の ID プロバイダーを構成する"></a>手順５：App Service 認証の ID プロバイダーを構成する</h3><p>App Service の [認証] ブレードより、Microsoft ID プロバイダー項目にて、編集アイコンをクリックして、以下の項目の値を編集します。</p>
+<p>・発行者のURL：手順３で指定された authority の値に編集します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://login.microsoftonline.com/&lt;Microsoft Entra ID に登録した SPA アプリケーションのテナント ID&gt;</span><br></pre></td></tr></table></figure>
+
+<p>・許可されるトークン対象ユーザー：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">api://&lt;App Service 認証のアプリケーション(クライアント) ID&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-dd0f3398-2d55-4b3f-82e0-d1c7312f0b22.png" alt="image-dd0f3398-2d55-4b3f-82e0-d1c7312f0b22.png"></p>
+<h3 id="手順６：プロジェクトを実行してアクセストークンを取得する"><a href="#手順６：プロジェクトを実行してアクセストークンを取得する" class="headerlink" title="手順６：プロジェクトを実行してアクセストークンを取得する"></a>手順６：プロジェクトを実行してアクセストークンを取得する</h3><p>下記の手順によりプロジェクトを実行します。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript#step-4-run-the-project">Node.js を使用して Web サーバーでプロジェクトを実行します。</a></p>
+<blockquote>
+<p>1.サーバーを起動するために、プロジェクト ディレクトリ内から次のコマンドを実行します。<br><br>npm install<br><br>npm start<br><br>2.「 <a href="http://localhost:3000/">http://localhost:3000/</a> 」を参照してください。<br><br>3.[サインイン] を選択してサインイン プロセスを開始してから、Microsoft Graph API を呼び出します。<br><br>初回サインイン時に、自分のプロファイルにアプリケーションがアクセスして自分をサインインさせることについて同意を求められます。<br><br>正常にサインインすると、ユーザー プロファイル情報がページに表示されます。</p>
+</blockquote>
+<p>正常にサインインさせると、以下のスクリーンショットのようにアクセストークンを取得できます。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-8399449f-655d-4515-b4ea-ab45db1e1f5d.png" alt="image-8399449f-655d-4515-b4ea-ab45db1e1f5d.png"></p>
+<p>サインインさせた際に、「管理者の承認が必要」または、「要求されているアクセス許可」というメッセージが表示された場合には、アプリケーション管理者による承認が必要です。<br><br>手順の詳細については、以下ドキュメントをご参照ください。<br><br>&lt;参考:「管理者の承認が必要」のメッセージが表示された場合の対処法&gt;<br><br><a href="https://jpazureid.github.io/blog/azure-active-directory/azure-ad-consent-framework/">https://jpazureid.github.io/blog/azure-active-directory/azure-ad-consent-framework/</a></p>
+<h3 id="手順７：取得したアクセストークンを-App-Service-認証に-POST-して-App-Service-独自の認証トークン-セッショントークン-を取得する"><a href="#手順７：取得したアクセストークンを-App-Service-認証に-POST-して-App-Service-独自の認証トークン-セッショントークン-を取得する" class="headerlink" title="手順７：取得したアクセストークンを App Service 認証に POST して App Service 独自の認証トークン(セッショントークン)を取得する"></a>手順７：取得したアクセストークンを App Service 認証に POST して App Service 独自の認証トークン(セッショントークン)を取得する</h3><p>下記の形式でアクセストークンを Body に指定して、<code>https://App Service名.azurewebsites.net/.auth/login/aad</code> にPOSTして、App Service 独自の認証トークン(セッショントークン) authenticationToken の値を取得します。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-customize-sign-in-out#client-directed-sign-in">参考: クライアント主導型サインイン</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;access_token&quot;:&quot;&lt;手順6で取得したaccess_token&gt;&quot;&#125;</span><br></pre></td></tr></table></figure>
+<p>下記が Postman ツールで試した結果の例です。</p>
+<p><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-6641cca9-558e-49c6-917b-724d5ce2fca1.png" alt="image-6641cca9-558e-49c6-917b-724d5ce2fca1.png"></p>
+<h3 id="手順８：取得した-App-Service-独自の認証トークン-セッショントークン-を利用して、App-Service-にアクセスする"><a href="#手順８：取得した-App-Service-独自の認証トークン-セッショントークン-を利用して、App-Service-にアクセスする" class="headerlink" title="手順８：取得した App Service 独自の認証トークン(セッショントークン)を利用して、App Service にアクセスする"></a>手順８：取得した App Service 独自の認証トークン(セッショントークン)を利用して、App Service にアクセスする</h3><p>手順7で取得した authenticationToken の値をヘッダー “X-ZUMO-AUTH” で指定した上で、App Service のURL（<code>https://App Service 名.azurewebsites.net</code>）に対してGETを実行します。<br><br>Postman ツールで試してみると、以下の様に App Service でホストしているサイトから HTTP 200 応答が返却され、正常にアクセスできていることが確認できます。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions/image-0e2df657-cdb1-4533-8bbf-81bba2dbe043.png" alt="image-0e2df657-cdb1-4533-8bbf-81bba2dbe043.png"></h2><p>上記の認証トークンについて以下のドキュメントにて記載がございますので併せてご参照ください。</p>
+<p>&lt;参考: Authentication flow&gt;<br><br><a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#authentication-flow">https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#authentication-flow</a></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2023 年 10 月 23 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/10/23/access-to-easyauth-enabled-appservice-or-functions.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../11/07/azure-container-apps-testing-DNS-connectivity.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Azure Container Apps での DNS 接続のトラブルシューティング
+        
+      </div>
+    </a>
+  
+  
+    <a href="../18/Singleton-lock-renewal-failed-for-blob-logs-in-Functions.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Functions の 「Singleton lock renewal failed for blob &#39;***/host&#39; with error code 409 …」 ログについて</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

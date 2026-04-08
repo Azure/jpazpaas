@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure APIM services の 4xx や 5xx のトラブルシューティング パート 2 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="このポストは、2021 年 3 月 1 日に投稿された Troubleshooting 4xx and 5xx Errors with Azure APIM services  (著者 Janani R)の翻訳です。 パート II - 5xx エラーのトラブルシューティング  本記事は、5xx エラーのトラブルシューティングシリーズの続きです。4xx エラーに関する記事はこちらです。 以下のセクシ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure APIM services の 4xx や 5xx のトラブルシューティング パート 2">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="このポストは、2021 年 3 月 1 日に投稿された Troubleshooting 4xx and 5xx Errors with Azure APIM services  (著者 Janani R)の翻訳です。 パート II - 5xx エラーのトラブルシューティング  本記事は、5xx エラーのトラブルシューティングシリーズの続きです。4xx エラーに関する記事はこちらです。 以下のセクシ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_0-1612547327830-2aa7b014-133f-40e6-9374-a3e55837bd14.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_1-1612547327837-5fa8e5e3-3050-4f5d-8cc6-e257bc35f4c0.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_2-1612547327849-bc61788a-ce52-4680-9fab-5c58ec3b48f2.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_3-1612547327853-623ba11f-66db-4342-9797-01ce42f7fa83.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_4-1612547327855-44e0a63d-1e1a-4c20-8c0a-1b67d90881fd.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_5-1612547327872-dc70934c-06b5-4ca1-8dec-e126843e2417.png">
+<meta property="article:published_time" content="2023-07-23T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.672Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="API Management">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_0-1612547327830-2aa7b014-133f-40e6-9374-a3e55837bd14.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure APIM services の 4xx や 5xx のトラブルシューティング パート 2
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-07-23T15:00:00.000Z" itemprop="datePublished">2023-07-24</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+606cd77b-2ec9-5477-80e9-016c7df0c40c%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+APIM+services+%E3%81%AE+4xx+%E3%82%84+5xx+%E3%81%AE%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E3%82%B7%E3%83%A5%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0+%E3%83%91%E3%83%BC%E3%83%88+2%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F07%2F24%2FTroubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F07%2F24%2FTroubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F07%2F24%2FTroubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2.html" data-id="cuidnv7OmYz2hjDts6TfCrxn5" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>このポストは、2021 年 3 月 1 日に投稿された <a href="https://techcommunity.microsoft.com/t5/azure-paas-blog/troubleshooting-4xx-and-5xx-errors-with-azure-apim-services/ba-p/2115744">Troubleshooting 4xx and 5xx Errors with Azure APIM services
+</a> (著者 Janani R)の翻訳です。</p>
+<h1>パート II - 5xx エラーのトラブルシューティング</h1>
+
+<p>本記事は、5xx エラーのトラブルシューティングシリーズの続きです。4xx エラーに関する記事は<a href="https://azure.github.io/jpazpaas/2023/03/07/Troubleshooting-204xx-20and-205xx-20Errors-20with-20Azure-20APIM-20services-20Part-201.html">こちら</a>です。</p>
+<p>以下のセクションの「診断&#x2F;ゲートウェイ ログ」とは、Log Analytics の 「Logs related to ApiManagement Gateway」(ApiManagementGatewayLogs) のことです。</p>
+<h2 id="症状："><a href="#症状：" class="headerlink" title="症状："></a>症状：</h2><p>特定の API 呼び出しが、「500 - Internal Server Error」というエラーメッセージで失敗します。</p>
+<p>このエラーの診断ログは、<strong>BackendResponseCode</strong> として 500 を表示しています。</p>
+<p><img src="/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_0-1612547327830-2aa7b014-133f-40e6-9374-a3e55837bd14.png" alt="Janani_R_0-1612547327830-2aa7b014-133f-40e6-9374-a3e55837bd14.png"></p>
+<h2 id="原因："><a href="#原因：" class="headerlink" title="原因："></a>原因：</h2><p>診断ログで BackendResponseCode が 500 と記録されている場合、バックエンド API が APIM サービスに 500 レスポンスを返しています。</p>
+<p>バックエンド API 自体が受信リクエストにステータスコード 500 を返しているシナリオでは、APIM サービスはクライアントに同じレスポンスを転送します。</p>
+<h2 id="解決策："><a href="#解決策：" class="headerlink" title="解決策："></a>解決策：</h2><p>この問題は、バックエンド API から調査する必要があります。バックエンド API の管理者が、バックエンドサーバーが HTTP 500 エラーを返している原因を確認します。</p>
+<h1 id="シナリオ-2：Expression-Value-Evaluation-Failures"><a href="#シナリオ-2：Expression-Value-Evaluation-Failures" class="headerlink" title="シナリオ 2：Expression Value Evaluation Failures"></a>シナリオ 2：Expression Value Evaluation Failures</h1><h2 id="症状：-1"><a href="#症状：-1" class="headerlink" title="症状："></a>症状：</h2><p>API リクエストが呼び出すポリシーの式の評価に失敗し、500 レスポンスコードが返される場合があります。</p>
+<p>エラーメッセージは、次のように記録されます。</p>
+<p>「ExpressionValueEvaluationFailure: Expression evaluation failed. Object reference not set to an instance of an object.」</p>
+<p><img src="/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_1-1612547327837-5fa8e5e3-3050-4f5d-8cc6-e257bc35f4c0.png" alt="Janani_R_1-1612547327837-5fa8e5e3-3050-4f5d-8cc6-e257bc35f4c0.png"></p>
+<h2 id="原因：-1"><a href="#原因：-1" class="headerlink" title="原因："></a>原因：</h2><p>このエラーは通常、「NullReferenceException」によって発生します。まだ定義されていないか、2023 年 08 月 01 日時点の内容となります。<br> に設定されているパラメーター値を読み取ろうとします。</p>
+<p>診断ログの <strong>ErrorSource</strong> には、リクエスト処理中にエラーが発生しているポリシーの名前が表示されます。</p>
+<h2 id="解決策：-1"><a href="#解決策：-1" class="headerlink" title="解決策："></a>解決策：</h2><p>リクエスト処理中に評価に失敗している API 操作のポリシー定義を確認し、null 参照例外を修正します。</p>
+<h1 id="シナリオ-3：レスポンスコード-0-またはレスポンスコード-500-で-APIM-クライアント接続エラー"><a href="#シナリオ-3：レスポンスコード-0-またはレスポンスコード-500-で-APIM-クライアント接続エラー" class="headerlink" title="シナリオ 3：レスポンスコード 0 またはレスポンスコード 500 で APIM クライアント接続エラー"></a>シナリオ 3：レスポンスコード 0 またはレスポンスコード 500 で APIM クライアント接続エラー</h1><h2 id="症状：-2"><a href="#症状：-2" class="headerlink" title="症状："></a>症状：</h2><p>ゲートウェイログで、次のシナリオが発生することがあります。</p>
+<ul>
+<li>ResponseCode 列に 0 または 500 レスポンスが含まれている。</li>
+<li>LastErrorReason 列に「ClientConnectionFailure」が記録されている。</li>
+<li>LastErrorMessage 列に「The operation was cancelled」、「A task was cancelled」などのエラーメッセージが含まれている。</li>
+</ul>
+<p><img src="/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_2-1612547327849-bc61788a-ce52-4680-9fab-5c58ec3b48f2.png" alt="Janani_R_2-1612547327849-bc61788a-ce52-4680-9fab-5c58ec3b48f2.png"></p>
+<h2 id="原因：-2"><a href="#原因：-2" class="headerlink" title="原因："></a>原因：</h2><p><strong>Client Connection Failure</strong> というのは、API 呼び出しを開始したクライアントアプリケーションが、バックエンド API がレスポンスを APIM に返す前に、APIM サービスとの接続を終了したことを意味します。</p>
+<p>つまり、クライアントがレスポンスを受け取る前にリクエストを放棄しています。APIM はクライアントがリクエストを破棄するタイミングや理由を制御できません。</p>
+<p>一般的に Client Connection Failure は、リクエストが完了するのに時間がかかる場合に発生します。そのため、クライアントがリクエストを放棄した（ユーザーがブラウザを閉じたなど）、またはクライアントアプリケーションがタイムアウトした可能性があります。</p>
+<p>このような失敗については以下のような原因が考えられます。</p>
+<ul>
+<li>クライアント ネットワークの問題</li>
+<li>Azure Virtual Network の安定性</li>
+<li>クライアントアプリケーションの問題</li>
+<li>クライアントアプリケーションのタイムアウト値が低い</li>
+<li>リクエスト処理時間の増加</li>
+<li>バックエンド API のレスポンス時間が長い（ペイロードが大きいなど）</li>
+</ul>
+<p>ほとんどの場合、診断ログから、リクエストの <strong>clientTime</strong> が高く、<strong>totalTime</strong> のほとんどを占めていることがわかります。</p>
+<p>それぞれのフィールド説明は以下の通りです：</p>
+<ul>
+<li><strong>totalTime</strong> - クライアントが最初のバイトを受信して最後のバイトをクライアントに送信するまでにかかった合計時間。バックエンドの処理時間とクライアントの読み取り時間を含みます。</li>
+<li><strong>backendTime</strong> - バックエンド I&#x2F;O（コネクションの確立、送信、受信）の合計ミリ秒数。この時間が長い場合、バックエンドが遅いため、バックエンドのパフォーマンス調査を行う必要があります。</li>
+<li><strong>clientTime</strong> - クライアント I&#x2F;O（コネクションの確立、送信、受信）の合計ミリ秒数。この時間が長い場合、クライアントの帯域幅または処理速度がレスポンスを読み取るのに十分ではない可能性があります。</li>
+</ul>
+<h2 id="解決策：-2"><a href="#解決策：-2" class="headerlink" title="解決策："></a>解決策：</h2><p>Client Connection Failures は クライアントが APIM サービスとの接続を終了したことを意味するため、ほとんどのシナリオでは主にクライアント側から調査する必要があります。</p>
+<p>解決策としては、クライアント側でタイムアウト値を増やしたり、レスポンス処理時間を短縮したりするなどがありますが、シナリオによって異なります。</p>
+<p>さらに、診断ログの <strong>ErrorSource</strong> 列を確認すると、クライアントがリクエストを放棄した APIM 内の処理を特定できます。</p>
+<p>例えば、</p>
+<ul>
+<li>ErrorSource が「forward-request」を含む場合、APIM サービスがバックエンド API にリクエストを転送している間にクライアントが接続を終了したことを意味します</li>
+<li>ErrorSource が「transfer-response」を含む場合、APIM サービスがバックエンド API からレスポンスを受信し、クライアントに返そうとしている間にクライアントが接続を終了したことを意味します。</li>
+</ul>
+<h1 id="シナリオ-4：APIM-Backend-Connection-Failures"><a href="#シナリオ-4：APIM-Backend-Connection-Failures" class="headerlink" title="シナリオ 4：APIM Backend Connection Failures"></a>シナリオ 4：APIM Backend Connection Failures</h1><p>診断ログの <strong>ErrorReason</strong> 列に「BackendConnectionFailure」と記録されている場合は、APIM サービスがバックエンド API との接続を確立できなかったことを意味します。</p>
+<p>このエラーは、さまざまな理由で、複数のタイプのエラーメッセージで発生する可能性があります。</p>
+<p>一般的に観察される Backend Connection Failures のエラーメッセージは以下の通りです。対応するエラーメッセージは、診断ログの <strong>ErrorMessage</strong> 列に記録されます。</p>
+<ul>
+<li>The remote name could not be resolved: {Remote Hostname}</li>
+<li>Authentication failed because the remote party has closed the transport stream.</li>
+<li>A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond {IP Address}:</li>
+<li>Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host.</li>
+<li>The underlying connection was closed: Could not establish trust relationship for the SSL&#x2F;TLS secure channel.</li>
+<li>The underlying connection was closed: An unexpected error occurred on a receive.</li>
+</ul>
+<h1 id="シナリオ-5：Unable-to-connect-to-the-remote-server"><a href="#シナリオ-5：Unable-to-connect-to-the-remote-server" class="headerlink" title="シナリオ 5：Unable to connect to the remote server"></a>シナリオ 5：Unable to connect to the remote server</h1><h2 id="症状：-3"><a href="#症状：-3" class="headerlink" title="症状："></a>症状：</h2><p>API リクエストがバックエンドへの接続で失敗する。Ocp-Apim トレース&#x2F;診断ログには以下のエラーメッセージが出力されている。</p>
+<p><img src="/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_3-1612547327853-623ba11f-66db-4342-9797-01ce42f7fa83.png" alt="Janani_R_3-1612547327853-623ba11f-66db-4342-9797-01ce42f7fa83.png"></p>
+<h2 id="原因と解決策："><a href="#原因と解決策：" class="headerlink" title="原因と解決策："></a>原因と解決策：</h2><p>「Unable to connect to the remote server」というエラーは、通常、以下の理由で発生します。</p>
+<ul>
+<li>APIM パフォーマンス&#x2F;容量の問題。</li>
+<li>APIM VM の SNAT ポートの枯渇。</li>
+<li>APIM サービスがバックエンド API と通信するのをブロックするネットワークデバイス（ファイアウォールなど）がある。</li>
+<li>バックエンド API が APIM リクエストに応答していない（バックエンドがダウンしているか応答していない）。</li>
+<li>APIM サービスとバックエンド間のネットワークの問題&#x2F;遅延。</li>
+</ul>
+<p>APIM サービスのメトリクス ブレードのキャパシティ ダッシュボードから、問題を引き起こしている可能性のあるキャパシティ使用量の異常な変動がないか確認できます。</p>
+<p>SNAT ポートの枯渇は、ハードウェア固有の失敗です。<br/><br>APIM からバックエンドへの最大同時リクエスト数は、Developer レベルの場合 1024で、他のレベルでは 2048 です。<br/><br><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/management/azure-subscription-service-limits#api-management-limits">https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/management/azure-subscription-service-limits#api-management-limits</a></p>
+<p>Developer レベルを例にとって、これが何を意味するかを理解しましょう。<br/><br>Developer レベルは、APIM サービスがひとつのの VM&#x2F;ノード&#x2F;ホストマシンにホストされています。<br/><br>各 VM は、内部的に、通信のために 1024 個の SNAT ポートが割り当てられています。したがって、Developer レベルの場合、同じ宛先への同時接続数は 1024 を超えることはできません（同時接続）。（大量のインバウンドリクエストなどによって、）同時接続数が 1024 を超える場合、サービスで SNAT ポートの枯渇が発生し、バックエンドサーバーとの接続を確立できなくなります。</p>
+<p>注：宛先が異なる場合は、1024 以上の接続を（同時接続ではなく）行うことができます。</p>
+<p>キャパシティの問題や SNAT の失敗が原因で発生していないことが確認されている場合、問題が発生している可能性があるのは、バックエンド API がダウンしている、APIM サービスとの接続を確立できなかった、APIM サービスとバックエンド間のネットワークの遅延により接続が終了した、などです。</p>
+<p>これを確認するには、問題が再現されている間に、APIM サービスをホストする VM&#x2F;ノードからネットワークトレースを収集し、トレースを分析して原因を特定する必要があります。</p>
+<p>ほとんどのシナリオでは、診断ログから、すべての失敗したリクエストの <strong>BackendTime</strong> が 21 秒程度かそれ以上で、<strong>totalTime</strong> のほとんどを占めていることがわかります。</p>
+<p>これは、バックエンドへの TCP 接続の失敗（21 秒が通常の TCP タイムアウト）の可能性を示しています。 APIM はバックエンドとコネクションを確立しようとしましたが、バックエンドからの応答はありませんでした。そして、接続が 21 秒後にタイムアウトし、HTTP ステータスコード 500 が返されました。これは、バックエンドサーバーがダウンしているか、接続要求に応答していないか、接続を維持できないことを示しています。</p>
+<h1 id="シナリオ-6：The-underlying-connection-was-closed-A-connection-that-was-expected-to-be-kept-alive-was-closed-by-the-server"><a href="#シナリオ-6：The-underlying-connection-was-closed-A-connection-that-was-expected-to-be-kept-alive-was-closed-by-the-server" class="headerlink" title="シナリオ 6：The underlying connection was closed: A connection that was expected to be kept alive was closed by the server."></a>シナリオ 6：The underlying connection was closed: A connection that was expected to be kept alive was closed by the server.</h1><h2 id="症状：-4"><a href="#症状：-4" class="headerlink" title="症状："></a>症状：</h2><p>診断ログの <strong>errorMessage</strong> セクションに下記のエラーメッセージが出力され、API リクエストが Backend Connection Failure で失敗しています。</p>
+<p>「The underlying connection was closed: A connection that was expected to be kept alive was closed by the server.」</p>
+<h2 id="原因：-3"><a href="#原因：-3" class="headerlink" title="原因："></a>原因：</h2><p>これは通常、既知の APIM の問題によって引き起こされます。</p>
+<p>APIM はバックエンドへの接続を再利用できるように可能な限り保持します。それによりパフォーマンスに悪影響を及ぼす新規接続確立のための TCP&#x2F;SSL ハンドシェイクを毎回行う必要がなくなります。しかし、リクエストがないために接続が一定期間（4 分）使用されない場合、内部の Azure ロードバランサーがサイレントで接続を切断します。このような場合、次回に APIM が切断された接続を使用しようとすると、接続が失敗し、上記のエラーメッセージがログに記録されます。</p>
+<h2 id="解決策：-3"><a href="#解決策：-3" class="headerlink" title="解決策："></a>解決策：</h2><p>APIM のリトライロジックを使用することで、これを回避できます。</p>
+<p>参照：APIM Retry Policy - <a href="https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies">https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies</a></p>
+<h1 id="シナリオ-7：The-remote-name-could-not-be-resolved"><a href="#シナリオ-7：The-remote-name-could-not-be-resolved" class="headerlink" title="シナリオ 7：The remote name could not be resolved"></a>シナリオ 7：The remote name could not be resolved</h1><h2 id="症状：-5"><a href="#症状：-5" class="headerlink" title="症状："></a>症状：</h2><p>診断ログの <strong>errorMessage</strong> セクションに下記のエラーメッセージが出力され、API リクエストが Backend Connection Failure で失敗しています。</p>
+<p>「The remote name could not be resolved」</p>
+<p><img src="/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_4-1612547327855-44e0a63d-1e1a-4c20-8c0a-1b67d90881fd.png" alt="Janani_R_4-1612547327855-44e0a63d-1e1a-4c20-8c0a-1b67d90881fd.png">
+	</p>
+<h2 id="原因：-4"><a href="#原因：-4" class="headerlink" title="原因："></a>原因：</h2><p>ある 1 つのマシンが別のマシンに接続する必要がある場合、DNS 名解決を実行する必要があります。</p>
+<p>上記のエラーは、APIM がバックエンドのホスト名（例：contoso.azurewebsites.com）を IP アドレスに変換できず、そのホストに接続できなかったことを示しています。</p>
+<p>このエラーのよくある原因は、API 構成を設定する際に不正なホスト名を使用していることです。サービスが VNET 内にあり、カスタム DNS を使用している場合、APIM が接続しようとしているバックエンドのレコードをカスタム DNS サーバーが利用できないか、または含んでいない可能性があります。</p>
+<h2 id="解決策：-4"><a href="#解決策：-4" class="headerlink" title="解決策："></a>解決策：</h2><p>したがって、問題はネットワーク観点でトラブルシューティングする必要があります。失敗しているリクエストのネットワーク トレースを取得し、問題を切り分け、原因を特定します。</p>
+<h1 id="シナリオ-8：The-underlying-connection-was-closed-Could-not-establish-trust-relationship-for-the-SSL-TLS-secure-channel"><a href="#シナリオ-8：The-underlying-connection-was-closed-Could-not-establish-trust-relationship-for-the-SSL-TLS-secure-channel" class="headerlink" title="シナリオ 8：The underlying connection was closed: Could not establish trust relationship for the SSL&#x2F;TLS secure channel"></a>シナリオ 8：The underlying connection was closed: Could not establish trust relationship for the SSL&#x2F;TLS secure channel</h1><h2 id="症状：-6"><a href="#症状：-6" class="headerlink" title="症状："></a>症状：</h2><p>診断ログの <strong>errorMessage</strong> セクションに下記のエラーメッセージが出力され、API リクエストが Backend Connection Failure で失敗しています。</p>
+<p>「The underlying connection was closed: Could not establish trust relationship for the SSL&#x2F;TLS secure channel」</p>
+<h2 id="原因：-5"><a href="#原因：-5" class="headerlink" title="原因："></a>原因：</h2><p>このエラーは、バックエンドがパブリックに信頼されたルート証明書ではなく、自己署名証明書を使用するように構成されている場合に発生することがあります。</p>
+<p>APIM サービスは、Windows OS で実行される PaaS VM を使用して Azure インフラストラクチャーでホストされています。</p>
+<p>したがって、すべての APIM インスタンスは、全 Windows マシンが信頼する同じデフォルトのルート証明機関を信頼します。</p>
+<p>信頼されたルート証明機関のリストは、Microsoft Trusted Root Certificate Program Participants リストを使用してダウンロードできます - <a href="https://learn.microsoft.com/ja-jp/security/trusted-root/participants-list">https://learn.microsoft.com/ja-jp/security/trusted-root/participants-list</a></p>
+<h2 id="解決策：-5"><a href="#解決策：-5" class="headerlink" title="解決策："></a>解決策：</h2><p>この問題を解決するためには 2 つの解決策があります。</p>
+<ul>
+<li>Microsoft Trusted Root Participant リストに有効な信頼されたルート証明書を追加します。</li>
+<li>APIM がバックエンドシステムと通信するために、証明書チェーンの検証を無効にします。これを構成するには、<a href="https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/new-azapimanagementbackend?view=azps-9.4.0">New-AzApiManagementBackend</a>（新しいバックエンド用）または <a href="https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/set-azapimanagementbackend?view=azps-9.4.0">Set-AzApiManagementBackend</a>（既存のバックエンド用）の PowerShell cmdlet を使用して、-SkipCertificateChainValidation パラメーターを True に設定します。以下がサンプル PowerShell コマンドです。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$context = New-AzApiManagementContext -resourcegroup &#x27;ContosoResourceGroup&#x27; -servicename &#x27;ContosoAPIMService&#x27;</span><br><span class="line">New-AzApiManagementBackend -Context $context -Url &#x27;https://contoso.com/myapi&#x27; -Protocol http -SkipCertificateChainValidation $true</span><br></pre></td></tr></table></figure>
+
+
+<p>参照：バックエンドエンティティを作成&#x2F;更新する</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/new-azapimanagementbackend?view=azps-9.4.0&viewFallbackFrom=azps-4.8.0">https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/new-azapimanagementbackend?view=azps-9.4.0&amp;viewFallbackFrom=azps-4.8.0</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/set-azapimanagementbackend?view=azps-9.4.0&viewFallbackFrom=azps-4.8.0">https://learn.microsoft.com/ja-jp/powershell/module/az.apimanagement/set-azapimanagementbackend?view=azps-9.4.0&amp;viewFallbackFrom=azps-4.8.0</a></li>
+</ul>
+<h1 id="シナリオ-9：Unable-to-read-data-from-the-transport-connection-The-connection-was-closed"><a href="#シナリオ-9：Unable-to-read-data-from-the-transport-connection-The-connection-was-closed" class="headerlink" title="シナリオ 9：Unable to read data from the transport connection: The connection was closed."></a>シナリオ 9：Unable to read data from the transport connection: The connection was closed.</h1><h2 id="症状：-7"><a href="#症状：-7" class="headerlink" title="症状："></a>症状：</h2><p>診断ログの <strong>errorMessage</strong> セクションに下記のエラーメッセージが出力され、API リクエストが Backend Connection Failure で失敗しています。</p>
+<p>「Unable to read data from the transport connection: The connection was closed.」</p>
+<h2 id="原因：-6"><a href="#原因：-6" class="headerlink" title="原因："></a>原因：</h2><p>このエラーは、APIM サービスがまだバックエンドからのレスポンスを読み取ろうとしているときに、接続が突然中止されると発生します。</p>
+<p>APIM がレスポンスをクライアントに転送するプロセスは以下の通りです：<br/><br>APIM がレスポンスステータスコードとヘッダーを最初に読み取る。ペイロードはネットワークストリームに残る。<br /><br>ヘッダーとステータスコードを受信したら、APIM はバックエンドサービスからクライアントへのレスポンスボディをストリーミングする。</p>
+<p>データ ストリームが進行中に、何らかの例外が発生した場合、上記のエラーメッセージが記録されます。</p>
+<h2 id="解決策：-6"><a href="#解決策：-6" class="headerlink" title="解決策："></a>解決策：</h2><p>ユーザーは、このエラーを回避するためにAPIMでリトライロジックを実装できます：</p>
+<p>参照：APIM リトライ ポリシー-<a href="https://docs.microsoft.com/en-us/azure/api-management/api-management-advanced-policies#Retry">https://docs.microsoft.com/en-us/azure/api-management/api-management-advanced-policies#Retry</a></p>
+<h1 id="シナリオ-10：The-underlying-connection-was-closed-The-connection-was-closed-unexpectedly"><a href="#シナリオ-10：The-underlying-connection-was-closed-The-connection-was-closed-unexpectedly" class="headerlink" title="シナリオ 10：The underlying connection was closed: The connection was closed unexpectedly"></a>シナリオ 10：The underlying connection was closed: The connection was closed unexpectedly</h1><h2 id="症状：-8"><a href="#症状：-8" class="headerlink" title="症状："></a>症状：</h2><p>診断ログの <strong>errorMessage</strong> セクションに下記のエラーメッセージが出力され、API リクエストが Backend Connection Failure で失敗しています。</p>
+<p>「The underlying connection was closed: The connection was closed unexpectedly」</p>
+<h2 id="原因：-7"><a href="#原因：-7" class="headerlink" title="原因："></a>原因：</h2><p>APIM サービスまたはバックエンド サービスが、APIM サービスとバックエンド間の通信がまだ進行中のときに接続が突然終了すると、このエラーが発生します。</p>
+<h2 id="解決策：-7"><a href="#解決策：-7" class="headerlink" title="解決策："></a>解決策：</h2><p>問題を特定して解決するためには、問題が再現されている間に、APIM サービスをホストする VM&#x2F;ノードからネットワークトレースを収集、分析して障害点を特定する必要があります。</p>
+<p>問題の頻度が非常にまれな場合は、リトライ ロジックを実装することで一定の範囲で改善することができます。</p>
+<h1 id="エラーコード：501"><a href="#エラーコード：501" class="headerlink" title="エラーコード：501"></a>エラーコード：501</h1><h1 id="シナリオ-1：Not-Implemented"><a href="#シナリオ-1：Not-Implemented" class="headerlink" title="シナリオ 1：Not Implemented"></a>シナリオ 1：Not Implemented</h1><h2 id="症状：-9"><a href="#症状：-9" class="headerlink" title="症状："></a>症状：</h2><p>診断ログの errorMessage セクションに下記のいずれかのエラーメッセージが出力され、API リクエストが HTTP 501 エラーで失敗しています。</p>
+<p>注：これは完全なリストではなく、エラーメッセージは実際の原因によって異なります：</p>
+<ul>
+<li>「Header BPC was not found in the request. Access denied.」</li>
+<li>「Unable to match incoming request to an operation.」</li>
+<li>「Header RegionID was not found in the request. Access denied.」</li>
+</ul>
+<h2 id="原因：-8"><a href="#原因：-8" class="headerlink" title="原因："></a>原因：</h2><p>APIM サービスでは非常にまれにこのようなエラーが発生します。</p>
+<p>上記の HTTP サーバー エラー レスポンスコードは、<strong>サーバーがリクエストを処理するために必要な機能をサポートしていない</strong>ことを意味します。</p>
+<p><strong>APIM では</strong>、クライアントがサーバーにリクエストを行うがサーバーがそのリクエストをサポートしていない機能&#x2F;メソッドであると判断した場合、サーバーは呼び出し元に 501 のレスポンスを返す可能性があります。</p>
+<p>このシナリオで 501 レスポンスを返しているサーバーは、</p>
+<ul>
+<li>診断ログの BackendResponseCode が 501 の場合はバックエンドです。 APIM は同じレスポンスをクライアントに返します。</li>
+<li><strong>ResponseCode</strong> が 501 で <strong>BackendResponseCode</strong> がブランクまたは 0 の場合は、APIM サービスです。</li>
+</ul>
+<h2 id="解決策：-8"><a href="#解決策：-8" class="headerlink" title="解決策："></a>解決策：</h2><p>501 レスポンスを返しているのがバックエンドではなく APIM である場合、「Unable to match incoming request to an operation」というエラーメッセージが APIM ログに出力されることがよくあります。このシナリオでは、APIM サービス内の API の構成と、リクエストの生成・実行過程の両方を確認する必要があります。</p>
+<p>または、リクエスト処理中に評価されるポリシーによって 501 エラー コードが返されている可能性もあります。その場合、診断ログの ErrorSource 列に対応するポリシー名が表示されます。</p>
+<h2 id="解決策：-9"><a href="#解決策：-9" class="headerlink" title="解決策："></a>解決策：</h2><p>このようなシナリオでは、Ocp-Apim-Trace を収集することでリクエストの処理の詳細を取得し、問題を切り分けることができます。</p>
+<h1 id="エラーコード：502"><a href="#エラーコード：502" class="headerlink" title="エラーコード：502"></a>エラーコード：502</h1><h1 id="シナリオ-1：Bad-Gateway"><a href="#シナリオ-1：Bad-Gateway" class="headerlink" title="シナリオ 1：Bad Gateway"></a>シナリオ 1：Bad Gateway</h1><h2 id="原因-解決策："><a href="#原因-解決策：" class="headerlink" title="原因&#x2F;解決策："></a>原因&#x2F;解決策：</h2><p>APIM サービスは、バックエンドの接続に失敗した場合、クライアントに 502 Bad Gateway レスポンスを転送します。</p>
+<p>したがって、トラブルシューティングとデバッグは上記の Backend Connection Failure セクションと同様で、診断ログの ErrorMessage 列に応じて対応します。</p>
+<p>APIM が 502 レスポンスで記録する最も一般的なエラーメッセージは、「<strong>The remote name could not be resolved</strong>」です。</p>
+<h1 id="エラーコード：503"><a href="#エラーコード：503" class="headerlink" title="エラーコード：503"></a>エラーコード：503</h1><h1 id="シナリオ-1：Service-Unavailable"><a href="#シナリオ-1：Service-Unavailable" class="headerlink" title="シナリオ 1：Service Unavailable"></a>シナリオ 1：Service Unavailable</h1><h2 id="症状：-10"><a href="#症状：-10" class="headerlink" title="症状："></a>症状：</h2><p>ときどき API リクエストが HTTP 503 エラーで 失敗し、「The service is unavailable」というエラーメッセージが表示されることがあります。</p>
+<p>以下は、API を呼び出したときに Postman で表示されたエラーメッセージのサンプルです。</p>
+<p><img src="/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2/Janani_R_5-1612547327872-dc70934c-06b5-4ca1-8dec-e126843e2417.png" alt="Janani_R_5-1612547327872-dc70934c-06b5-4ca1-8dec-e126843e2417.png"></p>
+<h2 id="原因：-9"><a href="#原因：-9" class="headerlink" title="原因："></a>原因：</h2><p>一般的に、503 レスポンスはバックエンドサーバーから返されることが多いです。</p>
+<p>しかし、APIM サービスからバックエンドへリクエストが転送される前に、APIM サービスで特定のポリシーがリクエストに適用されて、ポリシーの適用によりリクエストが終了した場合も、クライアントに 503 レスポンスが返されます。</p>
+<h2 id="解決策：-10"><a href="#解決策：-10" class="headerlink" title="解決策："></a>解決策：</h2><p>このようなシナリオでは、ErrorSource 、ErrorReason 、ErrorMessage の列を確認し、トラブルシューティングを行います。</p>
+<h1 id="エラーコード：504"><a href="#エラーコード：504" class="headerlink" title="エラーコード：504"></a>エラーコード：504</h1><h1 id="シナリオ-1：Gateway-Timeout"><a href="#シナリオ-1：Gateway-Timeout" class="headerlink" title="シナリオ 1：Gateway Timeout"></a>シナリオ 1：Gateway Timeout</h1><h2 id="原因-解決策：-1"><a href="#原因-解決策：-1" class="headerlink" title="原因&#x2F;解決策："></a>原因&#x2F;解決策：</h2><p>APIM サービスがクライアントに 504 レスポンスを返す一般的なシナリオをいくつか示します。</p>
+<p><strong>シナリオ 1：</strong> APIM サービスがバックエンドサーバーとの接続を確立するために長時間待機しているが、バックエンドが利用できないか応答しない。<br/><br>トラブルシューティングは、上記の Backend Connection Failures のトラブルシューティングと同じです。<br/><br>診断ログで、特にそれぞれのコンポーネントの処理時間と、ErrorReason および ErrorMessage の列を見て、問題の発生源を特定します。</p>
+<p><strong>シナリオ 2：</strong> バックエンド サービスがリクエスト処理に長時間かかっているため、APIM サービスが接続を終了しました。このようなシナリオでは、診断ログで BackendTime がリクエスト処理全体の合計時間と比較して高く、合計時間の大部分を消費していることが分かります。</p>
+<p>この問題を軽減するための 2 つの解決策があります。</p>
+<ul>
+<li>APIM サービスの forward-request ポリシーのタイムアウト値を、バックエンドのリクエスト処理にかかる平均時間に合わせて増やす。<ul>
+<li>参照：<a href="https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies">https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies</a></li>
+</ul>
+</li>
+<li>バックエンドのレスポンス時間を短縮してパフォーマンスを改善する。</li>
+</ul>
+<p><strong>シナリオ 3：</strong> forward-request ポリシー内で APIM サービスに設定されたタイムアウト値が低い。</p>
+<p>一般的な軽減策として、APIM サービスの forward-request ポリシーのタイムアウト値を、バックエンドのリクエスト処理にかかる平均時間に合わせて増やすことがあげられます。</p>
+<p>注：APIM API リクエスト処理において、APIM サービスが強制するデフォルトのタイムアウト値は 300 秒&#x2F; 5 分です。</p>
+<p>デフォルトのタイムアウト値は、<strong>forward-request</strong> ポリシーを使用して増やすことができます - <a href="https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies">https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies</a></p>
+<p>タイムアウトについては、有効な整数を設定できますが、上記のドキュメントにあるように、実際の最大値は約 240 秒です。240 秒を超える値は、基礎となるネットワーク インフラストラクチャがアイドル接続をドロップする場合があるため、動作しない可能性があります。<br/><br>参照：<a href="https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies">https://learn.microsoft.com/ja-jp/azure/api-management/api-management-policies#advanced-policies</a></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2023 年 7 月 31 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../27/AppServiceOnLinux-Log.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          App Service on Linux におけるログ出力について
+        
+      </div>
+    </a>
+  
+  
+    <a href="../06/How-to-add-domain-to-Email-Communication-Service.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">メール通信サービスにドメインを追加する際の DNS 設定について</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

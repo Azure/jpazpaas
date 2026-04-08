@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Communication Services Email クォータ緩和について | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="お世話になっております。Azure Communication Services サポート担当の押田です。 Azure Communication Services で Email を送信には規定でクォータが設けられております。 Azure Communication Services のサービス制限 - An Azure Communication Services article  送信できる">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Communication Services Email クォータ緩和について">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2026/01/27/ACS-Email-quota-increase.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="お世話になっております。Azure Communication Services サポート担当の押田です。 Azure Communication Services で Email を送信には規定でクォータが設けられております。 Azure Communication Services のサービス制限 - An Azure Communication Services article  送信できる">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/01/27/ACS-Email-quota-increase/image-c4655fff-b877-49b2-ba98-b2e8c942946f.png">
+<meta property="article:published_time" content="2026-01-26T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.850Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Azure Communication Services">
+<meta property="article:tag" content="Email">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2026/01/27/ACS-Email-quota-increase/image-c4655fff-b877-49b2-ba98-b2e8c942946f.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2026/01/27/ACS-Email-quota-increase" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Communication Services Email クォータ緩和について
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2026-01-26T15:00:00.000Z" itemprop="datePublished">2026-01-27</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+892fd045-8bc2-5a14-a373-09abc05cbb78%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Communication+Services+Email+%E3%82%AF%E3%82%A9%E3%83%BC%E3%82%BF%E7%B7%A9%E5%92%8C%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2026%2F01%2F27%2FACS-Email-quota-increase.html%29%0A*+Content+Source%3A+%5Barticles%2F2026%2F01%2F27%2FACS-Email-quota-increase.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2026%2F01%2F27%2FACS-Email-quota-increase.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2026/01/27/ACS-Email-quota-increase.html" data-id="cuidS4EXoJzl0gIOzJNYpxj53" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>お世話になっております。Azure Communication Services サポート担当の押田です。</p>
+<p>Azure Communication Services で Email を送信には規定でクォータが設けられております。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email">Azure Communication Services のサービス制限 - An Azure Communication Services article</a></p>
+<blockquote>
+<p>送信できる電子メール メッセージの数には制限があります。 サブスクリプションに応じた<a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#rate-limits-for-email">メールのレート制限</a>を超えた場合、要求が拒否されます。 再試行までの時間が経過した後に、これらの要求をもう一度試すことができるようになります。 必要に応じて、送信ボリュームの制限を引き上げるリクエストを行って、制限に達する前に対処してください。</p>
+</blockquote>
+<p>クォータの緩和はサポートリクエストを起票いただき申請いただく必要がございます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase">メール ドメインのクォータの引き上げ - An Azure Communication Services concept document</a></p>
+<p>クォータの引き上げは申請いただいた内容ならびに、当該リソースの状況に応じて審査されます。</p>
+<p><a href="https://azure.github.io/jpazpaas/2025/09/08/ACS-Email-Onboarding-FAQ.html#%E9%80%81%E4%BF%A1%E6%95%B0%E3%81%AE%E5%88%B6%E9%99%90%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">Azure Communication Services メール機能でよく頂くご質問 - Japan PaaS Support Team Blog</a> にて、クォータ引き上げに関する FAQ を記載させていただいております。</p>
+<p>この記事ではクォータの引き上げの際に弊社よりお伺いする情報や、申請が却下される要因について補足します。<br>なお、具体的な審査内容は公開されておりません。この記事で記載する項目がすべてではございませんことご了承くださいませ。</p>
+<blockquote>
+<p>メール クォータの引き上げ要求は自動的に承認されません。 レビュー チームは、承認の状態を決定するときに、送信者の全体的な評判を考慮します。 送信者の評判には、メール配信の失敗率、ドメインの評判、スパムや不正使用のレポートなどの要因が含まれます。</p>
+</blockquote>
+<h1 id="クォータ緩和審査の対策"><a href="#クォータ緩和審査の対策" class="headerlink" title="クォータ緩和審査の対策"></a>クォータ緩和審査の対策</h1><h2 id="ドメインの信頼性の維持"><a href="#ドメインの信頼性の維持" class="headerlink" title="ドメインの信頼性の維持"></a>ドメインの信頼性の維持</h2><h3 id="カスタムドメインの管理"><a href="#カスタムドメインの管理" class="headerlink" title="カスタムドメインの管理"></a>カスタムドメインの管理</h3><p>クォータの緩和対象はカスタムドメインのみとなります。申請にあったってはカスタムドメインを構成ください。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/add-custom-verified-domains?pivots=platform-azp">カスタム検証済みメール ドメインを追加する - An Azure Communication Services article</a></p>
+<ul>
+<li><a href="https://azure.github.io/jpazpaas/2025/09/08/ACS-Email-Onboarding-FAQ.html">Azure Communication Services メール機能でよく頂くご質問 - Japan PaaS Support Team Blog</a> <blockquote>
+<ul>
+<li>送信数の制限は引き上げられますか？</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h3 id="カスタムドメインがブラックリストへの登録されていないこと"><a href="#カスタムドメインがブラックリストへの登録されていないこと" class="headerlink" title="カスタムドメインがブラックリストへの登録されていないこと"></a>カスタムドメインがブラックリストへの登録されていないこと</h3><p>メール送信に用いるドメインが、RBLに登録されていないことが求められます。<br>下記は外部サービスとなりますが、指定したドメインがブラックリスト登録されているかどうかを確認できるサイトとなります。</p>
+<p><a href="https://multirbl.valli.org/lookup/0410mail1.t-oshida.org.html">MultiRBL.valli.org - Results of the query 0410mail1.t-oshida.org</a></p>
+<p>もし、いずれかのリストにお客様の指定したドメインが登録されている場合、当該のリストを管理されているベンダーにお問い合わせいただき、解除の対応を進めていただく必要がございます。</p>
+<p>以下の例では <code>0410mail1.t-oshida.org</code> はいずれのブラックリストにも登録されていないことが確認できます。</p>
+<p><img src="/jpazpaas/2026/01/27/ACS-Email-quota-increase/image-c4655fff-b877-49b2-ba98-b2e8c942946f.png" alt="image-c4655fff-b877-49b2-ba98-b2e8c942946f.png"></p>
+<h3 id="MX-レコードの登録"><a href="#MX-レコードの登録" class="headerlink" title="MX レコードの登録"></a>MX レコードの登録</h3><p>MX レコードを登録することで送信者ドメインの評判を向上に寄与します。</p>
+<p>Azure Communication Serviceにおいて、カスタムドメイン利用時(<a href="https://azure.github.io/jpazpaas/2023/07/06/How-to-add-domain-to-Email-Communication-Service.html">メール通信サービスにドメインを追加する際の DNS 設定について - Japan PaaS Support Team Blog</a>)に MX レコードの登録は必須ではございませんが、<br>Azure Communication Service から送信されたメールを受信するサーバーによっては、受信時に MX レコードの有無を判定に用いられる場合がございますため、<br><code>&lt;お客様のカスタムドメイン&gt;</code> を管理するDNSにて、 <code>&lt;お客様のカスタムドメイン&gt;</code> 宛てのメールを振り分けるべき宛先をご確認、ご設定くださいませ。<br>なお、Azure Communication Service ならびに、Email Serviceについては、Email の送信を行うサービスとなり、Emailの受信機能はございません。<br>そのため、Azure Communication Serviceとして、 MX レコードに登録可能な正当なメールサーバーの IP や FQDN について提供できるものはございません。<br><code>&lt;お客様のカスタムドメイン&gt;</code> 宛てのメールをどのサーバーへ転送すべきかについては、お客様次第となるものとなり、弊社側から具体的なレコードをお出しするものではございません。</p>
+<ul>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase#3-configure-a-mail-exchange-record-for-your-custom-domain">メール ドメインのクォータの引き上げ - An Azure Communication Services concept document</a></p>
+<blockquote>
+<p>メール交換 (MX) レコードは、ドメイン名に代わって電子メール メッセージを受信する電子メール サーバーを指定します。 MX レコードは、ドメイン ネーム システム (DNS) のリソース レコードです。 基本的に、MX レコードは、ドメインが電子メールを受信できることを示します。</p>
+<p>Azure Communication Service では送信メールのみがサポートされますが、送信者ドメインの評判を向上させるために MX レコードを設定することをお勧めします。 MX レコードがないカスタム ドメインからのメールは、受信者の電子メール サービス プロバイダーによってスパムとしてラベル付けされる可能性があります。 これにより、ドメインの評判が低下する可能性があります。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="DMARC-レコードの登録"><a href="#DMARC-レコードの登録" class="headerlink" title="DMARC レコードの登録"></a>DMARC レコードの登録</h3><p>MX レコードと同様にカスタムドメイン利用時に DMARC レコードは必須ではございませんが、DMARC レコードを設定いただくことで送信者ドメインの評判を向上に寄与します。</p>
+<ul>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-authentication-best-practice#implementing-dmarc">送信者認証のサポートに関するベスト プラクティス - An Azure Communication Services article</a></p>
+</li>
+<li><p><a href="https://learn.microsoft.com/ja-jp/defender-office-365/email-authentication-dmarc-configure?preserve-view=true&view=o365-worldwide#syntax-for-dmarc-txt-records">DMARC を使用してメールを検証する、セットアップ手順 - Microsoft Defender for Office 365</a></p>
+</li>
+</ul>
+<h2 id="送信成功率の維持"><a href="#送信成功率の維持" class="headerlink" title="送信成功率の維持"></a>送信成功率の維持</h2><p>メールの失敗率は 1% 未満であることが求められます。<br>検証目的であったとしても、当該のドメインからの失敗率が高い場合、申請は却下される可能性が高くございます。</p>
+<ul>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/sender-reputation-managed-suppression-list#managing-sender-reputation-and-email-complaints-to-enhance-email-delivery">Azure Communication Services 電子メールの送信者の評判を理解する - An Azure Communication Services article</a></p>
+<blockquote>
+<p><strong>送信者の評判と電子メールの苦情を管理してメール配信を強化する</strong></p>
+<p>Azure Communication Services には、顧客の通信を強化できる電子メール機能が用意されています。 ただし、プラットフォーム経由で送信したメールが顧客の受信トレイに届く保証はありません。 配信の問題を事前に特定して回避するには、次のような評判チェックを実行する必要があります。</p>
+<ul>
+<li>正常に配信された電子メールの一貫性と正常な割合を一定期間にわたって確保します。</li>
+<li>電子メール配信の失敗とバウンスに関する特定の詳細の分析。</li>
+<li>スパムおよび不正使用レポートの監視。</li>
+<li>正常な連絡先リストを維持する。</li>
+<li>ユーザーエンゲージメントとメールボックス配置の理解。</li>
+<li>顧客の苦情を理解し、オプトアウトまたは登録解除のための簡単なプロセスを提供します。</li>
+</ul>
+</blockquote>
+</li>
+<li><p><a href="https://azure.github.io/jpazpaas/2025/09/08/ACS-Email-Onboarding-FAQ.html">Azure Communication Services メール機能でよく頂くご質問 - Japan PaaS Support Team Blog</a> </p>
+<blockquote>
+<ul>
+<li>送信数のクォータ引き上げ審査でメール送信失敗率は加味されますか？</li>
+<li>失敗率の監視はどこからできますか？</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="段階的な緩和について"><a href="#段階的な緩和について" class="headerlink" title="段階的な緩和について"></a>段階的な緩和について</h2><p>カスタムドメインに対するデフォルトのレート制限は、30件&#x2F;min、100件&#x2F;hour となります。<br>具体的な値をお伝えすることができず恐縮ではございますが、制限の緩和は送信実績に基づき段階的に実施させていただいております。<br>そのため、現在の制限を大幅に上回るような申請をいただいてもご希望に沿える可能性は低くございます。<br>目安として、現在の制限に抵触する状態が続くようであればその倍の容量をご申請いただければと存じます。</p>
+<ul>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/send-email-advanced/throw-exception-when-tier-limit-reached?pivots=programming-language-javascript">メール送信層の制限に達したときに例外をスローする - An Azure Communication Services article</a></p>
+</li>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email">Azure Communication Services のサービス制限 - An Azure Communication Services article</a></p>
+<blockquote>
+<p>メールの配信状態を注意深く監視しながら、2 週間から 4 週間かけて、Azure Communication Services Email を使用するメールの量を少しずつ増やすことをお勧めします。 このように段階的に増やすと、サード パーティのメール サービス プロバイダーはドメインのメール トラフィック用の IP の変更に適応できます。 少しずつ変更すると、送信者評価を保護し、メール配信の信頼性を維持する時間が得られます。</p>
+</blockquote>
+</li>
+</ul>
+<p>一方でシステム要件として予定されている送信数があらかじめ定まっている場合なども多かろうと存じます。<br>そのような場合、ビジネスインパクトやスケジュール等の詳細をお伺いさせていただき、可能な範囲で調整させていただくこともございます。一度サポートまでご相談くださいませ。</p>
+<h2 id="弊社からのヒアリング事項"><a href="#弊社からのヒアリング事項" class="headerlink" title="弊社からのヒアリング事項"></a>弊社からのヒアリング事項</h2><p>ドキュメントに沿ってサポートリクエスト起票時に記入くださいませ。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/email-quota-increase">メール ドメインのクォータの引き上げ - An Azure Communication Services concept document</a></p>
+<p>日本語で記載いただいてもかまいません。<br>未記載の項目がございますと、審査プロセスを進めるまでに時間がかかってしまうことになります。ご注意くださいませ。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">1.送信を利用するお客様の会社名 (英語表記) :</span><br><span class="line">2.送信を利用するお客様の会社のウェブサイト URL :</span><br><span class="line">3.送信を利用するお客様の会社の事業内容について簡潔にご説明ください :</span><br><span class="line"></span><br><span class="line">4.該当の Azure Communication Services リソースでは、既にカスタムドメインを構成し、カスタムドメインからメールを送信できている状態でしょうか :</span><br><span class="line">5.メール送信に利用されているカスタムドメイン名 :</span><br><span class="line">6.Azure Communication Services リソース名および Email Services リソース名</span><br><span class="line">・Azure Communication Servicesリソース名 :</span><br><span class="line">・Email Services リソース名:</span><br><span class="line">7.サブスクリプション ID :</span><br><span class="line">8.テナント名 :</span><br><span class="line">9.テナント ID :</span><br><span class="line"></span><br><span class="line">10.本メール機能をどのような目的でご利用されるか (お客様との取引、売買 (ショッピング等)、宣伝等) :</span><br><span class="line">11.ご希望の上限:</span><br><span class="line"> - 件/1分</span><br><span class="line"> - 件/1時間</span><br><span class="line"> - 件/1日</span><br><span class="line">12.送信先のメールアドレスはどのような方法で取得しましたか :</span><br><span class="line">13.送信先となるユーザーが配信解除を希望、もしくは送信不達となった場合、対象ユーザーをどのように送信先から除外するか :</span><br><span class="line">14.現在該当のドメインにてどのようなプラットフォームをメール送信時に使用されているか教えてください。：例: オンプレミス、Amazon SES 等</span><br></pre></td></tr></table></figure>
+
+<h1 id="クォータ緩和後のガイドライン"><a href="#クォータ緩和後のガイドライン" class="headerlink" title="クォータ緩和後のガイドライン"></a>クォータ緩和後のガイドライン</h1><p>メール送信量を増やしていく際のガイドラインとなります。ご参考にしてくださいませ。</p>
+<ul>
+<li><p>MXレコードが未設定の場合、MX レコードの追加を実施くださいませ。</p>
+</li>
+<li><p>低い失敗率と良好なNDR（配信不能通知）は、高いメールクォータを維持するために重要です。以下の2つの重要なガイダンスに従っていることを確認してください。<br><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/service-limits#email">Azure Communication Services のサービス制限 - An Azure Communication Services article</a></p>
+<ul>
+<li><ol>
+<li>移行アプローチ<blockquote>
+<p>メールの配信状態を注意深く監視しながら、2 週間から 4 週間かけて、Azure Communication Services Email を使用するメールの量を少しずつ増やすことをお勧めします。 このように段階的に増やすと、サード パーティのメール サービス プロバイダーはドメインのメール トラフィック用の IP の変更に適応できます。 少しずつ変更すると、送信者評価を保護し、メール配信の信頼性を維持する時間が得られます。</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>失敗率の管理<blockquote>
+<p>失敗率の要件</p>
+<p>高いメール クォータを有効にするには、メールの失敗率が 1% 未満である必要があります。 失敗率が高い場合は、クォータの引き上げを要求する前に問題を解決する必要があります。 お客様は、失敗率を積極的に監視する必要があります。</p>
+<p>クォータの引き上げ後に失敗率が上がった場合、Azure Communication Services はお客様に連絡して、直ちに対処することを求め、解決のタイムラインを確認します。 極端なケースでは、指定されたタイムライン内で失敗率が管理されない場合、Azure Communication Services は、問題が解決されるまでサービスを減らしたり中断したりする可能性があります。</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p>下記のドキュメント群もご参考にしていただけますと幸いです。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/email/sender-reputation-managed-suppression-list">Azure Communication Services 電子メールの送信者の評判を理解する - An Azure Communication Services article</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/analytics/insights/email-insights">メールの分析情報 - An Azure Communication Services article</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/concepts/analytics/enable-logging">Azure Monitor でログ記録を有効にする - An Azure Communication Services article</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/handle-email-events">メールイベントを処理する - Azure Communication Services</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/event-grid/communication-services-email-events">Azure Communication Services - Email イベント - Azure Event Grid</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/communication-services/quickstarts/email/manage-suppression-list-management-sdks?pivots=programming-language-javascript">Management SDK を使用してドメイン抑制リストを管理する - An Azure Communication Services article</a></li>
+<li><a href="https://azure.github.io/jpazpaas/2025/09/08/ACS-Email-Onboarding-FAQ.html">Azure Communication Services メール機能でよく頂くご質問 - Japan PaaS Support Team Blog</a></li>
+</ul>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2026/01/27/ACS-Email-quota-increase.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../03/03/AppService-Node24-on-windows-needs-64bit-process.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。
+        
+      </div>
+    </a>
+  
+  
+    <a href="../16/i-can-listblobs-but-i-cant-deleteblobs.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure ポータルで BLOB のリストやダウンロードはできるけれど削除ができないときに考えられること</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

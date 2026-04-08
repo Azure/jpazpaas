@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Start/Stop VMs v2 のご紹介 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Start&#x2F;Stop VMs v2 は、複数のサブスクリプションにわたって Azure 仮想マシン (VM) を開始または停止できる、複数の Azure サービスからなるソリューションです。 本記事では、 Start&#x2F;Stop VMs v2 を作成し、スケジュールに従って VM を起動または停止する方法をご紹介します。 なお、本記事においては、 Start&#x2F;Stop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Start&#x2F;Stop VMs v2 のご紹介">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Start&#x2F;Stop VMs v2 は、複数のサブスクリプションにわたって Azure 仮想マシン (VM) を開始または停止できる、複数の Azure サービスからなるソリューションです。 本記事では、 Start&#x2F;Stop VMs v2 を作成し、スケジュールに従って VM を起動または停止する方法をご紹介します。 なお、本記事においては、 Start&#x2F;Stop">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_1_create_resource-0761ce8b-3d23-4240-b7b6-12012ac3a754.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_2_search_resource-1d4afd89-0bdc-4188-9360-d84fad17b277.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_3_create_resource_ssvmv2-72b93f70-4c10-44ba-bf11-060c6ecde9c9.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_4_type_resource_info-c91141f1-7ae3-4b15-8f77-ed8d14e77184.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_5_create_ssvmv2-c48fad1b-b205-403a-8b5d-176136f027ba.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_6_list_resourcegroup-55ade3e8-73c3-447e-a26b-691b58ffe222.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_1_edit_logicapp_code-c5651a5e-4617-450e-b1d5-ea4898eec04e.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_2_edit_logicapp_schedule-fa51447e-7cd6-41bc-8ade-45a7a3807ee5.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_3_apply_logicapp-84b85e9d-5dbf-403e-95a8-52975d77c263.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_4_list_ssvm_logs-2a37d117-02b3-4d0e-aa8e-dea5f7ecf30e.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_5_list_vm_activity_logs-051dcbb2-f4ce-477a-adaf-08e89176444c.png">
+<meta property="article:published_time" content="2021-11-28T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.354Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function App">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_1_create_resource-0761ce8b-3d23-4240-b7b6-12012ac3a754.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2021/11/29/introduce-Start-Stop-VMs-v2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Start/Stop VMs v2 のご紹介
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2021-11-28T15:00:00.000Z" itemprop="datePublished">2021-11-29</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+19eb6aaa-4801-5737-827d-123ad80af341%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BStart%2FStop+VMs+v2+%E3%81%AE%E3%81%94%E7%B4%B9%E4%BB%8B%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2021%2F11%2F29%2Fintroduce-Start-Stop-VMs-v2.html%29%0A*+Content+Source%3A+%5Barticles%2F2021%2F11%2F29%2Fintroduce-Start-Stop-VMs-v2.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2021%2F11%2F29%2Fintroduce-Start-Stop-VMs-v2.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2.html" data-id="cuidxNxaRcMc2cI6u0me7lgQx" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://docs.microsoft.com/ja-jp/azure/azure-functions/start-stop-vms/overview">Start&#x2F;Stop VMs v2</a> は、複数のサブスクリプションにわたって Azure 仮想マシン (VM) を開始または停止できる、複数の Azure サービスからなるソリューションです。</p>
+<p>本記事では、 Start&#x2F;Stop VMs v2 を作成し、スケジュールに従って VM を起動または停止する方法をご紹介します。</p>
+<p>なお、本記事においては、 Start&#x2F;Stop VMs v2 の基本的な使い方をご紹介し、すべての機能をご紹介するわけではございませんので予めご了承ください。</p>
+<p>Start&#x2F;Stop VMs v2 は、以下の Azure サービスで構成されます。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Azure リソース</th>
+<th align="left">機能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Function App</td>
+<td align="left">スケジュールや使用状況に応じて、 VM の起動と停止を行います。</td>
+</tr>
+<tr>
+<td align="center">Logic App</td>
+<td align="left">スケジュールの設定と VM に作用するペイロードを設定します。</td>
+</tr>
+<tr>
+<td align="center">Application Insights</td>
+<td align="left">実行された操作のテレメトリをログに記録します。</td>
+</tr>
+<tr>
+<td align="center">Dashboard</td>
+<td align="left">Application Insights で収集したログをビューとしてカスタムできます。</td>
+</tr>
+<tr>
+<td align="center">Storage</td>
+<td align="left">実行されたトランザクションをテーブルに記録、キューを使用してオペレーションオブジェクトを保存します。</td>
+</tr>
+<tr>
+<td align="center">Monitor</td>
+<td align="left">VM の状態が変化した際にアラートやメール通知を行います。</td>
+</tr>
+</tbody></table>
+<p>Start&#x2F;Stop VMs v2 は、 Azure Automation で使用できる以前のバージョンと同じ機能をすべて提供しますが、より新しい Azure のテクノロジを活用するように設計されています。</p>
+<p>本記事で紹介する環境は、検証のために作成したものとなりますので、活用の際にはお客様の要件に合わせて十分なテスト・検証の上ご利用いただきますようお願い申し上げます。</p>
+<h2 id="1-Start-Stop-VMs-v2-を作成する"><a href="#1-Start-Stop-VMs-v2-を作成する" class="headerlink" title="1. Start&#x2F;Stop VMs v2 を作成する"></a>1. Start&#x2F;Stop VMs v2 を作成する</h2><p>Azure ポータルの [リソースの作成] を利用して、 Function App や Logic App を含む、複数の Azure サービスからなるリソースグループを新規作成します。</p>
+<p>1-1. Azure ポータルを開き、 [リソースの作成] をクリックします。</p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_1_create_resource-0761ce8b-3d23-4240-b7b6-12012ac3a754.png" alt="1_1_create_resource-0761ce8b-3d23-4240-b7b6-12012ac3a754.png"></p>
+<p>1-2. 検索ボックスに [Start&#x2F;Stop] と入力し、 Start&#x2F;Stop VMs during off hours - V2 を選択、作成します。</p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_2_search_resource-1d4afd89-0bdc-4188-9360-d84fad17b277.png" alt="1_2_search_resource-1d4afd89-0bdc-4188-9360-d84fad17b277.png"></p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_3_create_resource_ssvmv2-72b93f70-4c10-44ba-bf11-060c6ecde9c9.png" alt="1_3_create_resource_ssvmv2-72b93f70-4c10-44ba-bf11-060c6ecde9c9.png"></p>
+<p>1-3. 各種リソース名等を入力し、 [作成] をクリックしてリソース群を作成します。</p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_4_type_resource_info-c91141f1-7ae3-4b15-8f77-ed8d14e77184.png" alt="1_4_type_resource_info-c91141f1-7ae3-4b15-8f77-ed8d14e77184.png"></p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_5_create_ssvmv2-c48fad1b-b205-403a-8b5d-176136f027ba.png" alt="1_5_create_ssvmv2-c48fad1b-b205-403a-8b5d-176136f027ba.png"></p>
+<p>1-4. [サブスクリプションに移動] を選択すると、作成されたリソースを確認できます。</p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/1_6_list_resourcegroup-55ade3e8-73c3-447e-a26b-691b58ffe222.png" alt="1_6_list_resourcegroup-55ade3e8-73c3-447e-a26b-691b58ffe222.png"></p>
+<h2 id="2-Options-サブスクリプションに対してロールを割り当てる"><a href="#2-Options-サブスクリプションに対してロールを割り当てる" class="headerlink" title="2. (Options) サブスクリプションに対してロールを割り当てる"></a>2. (Options) サブスクリプションに対してロールを割り当てる</h2><p>Start&#x2F;Stop VMs v2 では、作成された Function App が VM の起動&#x2F;停止を行うため、該当 Function App に対して、VM が属するサブスクリプションにロールを割り当てる必要があります。</p>
+<p>Start&#x2F;Stop VMs v2 を作成すると、作成された Function App に対してシステム割り当てマネージド ID が構成され、サブスクリプションに対する共同作成者ロールが付与されますが、 Start&#x2F;Stop VMs v2 を作成したサブスクリプションとは異なるサブスクリプション上に存在する VM を自動起動&#x2F;停止したいといった場合には、それらの VM が属するサブスクリプションに対する協同作成者ロールを付与する必要がございます。詳細については下記ドキュメントをご参照ください。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/start-stop-vms/deploy#enable-multiple-subscriptions">複数のサブスクリプションを有効にする - Start&#x2F;Stop VMs v2 を Azure サブスクリプションにデプロイする</a></p>
+<h2 id="3-スケジュールを構成する"><a href="#3-スケジュールを構成する" class="headerlink" title="3. スケジュールを構成する"></a>3. スケジュールを構成する</h2><p>VM の起動&#x2F;停止を制御するには、要件に基づいて、 1-4 で作成された Logic App を 1 つ以上構成します。 Start&#x2F;Stop VMs v2 では、 VM を起動&#x2F;停止するトリガーが 3 種類あります。</p>
+<table>
+<thead>
+<tr>
+<th align="center">トリガー種類</th>
+<th align="left">機能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Scheduled</td>
+<td align="left">指定したスケジュールに基づいて、 VM を起動&#x2F;停止します。 <br/>Azure Resource Manager とクラシック VM の両方に対して実行できます。</td>
+</tr>
+<tr>
+<td align="center">Sequenced</td>
+<td align="left">事前に定義されたシーケンス処理タグの付いた VM に対して順番に起動&#x2F;停止を行います。<br/>Azure Resource Manager の VM のみがサポートされ、クラシック VM では実行できません。</td>
+</tr>
+<tr>
+<td align="center">AutoStop</td>
+<td align="left">CPU 使用率に基づき、 VM の停止を行います。<br/>Azure Resource Manager とクラシック VM の両方に対して実行できます。</td>
+</tr>
+</tbody></table>
+<p>ここでは、スケジュールに基づいて VM を起動する方法をご紹介します。</p>
+<p>3-1. 作成された Logic App の一覧から [ststv2_vms_Scheduled_start] を選択し、 [ロジック アプリ コードビュー] に移動します。 <code>body</code> オブジェクトで起動&#x2F;停止したいターゲットを設定します。</p>
+<p>ここでは、 <code>rgvm</code> というリソースグループに属する Azure Resource Manager VM すべてを起動するために、デフォルトで <code>ResourceGroups</code> に記述されている <code>&quot;/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/rg1/&quot;</code> を削除し、<code>&quot;/subscriptions/12345678-1234-1234-1234-123456789012(該当サブスクリプションIDに変更してください)/resourceGroups/rgvm/&quot;</code> を追加しています。コードの編集が完了したら、 [保存] をクリックします。</p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_1_edit_logicapp_code-c5651a5e-4617-450e-b1d5-ea4898eec04e.png" alt="3_1_edit_logicapp_code-c5651a5e-4617-450e-b1d5-ea4898eec04e.png"></p>
+<p>起動&#x2F;停止する VM のスコープとして、サブスクリプション、リソースグループ、VM の3種類が用意されています。 <code>RequestScopes</code> を以下のフォーマットに従って記述することで、複数の VM を指定できます。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Key</th>
+<th align="left">Value (例)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Subscriptions</td>
+<td align="left">&#x2F;subscriptions&#x2F;12345678-1234-5678-1234-123456781234&#x2F;</td>
+</tr>
+<tr>
+<td align="center">ResourceGroups</td>
+<td align="left">&#x2F;subscriptions&#x2F;12345678-1234-5678-1234-123456781234&#x2F;resourceGroups&#x2F;rg1&#x2F;</td>
+</tr>
+<tr>
+<td align="center">VMLists</td>
+<td align="left">&#x2F;subscriptions&#x2F;12345678-1234-5678-1234-123456781234&#x2F;resourceGroups&#x2F;rg1&#x2F;providers&#x2F;Microsoft.Compute&#x2F;virtualMachines&#x2F;vm1</td>
+</tr>
+<tr>
+<td align="center">ExcludedVMLists</td>
+<td align="left">&#x2F;subscriptions&#x2F;12345678-1111-2222-3333-123456781234&#x2F;resourceGroups&#x2F;rg1&#x2F;providers&#x2F;Microsoft.Compute&#x2F;virtualMachines&#x2F;vm1</td>
+</tr>
+</tbody></table>
+<p><code>ExcludedVMLists</code> で指定した仮想マシンを対象から除外することができます。例えば、リソースグループ <code>rg1</code> の VM <code>vm1</code> 以外の VM すべてを起動したい場合は以下のように記述します。 <code>ExcludedVMLists</code> は、 <code>VMLists</code> とは併用できませんのでご注意ください。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;body&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;Action&quot;</span><span class="punctuation">:</span> <span class="string">&quot;start&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;RequestScopes&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">&quot;/subscriptions/12345678-1234-5678-1234-123456781234/resourceGroups/rg1/&quot;</span></span><br><span class="line">        <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;ExcludedVMLists&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">&quot;/subscriptions/12345678-1111-2222-3333-123456781234/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1&quot;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>3-2. [ロジック アプリ デザイナー] に移動し、 [Recurrence] をクリックし、スケジュールを設定します。ここでは、毎時 0 分と 30 分に スケジュールされるよう設定します。</p>
+<p>繰り返しオプションについては、以下のドキュメントで詳細に記載されておりますので、ご参照ください。</p>
+<p><a href="https://docs.microsoft.com/ja-jp/azure/connectors/connectors-native-recurrence#add-the-recurrence-trigger">Azure Logic Apps で繰り返しトリガーを使用して繰り返しタスクおよびワークフローを作成、スケジュール設定、および実行する | Microsoft Docs</a></p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_2_edit_logicapp_schedule-fa51447e-7cd6-41bc-8ade-45a7a3807ee5.png" alt="3_2_edit_logicapp_schedule-fa51447e-7cd6-41bc-8ade-45a7a3807ee5.png"></p>
+<p>3-3. [概要] に移動し、 [有効] をクリックしてスケジュールを有効化します。</p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_3_apply_logicapp-84b85e9d-5dbf-403e-95a8-52975d77c263.png" alt="3_3_apply_logicapp-84b85e9d-5dbf-403e-95a8-52975d77c263.png"></p>
+<p>3-4. 以上で、 Start&#x2F;Stop VMs V2 を作成し、スケジュールに基づいて VM を起動&#x2F;停止することができました。 [最新の情報に更新] をクリックし、 [実行の履歴] から実行履歴を確認できます。また、該当 VM の [アクティビティ ログ] に移動すると、 “Start Virtual Machine” の状態が成功になっていることから、 VM の起動が成功していることが確認できます。</p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_4_list_ssvm_logs-2a37d117-02b3-4d0e-aa8e-dea5f7ecf30e.png" alt="3_4_list_ssvm_logs-2a37d117-02b3-4d0e-aa8e-dea5f7ecf30e.png"></p>
+<p><img src="/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2/3_5_list_vm_activity_logs-051dcbb2-f4ce-477a-adaf-08e89176444c.png" alt="3_5_list_vm_activity_logs-051dcbb2-f4ce-477a-adaf-08e89176444c.png"></p>
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/start-stop-vms/overview">Start&#x2F;Stop VMs v2 の概要</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/start-stop-vms/deploy">Start&#x2F;Stop VMs v2 を Azure サブスクリプションにデプロイする</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/start-stop-vms/manage">Start&#x2F;Stop VMs v2 を管理する方法</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/start-stop-vms/troubleshoot">VM の開始&#x2F;停止に関する一般的な問題のトラブルシューティング</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/manage-logic-apps-with-azure-portal">Azure portal でロジック アプリを管理する</a></li>
+</ul>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2023 年 06 月 05 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2021/11/29/introduce-Start-Stop-VMs-v2.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../30/multi-private-endpoint-for-one-resource.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          1 つのリソースに対して、2 つのプライベートエンドポイントを作成する場合のネットワーク構成案
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../10/06/blob-container-usage-per-container.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Blobコンテナーのコンテナーごとの容量確認方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

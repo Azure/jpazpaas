@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>App Service 認証の概要と仕組みについて | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本記事では App Service 認証の概要とその仕組み、よくある質問についてご説明いたします。 App Service 認証とは、App Service 上にデプロイした Web アプリケーションでコードの実装無しで簡単に ユーザーの認証機能 (シングルサインオン(以下、SSO)) を実現する方法です。さらに、App Service 認証を有効にすると、Azure AD などの Identit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App Service 認証の概要と仕組みについて">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="本記事では App Service 認証の概要とその仕組み、よくある質問についてご説明いたします。 App Service 認証とは、App Service 上にデプロイした Web アプリケーションでコードの実装無しで簡単に ユーザーの認証機能 (シングルサインオン(以下、SSO)) を実現する方法です。さらに、App Service 認証を有効にすると、Azure AD などの Identit">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-98c5c81f-74ac-4b00-a915-a4fd24221254.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-36345568-8f2d-402c-aa9f-ffce7385567c.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-77ce2f70-720d-453b-9dba-f48b031046b5.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-19ff11bc-a3e1-4fe2-87c0-bfe3444c570c.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-d11daee3-8bb2-4120-bb4e-bd8b7111e0df.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-7af29312-1d45-4346-867f-848a261edd18.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-0f50180a-b3d4-4396-afa3-d64179c15463.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-b7a6ee44-12b4-47fa-b72d-e003c30c618c.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-8ff0fb62-9d02-49bb-a277-061c3730ede7.png">
+<meta property="article:published_time" content="2023-05-10T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.624Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="App Service">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-98c5c81f-74ac-4b00-a915-a4fd24221254.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/05/11/what-is-appserviceauthentication" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      App Service 認証の概要と仕組みについて
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-05-10T15:00:00.000Z" itemprop="datePublished">2023-05-11</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+7364658b-d775-50d9-ae2e-60906e9051bd%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BApp+Service+%E8%AA%8D%E8%A8%BC%E3%81%AE%E6%A6%82%E8%A6%81%E3%81%A8%E4%BB%95%E7%B5%84%E3%81%BF%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F05%2F11%2Fwhat-is-appserviceauthentication.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F05%2F11%2Fwhat-is-appserviceauthentication.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F05%2F11%2Fwhat-is-appserviceauthentication.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication.html" data-id="cuidX9fovw3S_t7dp5tr1DE-S" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本記事では App Service 認証の概要とその仕組み、よくある質問についてご説明いたします。</p>
+<p>App Service 認証とは、App Service 上にデプロイした Web アプリケーションでコードの実装無しで簡単に ユーザーの認証機能 (シングルサインオン(以下、SSO)) を実現する方法です。さらに、App Service 認証を有効にすると、Azure AD などの Identity Provider(以下、IdP) からアクセス元ユーザーのアクセストークン&#x2F;ID トークンが取得できるので、それをもとにアプリケーション内でユーザーごとに操作を管理することも出来ます。</p>
+<p>なお、App Service 認証で実現できる SSO で連携対象とする IdP は事前に用意されたもの中から選択する形となるため、連携していない IdP と連携を希望する場合は Web アプリケーション側で認証連携モジュールなどを使用して独自に認証を実装頂くことをご検討ください。(※認証連携に使用するプロトコルは、通常 OpenID Connect となります。SAML 認証には対応しておりませんのでご注意ください。2023-05 現在)</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#feature-architecture">App Service 認証 機能のアーキテクチャ</a></p>
+<blockquote>
+<p><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-98c5c81f-74ac-4b00-a915-a4fd24221254.png" alt="image-98c5c81f-74ac-4b00-a915-a4fd24221254.png"></p>
+</blockquote>
+<p>※ ちなみに、App Service 上の Web アプリケーションに対する認証は、App Service 認証の他にも、<a href="https://learn.microsoft.com/ja-jp/azure/app-service/app-service-web-configure-tls-mutual-auth?tabs=azurecli#enable-client-certificates">クライアント証明書による認証</a>も実現できますが、この話はまた別の記事でご紹介できればと思います。</p>
+<h1 id="App-Service-認証を有効にする"><a href="#App-Service-認証を有効にする" class="headerlink" title="App Service 認証を有効にする"></a>App Service 認証を有効にする</h1><p>本記事では、Azure AD を IdP として認証連携するように App Service 認証を構成します。連携可能な IdP は、Azure AD の他にも、Google、Fracebook、Twitter、さらには OpenID Connect に対応している IdP です。</p>
+<p>App Service 認証は、Azure ポータルから App Service を選択後、[認証] ブレードから有効にできます。Azure AD を IdP として構成するには、[認証] ブレード&gt; [ID プロバイダーの追加] をクリックし、”ID プロバイダー” ドロップダウンで [Microsoft] を選択します。</p>
+<p><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-36345568-8f2d-402c-aa9f-ffce7385567c.png" alt="image-36345568-8f2d-402c-aa9f-ffce7385567c.png"></p>
+<p>ID プロバイダーに [Microsoft] を選択後、基本的には規定値のままで動作できますが、構成の詳細などは、以下サイトに非常に分かりやすく記載されていますのでぜひ参照ください。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-provider-aad#--option-1-create-a-new-app-registration-automatically">Azure AD ログインを使用するように App Service または Azure Functions アプリを構成する</a></p>
+<h3 id="参考-OpenID-Connect-のメタデータ"><a href="#参考-OpenID-Connect-のメタデータ" class="headerlink" title="(参考) OpenID Connect のメタデータ"></a>(参考) OpenID Connect のメタデータ</h3><p>App Service 認証で Microsoft(Azure AD) を IdP として選択した場合には、通常 OpenID Connect が認証連携のプロトコルとして使用されます。Azure AD の OpenID Connect のメタデータは、以下 URL から取得できます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-protocols-oidc#find-your-apps-openid-configuration-document-uri">アプリの OpenID 構成ドキュメント URI を見つける</a></p>
+<blockquote>
+<ul>
+<li>既知の構成ドキュメント パス: &#x2F;.well-known&#x2F;openid-configuration</li>
+<li>機関 URL: <a href="https://login.microsoftonline.com/%7Btenant%7D/v2.0">https://login.microsoftonline.com/{tenant}/v2.0</a><br>GET &#x2F;{tenant}&#x2F;v2.0&#x2F;.well-known&#x2F;openid-configuration<br>Host: login.microsoftonline.com</li>
+</ul>
+</blockquote>
+<p>実際にリクエストしてみると issuer や authorization_endpoint などが確認できます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;token_endpoint&quot;: &quot;https://login.microsoftonline.com/&#123;tenant&#125;/oauth2/v2.0/token&quot;,</span><br><span class="line"> (中略)</span><br><span class="line">    &quot;issuer&quot;: &quot;https://login.microsoftonline.com/&#123;tenant&#125;/v2.0&quot;,</span><br><span class="line">    &quot;request_uri_parameter_supported&quot;: false,</span><br><span class="line">    &quot;userinfo_endpoint&quot;: &quot;https://graph.microsoft.com/oidc/userinfo&quot;,</span><br><span class="line">    &quot;authorization_endpoint&quot;: &quot;https://login.microsoftonline.com/&#123;tenant&#125;/oauth2/v2.0/authorize&quot;,</span><br><span class="line">    &quot;device_authorization_endpoint&quot;: &quot;https://login.microsoftonline.com/&#123;tenant&#125;/oauth2/v2.0/devicecode&quot;</span><br><span class="line"> (中略)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考-App-Service-認証の構成情報を確認する"><a href="#参考-App-Service-認証の構成情報を確認する" class="headerlink" title="(参考) App Service 認証の構成情報を確認する"></a>(参考) App Service 認証の構成情報を確認する</h3><p>App Service 認証の構成情報は az webapp auth show コマンドでご確認いただけます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/cli/azure/webapp/auth?view=azure-cli-latest#az-webapp-auth-show">az webapp auth show</a> </p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">az webapp auth show <span class="literal">--name</span> MyWebApp <span class="literal">--resource-group</span> MyResourceGroup</span><br></pre></td></tr></table></figure>
+<p>上記コマンドから、構成しているクライアント ID や IdP の情報などを確認することが出来ます。</p>
+<p>実行結果例:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;aadClaimsAuthorization&quot;: &quot;&#123;\&quot;allowed_groups\&quot;:2023 年 05 月 11 日時点の内容となります。&lt;br&gt;,\&quot;allowed_client_applications\&quot;:null&#125;&quot;,</span><br><span class="line">  &quot;additionalLoginParams&quot;: null,</span><br><span class="line">  &quot;allowedAudiences&quot;: [</span><br><span class="line">    &quot;api://***&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;allowedExternalRedirectUrls&quot;: [],</span><br><span class="line">  &quot;authFilePath&quot;: null,</span><br><span class="line">  &quot;clientId&quot;: &quot;***&quot;,</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考-App-Service-認証の構成情報を更新する"><a href="#参考-App-Service-認証の構成情報を更新する" class="headerlink" title="(参考) App Service 認証の構成情報を更新する"></a>(参考) App Service 認証の構成情報を更新する</h3><h4 id="az-コマンド"><a href="#az-コマンド" class="headerlink" title="az コマンド"></a>az コマンド</h4><p>App Service 認証は、az コマンドを使用していくつかの構成情報を更新することができます。<br>例えば、以下コマンドでは、Azure Active Directory ID プロバイダーのオープン ID 発行者、クライアント ID、クライアント シークレットを更新します。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/cli/azure/webapp/auth/microsoft?view=azure-cli-latest#az-webapp-auth-microsoft-update">az webapp auth microsoft update</a></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">az webapp auth microsoft update  <span class="literal">-g</span> myResourceGroup <span class="literal">--name</span> MyWebApp \</span><br><span class="line">  <span class="literal">--client-id</span> my<span class="literal">-client-id</span> <span class="literal">--client-secret</span> very_secret_password \</span><br><span class="line">  <span class="literal">--issuer</span> https://sts.windows.net/<span class="number">54826</span>b22<span class="literal">-38d6-4fb2-bad9-b7983a3e9c5a</span>/</span><br></pre></td></tr></table></figure>
+<p>現在ご利用いただけるコマンドの一覧は、<a href="https://learn.microsoft.com/ja-jp/cli/azure/webapp/auth?view=azure-cli-latest#commands">az webapp auth</a>にリファレンスがまとめられておりますので、併せてご参照ください。</p>
+<h4 id="Azure-Resource-Explorer"><a href="#Azure-Resource-Explorer" class="headerlink" title="Azure Resource Explorer"></a>Azure Resource Explorer</h4><p>az コマンドでは更新いただけない構成については、Azure Resource Explorer を使用して更新することが出来ます。</p>
+<ol>
+<li>Microsoft: <a href="https://resources.azure.com/">https://resources.azure.com</a> で、次の手順を実行します。</li>
+<li>ページの上部にある [Read&#x2F;Write] を選択します。<br><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-77ce2f70-720d-453b-9dba-f48b031046b5.png" alt="image-77ce2f70-720d-453b-9dba-f48b031046b5.png"></li>
+<li>左側のブラウザーで、<code>[subscriptions]&gt;&lt;subscription_name&gt;&gt;[resourceGroups]&gt;&lt;resource_group_name&gt;&gt;[providers]&gt;[Microsoft.Web]&gt;[sites]&gt;&lt;app_name&gt;&gt;[config]&gt;[authsettingsV2]</code> に移動します。</li>
+<li>[編集] をクリックします。</li>
+<li>編集対象とするプロパティを変更し、[Put] をクリックします。<br>プロパティの値は、以下リファレンスにおまとめしておりますため、ご参照ください。<br><a href="https://learn.microsoft.com/ja-jp/azure/templates/microsoft.web/sites/config-authsettingsv2?pivots=deployment-language-arm-template">Microsoft.Web sites&#x2F;config ‘authsettingsV2’</a></li>
+</ol>
+<p>例えば、App Service の認証セッションの有効期限は既定で 8 時間ですが、これは　[authsettingsV2] の login.cookieExpiration.timeToExpiration から変更することが出来ます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;cookieExpiration&quot;: &#123;</span><br><span class="line">  &quot;convention&quot;: &quot;FixedTime&quot;,</span><br><span class="line">  &quot;timeToExpiration&quot;: &quot;08:00:00&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="App-Service-認証の動作を確認してみる"><a href="#App-Service-認証の動作を確認してみる" class="headerlink" title="App Service 認証の動作を確認してみる"></a>App Service 認証の動作を確認してみる</h1><p>実際に App Service 認証の動作を確認してみます。確認対象の認証フローは、主に使用されているフローである「プロバイダーの SDK を使わない場合」（App Service により自動的に認証を行う場合）をご紹介します。<br>また、ここでは、IdP として Azure AD を使用します。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-authentication-authorization#authentication-flow">Authentication flow</a></p>
+<blockquote>
+<p>プロバイダーの SDK を使わない場合:アプリケーションは、フェデレーション サインインを App Service に委任します。 これはブラウザー アプリで通常のケースであり、プロバイダーのログイン ページをユーザーに表示することができます。</p>
+<p>(中略)</p>
+<p>手順	プロバイダーの SDK を使わない場合</p>
+<ul>
+<li>1.ユーザーをサインインさせる	クライアントを &#x2F;.auth&#x2F;login&#x2F;<provider> にリダイレクトします。</li>
+<li>2.認証をポストする	プロバイダーはクライアントを &#x2F;.auth&#x2F;login&#x2F;<provider>&#x2F;callback にリダイレクトします。</li>
+<li>3.認証済みのセッションを確立する	App Service は認証された Cookie を応答に追加します。</li>
+<li>4.認証済みのコンテンツを提供する	クライアントは以降の要求に認証クッキーを含めます (ブラウザーによって自動的に処理されます)。</li>
+</ul>
+</blockquote>
+<p>Azure AD を IdP とした場合の認証フローのイメージ図は以下の通りです。</p>
+<p>App Service と Azure AD それぞれにクライアントを操作するユーザーに対する認証セッションが生成される点に注意が必要です。Azure AD へのログインが完了したら、Azure AD にてユーザーの認証セッションが生成され、App Service にて Azure AD との認証連携が完了したらユーザーの認証セッションが App Service 内で生成されます。</p>
+<p>※ Azure AD 内の認証セッションは既定で 90 日間ですが、セッションが切れるまでの間に一回でもサインインしていたら (Azure AD に認証が来てセッション Cookie で SSO すれば)、その時点から 90 日有効期限は延長されます。<br>参考: <a href="https://learn.microsoft.com/ja-jp/azure/active-directory/conditional-access/howto-conditional-access-session-lifetime#user-sign-in-frequency">ユーザー サインインの頻度</a> また、Azure AD のセッション Cookie の有効期限については <a href="https://jpazureid.github.io/blog/azure-active-directory/aad-token-lifetime/#%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%83%BC-%E3%82%AF%E3%83%A9%E3%82%A4%E3%82%A2%E3%83%B3%E3%83%88%E3%81%AB%E3%82%88%E3%82%8B-AAD-%E3%81%A8%E3%81%AE-SSO-%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3-%E3%83%95%E3%83%AD%E3%83%BC%E3%81%A8%E6%9C%89%E5%8A%B9%E6%9C%9F%E9%99%90%E3%81%AE%E8%80%83%E3%81%88%E6%96%B9">ブラウザー クライアントによる AAD との SSO セッション フローと有効期限の考え方</a> を参照ください。</p>
+<p><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-19ff11bc-a3e1-4fe2-87c0-bfe3444c570c.png" alt="image-19ff11bc-a3e1-4fe2-87c0-bfe3444c570c.png"></p>
+<h2 id="1-ユーザーのサインイン"><a href="#1-ユーザーのサインイン" class="headerlink" title="1 ) ユーザーのサインイン"></a>1 ) ユーザーのサインイン</h2><h3 id="認証フロー開始"><a href="#認証フロー開始" class="headerlink" title="認証フロー開始"></a>認証フロー開始</h3><p>App Service 認証の設定で、以下のように指定していた場合には、認証されていない要求は自動的にプロバイダーにリダイレクトされ、認証フロー（ユーザーのサインイン）が開始されます。</p>
+<ul>
+<li>”アクセスを制限する”: “認証が必要”</li>
+<li>“認証されていない要求”:”HTTP 302 (検出) を返す (ID プロバイダーにリダイレクト)”</li>
+</ul>
+<p><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-d11daee3-8bb2-4120-bb4e-bd8b7111e0df.png" alt="image-d11daee3-8bb2-4120-bb4e-bd8b7111e0df.png"></p>
+<p>”アクセスを制限する” を “認証されていない要求を許可する” にした場合には、以下ドキュメントに記載されているように Web アプリケーションにてクライアントを <code>/.auth/login/&lt;provider&gt;</code> にリダイレクトすることで認証フローを開始させることが出来ます。その際に post_login_redirect_uri パラメターで認証フローが完了した後、どの画面を表示させるか指定します。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-customize-sign-in-out#use-multiple-sign-in-providers">複数のサインイン プロバイダーを使用する</a></p>
+<blockquote>
+<p>アプリのその他の任意の場所で、有効にした各プロバイダーへのサインイン リンク (&#x2F;.auth&#x2F;login&#x2F;<provider>) を追加します。 次に例を示します。</p>
+<p><code>&lt;a href=&quot;/.auth/login/aad&quot;&gt;Log in with the Microsoft Identity Platform&lt;/a&gt;</code></p>
+<p>サインイン後のユーザーをカスタム URL にリダイレクトさせるには、post_login_redirect_uri クエリ文字列パラメーターを使用します。</p>
+<p><code>&lt;a href=&quot;/.auth/login/&lt;provider&gt;?post_login_redirect_uri=/Home/Index&quot;&gt;Log in&lt;/a&gt;</code></p>
+</blockquote>
+<h3 id="App-Service-認証の処理-認可要求"><a href="#App-Service-認証の処理-認可要求" class="headerlink" title="(App Service 認証の処理) 認可要求"></a>(App Service 認証の処理) 認可要求</h3><p>App Service 認証は、<code>/.auth/login/aad</code> へのリクエストを受け取ったら、連携している IdP の <code>/authorize</code> エンドポイントにクライアントを自動的にリダイレクトさせます。例えば Azure AD では <code>https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize</code> になります。なお、この URL は、上述の “OpenID Connect のメタデータ” からも確認ができますので併せて参照してみてください。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-protocols-oidc#send-the-sign-in-request">例: サインイン要求を送信する</a></p>
+<blockquote>
+<p>GET <a href="https://login.microsoftonline.com/%7Btenant%7D/oauth2/v2.0/authorize">https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize</a>?<br>client_id&#x3D;6731de76-14a6-49ae-97bc-6eba6914391e<br>&amp;response_type&#x3D;id_token<br>&amp;redirect_uri&#x3D;http%3A%2F%2Flocalhost%2Fmyapp%2F<br>&amp;response_mode&#x3D;form_post<br>&amp;scope&#x3D;openid<br>&amp;state&#x3D;12345<br>&amp;nonce&#x3D;678910</p>
+</blockquote>
+<p>実際に試してみると、上記と同じ URL に、クライアント (ブラウザー) がリダイレクトされているのが分かります。</p>
+<p><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-7af29312-1d45-4346-867f-848a261edd18.png" alt="image-7af29312-1d45-4346-867f-848a261edd18.png"></p>
+<h2 id="2-App-Service-認証の処理-認可コードとアクセストークンの取得"><a href="#2-App-Service-認証の処理-認可コードとアクセストークンの取得" class="headerlink" title="2 ) (App Service 認証の処理) 認可コードとアクセストークンの取得"></a>2 ) (App Service 認証の処理) 認可コードとアクセストークンの取得</h2><p><code>/authorize</code> エンドポイントにクライアントがリダイレクトされた後、クライアントを操作するユーザーが IdP にサインインしていなければID&#x2F;パスワードを入力する画面が表示されます。IdP にサインイン済みであれば、通常画面表示はスキップされ、ユーザーは再度認証情報を入力することなく、認証が完了します。</p>
+<p>認証が完了したら、App Service 認証の <code>/.auth/login/&lt;provider&gt;/callback</code> へ認可コード (authorization_code) が送られ、App Service 認証はその認可コードをもとに IdP からアクセストークンを取得します。取得したアクセストークンは App Service 認証により検証されます。具体的には、App Service 認証の設定に追加されている「発行者の URL」であるか、「許可されるトークン対象ユーザー」であるか等です。<br>この検証に失敗すると、認証エラーになり、App Service にアクセスできません。</p>
+<h2 id="3-認証済みのセッションを確立する"><a href="#3-認証済みのセッションを確立する" class="headerlink" title="3 ) 認証済みのセッションを確立する"></a>3 ) 認証済みのセッションを確立する</h2><p>App Service でアクセストークンの検証まで完了すると、App Service 認証によりクライアントを操作するユーザーに対する認証セッションが App Service で作成され、この認証セッションによりユーザーの認証状況を保存しています。<br>認証セッションは、ブラウザーからアクセスした場合には、「AppServiceAuthSession」という Cookie で管理されます。ブラウザーではこの Cookie が存在していることで、認証済みユーザーとして App Service へアクセスすることが出来ます。</p>
+<p>「AppServiceAuthSession」Cookie は、対象 App Service へアクセスした後、ブラウザーの [Application] タブより下図のようにご確認いただけます。 </p>
+<p><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-0f50180a-b3d4-4396-afa3-d64179c15463.png" alt="image-0f50180a-b3d4-4396-afa3-d64179c15463.png"></p>
+<p>App Service 内で作成される認証セッションは既定では 8 時間で有効期限切れになりますが、もしこれに不足がある場合には、上述の <strong>(参考) App Service 認証の構成情報を更新する</strong> セクションに記載の手順で時間を変更することが出来ます。</p>
+<h2 id="4-認証済みのコンテンツを提供する"><a href="#4-認証済みのコンテンツを提供する" class="headerlink" title="4 ) 認証済みのコンテンツを提供する"></a>4 ) 認証済みのコンテンツを提供する</h2><h3 id="Web-アプリケーションからクライアントの情報にアクセスする"><a href="#Web-アプリケーションからクライアントの情報にアクセスする" class="headerlink" title="Web アプリケーションからクライアントの情報にアクセスする"></a>Web アプリケーションからクライアントの情報にアクセスする</h3><p>App Service 認証が完了したら、Web アプリケーションはリクエストヘッダーからクライアントの認証情報を取得することが出来ます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-user-identities#access-user-claims-in-app-code">アプリ コードでユーザー クレームにアクセスする</a></p>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>X-MS-CLIENT-PRINCIPAL</td>
+<td>使用可能な要求の Base64 エンコード JSON 表現。 詳細については、「クライアント プリンシパル ヘッダーのデコード」を参照してください。</td>
+</tr>
+<tr>
+<td>X-MS-CLIENT-PRINCIPAL-ID</td>
+<td>ID プロバイダーによって設定された呼び出し元の識別子。</td>
+</tr>
+<tr>
+<td>X-MS-CLIENT-PRINCIPAL-NAME</td>
+<td>ID プロバイダーによって設定された呼び出し元の人間が判読できる名前。</td>
+</tr>
+<tr>
+<td>X-MS-CLIENT-PRINCIPAL-IDP</td>
+<td>App Service 認証で使用される ID プロバイダーの名前。</td>
+</tr>
+<tr>
+<td>X-MS-TOKEN-AAD-ACCESS-TOKEN</td>
+<td>アクセストークン (Azure AD を IdP として選択した場合)</td>
+</tr>
+<tr>
+<td>X-MS-TOKEN-AAD-ID-TOKEN</td>
+<td>ID トークン (Azure AD を IdP として選択した場合)</td>
+</tr>
+</tbody></table>
+</blockquote>
+<p>ASP.NETCore6 MVC(C#) アプリケーションでクライアントの Principal Name を取得する場合のサンプルコードはこちらです。</p>
+<p>Controller:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public IActionResult Index()</span><br><span class="line"> &#123;</span><br><span class="line">     var principalName = Request.Headers[&quot;X-MS-CLIENT-PRINCIPAL-NAME&quot;];</span><br><span class="line">     return View();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>アプリコードから ユーザー クレームにアクセスする方法の詳細は、<a href="https://azure.github.io/jpazpaas/2022/12/02/Tips-for-App-Service-authentication.html#3-%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B3%E3%83%BC%E3%83%89%E3%81%8B%E3%82%89%E3%83%88%E3%83%BC%E3%82%AF%E3%83%B3%E3%82%92%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95">App Service 認証機能（Easy Auth）の Tips のご紹介</a> をご確認ください。</p>
+<h3 id="クライアントから自身の認証情報にアクセスする"><a href="#クライアントから自身の認証情報にアクセスする" class="headerlink" title="クライアントから自身の認証情報にアクセスする"></a>クライアントから自身の認証情報にアクセスする</h3><p>トークンストア が有効な場合は <code>/.auth/me</code> にアクセスすることでクライアントの認証情報を確認することが出来ます。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-authentication-user-identities#access-user-claims-using-the-api">API を使用してユーザー クレームにアクセスする</a></p>
+<p>実際にアクセスしてみると、アクセストークンやユーザー名などの値が表示されます。</p>
+<p><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-b7a6ee44-12b4-47fa-b72d-e003c30c618c.png" alt="image-b7a6ee44-12b4-47fa-b72d-e003c30c618c.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;access_token&quot;: &quot;***&quot;,</span><br><span class="line">    &quot;expires_on&quot;: &quot;2023-04-27T08:52:52.5858318Z&quot;, (※アクセストークンの有効期限)</span><br><span class="line">    &quot;id_token&quot;: &quot;***&quot;,</span><br><span class="line">    &quot;provider_name&quot;: &quot;aad&quot;,</span><br><span class="line">    &quot;user_claims&quot;: [&#123;</span><br><span class="line">            &quot;typ&quot;: &quot;aud&quot;,</span><br><span class="line">            &quot;val&quot;: &quot;***&quot;</span><br><span class="line">        &#125;, &#123;</span><br><span class="line">            &quot;typ&quot;: &quot;iss&quot;,</span><br><span class="line">            &quot;val&quot;: &quot;https:\/\/login.microsoftonline.com\/***\/v2.0&quot;</span><br><span class="line"> ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="エラーになったときのデバッグ方法"><a href="#エラーになったときのデバッグ方法" class="headerlink" title="エラーになったときのデバッグ方法"></a>エラーになったときのデバッグ方法</h1><h2 id="問題の診断と解決-機能を使用する"><a href="#問題の診断と解決-機能を使用する" class="headerlink" title="[問題の診断と解決] 機能を使用する"></a>[問題の診断と解決] 機能を使用する</h2><p>[問題の診断と解決] &gt; 認証設定および調査検出器(イージー認証)機能 の 「簡単な認証エラー&#x2F;警告」セクションにより、認証に失敗している原因についてご確認いただくことが出来ます。<br>もし、App Service 認証に失敗するといった状況がありましたら、まずはこちらの機能を参照いただくことをお勧めいたします。</p>
+<p><img src="/jpazpaas/2023/05/11/what-is-appserviceauthentication/image-8ff0fb62-9d02-49bb-a277-061c3730ede7.png" alt="image-8ff0fb62-9d02-49bb-a277-061c3730ede7.png"></p>
+<h3 id="■-よくある原因のご紹介"><a href="#■-よくある原因のご紹介" class="headerlink" title="■ よくある原因のご紹介"></a>■ よくある原因のご紹介</h3><h4 id="1-アクセストークンの検証に失敗している"><a href="#1-アクセストークンの検証に失敗している" class="headerlink" title="1 ) アクセストークンの検証に失敗している"></a>1 ) アクセストークンの検証に失敗している</h4><p>認証に失敗する原因として、App Service 認証に設定した値とトークンの値に相違がある例をご紹介します。左記の場合には、「簡単な認証エラー&#x2F;警告」セクションに JWT validation failed(JWT 検証に失敗しました) が表示されます。メッセージの例は、以下の通りです。</p>
+<p>JWT 検証に失敗しました: 発行者の検証に失敗しました - 予想: <a href="https://login.microsoftonline.com/XXX/v2.0;%E3%83%88%E3%83%BC%E3%82%AF%E3%83%B3">https://login.microsoftonline.com/XXX/v2.0;トークン</a>: <a href="https://sts.windows.net/XXX/">https://sts.windows.net/XXX/</a></p>
+<p>“予想” が App Service 認証に構成されている値となり、”トークン” がアクセストークンをもとにした値となります。上記例では、発行者(Issuer) が、”予想” と “トークン” で値が異なっているため、検証に失敗しエラーとなっていることを示しております。<br>上記の値の相違がある場合には、App Service 認証に構成されている値を “トークン” の値と揃えていただくことで認証に成功する可能性があります。</p>
+<h4 id="2-App-Service-と、その前段に配置している-Application-Gateway-のドメインに相違がある"><a href="#2-App-Service-と、その前段に配置している-Application-Gateway-のドメインに相違がある" class="headerlink" title="2 ) App Service と、その前段に配置している Application Gateway のドメインに相違がある"></a>2 ) App Service と、その前段に配置している Application Gateway のドメインに相違がある</h4><p>よくある例として、App Service の前段に Application Gateway を配置し、その Application Gateway 経由でクライアントからのリクエストを受け付ける構成がございます。左記構成の場合については、以下ブログにご紹介がございますため、少しでもご参考となりましたら幸いです。</p>
+<p><a href="https://azure.github.io/jpazpaas/2022/03/09/Application-Gateway-front-of-App-Service-auth.html">App Service の前段に ApplicationGateway を配置した際の Azure AD 認証</a></p>
+<hr>
+<p><br>App Service 認証に関する概要を以上の通りおまとめいたしました。少しでもご参考となりましたら幸いです。</p>
+<br>
+<br>
+
+<p>2023 年 02 月 16 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/05/11/what-is-appserviceauthentication.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../12/preview-events-of-eventhubs.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Event Hubs に格納されたイベントの中身を確認する方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="../10/Appservice-components.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">App Service を構成する主要な要素とそれぞれの役割</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

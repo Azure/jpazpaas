@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>App Service における SNAT ポート枯渇問題とその解決方法 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Azure App Service はアプリを簡単に構築・デプロイ・管理することができる PaaS（Platform as a Service）です。 App Service についてのお問い合わせとして「少数のリクエストをさばくテスト運用時には問題は発生しなかったが、大量のリクエストを受ける本番運用時にウェブアプリが不調になった」というものがあります。 そこで、本記事では原因の一つとして考えられ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App Service における SNAT ポート枯渇問題とその解決方法">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Azure App Service はアプリを簡単に構築・デプロイ・管理することができる PaaS（Platform as a Service）です。 App Service についてのお問い合わせとして「少数のリクエストをさばくテスト運用時には問題は発生しなかったが、大量のリクエストを受ける本番運用時にウェブアプリが不調になった」というものがあります。 そこで、本記事では原因の一つとして考えられ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat/2021-09-30-image-090da467-030d-4268-a1df-88f1f647b1da.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide8-61bd38a3-e64f-4a9f-aa4b-ffa5e6b3b35a.PNG">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide6-6b14bc2d-d300-4f58-b6b8-b558c2daa127.PNG">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide9-2d1158eb-92fd-4c25-a08e-429aad12c461.PNG">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide10-088dd600-d3c0-4ef4-a4d7-bc4604ad4ad6.PNG">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide3-4b4080d4-fe59-4e7a-9820-fd951d3bd022.PNG">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Presentation1-1f8514af-02f9-4601-a976-ec137a225a30.png">
+<meta property="article:published_time" content="2021-09-28T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.337Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="App Service">
+<meta property="article:tag" content="Function App">
+<meta property="article:tag" content="Web Apps">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat/2021-09-30-image-090da467-030d-4268-a1df-88f1f647b1da.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2021/09/29/app-service-snat" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      App Service における SNAT ポート枯渇問題とその解決方法
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2021-09-28T15:00:00.000Z" itemprop="datePublished">2021-09-29</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+7583e02b-7a8d-59f4-b26f-daeb372cb324%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BApp+Service+%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B+SNAT+%E3%83%9D%E3%83%BC%E3%83%88%E6%9E%AF%E6%B8%87%E5%95%8F%E9%A1%8C%E3%81%A8%E3%81%9D%E3%81%AE%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%B3%95%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2021%2F09%2F29%2Fapp-service-snat.html%29%0A*+Content+Source%3A+%5Barticles%2F2021%2F09%2F29%2Fapp-service-snat.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2021%2F09%2F29%2Fapp-service-snat.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2021/09/29/app-service-snat.html" data-id="cuidvzbWw9RlVdKR0aEBhtVdO" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Azure App Service はアプリを簡単に構築・デプロイ・管理することができる PaaS（Platform as a Service）です。</p>
+<p>App Service についてのお問い合わせとして「少数のリクエストをさばくテスト運用時には問題は発生しなかったが、大量のリクエストを受ける本番運用時にウェブアプリが不調になった」というものがあります。</p>
+<p>そこで、本記事では原因の一つとして考えられる SNAT ポート枯渇問題について、問題の概要から解決策までご案内いたします。</p>
+<p>App Service にてデプロイされたウェブアプリケーションが、 SQL データベースや Redis キャッシュ、外部の RESTful なウェブサービスなどいくつかの外部サービスと接続する必要があるということはよくあります。しかし、 App Service では、ウェブアプリケーションが外部のサービスと直接コネクションを確立することはできません。</p>
+<p>これは、App Service ワーカーインスタンスは必ずロードバランサー経由で外部と通信をする必要があるからです。 App Service にてデプロイされたウェブアプリケーションは一つ、もしくはいくつかの App Serivce ワーカーインスタンスによってホストされています。 ワーカーインスタンスは Scale Unit という単位でまとめられています。 ワーカーインスタンスはインターネットに公開された IP アドレスを割り振られておらず、外部の IP アドレス宛の通信を行うためには、 Scale Unit ごとに用意されたロードバランサを利用して Source Network Address Translation（SNAT） を行う必要があります。</p>
+<p>SNAT を行うロードバランサは、ある Scale Unit 内のウェブアプリケーション、WebJobs、Functions、テレメトリサービス（Application Insights）などを含むすべての App Service サイトで共用するリソースです。よって、あるアプリケーションが Scale Unit 外部のエンドポイントと大量のコネクションを張ると SNAT ポートが不足して通信できなくなってしまいます。</p>
+<p>SNAT ポートの枯渇を回避するためには、 1 インスタンスあたりのコネクションの数が <strong>128 を超えないようにする</strong>ことが必要であり、これを守る限りロードバランサーが SNAT のポート枯渇を理由にウェブアプリケーションが外部エンドポイントに接続するのをブロックすることはありません。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/azure/app-service/troubleshoot-intermittent-outbound-connection-errors#cause">https://docs.microsoft.com/ja-jp/azure/app-service/troubleshoot-intermittent-outbound-connection-errors#cause</a></li>
+</ul>
+<blockquote>
+<p> Azure アプリ サービスの各インスタンスには、当初、128 個の SNAT ポートが事前に割り当てられています。</p>
+</blockquote>
+<p>SNAT の詳しい説明や SNAT ポートの割り当てアルゴリズムの挙動などについては、弊社エンジニアが執筆いたしました下記の記事や公式ドキュメントをご参照ください。</p>
+<ul>
+<li><a href="https://4lowtherabbit.github.io/blogs/2019/10/SNAT/">https://4lowtherabbit.github.io/blogs/2019/10/SNAT/</a></li>
+<li><a href="https://docs.microsoft.com/ja-jp/azure/load-balancer/load-balancer-outbound-connections#default-port-allocation">https://docs.microsoft.com/ja-jp/azure/load-balancer/load-balancer-outbound-connections#default-port-allocation</a></li>
+</ul>
+<p>以下では、SNAT ポートが枯渇するアプリケーションを実際に用意して問題を再現することで、SNAT ポートが不足した時にウェブアプリケーションに現れる症状や問題を回避するためのアプリケーションの実装例を見ていきます。</p>
+<h1 id="SNAT-ポート枯渇問題の再現"><a href="#SNAT-ポート枯渇問題の再現" class="headerlink" title="SNAT ポート枯渇問題の再現"></a>SNAT ポート枯渇問題の再現</h1><p>SNAT ポート枯渇問題を再現するために次の 2 つのウェブアプリを用意し、各 App Service へデプロイを行います。</p>
+<ul>
+<li><code>StarveSnatWebAppEastAsia</code></li>
+<li><code>DelayReplyCentralUs</code></li>
+</ul>
+<p><code>StarveSnatWebAppEastAsia</code> が今回 SNAT ポートを大量に消費するアプリケーションです。<code>StarveSnatWebAppEastAsia</code> は次のように動作します。</p>
+<ul>
+<li><code>GET /snat/UseClient?url=&lt;url&gt;</code><ul>
+<li><code>HttpClient</code> をコネクションごとに生成・破棄しながら <code>&lt;url&gt;</code> にアクセスする。アクセスに成功したら <code>&quot;OK&quot;</code> と返す。</li>
+</ul>
+</li>
+<li><code>GET /snat/ReuseClient?url=&lt;url&gt;</code><ul>
+<li><code>HttpClient</code> を複数のコネクションに対して使いまわしながら <code>&lt;url&gt;</code> にアクセスする。アクセスに成功したら <code>&quot;OK&quot;</code> と返す。</li>
+</ul>
+</li>
+</ul>
+<p><code>DelayReplyCentralUs</code> は次のように動作します。</p>
+<ul>
+<li><code>/Delay?seconds=N</code>：<code>N</code> 秒間の <code>Sleep()</code> 後、<code>&quot;OK&quot;</code> と返す。</li>
+</ul>
+<p>これらを利用することで、アプリケーションが Scale Unit 外との通信を行うシナリオを再現できます。なお、<code>StarveSnatWebAppEastAsia</code> と <code>DelayReplyCentralUs</code> が異なる Scale Unit にデプロイされることを保証するために、それぞれ異なるリージョンにアプリをデプロイします。</p>
+<p><img src="/jpazpaas/2021/09/29/app-service-snat/2021-09-30-image-090da467-030d-4268-a1df-88f1f647b1da.png" alt="2021-09-30-image-090da467-030d-4268-a1df-88f1f647b1da.png"></p>
+<p><code>StarveSnatWebApp</code> へ同時に大量のアクセスを行うことで SNAT ポートを消費させ問題を再現することができます。今回は次のようなコマンドで実行しました。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PS</span>&gt; <span class="comment"># ForEach-Object -Parallel コマンドを使用（PowerShell version 7~ 提供）</span></span><br><span class="line"><span class="built_in">PS</span>&gt; <span class="variable">$PSVersionTable</span></span><br><span class="line"></span><br><span class="line">Name                           Value</span><br><span class="line"><span class="literal">----</span>                           <span class="literal">-----</span></span><br><span class="line">PSVersion                      <span class="number">7.0</span>.<span class="number">7</span></span><br><span class="line">PSEdition                      Core</span><br><span class="line">GitCommitId                    <span class="number">7.0</span>.<span class="number">7</span></span><br><span class="line">OS                             Microsoft Windows <span class="number">10.0</span>.<span class="number">19042</span></span><br><span class="line">Platform                       Win32NT</span><br><span class="line">PSCompatibleVersions           &#123;<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>, <span class="number">4.0</span>…&#125;</span><br><span class="line">PSRemotingProtocolVersion      <span class="number">2.3</span></span><br><span class="line">SerializationVersion           <span class="number">1.1</span>.<span class="number">0.1</span></span><br><span class="line">WSManStackVersion              <span class="number">3.0</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">PS</span>&gt; <span class="comment"># クライアントを毎回生成・200並列で合計1000アクセス</span></span><br><span class="line"><span class="built_in">PS</span>&gt; <span class="number">1</span>..<span class="number">1000</span> | <span class="built_in">ForEach-Object</span> <span class="literal">-Parallel</span> &#123; <span class="built_in">curl</span> <span class="string">&quot;https://&lt;StarveSnatWebAppEastAsia のエンドポイント&gt;/snat/UseClient?url=https://&lt;DelayReplyCentralUs のエンドポイント&gt;/delay?seconds=5&quot;</span>; &#125; <span class="literal">-ThrottleLimit</span> <span class="number">200</span> <span class="number">2</span>&gt; <span class="variable">$null</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">PS</span>&gt; <span class="comment"># クライアントを再利用・200並列で合計1000アクセス</span></span><br><span class="line"><span class="built_in">PS</span>&gt; <span class="number">1</span>..<span class="number">1000</span> | <span class="built_in">ForEach-Object</span> <span class="literal">-Parallel</span> &#123; <span class="built_in">curl</span> <span class="string">&quot;https://&lt;StarveSnatWebAppEastAsia のエンドポイント&gt;/snat/ReuseClient?url=https://&lt;DelayReplyCentralUs のエンドポイント&gt;/delay?seconds=5&quot;</span>; &#125; <span class="literal">-ThrottleLimit</span> <span class="number">200</span> <span class="number">2</span>&gt; <span class="variable">$null</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="ウェブアプリに現れる症状"><a href="#ウェブアプリに現れる症状" class="headerlink" title="ウェブアプリに現れる症状"></a>ウェブアプリに現れる症状</h1><p>SNAT ポートが枯渇すると、当該アプリケーションにて <code>SocketException</code> が発生します。当該アプリの <code>Application Insights &gt; Application map</code> からアプリケーションがどことどういう通信をしたかが表示されます。</p>
+<p><img src="/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide8-61bd38a3-e64f-4a9f-aa4b-ffa5e6b3b35a.PNG" alt="2021-09-30-Slide8-61bd38a3-e64f-4a9f-aa4b-ffa5e6b3b35a.PNG"></p>
+<p>失敗した通信があれば次の画像に示すような表示になります。赤い表示でエラーの発生が見て取れます。</p>
+<p><img src="/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide6-6b14bc2d-d300-4f58-b6b8-b558c2daa127.PNG" alt="2021-09-30-Slide6-6b14bc2d-d300-4f58-b6b8-b558c2daa127.PNG"></p>
+<p>さらにマップ上のアプリケーションに相当する部分をクリックすることでさらに詳細を確認することもできます。</p>
+<p><img src="/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide9-2d1158eb-92fd-4c25-a08e-429aad12c461.PNG" alt="2021-09-30-Slide9-2d1158eb-92fd-4c25-a08e-429aad12c461.PNG"></p>
+<p>また、Azure Portal から<code>問題の診断と解決 &gt; 「SNAT」と検索 &gt; 「SNAT ポートの枯渇」</code>で SNAT ポートに関わる問題発生の有無や割り当て済みポートと使用済みポートの時系列推移のグラフを見ることができます。</p>
+<p><img src="/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide10-088dd600-d3c0-4ef4-a4d7-bc4604ad4ad6.PNG" alt="2021-09-30-Slide10-088dd600-d3c0-4ef4-a4d7-bc4604ad4ad6.PNG"></p>
+<p>SNAT ポートの枯渇が検出された場合には、この画面の上部に通知されます。SNAT ポートの使用状況のグラフからおおよその SNAT ポートの割り当ての挙動が見て取れます（最初に 128 ポートがアプリに割り当てられて以降、要求に応じてベストエフォート）。一方で実際の割り当ての動作と比べてプロットの粒度が荒いため、グラフを観察することで SNAT ポートの枯渇が起こったのかを判断することはできません。上部の通知を確認しましょう。</p>
+<p><img src="/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Slide3-4b4080d4-fe59-4e7a-9820-fd951d3bd022.PNG" alt="2021-09-30-Slide3-4b4080d4-fe59-4e7a-9820-fd951d3bd022.PNG"></p>
+<p><img src="/jpazpaas/2021/09/29/app-service-snat/2021-09-30-Presentation1-1f8514af-02f9-4601-a976-ec137a225a30.png" alt="2021-09-30-Presentation1-1f8514af-02f9-4601-a976-ec137a225a30.png"></p>
+<h1 id="SNAT-ポート枯渇問題を回避する実装"><a href="#SNAT-ポート枯渇問題を回避する実装" class="headerlink" title="SNAT ポート枯渇問題を回避する実装"></a>SNAT ポート枯渇問題を回避する実装</h1><p>SNAT ポート枯渇問題を解決する方法はいくつか考えられますが、アプリケーションの実装を見直すことで解決する可能性もございます。</p>
+<p>例えば、 C# で書かれた以下のようなコードでは、<code>HttpClient</code>がコネクションごとに生成・破棄が行われ、 SNAT ポートを多く消費してしまいます。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">SnatController</span> : <span class="title">Controller</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task&lt;<span class="built_in">string</span>&gt; <span class="title">UseClient</span>(<span class="params"><span class="built_in">string</span> url</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// usingでくくることでHttpClientがリクエストごとに生成される</span></span><br><span class="line">        <span class="keyword">using</span> (<span class="keyword">var</span> client = <span class="keyword">new</span> HttpClient())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">await</span> client.GetAsync(url);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;OK&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一方で、次のように一つの <code>HttpClient</code> インスタンスを使いまわすことで SNAT ポートの消費を抑えることができます。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">SnatController</span> : <span class="title">Controller</span>, <span class="title">IDisposable</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> HttpClient _client;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">SnatController</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        _client = <span class="keyword">new</span> HttpClient();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 複数のコネクションに対して_clientを使いまわす</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task&lt;<span class="built_in">string</span>&gt; <span class="title">ReuseClient</span>(<span class="params"><span class="built_in">string</span> url</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">await</span> _client.GetAsync(url);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;OK&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">new</span> <span class="keyword">void</span> <span class="title">Dispose</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        _client.Dispose();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>C# の REST API についてのアプリケーションの詳細な実装方法は、下記の記事にて参考いただけます。</p>
+<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/dotnet/api/system.net.http.httpclient?view=net-5.0">https://docs.microsoft.com/ja-jp/dotnet/api/system.net.http.httpclient?view=net-5.0</a><ul>
+<li><code>HttpClient</code> についての弊社公式ドキュメントになります。</li>
+<li><code>HttpClient</code> の使用法についての一次情報としてご活用ください。</li>
+</ul>
+</li>
+<li><a href="https://qiita.com/superriver/items/91781bca04a76aec7dc0">https://qiita.com/superriver/items/91781bca04a76aec7dc0</a><ul>
+<li>弊社エンジニアが執筆を行っております。</li>
+<li><code>HttpClient</code> を使う際の実装上の注意点について解説されています。</li>
+</ul>
+</li>
+<li><a href="https://blog.nnasaki.com/entry/2019/10/04/143936">https://blog.nnasaki.com/entry/2019/10/04/143936</a><ul>
+<li>Microsoft MVP を取得しているエンジニアより執筆しております。</li>
+<li>.NET Core で <code>HttpClientFactory</code> を使う方法が解説されています。</li>
+</ul>
+</li>
+</ul>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>本記事では、実際に SNAT ポートを枯渇させるアプリケーションを動かし、アプリケーションに現れる症状とその対策の一例をお見せしました。</p>
+<p>SNAT ポートの枯渇は、アプリケーションへの大量のアクセスが起こってから顕在化することが多く、少数のアクセスを行うテスト段階では気が付きにくいです。</p>
+<p>本記事を参考に、皆様が問題を自分で発見し、解決のきっかけになれば幸いです。</p>
+<h1 id="参考ドキュメント・記事"><a href="#参考ドキュメント・記事" class="headerlink" title="参考ドキュメント・記事"></a>参考ドキュメント・記事</h1><ul>
+<li>SNAT そのものの挙動やポート割り当てのアルゴリズムが説明されています。<ul>
+<li><a href="https://4lowtherabbit.github.io/blogs/2019/10/SNAT/">https://4lowtherabbit.github.io/blogs/2019/10/SNAT/</a></li>
+</ul>
+</li>
+<li>SNAT に関わる公式ドキュメント<ul>
+<li><a href="https://docs.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors">https://docs.microsoft.com/azure/app-service/troubleshoot-intermittent-outbound-connection-errors</a></li>
+<li><a href="https://docs.microsoft.com/azure/load-balancer/load-balancer-outbound-connections#preallocatedports">https://docs.microsoft.com/azure/load-balancer/load-balancer-outbound-connections#preallocatedports</a></li>
+<li><a href="https://docs.microsoft.com/azure/azure-functions/manage-connections?tabs=csharp">https://docs.microsoft.com/azure/azure-functions/manage-connections?tabs=csharp</a></li>
+<li><a href="https://docs.microsoft.com/azure/load-balancer/troubleshoot-outbound-connection">https://docs.microsoft.com/azure/load-balancer/troubleshoot-outbound-connection</a></li>
+<li><a href="https://docs.microsoft.com/azure/load-balancer/outbound-rules">https://docs.microsoft.com/azure/load-balancer/outbound-rules</a></li>
+<li><a href="https://docs.microsoft.com/azure/load-balancer/load-balancer-standard-diagnostics">https://docs.microsoft.com/azure/load-balancer/load-balancer-standard-diagnostics</a></li>
+<li><a href="https://azure.microsoft.com/blog/azure-load-balancer-to-become-more-efficient/">https://azure.microsoft.com/blog/azure-load-balancer-to-become-more-efficient/</a></li>
+</ul>
+</li>
+<li>C# での <code>HttpClient</code>&#x2F;<code>HttpClientFactory</code> の使い方についての解説記事<ul>
+<li><a href="https://qiita.com/superriver/items/91781bca04a76aec7dc0">https://qiita.com/superriver/items/91781bca04a76aec7dc0</a></li>
+<li><a href="https://blog.nnasaki.com/entry/2019/10/04/143936">https://blog.nnasaki.com/entry/2019/10/04/143936</a></li>
+</ul>
+</li>
+</ul>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2021 年 9 月 29 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2021/09/29/app-service-snat.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../10/06/blob-container-usage-per-container.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Blobコンテナーのコンテナーごとの容量確認方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="../22/css-from-interns-point-of-view.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">インターン生から見た Customer Service &amp; Support</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

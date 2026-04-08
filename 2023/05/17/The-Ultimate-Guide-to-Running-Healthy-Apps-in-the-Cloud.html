@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>[日本語訳] The Ultimate Guide to Running Healthy Apps in the Cloud | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本記事は 2020 年 5 月に投稿されましたThe Ultimate Guide to Running Healthy Apps in the Cloud の日本語抄訳です。2022 年 5 月 12 日時点の内容に合わせて一部加筆修正を行っています。 現代のデータセンターは非常に複雑で、多くの可動部分があります。VM の再起動や移動、システムのアップグレード、ファイルサーバーのスケールアップ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[日本語訳] The Ultimate Guide to Running Healthy Apps in the Cloud">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="本記事は 2020 年 5 月に投稿されましたThe Ultimate Guide to Running Healthy Apps in the Cloud の日本語抄訳です。2022 年 5 月 12 日時点の内容に合わせて一部加筆修正を行っています。 現代のデータセンターは非常に複雑で、多くの可動部分があります。VM の再起動や移動、システムのアップグレード、ファイルサーバーのスケールアップ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-8115a83b-6e10-4351-9622-a24144e3f210.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-e325a3f5-5ae2-45fc-a8f9-7d00206de5a4.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-933c43be-a30e-46db-b6c6-8523adfa1800.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-65507357-2d5a-4980-8313-233dfd023e64.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-84c07222-1a13-493c-9181-bdf7ca098cd6.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-d56cc4c9-88bf-4c15-b77e-703499cb83c6.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-68834c23-54da-4fcb-a13d-0d144ccabb69.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-3b45777c-da36-49e3-a259-840921559809.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-6411c722-d39b-4e60-bad3-41b691b6e5dc.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-fd9d3056-1a0c-4b81-8f75-05210bd78b42.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-3e9c52bf-48a8-415a-82e7-53bfe1fd1e51.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-59336e52-9bd3-4842-80a9-a9e4855e9860.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-7d34c073-b964-4935-a14c-ff896e5e0894.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-0f36a465-2328-4751-b425-4c2c4918a5c2.png">
+<meta property="article:published_time" content="2023-05-16T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.630Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="App Service">
+<meta property="article:tag" content="App Service Environment">
+<meta property="article:tag" content="Function App">
+<meta property="article:tag" content="Web Apps">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-8115a83b-6e10-4351-9622-a24144e3f210.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [日本語訳] The Ultimate Guide to Running Healthy Apps in the Cloud
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-05-16T15:00:00.000Z" itemprop="datePublished">2023-05-17</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+26fdefc6-27cc-53c4-a8c9-9307a73b5ddc%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5B%5B%E6%97%A5%E6%9C%AC%E8%AA%9E%E8%A8%B3%5D+The+Ultimate+Guide+to+Running+Healthy+Apps+in+the+Cloud%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F05%2F17%2FThe-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F05%2F17%2FThe-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F05%2F17%2FThe-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud.html" data-id="cuidAm5PXYE1TnLHP8u7dZaN2" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<p>本記事は 2020 年 5 月に投稿されました<br><a href="https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html">The Ultimate Guide to Running Healthy Apps in the Cloud</a> の日本語抄訳です。2022 年 5 月 12 日時点の内容に合わせて一部加筆修正を行っています。</p>
+<p>現代のデータセンターは非常に複雑で、多くの可動部分があります。VM の再起動や移動、システムのアップグレード、ファイルサーバーのスケールアップやスケールダウン。これらの事象はクラウド環境では予想されることです。しかしながら、ベストプラクティスに従うことで、クラウドアプリケーションをこれらの事象に対応することができます。本稿では、アプリケーションをクラウドに対応させるために取るべき 13 の重要なステップを紹介します。これらのステップを踏むことで、データセンターで発生した事象がアプリケーションに与える影響を少なくし、アプリケーションがより弾力的で将来性のあるものにすることができます。</p>
+<p>前述のように、VM インスタンスは再起動することが予想されますし、実際に行われます。また、VM インスタンスはアップグレードされますし、しばしばファイルサーバーの移動に悩まされることもあります。しかしながら、アプリケーションをこのような事態に備えることは可能です。アプリケーションの可用性を最大限にするために、多くのプラクティスを取り入れることをお勧めします。</p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://azure.github.io/jpazpaas/2023/05/10/Appservice-components.html">App Service を構成する主要な要素とそれぞれの役割</a></li>
+<li><a href="https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html">[日本語訳] Inside the Azure App Service Architecture</a></li>
+<li><a href="https://azure.github.io/jpazpaas/2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html">Azure App Service の計画メンテナンスの事前通知</a></li>
+</ul>
+<br>
+
+<h1 id="複数のインスタンスを使用する"><a href="#複数のインスタンスを使用する" class="headerlink" title="複数のインスタンスを使用する"></a>複数のインスタンスを使用する</h1><hr>
+<p>アプリケーションを 1 つのインスタンスで動作させると、単一障害点となります。アプリケーションに複数のインスタンスを割り当てることで、特定の インスタンスに何か問題が発生した場合であっても、アプリケーションは他のインスタンスからリクエストに応答することができるようになります。<strong>アプリケーションコードは、データソースからの読み取りやデータソースへの書き込みの際に、同期の問題なしに複数のインスタンスで動作させる必要があることに留意ください。</strong> Azure ポータルの設定セクションの「スケール アウト（App Service のプラン）」より、アプリケーションに複数のインスタンスを割り当てることができます。</p>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-8115a83b-6e10-4351-9622-a24144e3f210.png" alt="image-8115a83b-6e10-4351-9622-a24144e3f210.png"></p>
+<p>単一障害点を避けるために、<strong>少なくとも2-3個のインスタンス</strong>でアプリケーションを実行することをご検討ください。これは、アプリケーションの起動に時間がかかる場合（コールドスタートと呼ばれます）には特に重要です。複数のインスタンスを実行することで、App Service の基盤となります インスタンスが移動、またはアップグレードした場合でもアプリケーションが利用できるようになります。また、以下のような事前定義されたルールに基づいて、自動的にスケールアウトするルールを構成することもできます。</p>
+<ul>
+<li>時間帯（アプリケーションのトラフィックが多い時間帯など）</li>
+<li>リソースの使用状況（メモリ、CPUなど）</li>
+<li>両方の組み合わせ</li>
+</ul>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/azure/azure-monitor/platform/autoscale-get-started?toc=/azure/app-service/toc.json">Azure での自動スケールの使用</a></li>
+<li><a href="https://michaelcandido.com/app-service-warm-up-demystified/">App Service Warm-Up Demystified</a></li>
+</ul>
+<br>
+
+<h1 id="初期設定の更新"><a href="#初期設定の更新" class="headerlink" title="初期設定の更新"></a>初期設定の更新</h1><hr>
+<p>App Service には、開発者が Web アプリケーションをユースケースに合わせて構成するための多くの設定があります。<strong>常時接続（Always-On）</strong> は、過去 20 分間にリクエストが受信されなかった場合でも、インスタンスを存続させます。常時接続を有効にすることで、アプリケーションのコールドスタートを緩和することができます。</p>
+<p><strong>ARR アフィニティ</strong> は、スティッキーセッションを作成し、クライアントがその後のリクエストで同じアプリケーションインスタンスに接続するようにします。ただし、ARR Affinity を使用すると、インスタンス間で要求が不均等に分散され、インスタンスに過負荷がかかる可能性があります。ARR アフィニティを無効にすることは、アプリケーションがステートレスであるか、セッションの状態がキャッシュやデータベースなどのリモートサービスに保存されていることを想定しています。</p>
+<p>最後に、<strong>プラットフォーム</strong>を 32 ビットから 64 ビットに設定してください。32ビットプロセス（64ビットオペレーティングシステム上でも）で利用可能なメモリ量は最大 2GB です。デフォルトでは、App Service のワーカープロセスは 32 ビットに設定されています（レガシーなWebアプリケーションとの互換性のためです）。利用できる追加のメモリを活用できるように、64 ビットプロセスへの切り替えを検討してください。</p>
+<p>堅牢性を重視する本番アプリケーションでは、<strong>［常時接続］を［オン］、［ARR アフィニティ］を［オフ］、［プラットフォーム］を［64 Bit］</strong> に設定することをお勧めします。</p>
+<p>これらの設定は、Azure ポータルの設定セクションの「構成」-&gt;「全般設定」タブで変更することができます。</p>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-e325a3f5-5ae2-45fc-a8f9-7d00206de5a4.png" alt="image-e325a3f5-5ae2-45fc-a8f9-7d00206de5a4.png"></p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/azure/app-service/configure-common#configure-general-settings">App Service アプリを構成する</a></li>
+<li><a href="https://azure.github.io/AppService/2016/05/16/Disable-Session-affinity-cookie-(ARR-cookie)-for-Azure-web-apps.html">Disable Session affinity cookie (ARR cookie) for Azure web apps</a></li>
+</ul>
+<br>
+
+<h1 id="Production-Hardware-を使用する"><a href="#Production-Hardware-を使用する" class="headerlink" title="Production Hardware を使用する"></a>Production Hardware を使用する</h1><hr>
+<p>App Service は、お客様のさまざまなニーズに合わせて、さまざまなハードウェア階層（SKU とも呼ばれます）を提供しています。新しい App Service プランを作成する際に SKU を選択するオプションがあります。</p>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-933c43be-a30e-46db-b6c6-8523adfa1800.png" alt="image-933c43be-a30e-46db-b6c6-8523adfa1800.png"></p>
+<p>App Service プランを運用環境で使用する場合、App Service プランが推奨する「Production」価格帯のいずれかを指定ください。さらに、お客様のアプリケーションが大量にリソースを消費する場合には、お客様のアプリケーションの必要性に応じて、推奨される価格帯の中から適切な価格帯を選択するようにしてください。例えば、アプリケーションが多くの CPU サイクルを消費する場合、S1 の価格帯で実行すると、CPU が高くなり、アプリケーションのダウンタイムや遅延を引き起こす可能性があります。</p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/azure/app-service/manage-scale-up">Azure App Service でアプリをスケールアップする</a></li>
+</ul>
+<br>
+
+<h1 id="デプロイメントスロットを活用する"><a href="#デプロイメントスロットを活用する" class="headerlink" title="デプロイメントスロットを活用する"></a>デプロイメントスロットを活用する</h1><hr>
+<p>新しいプログラムコードを運用環境にデプロイする前に、App Services のデプロイメントスロットを利用してテストすることができます。デプロイメントスロットは、独自のホスト名を持つアプリケーションです。アプリケーションのコンテンツと構成要素は、運用スロットを含む2つのデプロイメントスロット間でスワップすることができます。</p>
+<p>アプリケーションを非運用スロットにデプロイすると、次のような利点があります。</p>
+<ul>
+<li>運用スロットにスワップする前に、ステージング環境でアプリケーションの変更を検証することができます。</li>
+<li>アプリケーションを最初にスロットにデプロイして運用環境にスワップすると、運用環境にスワップする前にステージングスロットのすべてのインスタンスがウォームアップされます。これにより、アプリケーションをデプロイする際のダウンタイムをなくすことができます。トラフィックのリダイレクトはシームレスで、スワップ操作のためにリクエストがドロップされることもありません。自動スワップを設定することで、このワークフロー全体を自動化することができます。</li>
+<li>スワップ後のステージングスロットには以前の運用スロットのアプリケーションが動作しています。運用スロットにスワップされた変更が期待通りでない場合は、すぐに同じスワップを実行して「最後に確認された正常なサイト」に戻すことができます。</li>
+</ul>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-65507357-2d5a-4980-8313-233dfd023e64.png" alt="image-65507357-2d5a-4980-8313-233dfd023e64.png"></p>
+<p><em>デプロイメントスロットは、Standard、Premium、または Isolated App Service のプランでのみ利用可能です。</em></p>
+<p><strong>プレビューでのスワップ (複数フェーズのスワップ)</strong> の使用を強くお勧めします。プレビューでのスワップを使用すると、ステージングスロットのアプリケーションを運用スロットの設定と比較してテストし、またアプリケーションをウォームアップすることができます。テストを行い、必要なパスをすべてウォームアップした後、スワップを完了することで<strong>アプリケーションは再起動することなく</strong>運用環境のトラフィックを受信するようになります。これは、アプリケーションの可用性とパフォーマンスに大きな影響を与えます。</p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/azure/app-service/deploy-staging-slots">Azure App Service でステージング環境を設定する</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/app-service/deploy-staging-slots#swap-with-preview-multi-phase-swap">プレビューでのスワップ (複数フェーズのスワップ)</a></li>
+<li><a href="https://docs.microsoft.com/azure/app-service/deploy-best-practices#use-deployment-slots">デプロイ スロットの使用</a></li>
+</ul>
+<br>
+
+<h1 id="正常性チェックのパスを設定する"><a href="#正常性チェックのパスを設定する" class="headerlink" title="正常性チェックのパスを設定する"></a>正常性チェックのパスを設定する</h1><hr>
+<p>App Service では、アプリケーションのヘルスチェックパスを指定することができます。プラットフォームはこのパスに ping を送信して、アプリケーションが正常にリクエストに応答しているかどうかを判断します。サイトが複数のインスタンスにスケールアウトされている場合には App Service は異常なインスタンスを切り離し、全体の可用性を向上させます。アプリケーションのヘルスチェックパスは、データベース、キャッシュ、メッセージングサービスなど、アプリケーションの重要なコンポーネントをポーリングする必要があります。これにより、ヘルスチェックパスから返されるステータスが、アプリケーションの全体的な正常性を正確に表していることが保証されます。</p>
+<ol>
+<li>Azure ポータルの監視セクションの「正常性チェック」をクリックします。</li>
+</ol>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-84c07222-1a13-493c-9181-bdf7ca098cd6.png" alt="image-84c07222-1a13-493c-9181-bdf7ca098cd6.png"></p>
+<ol start="2">
+<li>当機能が ping を送信するパスを設定します。</li>
+<li>「保存」をクリックして設定を保存します。</li>
+</ol>
+<p><em><strong>正常性チェックにより異常なインスタンスが切り離されるのは 2 つ以上のインスタンスがある場合に限られます。</strong> シングルインスタンスの場合、異常な ping が 1 時間継続するとインスタンスの置換が行われます。</em></p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://learn.microsoft.com/azure/app-service/monitor-instances-health-check?tabs=dotnet">正常性チェックを使用して App Service インスタンスを監視する</a></li>
+<li><a href="https://learn.microsoft.com/azure/app-service/monitor-instances-health-check?tabs=dotnet#what-happens-if-my-app-is-running-on-a-single-instance">アプリが 1 つのインスタンスで実行されている場合は、どうなるでしょうか?</a></li>
+</ul>
+<br>
+
+<h1 id="Application-Initialization-を利用する"><a href="#Application-Initialization-を利用する" class="headerlink" title="Application Initialization を利用する"></a>Application Initialization を利用する</h1><hr>
+<p>Application Initialization は、アプリケーションのインスタンスがリクエストを受け付ける前にアプリケーションが完全に開始されることを保証します。Application Initialization は、サイトの再起動、自動スケーリング、および手動スケーリング時に使用されます。これは、サイトのルートパス(‘&#x2F;‘) がリクエストを受け付けるだけではアプリケーションが起動しない場合に重要な機能です。このために、認証を必要としないウォームアップパスをアプリケーション上に作成し、Application Initialization がこの URL パスを使用するように構成する必要があります。</p>
+<p>ウォームアップ用 URL で実装されたメソッドが、すべての重要な機能に触れるようにし、ウォームアップが完了したときだけレスポンスを返すようにします。レスポンス（成功または失敗）を返したときにのみ、Application Initialization は「アプリケーションは問題なく起動した」と判断します。Application Initialization は、web.config ファイル内で設定することができます。</p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://learn.microsoft.com/azure/app-service/deploy-staging-slots#specify-custom-warm-up">カスタム ウォームアップを指定する</a></li>
+</ul>
+<br>
+
+<h1 id="ローカルキャッシュの有効化"><a href="#ローカルキャッシュの有効化" class="headerlink" title="ローカルキャッシュの有効化"></a>ローカルキャッシュの有効化</h1><hr>
+<p>この機能を有効にすることで、サイトは（サイトコンテンツが保存されている）Azure ストレージから取得するのではなく、ローカルの仮想マシンインスタンスからファイルを読み書きするようになります。これにより、アプリケーションの リサイクルを減らすことができます。これは、Azure ポータルの設定セクションの「構成」-&gt; 「アプリケーション設定」から有効にすることができます。「アプリケーション設定」で、キーに「WEBSITE_LOCAL_CACHE_OPTION」を、値を「Always」として追加します。また、「WEBSITE_LOCAL_CACHE_SIZEINMB」を追加し、最大 2000MB のローカルキャッシュサイズを指定します（指定しない場合のデフォルトは 300MB になります）。サイトのコンテンツが 300MB を超える場合にはキャッシュサイズを指定する必要があります。この機能を使用するには、サイトのコンテンツが 2000MB 未満であることを確認してください。また、スワップ時に削除されないように、スロットにも設定ください。<strong>ここで最も重要なことは、アプリケーションがデータやトランザクションの状態を維持するためにローカルディスクへの書き込みを行うべきでないということです。</strong> ストレージはストレージコンテナや DB、Cosmos DB のような外部ストレージを使用する必要があります。</p>
+<p><em>ローカルキャッシュの動作は、使用している言語と CMS に依存することに注意してください。最良の結果を得るためには、アプリケーションがローカルディスクに書き込みを行っていない限り、.NET および .NET Core アプリケーションで使用することをお勧めします。</em></p>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-d56cc4c9-88bf-4c15-b77e-703499cb83c6.png" alt="image-d56cc4c9-88bf-4c15-b77e-703499cb83c6.png"></p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/azure/app-service/overview-local-cache">Azure App Service のローカル キャッシュの概要</a></li>
+</ul>
+<br>
+
+<h1 id="Auto-Heal"><a href="#Auto-Heal" class="headerlink" title="Auto-Heal"></a>Auto-Heal</h1><hr>
+<p>アプリケーションに予期せぬ動作が発生し、単純な再起動で解決することがあります。Auto-Heal 機能は、まさにそれを可能にします。Auto-Heal のトリガーとなる「条件」と、条件が満たされたときに Auto-Heal が開始する「アクション」を定義することができます。</p>
+<p>Auto-Heal のルールは、Azure ポータルの「問題の診断と解決」-&gt; 「Diagnostic Tools」タイルを開き、「Proactive tools」セクションの「Auto-Heal」より定義することができます。</p>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-68834c23-54da-4fcb-a13d-0d144ccabb69.png" alt="image-68834c23-54da-4fcb-a13d-0d144ccabb69.png"></p>
+<p>下記はフィルターの設定例ですが、他のエラーコードや頻度が適している場合は、適宜修正してください。</p>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Request Count</td>
+<td>70</td>
+</tr>
+<tr>
+<td>Status Code</td>
+<td>500</td>
+</tr>
+<tr>
+<td>Sub-status code</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Win32-status code</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Frequency in seconds</td>
+<td>60</td>
+</tr>
+</tbody></table>
+<p>上記の条件を満たした上で、アクションを設定することをお勧めします。</p>
+<ul>
+<li>Recycle Process</li>
+</ul>
+<p>を追加し、「Override when Action executes (Optional)」を追加します。</p>
+<ul>
+<li>Auto-Heal が実行されるまでのプロセスのスタートアップ時間： 3600秒(1時間)</li>
+</ul>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-diagnostics#auto-healing">自動復旧</a></li>
+<li><a href="https://stack247.wordpress.com/2019/05/20/azure-app-service-auto-healing/">Azure App Service Auto-Heal</a></li>
+<li><a href="https://stack247.wordpress.com/2019/05/20/azure-app-service-auto-healing/">Announcing the New Auto-Heal Experience in App Service Diagnostics</a></li>
+</ul>
+<br>
+
+<h1 id="App-Service-プランの密度を最小にする"><a href="#App-Service-プランの密度を最小にする" class="headerlink" title="App Service プランの密度を最小にする"></a>App Service プランの密度を最小にする</h1><hr>
+<p>App Service プランで多くのアプリケーションを実行すると、パフォーマンスに影響が出ることがあります。App Service プランで実行されているすべてのアプリは、Azure ポータルの App Service プランの「設定」セクションの「アプリ」で確認できます。</p>
+<p>App Service プランの密度は、App Service Plan Density Check で確認することができます。詳しくは <a href="#Risk-Assesments-%E3%81%AE%E6%B4%BB%E7%94%A8">Risk Assesments の活用</a> をご確認ください。Risk Assesments の「可用性とパフォーマンスのベスト プラクティス」もしくは「Get Resiliency Score report」よりご確認いただくことができます。</p>
+<ul>
+<li><a href="https://azure.github.io/AppService/2019/05/21/App-Service-Plan-Density-Check.html">App Service Plan Density Check</a></li>
+</ul>
+<br>
+
+<h1 id="ディスク容量の監視"><a href="#ディスク容量の監視" class="headerlink" title="ディスク容量の監視"></a>ディスク容量の監視</h1><hr>
+<p>デプロイするアプリケーションコンテンツが 1GB 未満であることを確認します。これは、アプリケーションの再起動時のダウンタイムを削減し、アプリケーションのパフォーマンスを向上させるための必要です。ファイルシステムの使用量は、Azure ポータルの「App Service プラン」の「設定」セクションの「ファイル システム ストレージ」より確認することができます。</p>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-3b45777c-da36-49e3-a259-840921559809.png" alt="image-3b45777c-da36-49e3-a259-840921559809.png"></p>
+<br>
+
+<h1 id="Application-Insights-の有効化"><a href="#Application-Insights-の有効化" class="headerlink" title="Application Insights の有効化"></a>Application Insights の有効化</h1><hr>
+<p>Application Insights は、アプリケーションで発生したインシデントのトラブルシューティングを支援する機能群を提供します。コードエラーのデバッグ、依存関係に起因するパフォーマンス低下の診断などに使用できます。</p>
+<p>Application Insights の強力な機能の 1 つに、Application Insights Profiler があります。Application Insights Profiler を有効にすると、Azure で本番稼働しているアプリケーションのパフォーマンストレースを確認できます。Profiler は、ユーザーに悪影響を与えることなく、スケールで自動的にデータを取得します。Profiler を使用すると、リクエストを処理する際に最も時間がかかる「ホット」なコードパスを特定することができます。Profiler は、.NET アプリケーションで動作します。これを有効にするには、Azure ポータルの「Application Insights」にアクセスします。「調査」 セクションの「パフォーマンス」をクリックします。</p>
+<ol>
+<li>「パフォーマンス」ペインで「プロファイラー」をクリックします。</li>
+</ol>
+<p> <img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-6411c722-d39b-4e60-bad3-41b691b6e5dc.png" alt="image-6411c722-d39b-4e60-bad3-41b691b6e5dc.png"></p>
+<ol start="2">
+<li>「プロファイラ」ペインで、「今すぐプロファイル」をクリックすると、Profiler が開始されます。</li>
+</ol>
+<p> <img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-fd9d3056-1a0c-4b81-8f75-05210bd78b42.png" alt="image-fd9d3056-1a0c-4b81-8f75-05210bd78b42.png"></p>
+<ol start="3">
+<li>Profiler が実行されている場合、1 時間に 1 回程度、2 分間、ランダムにプロファイルが作成されます。アプリケーションが安定してリクエストを処理している場合、Profiler は1時間ごとにトレースをアップロードします。トレースを表示するには、「パフォーマンス」ペインで「詳細の表示…」-&gt;「Profiler Traces」ボタンをクリックします。</li>
+</ol>
+<p> <img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-3e9c52bf-48a8-415a-82e7-53bfe1fd1e51.png" alt="image-3e9c52bf-48a8-415a-82e7-53bfe1fd1e51.png"></p>
+<ol start="4">
+<li>Application Insights では、アプリケーションの依存関係を追跡することも可能です。この機能を活用して、遅いリクエストのトラブルシューティングを行うことができます。.NET コンソールアプリから依存関係を自動的に追跡するには、Nuget パッケージ Microsoft.ApplicationInsights.DependencyCollector をインストールし、次のように DependencyTrackingTelemetryModule を初期化します。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DependencyTrackingTelemetryModule depModule = new DependencyTrackingTelemetryModule();</span><br><span class="line">depModule.Initialize(TelemetryConfiguration.Active);</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>各リクエストイベントは、アプリケーションがリクエストを処理している間に追跡される依存関係の呼び出し、例外、およびその他のイベントと関連付けられています。そのため、一部のリクエストの調子が悪い場合、依存関係からのレスポンスが遅いことが原因かどうかを突き止めることができます。「パフォーマンス」ペインでも、「依存関係」タブからリクエストのウォーターフォールビューを見ることができます。</li>
+</ol>
+<p> <img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-59336e52-9bd3-4842-80a9-a9e4855e9860.png" alt="image-59336e52-9bd3-4842-80a9-a9e4855e9860.png"></p>
+<p>また、 <a href="https://azure.github.io/AppService/2020/04/21/Announcing-Application-Insights-Integration-with-App-Service-Diagnostics.html">Application Insights integration with App Service Diagnostics</a> を活用することもできます。</p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/azure/azure-monitor/app/profiler-overview">Application Insights Profiler を使用した Azure のプロファイル運用アプリケーション</a></li>
+<li><a href="https://docs.microsoft.com/azure/azure-monitor/app/asp-net-exceptions">Application Insights を使用した Web アプリの例外の診断</a></li>
+<li><a href="https://docs.microsoft.com/azure/azure-monitor/app/asp-net-dependencies#diagnosis">リクエストから依存関係までのトレース</a></li>
+</ul>
+<br>
+
+<h1 id="複数のデータセンターに展開する"><a href="#複数のデータセンターに展開する" class="headerlink" title="複数のデータセンターに展開する"></a>複数のデータセンターに展開する</h1><hr>
+<p>Azure Front Door や Azure Traffic Manager を導入することで、トラフィックがサイトに到達する前に中継させることができます。これらは、インスタンス&#x2F;リージョン間のトラフィックのルーティングと分散を支援します。Azure リージョンの 1 つで壊滅的な災害が発生した場合でも、別のリージョンに投資することで、アプリケーションの実行とリクエストへの対応を保証することができます。Azure Front Door や Azure Traffic Manager を使用することで、クライアントの地域に基づいて受信リクエストをルーティングし、クライアントに最短の応答時間を提供したり、インスタンス間で負荷を分散して 1 つのインスタンスにリクエストが集中しないようにするなどの利点もあります。<br><br>また、2021 年に App Service は可用性ゾーンに対応しました。これにより App Service プランを指定したリージョン内の 3 つのゾーン（Azure データセンター）に分散配置することができるようなりました。いずれかの方法で App Service プランを複数のデータセンターに配置されることをお勧めします。</p>
+<p><strong>Learn More</strong></p>
+<ul>
+<li><a href="https://docs.microsoft.com/azure/app-service/web-sites-traffic-manager">Azure Traffic Manager による Azure App Service トラフィックの制御</a></li>
+<li><a href="https://docs.microsoft.com/azure/frontdoor/quickstart-create-front-door">クイック スタート:グローバル Web アプリケーションの高可用性を実現するフロント ドアを作成する</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/architecture/reference-architectures/app-service-web-app/zone-redundant">可用性の高いゾーン冗長 Web アプリケーション</a></li>
+<li><a href="https://learn.microsoft.com/azure/reliability/migrate-app-service">App Service を可用性ゾーンのサポートありに移行する</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/reliability/availability-zones-overview">Azure リージョンと可用性ゾーンとは</a></li>
+</ul>
+<br>
+
+<h1 id="Risk-Assesments-の活用"><a href="#Risk-Assesments-の活用" class="headerlink" title="Risk Assesments の活用"></a>Risk Assesments の活用</h1><hr>
+<p>最後に、Azure ポータルの「問題の診断と解決」の「Risk Assesments」を活用することで、アプリケーションの耐障害性向上の対応状況を確認することができます。</p>
+<p> <img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-7d34c073-b964-4935-a14c-ff896e5e0894.png" alt="image-7d34c073-b964-4935-a14c-ff896e5e0894.png"></p>
+<p>2つのオプションが表示されます。</p>
+<ul>
+<li>可用性とパフォーマンスのベスト プラクティス</li>
+<li>最適な構成のためのベスト プラクティス</li>
+</ul>
+<p>これらの検出器に記載されているすべてのベスト プラクティスを確認することをお勧めします。<br><br>また、「Get Resiliency Score report」より 2 つのオプションを含めた耐障害性向上レポートを取得することもできます。</p>
+<p><img src="/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud/image-0f36a465-2328-4751-b425-4c2c4918a5c2.png" alt="image-0f36a465-2328-4751-b425-4c2c4918a5c2.png"></p>
+<p>最後に、アプリケーションの開始時間を最小化し、より弾力性を高めるために <a href="https://docs.microsoft.com/azure/architecture/patterns/">クラウド設計パターン</a> を参照することもお勧めします。</p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2023 年 05 月 17 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../19/About-update-for-default-security-settings-for-new-Azure-Storage-accounts-LVK-RT8.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          2023 年 5 月頃に送付された Azure Storage のセキュリティ設定の変更に関する通知(_LVK-RT8)について
+        
+      </div>
+    </a>
+  
+  
+    <a href="../15/queuetrigger-visibility-timeout.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Queue トリガーの visibilityTimeout</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

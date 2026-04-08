@@ -1,1 +1,0 @@
-https://azure.github.io/jpazpaas/

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>App Service における Docker User Namespace remapping issues について | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="お世話になっております。App Service サポート担当の押田です。 本記事は 2022 年 6 月 30 日に公開されました Docker User Namespace remapping issues の日本語訳です。翻訳内容には細心の注意を払っておりますが、もし原文内容と齟齬がある場合は、原文の内容を優先くださいませ。   Docker にはユーザ名前空間と名前空間の再割り当て(user">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App Service における Docker User Namespace remapping issues について">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/02/15/Docker-User-Namespace-remapping-issues.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="お世話になっております。App Service サポート担当の押田です。 本記事は 2022 年 6 月 30 日に公開されました Docker User Namespace remapping issues の日本語訳です。翻訳内容には細心の注意を払っておりますが、もし原文内容と齟齬がある場合は、原文の内容を優先くださいませ。   Docker にはユーザ名前空間と名前空間の再割り当て(user">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2023-02-14T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.578Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="App Service">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/02/15/Docker-User-Namespace-remapping-issues" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      App Service における Docker User Namespace remapping issues について
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-02-14T15:00:00.000Z" itemprop="datePublished">2023-02-15</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+f033dd99-1b1a-51db-8ed5-63d12b4c909a%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BApp+Service+%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B+Docker+User+Namespace+remapping+issues+%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F02%2F15%2FDocker-User-Namespace-remapping-issues.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F02%2F15%2FDocker-User-Namespace-remapping-issues.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F02%2F15%2FDocker-User-Namespace-remapping-issues.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/02/15/Docker-User-Namespace-remapping-issues.html" data-id="cuidfJ3UrbFZcpqaZF0_M6tlH" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>お世話になっております。App Service サポート担当の押田です。</p>
+<p>本記事は 2022 年 6 月 30 日に公開されました <a href="https://azureossd.github.io/2022/06/30/Docker-User-Namespace-remapping-issues/index.html">Docker User Namespace remapping issues</a> の日本語訳です。<br>翻訳内容には細心の注意を払っておりますが、もし原文内容と齟齬がある場合は、原文の内容を優先くださいませ。</p>
+<!--
+Docker has a concept of **User namespace** and **User namespace remapping** (Otherwise known as `userns`). When this is used, this remaps users in the container to less privileged users on the host machine. 
+
+Sometimes, a user may be explicitly defined in a `Dockerfile` that has a `UID` mapped outside of the allowed range of id's. Othertimes, a file itself for example can have a high `UID`, which may happen without purposely doing this, as this would depend on how the Image is ultimately built (base Image, Third Party Image, etc.)
+
+When these `UID`s are mapped to an id out of range, errors can occur, as explained below.
+
+You can read more of the official documentation [here](https://docs.docker.com/engine/security/userns-remap/#user-namespace-known-limitations).
+
+# Important note
+The concept of username spaces is a typical Linux construct. The error described in this article is **NOT** an App Service and/or an Azure issue. This can easily be reproduced on essentially any machine that supports user namespaces and remapping, and is trying to create an ID out of the range set on the machine.
+
+> **NOTE**: The range of these id's can **not** be changed on App Services. It is ultimately up to the developer or maintainer of the Image to resolve what is set with too high of an id.
+-->
+
+<p>Docker には<strong>ユーザ名前空間</strong>と<strong>名前空間の再割り当て</strong>(userns とも呼ばれます)の概念があります。これを使用すると、コンテナ内のユーザーをホストマシン上の特権のないユーザーに再割当てできます。</p>
+<p><code>Dockerfile</code> で明示的に定義されたユーザーが、許可された ID 範囲の外の <code>UID</code> を持っている場合や、ファイル自体が大きな <code>UID</code> を持っている場合があります。これは、最終的にイメージがどのように構築されるか（ベースイメージ、サードパーティイメージなど）に依存するため、意図せずに発生する可能性があります。</p>
+<p>許可された範囲外の <code>UID</code> が割当てされた場合、以下に示すようなエラーが発生する場合があります。</p>
+<p>詳細については <a href="https://docs.docker.com/engine/security/userns-remap/#user-namespace-known-limitations">こちら</a> のオフィシャルドキュメントもご参照ください。</p>
+<h1 id="重要事項"><a href="#重要事項" class="headerlink" title="重要事項"></a>重要事項</h1><p>ユーザー名前空間の概念は、典型的な Linux の仕組みです。この記事で説明されているエラーは、App Service や Azure の問題ではありません。これは、ユーザー名前空間と再割当てをサポートし、マシン上の設定範囲外の ID を作成しようとしているマシンでも再現できます。</p>
+<blockquote>
+<p><strong>注意</strong>: App Service において、ID の範囲の変更は<strong>できません</strong>。非常に大きな ID の解決は、最終的にはイメージの開発者または管理者にて行う必要があります。</p>
+</blockquote>
+<!--
+# Errors 
+
+## Types of errors
+Sometimes if a user, group or file is mapped to a high UID or GUID you may see errors like the following:
+
+- `failed to register layer: Error processing tar file(exit status 1): Container ID 1000000 cannot be mapped to a host IDErr: 0, Message: failed to register layer: Error processing tar file(exit status 1): Container ID 1000000 cannot be mapped to a host ID`
+- `OCI runtime create failed: container_linux.go:380: starting container process caused: setup user: cannot set uid to unmapped user in user namespace: unknown`
+
+There may be other variations of this message, but ultimately it will show that a user id cannot be mapped to the user namespace or hose.
+
+## Where this may show
+On App Services, this will show on the Image pull. Encountering these errors will cause the pull to fail - causing an `Application Error :(` message or a HTTP 502 when attempting to browse the site.
+
+Below is an example of a pull that fails:
+
+```yaml
+2022-07-01T00:02:29.030Z INFO  - 6f199d2c4d2f Extracting 32KB / 308KB
+2022-07-01T00:02:29.930Z INFO  - 6f199d2c4d2f Extracting 192KB / 308KB
+2022-07-01T00:02:30.500Z INFO  - 6f199d2c4d2f Extracting 224KB / 308KB
+2022-07-01T00:02:32.193Z INFO  - 6f199d2c4d2f Extracting 256KB / 308KB
+2022-07-01T00:02:34.247Z INFO  - 6f199d2c4d2f Extracting 308KB / 308KB
+2022-07-01T00:02:35.021Z INFO  - 6f199d2c4d2f Extracting 308KB / 308KB
+2022-07-01T00:02:48.845Z INFO  - 6f199d2c4d2f Pull complete
+2022-07-01T00:02:48.874Z INFO  - d163dfb13dd8 Extracting 193B / 193B
+2022-07-01T00:02:48.876Z INFO  - d163dfb13dd8 Extracting 193B / 193B
+2022-07-01T00:02:49.002Z INFO  - d163dfb13dd8 Pull complete
+2022-07-01T00:02:49.017Z INFO  - 8820d67a46eb Extracting 202B / 202B
+2022-07-01T00:02:49.019Z INFO  - 8820d67a46eb Extracting 202B / 202B
+2022-07-01T00:02:49.113Z INFO  -  
+2022-07-01T00:02:49.114Z ERROR - failed to register layer: Error processing tar file(exit status 1): Container ID 1000000 cannot be mapped to a host IDErr: 0, Message: failed to register layer: Error processing tar file(exit status 1): Container ID 1000000 cannot be mapped to a host ID
+2022-07-01T00:02:49.124Z INFO  - Pull Image failed, Time taken: 0 Minutes and 55 Seconds
+```
+
+You can view log files to further correlate this through **Log Stream** or the **Kudu** site by viewing log files ending with `_docker.log`.
+-->
+<h1 id="エラー"><a href="#エラー" class="headerlink" title="エラー"></a>エラー</h1><h2 id="エラーの種類"><a href="#エラーの種類" class="headerlink" title="エラーの種類"></a>エラーの種類</h2><p>ユーザー、グループまたはファイルが大きな <code>UID</code> または、<code>GUID</code> に再割当てされる場合、以下のようなエラーを目にする可能性があります。</p>
+<ul>
+<li><code>failed to register layer: Error processing tar file(exit status 1): Container ID 1000000 cannot be mapped to a host IDErr: 0, Message: failed to register layer: Error processing tar file(exit status 1): Container ID 1000000 cannot be mapped to a host ID</code></li>
+<li><code>OCI runtime create failed: container_linux.go:380: starting container process caused: setup user: cannot set uid to unmapped user in user namespace: unknown</code></li>
+</ul>
+<p>様々なパターンのメッセージがありますが、根本原因としては、uid を ユーザー名前空間に再割当てできないことに起因します。</p>
+<h2 id="エラーの発生箇所"><a href="#エラーの発生箇所" class="headerlink" title="エラーの発生箇所"></a>エラーの発生箇所</h2><p>App Sericeでは、イメージの pull 実行時に発生します。これらのエラーが発生した場合、pull に失敗し、サイトアクセス時に <code>Application Error :(</code> が表示されたり、HTTP ステータス 502 が返却されることになります。</p>
+<p>以下は、pull 失敗時のエラー例となります。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2022-07-01T00:02:29.030Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">6f199d2c4d2f</span> <span class="string">Extracting</span> <span class="string">32KB</span> <span class="string">/</span> <span class="string">308KB</span></span><br><span class="line"><span class="number">2022-07-01T00:02:29.930Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">6f199d2c4d2f</span> <span class="string">Extracting</span> <span class="string">192KB</span> <span class="string">/</span> <span class="string">308KB</span></span><br><span class="line"><span class="number">2022-07-01T00:02:30.500Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">6f199d2c4d2f</span> <span class="string">Extracting</span> <span class="string">224KB</span> <span class="string">/</span> <span class="string">308KB</span></span><br><span class="line"><span class="number">2022-07-01T00:02:32.193Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">6f199d2c4d2f</span> <span class="string">Extracting</span> <span class="string">256KB</span> <span class="string">/</span> <span class="string">308KB</span></span><br><span class="line"><span class="number">2022-07-01T00:02:34.247Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">6f199d2c4d2f</span> <span class="string">Extracting</span> <span class="string">308KB</span> <span class="string">/</span> <span class="string">308KB</span></span><br><span class="line"><span class="number">2022-07-01T00:02:35.021Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">6f199d2c4d2f</span> <span class="string">Extracting</span> <span class="string">308KB</span> <span class="string">/</span> <span class="string">308KB</span></span><br><span class="line"><span class="number">2022-07-01T00:02:48.845Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">6f199d2c4d2f</span> <span class="string">Pull</span> <span class="string">complete</span></span><br><span class="line"><span class="number">2022-07-01T00:02:48.874Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">d163dfb13dd8</span> <span class="string">Extracting</span> <span class="string">193B</span> <span class="string">/</span> <span class="string">193B</span></span><br><span class="line"><span class="number">2022-07-01T00:02:48.876Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">d163dfb13dd8</span> <span class="string">Extracting</span> <span class="string">193B</span> <span class="string">/</span> <span class="string">193B</span></span><br><span class="line"><span class="number">2022-07-01T00:02:49.002Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">d163dfb13dd8</span> <span class="string">Pull</span> <span class="string">complete</span></span><br><span class="line"><span class="number">2022-07-01T00:02:49.017Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">8820d67a46eb</span> <span class="string">Extracting</span> <span class="string">202B</span> <span class="string">/</span> <span class="string">202B</span></span><br><span class="line"><span class="number">2022-07-01T00:02:49.019Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">8820d67a46eb</span> <span class="string">Extracting</span> <span class="string">202B</span> <span class="string">/</span> <span class="string">202B</span></span><br><span class="line"><span class="number">2022-07-01T00:02:49.113Z</span> <span class="string">INFO</span>  <span class="bullet">-</span>  </span><br><span class="line"><span class="attr">2022-07-01T00:02:49.114Z ERROR - failed to register layer: Error processing tar file(exit status 1): Container ID 1000000 cannot be mapped to a host IDErr:</span> <span class="number">0</span><span class="string">,</span> <span class="attr">Message: failed to register layer: Error processing tar file(exit status 1):</span> <span class="string">Container</span> <span class="string">ID</span> <span class="number">1000000</span> <span class="string">cannot</span> <span class="string">be</span> <span class="string">mapped</span> <span class="string">to</span> <span class="string">a</span> <span class="string">host</span> <span class="string">ID</span></span><br><span class="line"><span class="number">2022-07-01T00:02:49.124Z</span> <span class="string">INFO</span>  <span class="bullet">-</span> <span class="string">Pull</span> <span class="string">Image</span> <span class="string">failed,</span> <span class="attr">Time taken:</span> <span class="number">0</span> <span class="string">Minutes</span> <span class="string">and</span> <span class="number">55</span> <span class="string">Seconds</span></span><br></pre></td></tr></table></figure>
+
+<p>これらのログは <code>ログストリーム</code> 機能や、<code>Kudu</code> にて <code>_docker.log.</code> で終わるファイル名のログファイルから確認することができます。</p>
+<!--
+# Resolution
+## Find the file
+
+**This must be ran locally and not on App Services**.
+
+Start a shell into the locally running container from the Image in question and run `find / \( -uid 1000000 \)  -ls 2>/dev/null`.
+
+Replace `1000000` with the id that fails in the error message during the Image pull.
+
+Ideally, the below should be seen, in this case with a file owned by a user of too high of a `UID`:
+
+```shell
+# find / \( -uid 1000000 \)  -ls 2>/dev/null
+  4758012      0 -rw-r--r--   1 veryhigh veryhigh        0 Jun 30 21:24 /var/www/html/file-with-high-id
+```
+
+> **NOTE**: If a user with a high `UID` is set as the `USER` of the container, then all files may appear owned by said user.
+
+## Confirm the file 
+
+**This must be ran locally and not on App Services**.
+
+If a specific file is found to be the offender, it can be confirmed to have a high ID mapping by running:
+
+`ls -ln file-with-high-id`
+
+An example of output would be:
+
+```shell
+# ls -ln file-with-high-id
+-rw-r--r-- 1 1000000 1000000 0 Jun 30 21:24 file-with-high-id
+```
+
+## Fix the file or user
+To do this, the file(s) ownership must be changed. This can be done in the `Dockerfile` by using `chown` for example on the file.
+
+If the user is defined in the Image like the below, update the id it is mapped to - below is an example:
+
+```Dockerfile
+RUN groupadd veryhigh -g 1000000
+RUN useradd -r -u 1000000 -g veryhigh veryhigh
+RUN touch file-with-high-id
+RUN chown veryhigh:veryhigh file-with-high-id
+```
+
+If the Image is a 3rd party image, contact the maintainer about the `UID` used. Alternatively it may be possible to create your own Image and use the 3rd party image as a base to change ownership on the affect file(s) or user.
+
+After resolving this, **the image must be rebuilt** and then can be deployed. This **must** be done locally.
+
+-->
+
+<h1 id="回避方法"><a href="#回避方法" class="headerlink" title="回避方法"></a>回避方法</h1><h2 id="ファイルの特定"><a href="#ファイルの特定" class="headerlink" title="ファイルの特定"></a>ファイルの特定</h2><p><strong>次の操作は App Service 上ではなく、ローカル環境で実施する必要があります。</strong></p>
+<p>問題のあるコンテナイメージをローカル環境で実行し <code>find / \( -uid 1000000 \) -ls 2&gt;/dev/null</code> を shell から実行します。</p>
+<p><code>1000000 </code> は実際に pull 失敗時のエラーメッセージに含まれる値に置き換えます。</p>
+<p>理想的には、以下のように表示されるはずです。この場合、UID が大きすぎるユーザーが所有するファイルがあります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># find / \( -uid 1000000 \)  -ls 2&gt;/dev/null</span><br><span class="line">  4758012      0 -rw-r--r--   1 veryhigh veryhigh        0 Jun 30 21:24 /var/www/html/file-with-high-id</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>: もし、大きな <code>UID</code> がコンテナ内の <code>USER</code> として定義されている場合、全てのファイルが該当のユーザーに所有されていると表示される場合があります。</p>
+</blockquote>
+<h2 id="ファイルの確認"><a href="#ファイルの確認" class="headerlink" title="ファイルの確認"></a>ファイルの確認</h2><p><strong>次の操作は App Service 上ではなく、ローカル環境で実施する必要があります。</strong></p>
+<p>特定のファイルが特定できた場合、次のコマンドを実行することで、大きな ID マッピングが実行されていることがわかります。</p>
+<p><code>ls -ln file-with-high-id</code></p>
+<p>サンプル実行例:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">ls</span> -<span class="built_in">ln</span> file-with-high-id</span></span><br><span class="line">-rw-r--r-- 1 1000000 1000000 0 Jun 30 21:24 file-with-high-id</span><br></pre></td></tr></table></figure>
+<h2 id="ファイルまたはユーザーの修正"><a href="#ファイルまたはユーザーの修正" class="headerlink" title="ファイルまたはユーザーの修正"></a>ファイルまたはユーザーの修正</h2><p>このためには、ファイルの所有権を変更する必要があります。例えばファイルに対しては <code>Dockerfile</code> 内で <code>chown</code> コマンドを利用します。<br>もし、以下のようにユーザーがイメージ内に定義されている場合、以下のように割り当てられるIDをセットする必要があります。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> groupadd veryhigh -g 1000000</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> useradd -r -u 1000000 -g veryhigh veryhigh</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">touch</span> file-with-high-id</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">chown</span> veryhigh:veryhigh file-with-high-id</span></span><br></pre></td></tr></table></figure>
+
+<p>もし、イメージがサードパーティ製の場合は、<code>UID</code> を使用しているメンテナーに連絡してください。あるいは、サードパーティ製イメージをベースとし、問題のあるファイルあるいはユーザーを変更したイメージを作成することも可能です。</p>
+<p>問題を解消した後に、<strong>イメージを再ビルドし</strong>、デプロイすることができます。この作業は<strong>ローカルで実施する必要</strong>があります。 </p>
+<h2 id="NPM-利用プロジェクトにおける-ユーザー名前空間再割当てエラー"><a href="#NPM-利用プロジェクトにおける-ユーザー名前空間再割当てエラー" class="headerlink" title="NPM 利用プロジェクトにおける ユーザー名前空間再割当てエラー"></a>NPM 利用プロジェクトにおける ユーザー名前空間再割当てエラー</h2><p>特定の NPM バージョンでは、<code>node_modules</code> インストール時に、非常に大きな ID をファイルの所有者&#x2F;作成者として割り当てることがあります。これは <strong>npm 9</strong> 系において導入されました。npm コミュニティにおいてもこの問題に関連するディスカッションが以下の 3 つのスレッドで確認できます。 一読することをお勧めします。</p>
+<ul>
+<li><a href="https://github.com/npm/rfcs/issues/546">RFC thread ([RRFC] Clean up file ownership story)</a></li>
+<li><a href="https://docs.npmjs.com/cli/v9/using-npm/changelog?v=true#900-pre6-2022-10-19">NPM 9 change log (Breaking Changes)</a></li>
+<li><a href="https://github.com/npm/cli/issues/5900">This GitHub issue (GitHub Issue 5900)</a></li>
+</ul>
+<p><strong>npm 9</strong> 系を利用する以下の <code>Dockerfile</code> を App Service にデプロイした場合、ユーザー名前空間再割当てに関するエラーが発生します。</p>
+<blockquote>
+<p><strong>注意</strong>: <a href="https://github.com/projectkudu/kudu/issues/2512">npm 5</a>系でも発生することもあります。</p>
+</blockquote>
+<p><strong>(Dockerfile)</strong>:</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> node:<span class="number">18.9</span>.<span class="number">0</span>-alpine3.<span class="number">15</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> package.json ./</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> npm i -g npm@9.1.1 &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    npm i</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . ./</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">8080</span> </span><br><span class="line"></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [ <span class="string">&quot;node&quot;</span>, <span class="string">&quot;/app/server.js&quot;</span> ]</span></span><br></pre></td></tr></table></figure>
+
+<p>App Service で発生するエラー:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR - failed to register layer: Error processing tar file(exit status 1): Container ID 1516583083 cannot be mapped to a host IDErr: 0, Message: failed to register layer: Error processing tar file(exit status 1): Container ID 1516583083 cannot be mapped to a host ID</span><br></pre></td></tr></table></figure>
+
+<p>前述のアプローチと同様に、<strong>ローカル環境で調査する必要があります。</strong>　ただし、<code>find</code> コマンドでは、問題を起こしている UID を特定することができません。 ID 変更が発生しているためです。（詳細については前述のスレッド内に書かれています。）</p>
+<p>NPM と node_modules に関連する問題がわかっているため、以下のアプローチで特定します。<br>実際には、利用するプロジェクト内の <code>node_modules</code> のパスに置き換えてください。</p>
+<p><code>node_modules</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FILES=$(find /app/node_modules/ ! -user root)</span><br><span class="line"><span class="built_in">ls</span> -lrta <span class="variable">$FILES</span></span><br></pre></td></tr></table></figure>
+<p>エラーに示される ID と一致する以下の所有者名を確認することができます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">-rw-r--r--    1 501      dialout       1490 Nov 29 17:18 /app/node_modules/cookie-signature/Readme.md</span><br><span class="line">-rw-r--r--    1 501      dialout        695 Nov 29 17:18 /app/node_modules/cookie-signature/History.md</span><br><span class="line">-rw-r--r--    1 501      dialout         29 Nov 29 17:18 /app/node_modules/cookie-signature/.npmignore</span><br><span class="line">-rw-r--r--    1 15165830 root          1070 Nov 29 17:18 /app/node_modules/content-type/package.json</span><br><span class="line">-rw-r--r--    1 15165830 root          4809 Nov 29 17:18 /app/node_modules/content-type/index.js</span><br><span class="line">-rw-r--r--    1 15165830 root          2796 Nov 29 17:18 /app/node_modules/content-type/README.md</span><br><span class="line">-rw-r--r--    1 15165830 root          1089 Nov 29 17:18 /app/node_modules/content-type/LICENSE</span><br><span class="line">-rw-r--r--    1 15165830 root           436 Nov 29 17:18 /app/node_modules/content-type/HISTORY.md</span><br><span class="line">-rw-r--r--    1 501      dialout        703 Nov 29 17:18 /app/node_modules/asynckit/stream.js</span><br><span class="line">-rw-r--r--    1 501      dialout       1751 Nov 29 17:18 /app/node_modules/asynckit/serialOrdered.js</span><br><span class="line">-rw-r--r--    1 501      dialout        501 Nov 29 17:18 /app/node_modules/asynckit/serial.js</span><br><span class="line">-rw-r--r--    1 501      dialout       1017 Nov 29 17:18 /app/node_modules/asynckit/parallel.js</span><br></pre></td></tr></table></figure>
+
+<p>回避策としては, <code>chown</code> コマンドによってディレクトリ配下のファイルの所有者を変更します。</p>
+<p><strong>重要</strong>: <code>chown</code> を実行する場合、それは <code>npm install</code> を実行するレイヤと<strong>必ず</strong>同じレイヤで実行する必要があります。もし 2 つの異なるレイヤで実行された場合、所有者の変更は正しく動かず、名前空間再割当てに関するエラーは解消しません。</p>
+<p>(Do)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RUN npm i -g npm@9.1.1 &amp;&amp; \</span><br><span class="line">    npm i &amp;&amp; \</span><br><span class="line">    find /app/node_modules/ ! -user root | xargs chown root:root</span><br></pre></td></tr></table></figure>
+
+<p>(Dont)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RUN npm i -g npm@9.1.1 &amp;&amp; \</span><br><span class="line">    npm i </span><br><span class="line"></span><br><span class="line">RUN find /app/node_modules/ ! -user root | xargs chown root:root</span><br></pre></td></tr></table></figure>
+
+<h3 id="UID-を特定できない場合はどうすると良いか"><a href="#UID-を特定できない場合はどうすると良いか" class="headerlink" title="UID を特定できない場合はどうすると良いか?"></a>UID を特定できない場合はどうすると良いか?</h3><p>コンテナを Pull し作成エラーとなった際に、エラーメッセージから UID が特定できない場合もあります。</p>
+<p>常にそうなるわけではありませんが、<strong>同様のアプローチ</strong> で解決することができます。</p>
+<p>なぜなら、 <code>find /app/node_modules/ ! -user root</code> を実行しているためです。例えば、ユーザーが <strong>50x</strong> の範囲にあり、グループ <strong>dialout</strong> に含まれる node_module 関連のファイルが表示される場合があります。 ファイルシステム全体を検索すると、通常、これらはユーザー&#x2F;グループとして、 <code>root</code> と <code>node</code> 以外に表示される唯一のものです。<br>このようなシナリオの場合、50x ユーザーと dialout グループを <strong>root</strong> (または、許容範囲内にあるUID) に変更することで問題が解消します。これは、NPM インストール実行時にユーザー切り替えが起きているためとなります。<strong>NPM</strong> に関連する当セクションの先頭に記載したスレッドのリンクを参照ください。</p>
+<p>2023 年 02 月 15 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/02/15/Docker-User-Namespace-remapping-issues.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Azure App Service の計画メンテナンスの事前通知
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure Resource Graph を用いた App Service 証明書の管理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

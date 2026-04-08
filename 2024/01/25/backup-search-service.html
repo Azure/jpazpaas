@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>AI Search の設定やインデックスデータをバックアップしたい | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="AI Search を削除後に同じ設定で復元したり、同じ設定の別の環境を用意するために、AI Search の設定やインデックスデータをバックアップ&#x2F;リストアする方法はありますでしょうか。※ 以前は AI Search でのレベル変更がサポートされておりませんでしたが、以下のドキュメントに記載されますとおり、現在はレベル変更が可能となっております。レベル変更に柔軟に対応できるように、予め">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI Search の設定やインデックスデータをバックアップしたい">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2024/01/25/backup-search-service.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="AI Search を削除後に同じ設定で復元したり、同じ設定の別の環境を用意するために、AI Search の設定やインデックスデータをバックアップ&#x2F;リストアする方法はありますでしょうか。※ 以前は AI Search でのレベル変更がサポートされておりませんでしたが、以下のドキュメントに記載されますとおり、現在はレベル変更が可能となっております。レベル変更に柔軟に対応できるように、予め">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/backup-search-service/image-a7b64ac5-a0a1-4971-b83a-7da52970b429.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/backup-search-service/image-516b7473-4fbf-4dad-9a90-765105bfc8b1.png">
+<meta property="article:published_time" content="2024-01-24T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.719Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="AI Search">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2024/01/25/backup-search-service/image-a7b64ac5-a0a1-4971-b83a-7da52970b429.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2024/01/25/backup-search-service" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      AI Search の設定やインデックスデータをバックアップしたい
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2024-01-24T15:00:00.000Z" itemprop="datePublished">2024-01-25</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+52ef3b0d-0c44-5fc0-8f98-82231521b6a5%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAI+Search+%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%82%84%E3%82%A4%E3%83%B3%E3%83%87%E3%83%83%E3%82%AF%E3%82%B9%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E3%83%90%E3%83%83%E3%82%AF%E3%82%A2%E3%83%83%E3%83%97%E3%81%97%E3%81%9F%E3%81%84%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2024%2F01%2F25%2Fbackup-search-service.html%29%0A*+Content+Source%3A+%5Barticles%2F2024%2F01%2F25%2Fbackup-search-service.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2024%2F01%2F25%2Fbackup-search-service.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2024/01/25/backup-search-service.html" data-id="cuid8g4zwITnGz8a-XidKJnlg" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>AI Search を削除後に同じ設定で復元したり、同じ設定の別の環境を用意するために、<br>AI Search の設定やインデックスデータをバックアップ&#x2F;リストアする方法はありますでしょうか。<br><br/><br><br/><br>※ 以前は AI Search でのレベル変更がサポートされておりませんでしたが、以下のドキュメントに記載されますとおり、現在はレベル変更が可能となっております。レベル変更に柔軟に対応できるように、予め設定をバックアップしておきたいという要望にお応えするのが本記事の当初の目的でした。</p>
+<blockquote>
+<p>Azure portal と サービス - 更新プログラム (REST API) では 、Basic レベルと Standard レベル (S1、S2、S3) レベル間の変更がサポートされます。 </p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/search/search-capacity-planning#change-your-pricing-tier">価格レベルを変更する</a></p>
+<h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>AI Search の設定とインデックスデータそれぞれのバックアップ&#x2F;リストア方法をご案内いたします。</p>
+<h2 id="AI-Search-の設定のバックアップ-リストア方法"><a href="#AI-Search-の設定のバックアップ-リストア方法" class="headerlink" title="AI Search の設定のバックアップ&#x2F;リストア方法"></a>AI Search の設定のバックアップ&#x2F;リストア方法</h2><p>AI Search の設定については、以下の 2 つでそれぞれ方法が異なります。</p>
+<ol>
+<li>AI Search サービス</li>
+<li>AI Search サービス内のインデックス、スキルセット、データソース、インデクサー等の設定</li>
+</ol>
+<p>1 と 2 の違いとしては、1 の AI Search サービスは設定を Azure Resource Manager (ARM) という管理レイヤーを利用するのに対して、<br>2 のインデックス等は、ARM を介さず AI Search サービスに対して管理リクエストを実行するという点が異なります。<br><br/><br/><br>バックアップ&#x2F;リストア方法について、以下に記載します。</p>
+<h3 id="1-AI-Search-サービス自体のバックアップ-リストア方法"><a href="#1-AI-Search-サービス自体のバックアップ-リストア方法" class="headerlink" title="1. AI Search サービス自体のバックアップ&#x2F;リストア方法"></a>1. AI Search サービス自体のバックアップ&#x2F;リストア方法</h3><p>AI Search サービス自体は ARM で設定を管理できるため、ARM テンプレートとパラメータを保持しておけば、ARM テンプレートとパラメータを利用して同様のリソースを作成できます。<br/></p>
+<p>既存の AI Search サービスリソースにて、ARM テンプレートをエクスポートすることは可能ですが、以下のドキュメントに記載の通り、<br>最初から ARM テンプレート (もしくは Bicep ファイル、terraform) を利用してリソースをデプロイいただけますと幸いです。  </p>
+<blockquote>
+<p>エクスポートが成功するという保証はありません。 <br/><br>エクスポートは、既存のリソースを運用環境で使用できるテンプレートに変換するための信頼性の高い方法ではありません。<br/>手書きの Bicep ファイル、ARM テンプレート、または terraform を使用して、リソースを最初から作成することをお勧めします。</p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/templates/export-template-portal#limitations">制限事項</a></p>
+<p>つまり、ARM テンプレートの構成ファイルが、設定のバックアップとなり、同様のリソースを作成 (リストア) する際に利用できるとご認識いただけますと幸いです。</p>
+<p>以下のドキュメントにチュートリアルがございますので、参考になれば幸いです。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/search/search-get-started-arm">クイック スタート: Azure Resource Manager テンプレートを使用して Azure AI Search をデプロイする</a>  </li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/templates/deploy-powershell">ARM テンプレートと Azure PowerShell を使用したリソースのデプロイ</a></li>
+</ul>
+<p>以下では実際に AI Search サービスを ARM テンプレートを利用してデプロイします。</p>
+<h4 id="1-ARM-テンプレートを作成します。"><a href="#1-ARM-テンプレートを作成します。" class="headerlink" title="1. ARM テンプレートを作成します。"></a>1. ARM テンプレートを作成します。</h4><p><a href="https://learn.microsoft.com/ja-jp/azure/search/search-get-started-arm#review-the-template">テンプレートを確認する</a> に記載のサンプル JSON もしくは、<a href="https://learn.microsoft.com/ja-jp/azure/templates/microsoft.search/searchservices?pivots=deployment-language-arm-template">AI Search ARM テンプレート定義</a> を元にファイルを編集いただき <code>azuredeploy.json</code> としてローカルに保存します。<br/><br>今回は <a href="https://learn.microsoft.com/ja-jp/azure/search/search-get-started-arm#review-the-template">テンプレートを確認する</a> に記載のサンプル JSON をそのまま使用します。</p>
+<h4 id="2-1-で作成した-ARM-テンプレートで使用するパラメータファイルを作成します。parameters-json-として保存します。"><a href="#2-1-で作成した-ARM-テンプレートで使用するパラメータファイルを作成します。parameters-json-として保存します。" class="headerlink" title="2. 1 で作成した ARM テンプレートで使用するパラメータファイルを作成します。parameters.json として保存します。"></a>2. 1 で作成した ARM テンプレートで使用するパラメータファイルを作成します。<code>parameters.json</code> として保存します。</h4><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/templates/parameter-files#parameter-file">パラメーター ファイル</a> 参考に、以下のようにします。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;$schema&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;contentVersion&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;parameters&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="string">&quot;blog-search-sample&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;sku&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="string">&quot;basic&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;replicaCount&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="number">1</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;partitionCount&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="number">1</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hostingMode&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="string">&quot;default&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;location&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="string">&quot;japaneast&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-PowerShell-でリソースグループを作成し、テンプレートをデプロイします。"><a href="#3-PowerShell-でリソースグループを作成し、テンプレートをデプロイします。" class="headerlink" title="3. PowerShell でリソースグループを作成し、テンプレートをデプロイします。"></a>3. PowerShell でリソースグループを作成し、テンプレートをデプロイします。</h4><ul>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/templates/deploy-powershell">ARM テンプレートと Azure PowerShell を使用したリソースのデプロイ</a> の手順が参考になれば幸いです。</p>
+</li>
+<li><p>リソースグループを作成します。</p>
+</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$rgName</span> = <span class="string">&quot;Blogsample&quot;</span></span><br><span class="line"><span class="variable">$location</span> = <span class="string">&quot;Japan East&quot;</span></span><br><span class="line"><span class="built_in">New-AzResourceGroup</span> <span class="literal">-Name</span> <span class="variable">$rgName</span> <span class="literal">-Location</span> <span class="variable">$location</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>デプロイ名を設定します。</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$today</span>=<span class="built_in">Get-Date</span> <span class="literal">-Format</span> <span class="string">&quot;MM-dd-yyyy&quot;</span></span><br><span class="line"><span class="variable">$deploymentName</span>=<span class="string">&quot;ExampleDeployment&quot;</span>+<span class="string">&quot;<span class="variable">$today</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>テンプレートを指定してデプロイします。</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">New-AzResourceGroupDeployment</span> `</span><br><span class="line">  <span class="literal">-Name</span> <span class="variable">$deploymentName</span> `</span><br><span class="line">  <span class="literal">-ResourceGroupName</span> <span class="variable">$rgName</span> `</span><br><span class="line">  <span class="literal">-TemplateFile</span> &lt;path\to\azuredeploy.json&gt; `</span><br><span class="line">  <span class="literal">-TemplateParameterFile</span> &lt;path\to\parameters.json&gt;</span><br></pre></td></tr></table></figure>
+
+<p>以上の手順で AI Search サービスを ARM テンプレートから作成することができました。</p>
+<h3 id="2-AI-Search-サービス内のインデックス等設定のバックアップ-リストア方法"><a href="#2-AI-Search-サービス内のインデックス等設定のバックアップ-リストア方法" class="headerlink" title="2. AI Search サービス内のインデックス等設定のバックアップ&#x2F;リストア方法"></a>2. AI Search サービス内のインデックス等設定のバックアップ&#x2F;リストア方法</h3><p>インデックス等も、AI Search サービスを ARM テンプレートで管理するのと同様に、REST API の要求本文を保持しておくか、SDK でリソース作成のコードを記述し、リストア用に保持しておく形になります。</p>
+<p>例えばインデックスの場合、以下のクイックスタートを参考に、REST API の実行環境を整え、インデックスを作成します。<br>クイックスタートの手順 <a href="https://learn.microsoft.com/ja-jp/azure/search/search-get-started-rest#index-definition">インデックスの定義</a> で作成した要求本文があれば、今後インデックスを再作成やリストアする場合にそのままご利用可能となります。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/search/search-get-started-rest">クイック スタート: REST API を使用して Azure AI Search インデックスを作成する</a></li>
+</ul>
+<p>他にもインデクサー、データソース、スキルセットなどの作成&#x2F;更新も REST API で提供されておりますので、<br>同様にご利用いただけますと幸いです。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/rest/api/searchservice/create-index">インデックスの作成 (Azure AI Search REST API)</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/rest/api/searchservice/create-indexer">インデクサーの作成 (Azure AI Search REST API)</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/rest/api/searchservice/create-data-source">データ ソースの作成 (Azure AI Search REST API)</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/rest/api/searchservice/create-skillset">スキルセットの作成 (Azure AI Search REST API)</a></li>
+</ul>
+<p>お客様によっては、プレビューの REST API をご利用の場合もあると存じます。その場合は <a href="https://learn.microsoft.com/ja-jp/rest/api/searchservice/index-preview">Search Service REST API のプレビュー</a> より、プレビューの API 仕様をご確認いただけますと幸いです。<br>また、<a href="https://learn.microsoft.com/ja-jp/rest/api/searchservice/search-service-api-versions">検索 REST API の API バージョン</a> もご確認いただき、どの API バージョンを利用するか検討いただけますと幸いです。<br/><br/></p>
+<p>また、Azure Portal のインポートウィザードから自動的に各リソースを作成いただく場合もあると存じます。<br>その場合は、以下の手順で REST API 経由でリソースを管理するようにしていただければ、今後同様のリソースをすぐに作成することができます。<br>※以下はインデックスでの例ですが、インデクサー、データソース等も同様に実施いただけますと幸いです。<br>※ただし、データソースの場合、接続文字列等の Blob Storage や SQL Database 等にアクセスするシークレット情報は、Azure Portal から取得すると削除されている場合がございます。接続文字列等が正しいか念のためご確認いただけますと幸いです。</p>
+<h4 id="1-Azure-Portal-で既存のインデックス定義の-JSON-を取得します。"><a href="#1-Azure-Portal-で既存のインデックス定義の-JSON-を取得します。" class="headerlink" title="1. Azure Portal で既存のインデックス定義の JSON を取得します。"></a>1. Azure Portal で既存のインデックス定義の JSON を取得します。</h4><p><img src="/jpazpaas/2024/01/25/backup-search-service/image-a7b64ac5-a0a1-4971-b83a-7da52970b429.png" alt="image-a7b64ac5-a0a1-4971-b83a-7da52970b429.png"></p>
+<h4 id="2-JSON-内の以下の不要なプロパティを削除します。"><a href="#2-JSON-内の以下の不要なプロパティを削除します。" class="headerlink" title="2. JSON 内の以下の不要なプロパティを削除します。"></a>2. JSON 内の以下の不要なプロパティを削除します。</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;@odata.context&quot;: &quot;https://&lt;search service name&gt;.search.windows.net/$metadata#indexes/$entity&quot;,</span><br><span class="line">&quot;@odata.etag&quot;: &quot;\&quot;0x8DC10B88B43FA8D\&quot;&quot;,</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-インデックスの作成-Azure-AI-Search-REST-API-または-インデックスの更新-Azure-AI-Search-REST-API-を元に-Postman-でリクエストを設定します。要求本文に-2-で作成した-JSON-を設定します。"><a href="#3-インデックスの作成-Azure-AI-Search-REST-API-または-インデックスの更新-Azure-AI-Search-REST-API-を元に-Postman-でリクエストを設定します。要求本文に-2-で作成した-JSON-を設定します。" class="headerlink" title="3. インデックスの作成 (Azure AI Search REST API) または インデックスの更新 (Azure AI Search REST API)を元に Postman でリクエストを設定します。要求本文に 2 で作成した JSON を設定します。"></a>3. <a href="https://learn.microsoft.com/ja-jp/rest/api/searchservice/create-index">インデックスの作成 (Azure AI Search REST API)</a> または <a href="https://learn.microsoft.com/ja-jp/rest/api/searchservice/update-index">インデックスの更新 (Azure AI Search REST API)</a>を元に Postman でリクエストを設定します。要求本文に 2 で作成した JSON を設定します。</h4><p><img src="/jpazpaas/2024/01/25/backup-search-service/image-516b7473-4fbf-4dad-9a90-765105bfc8b1.png" alt="image-516b7473-4fbf-4dad-9a90-765105bfc8b1.png"></p>
+<h4 id="4-API-を実行し、エラーがなければ正常に作成、更新できた形になります。これで仮にインデックスが削除されても再度この要求を実施すれば同じインデックスが作成されます。"><a href="#4-API-を実行し、エラーがなければ正常に作成、更新できた形になります。これで仮にインデックスが削除されても再度この要求を実施すれば同じインデックスが作成されます。" class="headerlink" title="4. API を実行し、エラーがなければ正常に作成、更新できた形になります。これで仮にインデックスが削除されても再度この要求を実施すれば同じインデックスが作成されます。"></a>4. API を実行し、エラーがなければ正常に作成、更新できた形になります。これで仮にインデックスが削除されても再度この要求を実施すれば同じインデックスが作成されます。</h4><h2 id="インデックスデータのバックアップ-リストア方法"><a href="#インデックスデータのバックアップ-リストア方法" class="headerlink" title="インデックスデータのバックアップ&#x2F;リストア方法"></a>インデックスデータのバックアップ&#x2F;リストア方法</h2><p>恐れ入りますが、AI Search の機能としてインデックスデータのバックアップ&#x2F;リストアする方法はございません。<br>以下のドキュメントにも記載がございます。</p>
+<blockquote>
+<p>インデックス管理のネイティブ サポートはありません。</p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/search/search-faq-frequently-asked-questions#--------------------------">インデックスの移動、バックアップ、復元はできますか?</a></p>
+<p>AI Search の機能としてインデックスデータのバックアップ&#x2F;リストアする方法がないのは、そもそも Blob Storage や SQL Database 等に保持されたデータを元に AI Search のインデックスデータが作成されるため、仮にインデックスデータを復元する必要がある場合は、AI Search のインデックス、インデクサー、データソース、スキルセットを再構成すれば Blob Storage や SQL Database 等からインデックスデータを再構成できるためです。<br/><br><br/><br>したがって、基本的には Blob Storage や SQL Database 等に保持されたデータがあれば、AI Search のインデックス、インデクサー、データソース、スキルセットを再構成することで、インデックスデータが復元できるため、インデックスデータを個別にバックアップいただく必要はないと認識いただけますと幸いです。<br/><br><br/><br>もちろん、お客様の状況によってはインデックスデータをバックアップする必要があると存じます。<br>その場合は、以下の FAQ に記載のサンプルコードを試していただければと存じます。<br><strong>※あくまでサンプルコードでございますので、お客様にてコードの内容を確認し動作検証いただいた上でご利用いただけますと幸いです。</strong>  </p>
+<blockquote>
+<p>ただし、検索サービス間でインデックスを移動する場合は、この <a href="https://github.com/Azure-Samples/azure-search-dotnet-utilities">Azure AI Search .NET サンプル リポジトリ</a>にある index-backup-restore サンプル コードを試すことができます。  </p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/search/search-faq-frequently-asked-questions#--------------------------">インデックスの移動、バックアップ、復元はできますか?</a></p>
+<h3 id="サンプルコードの実行手順"><a href="#サンプルコードの実行手順" class="headerlink" title="サンプルコードの実行手順"></a>サンプルコードの実行手順</h3><p><a href="https://github.com/Azure-Samples/azure-search-dotnet-utilities/tree/main/index-backup-restore#run-the-sample">Run the sample</a> に詳細の記載がありますが、簡単に手順を記載いたします。<br>また、<strong>サンプルコードには、10万以上のレコードはバックアップできないなど、重要な記載がございますので、必ず <a href="https://github.com/Azure-Samples/azure-search-dotnet-utilities/blob/main/index-backup-restore/README.md#important---please-read">IMPORTANT - PLEASE READ</a> を事前にご確認いただけますと幸いです。</strong></p>
+<h4 id="1-GitHub-からサンプルコードを開いて解凍し、index-backup-restore-v11-にあるプロジェクトを-Visual-Studio-で開きます。"><a href="#1-GitHub-からサンプルコードを開いて解凍し、index-backup-restore-v11-にあるプロジェクトを-Visual-Studio-で開きます。" class="headerlink" title="1. GitHub からサンプルコードを開いて解凍し、index-backup-restore/v11 にあるプロジェクトを Visual Studio で開きます。"></a>1. GitHub からサンプルコードを開いて解凍し、<code>index-backup-restore/v11</code> にあるプロジェクトを Visual Studio で開きます。</h4><h4 id="2-プロジェクト内のファイル-appsettings-json-を編集します。"><a href="#2-プロジェクト内のファイル-appsettings-json-を編集します。" class="headerlink" title="2. プロジェクト内のファイル appsettings.json を編集します。"></a>2. プロジェクト内のファイル <code>appsettings.json</code> を編集します。</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;SourceSearchServiceName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;バックアップする Search サービス名&gt;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;SourceAdminKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;バックアップする Search サービスの API キー&gt;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;SourceIndexName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;バックアップするインデックス名&gt;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;TargetSearchServiceName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;リストアする Search サービス名&gt;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;TargetAdminKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;リストアする Search サービスの API キー&gt;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;TargetIndexName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;リストアするインデックス名&gt;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;BackupDirectory&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;バックアップ処理で生成されるファイルを保存するディレクトリ&gt;&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-プロジェクトをビルドして、実行します。"><a href="#3-プロジェクトをビルドして、実行します。" class="headerlink" title="3. プロジェクトをビルドして、実行します。"></a>3. プロジェクトをビルドして、実行します。</h4><p>実行時に以下のようなエラーが発生する場合があります。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Search request failed: &#123;&quot;error&quot;:&#123;&quot;code&quot;:&quot;FeatureNotSupportedInApiVersion&quot;,&quot;message&quot;:&quot;This index was created with a newer version of the Azure Search API and uses features exclusive to that version. Please use the latest API version (2023-10-01-Preview) to manage this index.&quot;</span><br></pre></td></tr></table></figure>
+
+<p>これは <a href="https://github.com/Azure-Samples/azure-search-dotnet-utilities/blob/main/index-backup-restore/v11/AzureSearchBackupRestoreIndex/AzureSearchHelper.cs#L25">AzureSearchBackupRestoreIndex&#x2F;AzureSearchHelper.cs</a> で設定されている、AI Search サービスの REST API バージョンの値が古いことによるもので、<br>以下のようにエラーメッセージに含まれる REST API のバージョン (例: 2023-10-01-Preview) に修正することで解消する可能性があります。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">string</span> ApiVersionString = <span class="string">&quot;api-version=2023-10-01-Preview&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-完了するとバックアップ元とリストア先のインデックスのインデックス内のドキュメント数が以下のように表示されます。バックアップ元のインデックスのドキュメント数-36-と同数のドキュメントがリストアされたことが確認できます。"><a href="#4-完了するとバックアップ元とリストア先のインデックスのインデックス内のドキュメント数が以下のように表示されます。バックアップ元のインデックスのドキュメント数-36-と同数のドキュメントがリストアされたことが確認できます。" class="headerlink" title="4. 完了するとバックアップ元とリストア先のインデックスのインデックス内のドキュメント数が以下のように表示されます。バックアップ元のインデックスのドキュメント数 36 と同数のドキュメントがリストアされたことが確認できます。"></a>4. 完了するとバックアップ元とリストア先のインデックスのインデックス内のドキュメント数が以下のように表示されます。バックアップ元のインデックスのドキュメント数 36 と同数のドキュメントがリストアされたことが確認できます。</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SAFEGUARD CHECK: Source and target index counts should match</span><br><span class="line"> Source index contains 36 docs</span><br><span class="line"> Target index contains 36 docs</span><br></pre></td></tr></table></figure>
+
+<h1 id="変更履歴"><a href="#変更履歴" class="headerlink" title="変更履歴"></a>変更履歴</h1><ul>
+<li>2025 年 5 月 12 日 追記： 2025 年 4 月時点で、価格レベルを　Basic と Standard 間で下位レベルから上位レベルに切り替えることが、プレビューで可能となった旨追記しています。</li>
+<li>2026 年 2 月 4 日 修正： レベルの変更は一般利用可能となっているため、関連する記載を修正しています。</li>
+</ul>
+<hr>
+<br>
+<br>
+
+<p>2026 年 02 月 04 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2024/01/25/backup-search-service.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../26/change-paas-blog-url.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          PaaS Blog の URL 変更について
+        
+      </div>
+    </a>
+  
+  
+    <a href="search-private-access-to-openai.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure AI Search から Azure OpenAI Service へ可能な限りセキュアに接続したい</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>App Service on Linux における robots933456.txt について | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="お世話になっております。App Service サポート担当の押田です。 本記事では App Service on Linux において 組み込みイメージおよびカスタム Linux コンテナー(Web App for Containers) がどのように起動確認が行われるのかについて解説します。 起動確認に用いられるリクエスト (GET &#x2F;robots933456.txt)App Ser">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App Service on Linux における robots933456.txt について">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="お世話になっております。App Service サポート担当の押田です。 本記事では App Service on Linux において 組み込みイメージおよびカスタム Linux コンテナー(Web App for Containers) がどのように起動確認が行われるのかについて解説します。 起動確認に用いられるリクエスト (GET &#x2F;robots933456.txt)App Ser">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs/image-ad410849-ee97-4675-a919-f51212297f26.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs/image-a93144a2-87fc-4238-af5c-d008f53809ea.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs/image-a93245d5-f130-4169-913a-6dc2b9a8fd2f.png">
+<meta property="article:published_time" content="2023-03-07T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.594Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="App Service">
+<meta property="article:tag" content="App Service on Linux">
+<meta property="article:tag" content="Node.js">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs/image-ad410849-ee97-4675-a919-f51212297f26.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/03/08/AppServiceLinux-robots933456-in-logs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      App Service on Linux における robots933456.txt について
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-03-07T15:00:00.000Z" itemprop="datePublished">2023-03-08</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+a8692cbd-bebe-5b5c-86a0-c16b9ba7aa18%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BApp+Service+on+Linux+%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B+robots933456.txt+%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F03%2F08%2FAppServiceLinux-robots933456-in-logs.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F03%2F08%2FAppServiceLinux-robots933456-in-logs.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F03%2F08%2FAppServiceLinux-robots933456-in-logs.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs.html" data-id="cuidx4PGc0A5GpjZtXdJ5A7Gs" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>お世話になっております。App Service サポート担当の押田です。</p>
+<p>本記事では App Service on Linux において 組み込みイメージおよびカスタム Linux コンテナー(Web App for Containers) がどのように起動確認が行われるのかについて解説します。</p>
+<h1 id="起動確認に用いられるリクエスト-GET-robots933456-txt"><a href="#起動確認に用いられるリクエスト-GET-robots933456-txt" class="headerlink" title="起動確認に用いられるリクエスト (GET &#x2F;robots933456.txt)"></a>起動確認に用いられるリクエスト (GET &#x2F;robots933456.txt)</h1><p>App Service on Linux において、組み込みイメージおよびカスタムイメージはプラットフォーム上で、docker コマンドによって起動されます。App Service のプラットフォームは、docker コマンドで起動したコンテナが動作可能な状態であるかの確認のため、アプリケーションに対して、<code>GET /robots933456.txt</code> リクエストを実行します。<br>このリクエストに応答ができない場合、コンテナ起動失敗とみなされ、コンテナのリサイクルが行われます。<br>なお、<code>GET /robots933456.txt</code> に対しては、必ずしも 200 応答を返す必要はありません。</p>
+<blockquote>
+<p> &#x2F;robots933456.txt は、コンテナーが要求を処理できるかどうかを調べるために App Service が使用するダミーの URL パスです。 404 応答は、パスが存在しないことを示すだけですが、コンテナーが正常であり、要求に応答できる状態であることを App Service に知らせます。</p>
+</blockquote>
+<p>これは、組み込みイメージの言語や、カスタム Linux コンテナーに共通の仕組みとなっています。公式ドキュメントにおいても、下記の記事が各構成向けの資料にインクルードされているものとなります。</p>
+<p>共通記事</p>
+<p><a href="/blog/includes/app-service-web-configure-robots933456/">azure-docs&#x2F;app-service-web-configure-robots933456.md at main · MicrosoftDocs&#x2F;azure-docs</a></p>
+<p>ドキュメント例</p>
+<ul>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-language-nodejs?pivots=platform-linux#robots933456-in-logs">Node.js アプリの構成 - Azure App Service | Microsoft Learn</a></p>
+</li>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-language-dotnetcore?pivots=platform-linux#robots933456-in-logs">ASP.NET Core アプリの構成 - Azure App Service | Microsoft Learn</a></p>
+</li>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#robots933456-in-logs">カスタム コンテナーを構成する - Azure App Service | Microsoft Learn</a></p>
+</li>
+</ul>
+<h2 id="起動確認リクエストの詳細"><a href="#起動確認リクエストの詳細" class="headerlink" title="起動確認リクエストの詳細"></a>起動確認リクエストの詳細</h2><p>本記事では、組み込みイメージとして Node 18 LTS を利用して動作を確認してみます。</p>
+<h3 id="動作確認環境"><a href="#動作確認環境" class="headerlink" title="動作確認環境"></a>動作確認環境</h3><ul>
+<li>LinuxFxVersion: NODE|18-lts”</li>
+<li>App Service Plan: S1</li>
+</ul>
+<h3 id="検証コード"><a href="#検証コード" class="headerlink" title="検証コード"></a>検証コード</h3><p><code>/home/site/wwwroot/package.json</code> では、以下のように <code>start</code> スクリプトに <code>index.js</code> を指定します。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;jpazpaas-blog-examples-linuxnodeapp-20230307&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;start&quot;</span><span class="punctuation">:</span> <span class="string">&quot;node index.js&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>/home/site/wwwroot/index.js</code> ではリクエストを受信したらリクエスト内容をログに出力し、200 OK を返却するようにします。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&quot;http&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> port = process.<span class="property">env</span>.<span class="property">PORT</span> || <span class="number">3000</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`index.js started with process.env.PORT=<span class="subst">$&#123;process.env.PORT&#125;</span>`</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">logRequest</span> = (<span class="params">request</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> msg = <span class="string">`Request received</span></span><br><span class="line"><span class="string">  [time]: <span class="subst">$&#123;<span class="keyword">new</span> <span class="built_in">Date</span>().toISOString()&#125;</span></span></span><br><span class="line"><span class="string">  [request.url]: <span class="subst">$&#123;request.url&#125;</span></span></span><br><span class="line"><span class="string">  [request.headers]: <span class="subst">$&#123;<span class="built_in">JSON</span>.stringify(request.headers,<span class="literal">null</span>,<span class="number">4</span>)&#125;</span>`</span>;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(msg);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// https://nodejs.org/docs/latest-v18.x/api/http.html#httpcreateserveroptions-requestlistener</span></span><br><span class="line"><span class="keyword">const</span> server = http.<span class="title function_">createServer</span>(<span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">logRequest</span>(req);</span><br><span class="line">    res.<span class="title function_">writeHead</span>(<span class="number">200</span>, &#123;<span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;text/plain&quot;</span>&#125;);</span><br><span class="line">    res.<span class="title function_">end</span>(<span class="string">&quot;OK&quot;</span>);</span><br><span class="line">&#125;)</span><br><span class="line">server.<span class="title function_">listen</span>(port);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Server started`</span>);</span><br></pre></td></tr></table></figure>
+
+<p>クライアント側はリクエスト開始日時がわかるように以下のようなコードを用意します。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">clientReqest</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> clientTime = <span class="keyword">new</span> <span class="title class_">Date</span>().<span class="title function_">toISOString</span>();</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`client request started <span class="subst">$&#123;clientTime&#125;</span>`</span>);</span><br><span class="line">    <span class="title function_">fetch</span>(<span class="string">`https://jpazpaas-blog-examples-linuxnodeapp-20230307.azurewebsites.net/fromClient/<span class="subst">$&#123;clientTime&#125;</span>`</span>)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`response received <span class="subst">$&#123;<span class="keyword">new</span> <span class="built_in">Date</span>().toISOString()&#125;</span>,<span class="subst">$&#123;res.status&#125;</span>`</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">catch</span>(<span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`request failed <span class="subst">$&#123;<span class="keyword">new</span> <span class="built_in">Date</span>().toISOString()&#125;</span>,<span class="subst">$&#123;e&#125;</span>`</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="検証"><a href="#検証" class="headerlink" title="検証"></a>検証</h3><p>まず、アプリケーションリソースが停止状態の動作を確認します。</p>
+<p>App Service リソースとして起動されていない場合、以下のように <code>403 (Site Disabled)</code> エラーがすぐに返却されます。<br><img src="/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs/image-ad410849-ee97-4675-a919-f51212297f26.png" alt="image-ad410849-ee97-4675-a919-f51212297f26.png"> </p>
+<p>これは、アプリケーションコードではなく、App Service のプラットフォームから返却されているものとなります。</p>
+<p>ポータルからアプリケーションを起動し、すぐにクライアント側からリクエストを送信してみます。</p>
+<p><img src="/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs/image-a93144a2-87fc-4238-af5c-d008f53809ea.png" alt="image-a93144a2-87fc-4238-af5c-d008f53809ea.png"></p>
+<p>おおよそ 2分後に 200 レスポンスを受信しました。</p>
+<p>このときのログを確認してみます。</p>
+<p>プラットフォーム側のログとして、診断設定の <code>AppServicePlatformLogs</code> や、ファイル<br> <code>/home/LogFiles/&lt;YYY_MM_DD&gt;_&lt;HostName&gt;_docker.log</code> には、以下のような出力が見られます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">2023-03-07T02:49:57.774Z INFO  - 18-lts_20221208.1.tuxprod Pulling from appsvc/node</span><br><span class="line">2023-03-07T02:49:57.776Z INFO  -  Digest: sha256:0213c7471d5f274a1ecd012920a26e9f5ed76dc3008981c3c46e0fc98a124e79</span><br><span class="line">2023-03-07T02:49:57.777Z INFO  -  Status: Image is up to date for mcr.microsoft.com/appsvc/node:18-lts_20221208.1.tuxprod</span><br><span class="line">2023-03-07T02:49:57.894Z INFO  - Pull Image successful, Time taken: 0 Minutes and 0 Seconds</span><br><span class="line">2023-03-07T02:49:58.150Z INFO  - Starting container for site</span><br><span class="line">2023-03-07T02:49:58.151Z INFO  - docker run -d -p 8020:8080 --name jpazpaas-blog-examples-linuxnodeapp-20230307_0_3ab3e0bf -e WEBSITE_SITE_NAME=jpazpaas-blog-examples-linuxnodeapp-20230307 -e WEBSITE_AUTH_ENABLED=False -e WEBSITE_ROLE_INSTANCE_ID=0 -e WEBSITE_HOSTNAME=jpazpaas-blog-examples-linuxnodeapp-20230307.azurewebsites.net -e WEBSITE_INSTANCE_ID=60c176d165cff1190180ffa3f443f64d8269bd82832141c75f0f4d8dee36c586 -e HTTP_LOGGING_ENABLED=1 -e NODE_OPTIONS=--require /agents/node/build/src/Loader.js -e WEBSITE_USE_DIAGNOSTIC_SERVER=True appsvc/node:18-lts_20221208.1.tuxprod  </span><br><span class="line"></span><br><span class="line">2023-03-07T02:50:12.665Z INFO  - Initiating warmup request to container jpazpaas-blog-examples-linuxnodeapp-20230307_0_3ab3e0bf for site jpazpaas-blog-examples-linuxnodeapp-20230307</span><br><span class="line">2023-03-07T02:50:35.733Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_3ab3e0bf. Elapsed time = 23.0750703 sec</span><br><span class="line">2023-03-07T02:50:52.895Z INFO  - Container jpazpaas-blog-examples-linuxnodeapp-20230307_0_3ab3e0bf for site jpazpaas-blog-examples-linuxnodeapp-20230307 initialized successfully and is ready to serve requests.</span><br></pre></td></tr></table></figure>
+
+<p>今回注目すべき内容は以下となります。</p>
+<ul>
+<li>02:49:58.151 に <code>docker run -d -p 8020:8080 &lt;~省略~&gt;</code>にてイメージを起動開始処理実行</li>
+<li>02:50:12.665 に warmup requestを開始</li>
+<li>02:50:35.733 に Waiting for response to warmup にて、23秒経過</li>
+<li>02:50:52.895 に ready to serve requests</li>
+</ul>
+<p>アプリケーション側のログとして、診断設定の <code>AppServiceConsoleLogs</code> や、ファイル<br><code>/home/LogFiles/&lt;YYY_MM_DD&gt;_&lt;HostName&gt;_default_docker.log</code> には、以下のような出力が見られます。<br>※一部マスクしています。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">2023-03-07T02:50:13.040241471Z    _____                               </span><br><span class="line">2023-03-07T02:50:13.040290971Z   /  _  \ __________ _________   ____  </span><br><span class="line">2023-03-07T02:50:13.040312772Z  /  /_\  \\___   /  |  \_  __ \_/ __ \ </span><br><span class="line">2023-03-07T02:50:13.040317372Z /    |    \/    /|  |  /|  | \/\  ___/ </span><br><span class="line">2023-03-07T02:50:13.040321272Z \____|__  /_____ \____/ |__|    \___  &gt;</span><br><span class="line">2023-03-07T02:50:13.040325572Z         \/      \/                  \/ </span><br><span class="line">2023-03-07T02:50:13.040329072Z A P P   S E R V I C E   O N   L I N U X</span><br><span class="line">2023-03-07T02:50:13.040332472Z </span><br><span class="line">2023-03-07T02:50:13.040335772Z Documentation: http://aka.ms/webapp-linux</span><br><span class="line">2023-03-07T02:50:13.040339272Z NodeJS quickstart: https://aka.ms/node-qs</span><br><span class="line">2023-03-07T02:50:13.040342872Z NodeJS Version : v18.12.1</span><br><span class="line">2023-03-07T02:50:13.040346172Z Note: Any data outside &#x27;/home&#x27; is not persisted</span><br><span class="line">2023-03-07T02:50:13.040349772Z </span><br><span class="line">2023-03-07T02:50:13.613486570Z Starting OpenBSD Secure Shell server: sshd.</span><br><span class="line">2023-03-07T02:50:13.973876656Z Starting periodic command scheduler: cron.</span><br><span class="line">2023-03-07T02:50:14.227141627Z Found build manifest file at &#x27;/home/site/wwwroot/oryx-manifest.toml&#x27;. Deserializing it...</span><br><span class="line">2023-03-07T02:50:14.238570157Z Build Operation ID: |UC/E2l5dpjI=.2e033bab_</span><br><span class="line">2023-03-07T02:50:16.626325323Z Environment Variables for Application Insight&#x27;s IPA Codeless Configuration exists..</span><br><span class="line">2023-03-07T02:50:16.747346429Z Writing output script to &#x27;/opt/startup/startup.sh&#x27;</span><br><span class="line">2023-03-07T02:50:16.896343282Z Running #!/bin/sh</span><br><span class="line">2023-03-07T02:50:16.896375582Z </span><br><span class="line">2023-03-07T02:50:16.896381082Z # Enter the source directory to make sure the script runs where the user expects</span><br><span class="line">2023-03-07T02:50:16.896385182Z cd &quot;/home/site/wwwroot&quot;</span><br><span class="line">2023-03-07T02:50:16.896388782Z </span><br><span class="line">2023-03-07T02:50:16.896392182Z export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH</span><br><span class="line">2023-03-07T02:50:16.896395882Z if [ -z &quot;$PORT&quot; ]; then</span><br><span class="line">2023-03-07T02:50:16.896399582Z 		export PORT=8080</span><br><span class="line">2023-03-07T02:50:16.896403482Z fi</span><br><span class="line">2023-03-07T02:50:16.896412183Z </span><br><span class="line">2023-03-07T02:50:16.896416083Z echo Found tar.gz based node_modules.</span><br><span class="line">2023-03-07T02:50:16.896419583Z extractionCommand=&quot;tar -xzf node_modules.tar.gz -C /node_modules&quot;</span><br><span class="line">2023-03-07T02:50:16.896423283Z echo &quot;Removing existing modules directory from root...&quot;</span><br><span class="line">2023-03-07T02:50:16.896426883Z rm -fr /node_modules</span><br><span class="line">2023-03-07T02:50:16.896430283Z mkdir -p /node_modules</span><br><span class="line">2023-03-07T02:50:16.896433683Z echo Extracting modules...</span><br><span class="line">2023-03-07T02:50:16.896437083Z $extractionCommand</span><br><span class="line">2023-03-07T02:50:16.896440383Z export NODE_PATH=&quot;/node_modules&quot;:$NODE_PATH</span><br><span class="line">2023-03-07T02:50:16.896444083Z export PATH=/node_modules/.bin:$PATH</span><br><span class="line">2023-03-07T02:50:16.896447483Z if [ -d node_modules ]; then</span><br><span class="line">2023-03-07T02:50:16.896461683Z     mv -f node_modules _del_node_modules || true</span><br><span class="line">2023-03-07T02:50:16.896465483Z fi</span><br><span class="line">2023-03-07T02:50:16.896468883Z </span><br><span class="line">2023-03-07T02:50:16.896472083Z if [ -d /node_modules ]; then</span><br><span class="line">2023-03-07T02:50:16.896475483Z     ln -sfn /node_modules ./node_modules </span><br><span class="line">2023-03-07T02:50:16.896478883Z fi</span><br><span class="line">2023-03-07T02:50:16.896482383Z </span><br><span class="line">2023-03-07T02:50:16.896485683Z echo &quot;Done.&quot;</span><br><span class="line">2023-03-07T02:50:16.906654610Z npm start</span><br><span class="line">2023-03-07T02:50:16.907561321Z Found tar.gz based node_modules.</span><br><span class="line">2023-03-07T02:50:16.946023600Z Removing existing modules directory from root...</span><br><span class="line">2023-03-07T02:50:16.957690445Z Extracting modules...</span><br><span class="line">2023-03-07T02:50:16.987503315Z tar (child): node_modules.tar.gz: Cannot open: No such file or directory</span><br><span class="line">2023-03-07T02:50:16.988244925Z tar (child): Error is not recoverable: exiting now</span><br><span class="line">2023-03-07T02:50:16.994973408Z tar: Child returned status 2</span><br><span class="line">2023-03-07T02:50:16.995494915Z tar: Error is not recoverable: exiting now</span><br><span class="line">2023-03-07T02:50:17.136177265Z Done.</span><br><span class="line">2023-03-07T02:50:36.519401247Z npm info it worked if it ends with ok</span><br><span class="line">2023-03-07T02:50:36.520006255Z npm info using npm@6.14.15</span><br><span class="line">2023-03-07T02:50:36.520016155Z npm info using node@v18.12.1</span><br><span class="line">2023-03-07T02:50:40.754968999Z npm info lifecycle jpazpaas-blog-examples-linuxnodeapp-20230307@1.0.0~prestart: jpazpaas-blog-examples-linuxnodeapp-20230307@1.0.0</span><br><span class="line">2023-03-07T02:50:40.815105848Z npm info lifecycle jpazpaas-blog-examples-linuxnodeapp-20230307@1.0.0~start: jpazpaas-blog-examples-linuxnodeapp-20230307@1.0.0</span><br><span class="line">2023-03-07T02:50:40.975282743Z </span><br><span class="line">2023-03-07T02:50:40.975346543Z &gt; jpazpaas-blog-examples-linuxnodeapp-20230307@1.0.0 start /home/site/wwwroot</span><br><span class="line">2023-03-07T02:50:40.975357044Z &gt; node index.js</span><br><span class="line">2023-03-07T02:50:40.975361044Z </span><br><span class="line">2023-03-07T02:50:52.056046116Z index.js started with process.env.PORT=8080</span><br><span class="line">2023-03-07T02:50:52.056090917Z Server started</span><br><span class="line">2023-03-07T02:50:52.689402008Z Request received</span><br><span class="line">2023-03-07T02:50:52.696386693Z  [time]: 2023-03-07T02:50:52.659Z</span><br><span class="line">2023-03-07T02:50:52.696393193Z  [request.url]:/robots933456.txt</span><br><span class="line">2023-03-07T02:50:52.696397093Z  [request.headers]:&#123;</span><br><span class="line">2023-03-07T02:50:52.696408293Z     &quot;host&quot;: &quot;127.0.0.1:8020&quot;,</span><br><span class="line">2023-03-07T02:50:52.696412693Z     &quot;user-agent&quot;: &quot;HealthCheck/1.0&quot;</span><br><span class="line">2023-03-07T02:50:52.696416493Z &#125;</span><br><span class="line">2023-03-07T02:50:53.311775366Z Request received</span><br><span class="line">2023-03-07T02:50:53.318595749Z  [time]: 2023-03-07T02:50:53.272Z</span><br><span class="line">2023-03-07T02:50:53.318631150Z  [request.url]:/fromClient/2023-03-07T02:48:56.457Z</span><br><span class="line">2023-03-07T02:50:53.318635850Z  [request.headers]:&#123;</span><br><span class="line">2023-03-07T02:50:53.318639050Z     &quot;accept&quot;: &quot;*/*&quot;,</span><br><span class="line">2023-03-07T02:50:53.318671950Z     &quot;host&quot;: &quot;jpazpaas-blog-examples-linuxnodeapp-20230307.azurewebsites.net&quot;,</span><br><span class="line">2023-03-07T02:50:53.318675850Z     &quot;user-agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36&quot;,</span><br><span class="line">2023-03-07T02:50:53.318679250Z     &quot;accept-encoding&quot;: &quot;gzip, deflate, br&quot;,</span><br><span class="line">2023-03-07T02:50:53.318682550Z     &quot;accept-language&quot;: &quot;ja-JP,ja;q=0.9&quot;,</span><br><span class="line">2023-03-07T02:50:53.318685650Z     &quot;cache-control&quot;: &quot;no-cache&quot;,</span><br><span class="line">2023-03-07T02:50:53.318688950Z     &quot;max-forwards&quot;: &quot;10&quot;,</span><br><span class="line">2023-03-07T02:50:53.318692050Z     &quot;pragma&quot;: &quot;no-cache&quot;,</span><br><span class="line">2023-03-07T02:50:53.318695150Z     &quot;referer&quot;: &quot;https://jpazpaas-blog-examples-linuxnodeapp-20230307.azurewebsites.net/&quot;,</span><br><span class="line">2023-03-07T02:50:53.318698450Z     &quot;sec-ch-ua&quot;: &quot;\&quot;Chromium\&quot;;v=\&quot;110\&quot;, \&quot;Not A(Brand\&quot;;v=\&quot;24\&quot;, \&quot;Google Chrome\&quot;;v=\&quot;110\&quot;&quot;,</span><br><span class="line">2023-03-07T02:50:53.318702050Z     &quot;sec-ch-ua-mobile&quot;: &quot;?0&quot;,</span><br><span class="line">2023-03-07T02:50:53.318705151Z     &quot;sec-ch-ua-platform&quot;: &quot;\&quot;Windows\&quot;&quot;,</span><br><span class="line">2023-03-07T02:50:53.318708351Z     &quot;sec-fetch-site&quot;: &quot;same-origin&quot;,</span><br><span class="line">2023-03-07T02:50:53.318711351Z     &quot;sec-fetch-mode&quot;: &quot;cors&quot;,</span><br><span class="line">2023-03-07T02:50:53.318714551Z     &quot;sec-fetch-dest&quot;: &quot;empty&quot;,</span><br><span class="line">2023-03-07T02:50:53.318717751Z     &quot;x-arr-log-id&quot;: &quot;*******&quot;,</span><br><span class="line">2023-03-07T02:50:53.318720851Z     &quot;client-ip&quot;: &quot;*******&quot;,</span><br><span class="line">2023-03-07T02:50:53.318724051Z     &quot;x-client-ip&quot;: &quot;*******&quot;,</span><br><span class="line">2023-03-07T02:50:53.318727051Z     &quot;disguised-host&quot;: &quot;jpazpaas-blog-examples-linuxnodeapp-20230307.azurewebsites.net&quot;,</span><br><span class="line">2023-03-07T02:50:53.318730151Z     &quot;x-site-deployment-id&quot;: &quot;jpazpaas-blog-examples-linuxnodeapp-20230307&quot;,</span><br><span class="line">2023-03-07T02:50:53.318733351Z     &quot;was-default-hostname&quot;: &quot;jpazpaas-blog-examples-linuxnodeapp-20230307.azurewebsites.net&quot;,</span><br><span class="line">2023-03-07T02:50:53.318736451Z     &quot;x-forwarded-proto&quot;: &quot;https&quot;,</span><br><span class="line">2023-03-07T02:50:53.318739651Z     &quot;x-appservice-proto&quot;: &quot;https&quot;,</span><br><span class="line">2023-03-07T02:50:53.318742751Z     &quot;x-arr-ssl&quot;: &quot;2048|256|CN=Microsoft Azure TLS Issuing CA 05, O=Microsoft Corporation, C=US|CN=*.azurewebsites.net, O=Microsoft Corporation, L=Redmond, S=WA, C=US&quot;,</span><br><span class="line">2023-03-07T02:50:53.318746151Z     &quot;x-forwarded-tlsversion&quot;: &quot;1.2&quot;,</span><br><span class="line">2023-03-07T02:50:53.318749251Z     &quot;x-forwarded-for&quot;: &quot;*******&quot;,</span><br><span class="line">2023-03-07T02:50:53.318752251Z     &quot;x-original-url&quot;: &quot;/fromClient/2023-03-07T02:48:56.457Z&quot;,</span><br><span class="line">2023-03-07T02:50:53.318755351Z     &quot;x-waws-unencoded-url&quot;: &quot;/fromClient/2023-03-07T02:48:56.457Z&quot;,</span><br><span class="line">2023-03-07T02:50:53.318758451Z     &quot;x-client-port&quot;: &quot;49890&quot;</span><br><span class="line">2023-03-07T02:50:53.318761451Z &#125;</span><br></pre></td></tr></table></figure>
+
+<p>実際に index.js が実行された時間は<br>ここで注目すべき内容は以下となります。</p>
+<ul>
+<li>02:50:40.975 に <code>node index.js</code> 実行</li>
+<li>02:50:52.056 に index.js 内の最初のログ出力</li>
+<li>02:50:52.689 に &#x2F;robots933456.txt へのリクエスト受信</li>
+<li>02:50:53.311 に &#x2F;fromClient&#x2F;2023-03-07T02:48:56.457Z へのリクエスト受信</li>
+</ul>
+<p>&#x2F;robots933456.txt は hostヘッダからわかるように、<code>127.0.0.1:8020</code> 宛にリクエストが送られています。<br>これは、<code>docker -p 8020:8080</code> コマンドを実行している インスタンスの Host OS から送信されているということになります。そのため、App Service の各種アクセス制限の範囲外となります。</p>
+<p>02:48:56にクライアント側から実行したリクエストは、02:50:53にはじめてアプリケーションに到達しています。</p>
+<p>2つのログを合わせて確認すると以下のような順序となります。<br>なお各処理間にかかる時間は、インスタンスの性能であったり、アプリケーションの初期化ロジックに影響するものとなります。ここでは前後関係にのみ着目します。</p>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Platform</th>
+<th>ApplicationContainer</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>02:49:58.151</td>
+<td><code>docker run -d -p 7636:8080 &lt;~省略~&gt;</code>にてイメージを起動開始処理実行</td>
+<td></td>
+</tr>
+<tr>
+<td>02:50:12.665</td>
+<td>warmup requestを開始</td>
+<td></td>
+</tr>
+<tr>
+<td>02:50:35.733</td>
+<td>Waiting for response to warmup にて、23秒経過</td>
+<td></td>
+</tr>
+<tr>
+<td>02:50:40.975</td>
+<td></td>
+<td><code>node index.js</code> 実行</td>
+</tr>
+<tr>
+<td>02:50:52.056</td>
+<td></td>
+<td>index.js 内の最初のログ出力</td>
+</tr>
+<tr>
+<td>02:50:52.689</td>
+<td></td>
+<td>&#x2F;robots933456.txt へのリクエスト受信</td>
+</tr>
+<tr>
+<td>02:50:52.895</td>
+<td>ready to serve requests</td>
+<td></td>
+</tr>
+<tr>
+<td>02:50:53.311</td>
+<td></td>
+<td>&#x2F;fromClient&#x2F;2023-03-07T02:48:56.457Z へのリクエスト受信 へのリクエスト受信</td>
+</tr>
+</tbody></table>
+<p>すなわち、App Service のプラットフォームとしては、docker コマンドで起動したアプリケーションコンテナが、<code>/robots933456.txt</code> に対して応答を返すことではじめて、アプリケーションが応答可能な状態(<code>ready to server requests</code>)となり、実際のユーザーからのリクエストがルーティングされることになります。</p>
+<h2 id="トラブルシューティング"><a href="#トラブルシューティング" class="headerlink" title="トラブルシューティング"></a>トラブルシューティング</h2><p>プラットフォーム側では、アプリケーションコンテナが稼働したかどうかは、一定時間 warmup リクエスト(<code>GET /robots933456.txt</code>)をリトライします。<br>最終的にエラーとなった場合は、以下のようなログが出力されます。</p>
+<p> <code>AppServicePlatformLogs</code> または <code>/home/LogFiles/&lt;YYY_MM_DD&gt;_&lt;HostName&gt;_docker.log</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">2023-03-07T03:15:19.987Z INFO  - Initiating warmup request to container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a for site jpazpaas-blog-examples-linuxnodeapp-20230307</span><br><span class="line">2023-03-07T03:15:39.033Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 18.2989576 sec</span><br><span class="line">2023-03-07T03:16:09.103Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 49.1164098 sec</span><br><span class="line">2023-03-07T03:16:26.012Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 66.0247886 sec</span><br><span class="line">2023-03-07T03:16:42.828Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 82.8346583 sec</span><br><span class="line">2023-03-07T03:17:00.479Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 100.4923859 sec</span><br><span class="line">2023-03-07T03:17:18.697Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 118.710235 sec</span><br><span class="line">2023-03-07T03:17:34.987Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 135.0003789 sec</span><br><span class="line">2023-03-07T03:17:51.299Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 151.3122307 sec</span><br><span class="line">2023-03-07T03:18:07.801Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 167.8145076 sec</span><br><span class="line">2023-03-07T03:18:23.440Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 183.4531577 sec</span><br><span class="line">2023-03-07T03:18:39.558Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 199.5713445 sec</span><br><span class="line">2023-03-07T03:18:56.582Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a. Elapsed time = 216.5952289 sec</span><br><span class="line">2023-03-07T03:19:10.099Z ERROR - Container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a for site jpazpaas-blog-examples-linuxnodeapp-20230307 did not start within expected time limit. Elapsed time = 230.1068051 sec</span><br><span class="line">2023-03-07T03:19:10.206Z ERROR - Container jpazpaas-blog-examples-linuxnodeapp-20230307_0_e642bb9a didn&#x27;t respond to HTTP pings on port: 8080, failing site start. See container logs for debugging.</span><br><span class="line">2023-03-07T03:19:10.240Z INFO  - Stopping site jpazpaas-blog-examples-linuxnodeapp-20230307 because it failed during startup.</span><br></pre></td></tr></table></figure>
+
+<p>問題の診断と解決では、<code>Web アプリの再起動</code>　や <code>コンテナの問題</code> 、<code>コンテナクラッシュ</code> に参考情報が表示されます。<br><img src="/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs/image-a93245d5-f130-4169-913a-6dc2b9a8fd2f.png" alt="image-a93245d5-f130-4169-913a-6dc2b9a8fd2f.png"></p>
+<h3 id="エラー例1-アプリケーションコード内でのエラー"><a href="#エラー例1-アプリケーションコード内でのエラー" class="headerlink" title="エラー例1: アプリケーションコード内でのエラー"></a>エラー例1: アプリケーションコード内でのエラー</h3><p>まずは、 <code>AppServiceConsoleLogs</code> や <code>/home/LogFiles/&lt;YYY_MM_DD&gt;_&lt;HostName&gt;_default_docker.log</code>などから、アプリケーションコードが正常に Web サーバーを起動できているか確認をしてください。</p>
+<p>参考</p>
+<ul>
+<li><p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/troubleshoot-http-502-http-503">HTTP 502 と HTTP 503 エラーを修正する - Azure App Service | Microsoft Learn</a></p>
+</li>
+<li><p><a href="https://azureossd.github.io/2023/02/09/troubleshooting-nodejs-deployments-on-appservice-linux/index.html#post-deployment-scenarios">Troubleshooting Node.js deployments on App Service Linux -</a></p>
+</li>
+</ul>
+<h3 id="エラー例2-アプリケーションが指定されたポートを利用して-Web-サーバーを起動していないケース"><a href="#エラー例2-アプリケーションが指定されたポートを利用して-Web-サーバーを起動していないケース" class="headerlink" title="エラー例2: アプリケーションが指定されたポートを利用して Web サーバーを起動していないケース"></a>エラー例2: アプリケーションが指定されたポートを利用して Web サーバーを起動していないケース</h3><p>プラットフォーム側はアプリケーションが特定のポートを listen していることを想定してリクエストを実行します。<br>そのため、アプリケーション側がそのポートを利用して Web サーバーを起動していない場合 <code>GET /robots933456.txt</code> に疎通することができず、コンテナ起動に失敗と判定されます。<br>組み込みイメージの場合は、基本的には予め設定されている環境変数の <code>PORT</code> を使用する必要があります。カスタムイメージの場合はアプリケーション設定 <code>WEBSITES_PORT</code> を利用して変更することも可能です。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-custom-container?tabs=debian&pivots=container-linux#configure-port-number">カスタム コンテナーを構成する - Azure App Service | Microsoft Learn</a></p>
+<p>PORTの利用方法については、下記記事も参考にしてください。</p>
+<p><a href="https://azureossd.github.io/2023/02/15/Whats-the-difference-between-PORT-and-WEBSITES_PORT/index.html#port-blessed-images">Whats the difference between PORT and WEBSITES_PORT -</a></p>
+<h3 id="エラー例3-アプリケーションの起動に時間がかかる場合"><a href="#エラー例3-アプリケーションの起動に時間がかかる場合" class="headerlink" title="エラー例3: アプリケーションの起動に時間がかかる場合"></a>エラー例3: アプリケーションの起動に時間がかかる場合</h3><p>デフォルトでは起動確認のタイムアウトは 230 秒となっています。<br>アプリケーション設定値 <code>WEBSITES_CONTAINER_START_TIME_LIMIT</code> を利用することで、最大 1800 秒まで延長することが可能です。</p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/app-service/reference-app-settings?tabs=kudu,python#custom-containers">WEBSITES_CONTAINER_START_TIME_LIMIT</a></p>
+<p>例えば、<code>WEBSITES_CONTAINER_START_TIME_LIMIT</code> に 500 をセットした状態で、アプリケーション側にてWebサーバー起動まで 235秒遅延するようにしてみます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(() =&gt; &#123;</span><br><span class="line">  server.listen(port);</span><br><span class="line">  console.log(`Server started`);</span><br><span class="line">&#125;,230*1000 + 5000);</span><br></pre></td></tr></table></figure>
+
+<p>アプリケーション側では　Server startedが出力されるまで 235 秒かかっています。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2023-03-07T03:36:39.677370883Z &gt; jpazpaas-blog-examples-linuxnodeapp-20230307@1.0.0 start /home/site/wwwroot</span><br><span class="line">2023-03-07T03:36:39.677377183Z &gt; node index.js</span><br><span class="line">2023-03-07T03:36:39.677381183Z </span><br><span class="line">2023-03-07T03:36:49.323864062Z index.js started with process.env.PORT=8080</span><br><span class="line">2023-03-07T03:40:44.477611509Z Server started</span><br></pre></td></tr></table></figure>
+
+<p>プラットフォーム側では以下のように warmup に失敗し続けますが、03:40:44にアプリ側が正常起動した以降の確認にて正常と判定されています。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">2023-03-07T03:36:26.055Z INFO  - Initiating warmup request to container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304 for site jpazpaas-blog-examples-linuxnodeapp-20230307</span><br><span class="line">2023-03-07T03:36:44.797Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 18.7491015 sec</span><br><span class="line">2023-03-07T03:37:01.130Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 35.078963 sec</span><br><span class="line">2023-03-07T03:37:16.867Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 50.8190484 sec</span><br><span class="line">2023-03-07T03:37:33.695Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 67.6477506 sec</span><br><span class="line">2023-03-07T03:37:49.107Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 83.0596245 sec</span><br><span class="line">2023-03-07T03:38:09.202Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 103.1545329 sec</span><br><span class="line">2023-03-07T03:38:25.324Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 119.276316 sec</span><br><span class="line">2023-03-07T03:38:40.633Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 134.5835292 sec</span><br><span class="line">2023-03-07T03:38:56.333Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 150.2849426 sec</span><br><span class="line">2023-03-07T03:39:11.863Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 165.8133384 sec</span><br><span class="line">2023-03-07T03:39:27.593Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 181.5454235 sec</span><br><span class="line">2023-03-07T03:39:43.395Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 197.3478286 sec</span><br><span class="line">2023-03-07T03:39:58.961Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 212.9132567 sec</span><br><span class="line">2023-03-07T03:40:20.483Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 234.4350637 sec</span><br><span class="line">2023-03-07T03:40:36.400Z INFO  - Waiting for response to warmup request for container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304. Elapsed time = 250.3523063 sec</span><br><span class="line">2023-03-07T03:40:45.837Z INFO  - Container jpazpaas-blog-examples-linuxnodeapp-20230307_0_c320e304 for site jpazpaas-blog-examples-linuxnodeapp-20230307 initialized successfully and is ready to serve requests.</span><br></pre></td></tr></table></figure>
+
+<h3 id="エラー例4-アプリケーションは起動しているが、GET-robots933456-txt-をハンドリングしていない"><a href="#エラー例4-アプリケーションは起動しているが、GET-robots933456-txt-をハンドリングしていない" class="headerlink" title="エラー例4: アプリケーションは起動しているが、GET /robots933456.txt をハンドリングしていない"></a>エラー例4: アプリケーションは起動しているが、<code>GET /robots933456.txt</code> をハンドリングしていない</h3><p><code>GET /robots933456.txt</code> は インスタンス内部から送信されているため、各種アクセス制限は適用されません。<br>そのため、アプリケーションコードにて、正しいポートで正常に起動しているにも関わらず、App Service として正しく開始されていない場合は、アプリケーションコードや利用しているフレームワークにて、<code>GET /robots933456.txt</code> へのルーティングに対して何も応答を返さないような実装となっている可能性が考えられます。ローカル環境で動作させた場合に、<code>GET /robots933456.txt</code> から応答が返るかご確認ください。</p>
+<p>また、Node.js 特有の事例とはなりますが、<br><code>server.listen</code> において、<code>host</code> を指定している場合においても、正しく起動確認リクエストを受け付けられないことになります。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server.<span class="title function_">listen</span>(port, <span class="string">&quot;localhost&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://nodejs.org/docs/latest-v18.x/api/net.html#serverlisten">Net | Node.js v18.14.2 Documentation</a></p>
+<h1 id="参考記事"><a href="#参考記事" class="headerlink" title="参考記事"></a>参考記事</h1><p><a href="https://qiita.com/georgeOsdDev@github/items/abdadd35248b98c4ef88">App Service on Linux の組み込みコンテナイメージについて - Qiita</a></p>
+<p>2023 年 03 月 08 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/03/08/AppServiceLinux-robots933456-in-logs.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../10/azure-ad-b2c-apgw.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          Azure AD B2C 認証を設定した App Service と Application Gateway の統合
+        
+      </div>
+    </a>
+  
+  
+    <a href="How-to-put-newline-in-app-settings-of-App-Service.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">App Serviceのアプリケーション設定で改行を含む値を登録する方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

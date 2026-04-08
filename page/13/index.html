@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Japan PaaS Support Team Blog">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/page/13/index.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Example">
+<meta property="article:tag" content="Information">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../favicon-16x16.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <link rel="mask-icon" href="../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-2022/12/05/2022-10-14-Graceful-Shutdown-Azure-Functions" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/12/05/2022-10-14-Graceful-Shutdown-Azure-Functions.html" class="article-date">
+  <time datetime="2022-12-04T15:00:00.000Z" itemprop="datePublished">2022-12-05</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/12/05/2022-10-14-Graceful-Shutdown-Azure-Functions.html">Azure Functions の Graceful Shutdown について</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        Azure Functions の Graceful Shutdown について
+回答Graceful Shutdown は、より安全にインスタンスのシャットダウンを行う仕組みのことを指しています。
+特に Azure Functions においては、アプリケーションが動作するインスタンス上でインスタンスの停止処理が発生する際にあるオブジェクトに対して停止処理の開始を通知し利用者側で後述するある程度の猶予のもとアプリケーションの処理を制御可能な仕組みを指しています。
+本稿では、Graceful Shutdown の詳解は省略するものの、Azure Functions を利用時にどういったことを実装いただけるかという点について紹介していこうと思います。
+停止処理の検知と実装例C# の場合には以下のドキュメントにあるように CancellationToken クラスの IsCancellatio...
+        <p class="article-readmore">
+          <a href="../../2022/12/05/2022-10-14-Graceful-Shutdown-Azure-Functions.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/05/2022-10-14-Graceful-Shutdown-Azure-Functions.html" data-id="cuidrQlSfPt07nrYR5vwAr71m" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-Apps/" rel="tag">Function Apps</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/12/02/Tips-for-App-Service-authentication" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/12/02/Tips-for-App-Service-authentication.html" class="article-date">
+  <time datetime="2022-12-01T15:00:00.000Z" itemprop="datePublished">2022-12-02</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/12/02/Tips-for-App-Service-authentication.html">App Service 認証機能（Easy Auth）の Tips のご紹介</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        お世話になっております。App Service サポート担当の蔵下です。
+App Service&#x2F;Azure Functions には、組み込みの認証&#x2F;認可機能である、App Service 認証機能（Easy Auth）が提供されております。
+Azure App Service および Azure Functions での認証と承認
+本記事では、App Service 認証機能の Tips について紹介いたします。
+Tips
+認証したユーザーをサインアウトする方法
+トークンストアからトークンを取得する方法
+アプリコードからトークンを取得する方法
+アプリコードからユーザーの認証情報を取得する方法
+
+1. 認証したユーザーをサインアウトする方法認証したユーザーをサインアウトさせたい場合、”&#x2F;.auth&#x2F;logout” へアクセスすることで、ユーザーをサ...
+        <p class="article-readmore">
+          <a href="../../2022/12/02/Tips-for-App-Service-authentication.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/02/Tips-for-App-Service-authentication.html" data-id="cuid80jlK3JJ90-5Ou-BtbRsi" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/11/28/How-to-use-Kudu-site" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/11/28/How-to-use-Kudu-site.html" class="article-date">
+  <time datetime="2022-11-27T15:00:00.000Z" itemprop="datePublished">2022-11-28</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/11/28/How-to-use-Kudu-site.html">Kudu サイトの使い方 (Tips 4 選)</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        Kudu は App Service や Functions のさまざまな機能の背後にあるエンジンです。本稿では、 App Service や Functions をご利用いただく上で活用いただけるであろう Kudu が提供する機能を Tips として紹介します。
+目次 
+Kudu へのアクセス方法
+Tips 1. Kudu サイトへのログイン
+Azure Active Directory (AAD) 認証を利用して Kudu サイトへログインする方法
+Basic 認証を利用して Kudu サイトへログインする方法
+
+
+Tips 2. New UI (KuduLite)
+Tips 3. Docker ログのダウンロード
+Docker ログの取得方法
+
+
+Tips 4. TCP Ping を用いた疎通確認
+TCP Ping の実行方法
+
+
+
+Kudu へのアクセス方法Kudu サイトへのアク...
+        <p class="article-readmore">
+          <a href="../../2022/11/28/How-to-use-Kudu-site.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/11/28/How-to-use-Kudu-site.html" data-id="cuiddjqWzdsxajKrvo9QjwT9x" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/11/15/PHP7.4_EoL" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/11/15/PHP7.4_EoL.html" class="article-date">
+  <time datetime="2022-11-14T15:00:00.000Z" itemprop="datePublished">2022-11-15</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/11/15/PHP7.4_EoL.html">PHP 7.4 のサポートは 2022 年 11 月 28 日で終了します</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        お世話になっております。App Service サポート担当の東方です。
+PHP 7.4 のサポート終了が近づいておりますので、よく頂戴するご不明点にお答えしたく本記事を作成いたしました。
+みなさまのご不明点の解消に役立てましたら幸いです。
+PHP 7.4 のサポートが 2022 年 11 月 28 日で終了しますが、サポート終了前にサポートされている PHP (8.0 以降) に更新しないと、アプリケーションが動作しなくなるのでしょうか。
+回答いいえ、PHP 7.4 のサポート終了後も、PHP 7.4 でアプリケーションを動作し続けることができます。
+ただし、PHP7.4 のバイナリは一定の猶予期間後に提供が終了すると共に、PHP7.4 の提供が終了する時期は恐縮ながら未定となっております。サポート終了後には PHP に対するセキュリティパッチのサポート等を受けることはできませんので、お...
+        <p class="article-readmore">
+          <a href="../../2022/11/15/PHP7.4_EoL.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/11/15/PHP7.4_EoL.html" data-id="cuidO4YJ0VBE3spZ5yOpZ95Da" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/10/28/Developing-Powershell-script-on-Azure-Functions" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/10/28/Developing-Powershell-script-on-Azure-Functions.html" class="article-date">
+  <time datetime="2022-10-27T15:00:00.000Z" itemprop="datePublished">2022-10-28</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/10/28/Developing-Powershell-script-on-Azure-Functions.html">任意のPowerShellモジュールを利用したAzure Functions の環境構築ガイド</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        PowerShellモジュールを利用して Azure Functions から Azure 上のリソースへアクセスを行いたい。
+回答以下に Azure Functions から特定のリソース グループの LogicApps リソース一覧を参照する場合の環境構築手順例を示します。
+構築手順
+任意のプランで Azure Functions と LogicApps を作成します。今回は Azure Functions の従量課金プランと Logic Apps の消費プランを作成します。
+
+任意の関数アプリを作成します。今回は HTTP トリガーを作成します。
+
+
+
+
+PowerShell にて利用する依存モジュールを宣言します。Azure Functions の PowerShell では、以下にご案内がございますように requirements.psd1 にて依存モジュールを宣言するかモジュー...
+        <p class="article-readmore">
+          <a href="../../2022/10/28/Developing-Powershell-script-on-Azure-Functions.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/10/28/Developing-Powershell-script-on-Azure-Functions.html" data-id="cuidYFSQvXLrfoUwxZMJQxrS1" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/PowerShell/" rel="tag">PowerShell</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/10/18/2022-05-07-ASEv3%20VS%20ASEv2%20-%20Difference%20Overview%20(in%20Japanese)" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/10/18/2022-05-07-ASEv3%20VS%20ASEv2%20-%20Difference%20Overview%20(in%20Japanese).html" class="article-date">
+  <time datetime="2022-10-17T15:00:00.000Z" itemprop="datePublished">2022-10-18</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/10/18/2022-05-07-ASEv3%20VS%20ASEv2%20-%20Difference%20Overview%20(in%20Japanese).html">ASEv3 VS ASEv2 - Difference Overview (日本語訳版)</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        App Service Environment (以下、 ASE) の導入をご検討いただいているお客様より、 ASEv2 と ASEv3 の主な違いについてご質問をいただくことがございます。以下の弊社エンジニアが執筆した記事に情報がよくまとまっておりますため、ご案内の際に参考情報としてご紹介差し上げることがございますが、 2022 年 5 月現在では英語表記のみとなっております。
+App Service environment difference, ASEv3 VS ASEv2https://techcommunity.microsoft.com/t5/apps-on-azure-blog/asev3-vs-asev2-difference-overview/ba-p/3276225
+そのため、上記記事の日本語訳版 (一部意訳を含む) を以下に掲載いたします。少しでもご参考になれば幸いで...
+        <p class="article-readmore">
+          <a href="../../2022/10/18/2022-05-07-ASEv3%20VS%20ASEv2%20-%20Difference%20Overview%20(in%20Japanese).html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/10/18/2022-05-07-ASEv3%20VS%20ASEv2%20-%20Difference%20Overview%20(in%20Japanese).html" data-id="cuidqc6A0AmBjzMkbluv7edKQ" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/09/26/2022-09-22-How-to-check-IP-address-of-access-error" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/09/26/2022-09-22-How-to-check-IP-address-of-access-error.html" class="article-date">
+  <time datetime="2022-09-25T15:00:00.000Z" itemprop="datePublished">2022-09-26</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/09/26/2022-09-22-How-to-check-IP-address-of-access-error.html">Request ID を基に Storage へのアクセス失敗を調べる方法</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        • はじめに• クライアント IP アドレスを確認する方法• ファイアウォールの設定• 3行要約
+はじめに「Storage にアクセスしたら、403 のエラーでアクセスが拒否される」というお問い合わせをいただき、調べてみたら Storage Account のファイアウォールの設定で許可してない IP アドレスからのアクセスだったということが時々ございます。この際、上記の写真のように要求 ID などが確認出来れば、プラットフォームのログから Storage Account にとってのクライアント IP アドレスが何になるか知ることが出来ます。以下では、このクライアント IP アドレスを確認する方法と、ファイアウォールの設定についてご紹介いたします。
+
+クライアント IP アドレスを確認する方法診断設定を利用し、このアクセスが Storage Account にとってどんなアクセスになるかを...
+        <p class="article-readmore">
+          <a href="../../2022/09/26/2022-09-22-How-to-check-IP-address-of-access-error.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/09/26/2022-09-22-How-to-check-IP-address-of-access-error.html" data-id="cuidbGe2rgas8LQPGdyG1wv-t" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/09/16/How-to-import-ASC-to-AppGW" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/09/16/How-to-import-ASC-to-AppGW.html" class="article-date">
+  <time datetime="2022-09-15T15:00:00.000Z" itemprop="datePublished">2022-09-16</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/09/16/How-to-import-ASC-to-AppGW.html">Application Gateway のリスナーに Key Vault に格納された App Service 証明書を表示させる方法</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        App Service 証明書をエクスポートする手順が以下の記事で紹介されており、エクスポートされた証明書は Application Gateway などで利用することが可能となっております。
+参考 : App service 証明書をエクスポートしてパスワードを設定し、他の Azure サービスにインポートする方法 - Japan PaaS Support Team Blog
+上記の記事とは別の方法として、 2022 年 9 月現在、Application Gateway SKU v2 をご利用いただくことで Key Vault に格納された App Service 証明書をエクスポートせずに Application Gateway に直接紐づけることが可能となっております。
+Application Gateway と App Service 証明書を直接紐づけることにより、Applic...
+        <p class="article-readmore">
+          <a href="../../2022/09/16/How-to-import-ASC-to-AppGW.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/09/16/How-to-import-ASC-to-AppGW.html" data-id="cuid-pHk7n3Q3PRK8TvXTODhv" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/09/12/2022-09-09-Types-of-BLOB-for-Lifecycle-Management" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/09/12/2022-09-09-Types-of-BLOB-for-Lifecycle-Management.html" class="article-date">
+  <time datetime="2022-09-11T15:00:00.000Z" itemprop="datePublished">2022-09-12</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/09/12/2022-09-09-Types-of-BLOB-for-Lifecycle-Management.html">ライフサイクル管理を設定する際の Blob の種類について</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        #目次• はじめに• 自動でログを削除するライフサイクル管理ポリシーの作成方法• 作成したライフサイクル管理ポリシーの確認方法• まとめ• 3行要約
+#はじめに　   Azure Monitor の出力するログ（以下の写真参照、[insights-logs-XXXX] ）を一定期間が経った後に消すために Azure Storage の Blob のライフサイクル管理の規則を入れたけれど、想定していた通りに消えないというお問い合わせをいただくことが時々あります。
+
+
+
+   このログは、診断設定で [他のストレージ アカウントに保存する] を選択したため出力される、対象アカウント（ここでは、「satest0829」）のログです。下記のスクリーンショットでは、「satest0829」 ストレージ アカウントの読み取り、上書き、削除のログを 「r40904mon」 ストレージ アカウントに出力さ...
+        <p class="article-readmore">
+          <a href="../../2022/09/12/2022-09-09-Types-of-BLOB-for-Lifecycle-Management.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/09/12/2022-09-09-Types-of-BLOB-for-Lifecycle-Management.html" data-id="cuidk73WtbBcyuEtLSWbixp-Q" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2022/09/09/2022-09-08-BLOB-public-access" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2022/09/09/2022-09-08-BLOB-public-access.html" class="article-date">
+  <time datetime="2022-09-08T15:00:00.000Z" itemprop="datePublished">2022-09-09</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2022/09/09/2022-09-08-BLOB-public-access.html">BLOB 匿名 アクセスを有効・無効にする</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        目次• 背景
+• BLOB 匿名 アクセス
+• アカウント レベルとコンテナー レベルでの匿名 アクセス
+• 匿名 アクセス設定方法
+• パブリック ネットワーク アクセス
+• よくある誤解
+• 3 行要約
+
+
+
+背景   Blob Storage には、以下の3 種類のリソースがあります。
+i. ストレージ アカウント
+ii. ストレージ アカウント内のコンテナー
+iii. コンテナー内のBLOB
+
+
+ ストレージ アカウントにおいて混同されがちな設定として、BLOB 匿名 アクセスと、パブリック ネットワーク アクセスがあります。前者は認証・承認に関連し、後者はネットワークの経路に関連します。両方ともセキュリティに関する設定ですが、それぞれ独立した設定となります。下記ではそれぞれの設定について説明いたします。
+(注) BLOB 匿名アクセスの設定は以前は BLOB パブリックアクセスと...
+        <p class="article-readmore">
+          <a href="../../2022/09/09/2022-09-08-BLOB-public-access.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/09/09/2022-09-08-BLOB-public-access.html" data-id="cuid8rEBWml8evCm6diuPmYaW" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="../12/">&laquo; 戻る</a><a class="page-number" href="../../">1</a><span class="space">&hellip;</span><a class="page-number" href="../11/">11</a><a class="page-number" href="../12/">12</a><span class="page-number current">13</span><a class="page-number" href="../14/">14</a><a class="page-number" href="../15/">15</a><span class="space">&hellip;</span><a class="page-number" href="../19/">19</a><a class="extend next" rel="next" href="../14/">次へ &raquo;</a>
+  </nav>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

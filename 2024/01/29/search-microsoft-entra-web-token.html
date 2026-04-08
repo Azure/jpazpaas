@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Microsoft Entra 認証でログインする Web アプリケーションで、ユーザーの権限に応じて AI Search を検索させたい | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Microsoft Entra 認証でログインする Web アプリケーションがあり、AI Search のインデックスを検索させたいです。ただし、ユーザーが AI Search のインデックスを検索する権限がない場合は、検索できないようにしたいです。 回答端的に申し上げますと、Web アプリケーションが利用する Microsoft Entra ID アプリケーションの設定で、AI Search サ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Microsoft Entra 認証でログインする Web アプリケーションで、ユーザーの権限に応じて AI Search を検索させたい">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Microsoft Entra 認証でログインする Web アプリケーションがあり、AI Search のインデックスを検索させたいです。ただし、ユーザーが AI Search のインデックスを検索する権限がない場合は、検索できないようにしたいです。 回答端的に申し上げますと、Web アプリケーションが利用する Microsoft Entra ID アプリケーションの設定で、AI Search サ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-7b9f23e3-2518-4cf7-8cdd-17b03244f091.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-a470d374-8ae2-4754-b934-950d2e1e9d8d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-d8dbbf12-41c9-442d-9e1b-20aa44b32d80.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-d7829107-6711-4b9b-975c-7575826262a0.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-e83f389b-f7ff-45d5-a425-9d78b59bd563.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-e23ea208-d76a-4adf-b4dd-5f05997ff018.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-0c092b76-47cf-4290-a3da-e428d41a5253.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-122d9417-c126-49ec-b821-5c9db7162739.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-222496ff-aa66-4b58-a445-165a436ce1df.png">
+<meta property="article:published_time" content="2024-01-28T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.729Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="AI Search">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-7b9f23e3-2518-4cf7-8cdd-17b03244f091.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2024/01/29/search-microsoft-entra-web-token" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Microsoft Entra 認証でログインする Web アプリケーションで、ユーザーの権限に応じて AI Search を検索させたい
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2024-01-28T15:00:00.000Z" itemprop="datePublished">2024-01-29</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+292f0afe-de88-50bb-a164-5a49dc810a63%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BMicrosoft+Entra+%E8%AA%8D%E8%A8%BC%E3%81%A7%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%99%E3%82%8B+Web+%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%A7%E3%80%81%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%81%AE%E6%A8%A9%E9%99%90%E3%81%AB%E5%BF%9C%E3%81%98%E3%81%A6+AI+Search+%E3%82%92%E6%A4%9C%E7%B4%A2%E3%81%95%E3%81%9B%E3%81%9F%E3%81%84%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2024%2F01%2F29%2Fsearch-microsoft-entra-web-token.html%29%0A*+Content+Source%3A+%5Barticles%2F2024%2F01%2F29%2Fsearch-microsoft-entra-web-token.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2024%2F01%2F29%2Fsearch-microsoft-entra-web-token.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token.html" data-id="cuidX7PjoxbdyDDqNVNbyQ43h" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Microsoft Entra 認証でログインする Web アプリケーションがあり、AI Search のインデックスを検索させたいです。<br>ただし、ユーザーが AI Search のインデックスを検索する権限がない場合は、検索できないようにしたいです。</p>
+<h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>端的に申し上げますと、Web アプリケーションが利用する Microsoft Entra ID アプリケーションの設定で、AI Search サービスの API に対する「委任されたアクセス許可」を追加いただき、<br>認証スコープを <code>https://search.azure.com/user_impersonation</code> としてトークンを取得すると、ユーザーの権限に応じて AI Search のインデックスを検索させることができます。</p>
+<h2 id="AI-Search-側で必要な前提条件"><a href="#AI-Search-側で必要な前提条件" class="headerlink" title="AI Search 側で必要な前提条件"></a>AI Search 側で必要な前提条件</h2><p>アプリケーションの設定前に、AI Search 側で必要な対応を記載いたします。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/search/search-security-rbac?tabs=config-svc-portal,roles-portal,test-portal,custom-role-portal,disable-keys-portal#assign-roles">ロールの割り当て</a> のドキュメントを参考に、インデックスもしくは AI Search スコープで、ユーザーに対して権限を付与します。<ul>
+<li>AI Search のインデックスを検索するための組み込みロールとして「検索インデックス データ閲覧者」がございます。アプリケーション経由で AI Search を検索する場合はこちらのロールが便利と存じます。</li>
+</ul>
+</li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/search/search-security-rbac?tabs=config-svc-portal,roles-portal,test-portal,custom-role-portal,disable-keys-portal#configure-role-based-access-for-data-plane">データ プレーンにロールベースのアクセスを構成する</a> のドキュメントを参考に、AI Search でロールベースのアクセス制御を有効にします。</li>
+</ul>
+<h2 id="Web-アプリケーション-および-Microsoft-Entra-ID-アプリケーションの設定"><a href="#Web-アプリケーション-および-Microsoft-Entra-ID-アプリケーションの設定" class="headerlink" title="Web アプリケーション および Microsoft Entra ID アプリケーションの設定"></a>Web アプリケーション および Microsoft Entra ID アプリケーションの設定</h2><h3 id="手順-1-Microsoft-Entra-ID-認証でログインする-Web-アプリケーションを用意します。"><a href="#手順-1-Microsoft-Entra-ID-認証でログインする-Web-アプリケーションを用意します。" class="headerlink" title="手順 1. Microsoft Entra ID 認証でログインする Web アプリケーションを用意します。"></a>手順 1. Microsoft Entra ID 認証でログインする Web アプリケーションを用意します。</h3><p>サンプルとして、<a href="https://learn.microsoft.com/ja-jp/entra/identity-platform/sample-v2-code?tabs=apptype#samples-and-guides">Microsoft ID プラットフォームのコード サンプル</a> にある React アプリケーション「<a href="https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/tree/main/2-Authorization-I/2-call-arm">Azure REST API と Azure Storage を呼び出す</a>」を使用します。  </p>
+<h3 id="手順-2-Microsoft-Entra-ID-アプリケーションを設定します。"><a href="#手順-2-Microsoft-Entra-ID-アプリケーションを設定します。" class="headerlink" title="手順 2. Microsoft Entra ID アプリケーションを設定します。"></a>手順 2. Microsoft Entra ID アプリケーションを設定します。</h3><p>手順 1. のサンプルをご利用の場合は、<a href="https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/tree/main/2-Authorization-I/2-call-arm#step-3-register-the-sample-applications-in-your-tenant">Step 3: Register the sample application(s) in your tenant</a> の手順に従います。<br>以下の 1 ~ 6 の手順は、<a href="https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/tree/main/2-Authorization-I/2-call-arm#step-3-register-the-sample-applications-in-your-tenant">Step 3: Register the sample application(s) in your tenant</a> に基づく内容となりますが、Microsoft Entra ID アプリケーションの設定方法を参考までに記載いたします。<br><br/><br><strong>既に Microsoft Entra ID アプリケーションを構成いただいている場合は、以下の 4. 5. の「Azure Cognitive Search」の API へのアクセス許可設定のみ実施いただければと存じます。</strong></p>
+<h4 id="1-Azure-Portal-で-Microsoft-Entra-ID-を開き、「アプリの登録」から「新規登録」をクリックします。"><a href="#1-Azure-Portal-で-Microsoft-Entra-ID-を開き、「アプリの登録」から「新規登録」をクリックします。" class="headerlink" title="1. Azure Portal で Microsoft Entra ID を開き、「アプリの登録」から「新規登録」をクリックします。"></a>1. Azure Portal で Microsoft Entra ID を開き、「アプリの登録」から「新規登録」をクリックします。</h4><p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-7b9f23e3-2518-4cf7-8cdd-17b03244f091.png" alt="image-7b9f23e3-2518-4cf7-8cdd-17b03244f091.png"></p>
+<h4 id="2-アプリケーションの表示名を入力し、「この組織ディレクトリのみに含まれるアカウント」を選択し、アプリケーションを作成します。"><a href="#2-アプリケーションの表示名を入力し、「この組織ディレクトリのみに含まれるアカウント」を選択し、アプリケーションを作成します。" class="headerlink" title="2. アプリケーションの表示名を入力し、「この組織ディレクトリのみに含まれるアカウント」を選択し、アプリケーションを作成します。"></a>2. アプリケーションの表示名を入力し、「この組織ディレクトリのみに含まれるアカウント」を選択し、アプリケーションを作成します。</h4><p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-a470d374-8ae2-4754-b934-950d2e1e9d8d.png" alt="image-a470d374-8ae2-4754-b934-950d2e1e9d8d.png"></p>
+<h4 id="3-「認証」ブレードより、「プラットフォームを追加」をクリックします。サンプルはシングルページアプリケーションなので、「シングルページアプリケーション」を選択し、リダイレクト-URI-に以下を設定し保存します。"><a href="#3-「認証」ブレードより、「プラットフォームを追加」をクリックします。サンプルはシングルページアプリケーションなので、「シングルページアプリケーション」を選択し、リダイレクト-URI-に以下を設定し保存します。" class="headerlink" title="3. 「認証」ブレードより、「プラットフォームを追加」をクリックします。サンプルはシングルページアプリケーションなので、「シングルページアプリケーション」を選択し、リダイレクト URI に以下を設定し保存します。"></a>3. 「認証」ブレードより、「プラットフォームを追加」をクリックします。サンプルはシングルページアプリケーションなので、「シングルページアプリケーション」を選択し、リダイレクト URI に以下を設定し保存します。</h4><ul>
+<li><code>http://localhost:3000/redirect</code></li>
+<li><code>http://localhost:3000/</code></li>
+</ul>
+<p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-d8dbbf12-41c9-442d-9e1b-20aa44b32d80.png" alt="image-d8dbbf12-41c9-442d-9e1b-20aa44b32d80.png"></p>
+<h4 id="4-「API-のアクセス許可」ブレードを開き、「アクセス許可の追加」から「Azure-Cognitive-Search」という名前の-API-を探します。"><a href="#4-「API-のアクセス許可」ブレードを開き、「アクセス許可の追加」から「Azure-Cognitive-Search」という名前の-API-を探します。" class="headerlink" title="4. 「API のアクセス許可」ブレードを開き、「アクセス許可の追加」から「Azure Cognitive Search」という名前の API を探します。"></a>4. 「API のアクセス許可」ブレードを開き、「アクセス許可の追加」から「Azure Cognitive Search」という名前の API を探します。</h4><p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-d7829107-6711-4b9b-975c-7575826262a0.png" alt="image-d7829107-6711-4b9b-975c-7575826262a0.png"></p>
+<h4 id="5-「Azure-Cognitive-Search」をクリックし、「委任されたアクセス許可」を選択し、「user-impersonation」にチェックを入れアクセス許可を追加します。"><a href="#5-「Azure-Cognitive-Search」をクリックし、「委任されたアクセス許可」を選択し、「user-impersonation」にチェックを入れアクセス許可を追加します。" class="headerlink" title="5. 「Azure Cognitive Search」をクリックし、「委任されたアクセス許可」を選択し、「user_impersonation」にチェックを入れアクセス許可を追加します。"></a>5. 「Azure Cognitive Search」をクリックし、「委任されたアクセス許可」を選択し、「user_impersonation」にチェックを入れアクセス許可を追加します。</h4><p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-e83f389b-f7ff-45d5-a425-9d78b59bd563.png" alt="image-e83f389b-f7ff-45d5-a425-9d78b59bd563.png"></p>
+<p>API のアクセス許可が以下のようになっていれば問題ありません。</p>
+<p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-e23ea208-d76a-4adf-b4dd-5f05997ff018.png" alt="image-e23ea208-d76a-4adf-b4dd-5f05997ff018.png"></p>
+<h4 id="6-「トークン構成」のブレードより、「オプションの要求の追加」をクリックし、トークンの種類-「ID」で「acct」にチェックを入れて保存します。"><a href="#6-「トークン構成」のブレードより、「オプションの要求の追加」をクリックし、トークンの種類-「ID」で「acct」にチェックを入れて保存します。" class="headerlink" title="6. 「トークン構成」のブレードより、「オプションの要求の追加」をクリックし、トークンの種類 「ID」で「acct」にチェックを入れて保存します。"></a>6. 「トークン構成」のブレードより、「オプションの要求の追加」をクリックし、トークンの種類 「ID」で「acct」にチェックを入れて保存します。</h4><p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-0c092b76-47cf-4290-a3da-e428d41a5253.png" alt="image-0c092b76-47cf-4290-a3da-e428d41a5253.png"></p>
+<h3 id="手順-3-Web-アプリケーションの構成"><a href="#手順-3-Web-アプリケーションの構成" class="headerlink" title="手順 3. Web アプリケーションの構成"></a>手順 3. Web アプリケーションの構成</h3><p>恐れ入りますが、以下の内容はあくまでサンプルアプリケーションをベースにしたものになりますので、お客様のアプリケーションに応じて適宜検証の上開発いただけますと幸いです。</p>
+<h4 id="1-手順-2-で作成した-Microsoft-Entra-ID-アプリケーションの概要ページより、アプリケーション-ID-とディレクトリ-ID-を取得します。"><a href="#1-手順-2-で作成した-Microsoft-Entra-ID-アプリケーションの概要ページより、アプリケーション-ID-とディレクトリ-ID-を取得します。" class="headerlink" title="1. 手順 2 で作成した Microsoft Entra ID アプリケーションの概要ページより、アプリケーション ID とディレクトリ ID を取得します。"></a>1. 手順 2 で作成した Microsoft Entra ID アプリケーションの概要ページより、アプリケーション ID とディレクトリ ID を取得します。</h4><p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-122d9417-c126-49ec-b821-5c9db7162739.png" alt="image-122d9417-c126-49ec-b821-5c9db7162739.png"></p>
+<h4 id="2-Web-アプリケーションの設定ファイルにて、アプリケーション-ID-とディレクトリ-ID-を設定します。サンプルでは-SPA-src-authConfig-js-L16-内の以下の部分に設定します。"><a href="#2-Web-アプリケーションの設定ファイルにて、アプリケーション-ID-とディレクトリ-ID-を設定します。サンプルでは-SPA-src-authConfig-js-L16-内の以下の部分に設定します。" class="headerlink" title="2. Web アプリケーションの設定ファイルにて、アプリケーション ID とディレクトリ ID を設定します。サンプルでは SPA&#x2F;src&#x2F;authConfig.js#L16 内の以下の部分に設定します。"></a>2. Web アプリケーションの設定ファイルにて、アプリケーション ID とディレクトリ ID を設定します。サンプルでは <a href="https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/2-Authorization-I/2-call-arm/SPA/src/authConfig.js#L16">SPA&#x2F;src&#x2F;authConfig.js#L16</a> 内の以下の部分に設定します。</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> msalConfig = &#123;</span><br><span class="line">    <span class="attr">auth</span>: &#123;</span><br><span class="line">        <span class="attr">clientId</span>: <span class="string">&#x27;Enter_the_Application_Id_Here&#x27;</span>, <span class="comment">// This is the ONLY mandatory field that you need to supply.</span></span><br><span class="line">        <span class="attr">authority</span>: <span class="string">&#x27;https://login.microsoftonline.com/Enter_the_Tenant_Info_Here&#x27;</span>, <span class="comment">// Defaults to &quot;https://login.microsoftonline.com/common&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-AI-Search-用のトークンを取得するため、SPA-src-authConfig-js-L71-に以下のようにスコープの定義を追加します。"><a href="#3-AI-Search-用のトークンを取得するため、SPA-src-authConfig-js-L71-に以下のようにスコープの定義を追加します。" class="headerlink" title="3. AI Search 用のトークンを取得するため、SPA&#x2F;src&#x2F;authConfig.js#L71 に以下のようにスコープの定義を追加します。"></a>3. AI Search 用のトークンを取得するため、<a href="https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/2-Authorization-I/2-call-arm/SPA/src/authConfig.js#L71">SPA&#x2F;src&#x2F;authConfig.js#L71</a> に以下のようにスコープの定義を追加します。</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">armBlobStorage</span>: &#123;</span><br><span class="line">    <span class="attr">scopes</span>: [<span class="string">&#x27;https://storage.azure.com/user_impersonation&#x27;</span>],</span><br><span class="line">&#125;,</span><br><span class="line"><span class="attr">armSearch</span>: &#123;</span><br><span class="line">    <span class="attr">scopes</span>: [<span class="string">&#x27;https://search.azure.com/user_impersonation&#x27;</span>],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-SPA-src-authConfig-js-に接続先の-AI-Search-サービス名と、インデックス名を指定します。"><a href="#4-SPA-src-authConfig-js-に接続先の-AI-Search-サービス名と、インデックス名を指定します。" class="headerlink" title="4. SPA&#x2F;src&#x2F;authConfig.js に接続先の AI Search サービス名と、インデックス名を指定します。"></a>4. <a href="https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/2-Authorization-I/2-call-arm/SPA/src/authConfig.js">SPA&#x2F;src&#x2F;authConfig.js</a> に接続先の AI Search サービス名と、インデックス名を指定します。</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">export</span> <span class="keyword">const</span> searchInformation = &#123;</span><br><span class="line">    <span class="attr">serviceName</span>: <span class="string">&#x27;search-service-name&#x27;</span>,</span><br><span class="line">    <span class="attr">indexName</span>: <span class="string">&#x27;hotels-sample-index&#x27;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-サンプルの-SPA-src-pages-BlobStorage-jsx-と同様に、Search-jsx-を用意し、request-定数の-scopes-に-3-で作成した-armSearch-の-scopes-を指定します。"><a href="#5-サンプルの-SPA-src-pages-BlobStorage-jsx-と同様に、Search-jsx-を用意し、request-定数の-scopes-に-3-で作成した-armSearch-の-scopes-を指定します。" class="headerlink" title="5. サンプルの SPA&#x2F;src&#x2F;pages&#x2F;BlobStorage.jsx と同様に、Search.jsx を用意し、request 定数の scopes に 3. で作成した armSearch の scopes を指定します。"></a>5. サンプルの <a href="https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/2-Authorization-I/2-call-arm/SPA/src/pages/BlobStorage.jsx">SPA&#x2F;src&#x2F;pages&#x2F;BlobStorage.jsx</a> と同様に、<code>Search.jsx</code> を用意し、<code>request</code> 定数の <code>scopes</code> に 3. で作成した <code>armSearch</code> の <code>scopes</code> を指定します。</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">Search</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line"><span class="comment">// 中略</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> request = &#123;</span><br><span class="line">        <span class="attr">scopes</span>: protectedResources.<span class="property">armSearch</span>.<span class="property">scopes</span>,</span><br><span class="line">        <span class="attr">account</span>: account,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> &#123; login, result, error &#125; = <span class="title function_">useMsalAuthentication</span>(<span class="title class_">InteractionType</span>.<span class="property">Popup</span>, &#123;</span><br><span class="line">        ...request,</span><br><span class="line">        <span class="attr">redirectUri</span>: <span class="string">&#x27;/redirect&#x27;</span>,</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-SPA-src-azureManagement-js-にある、Blob-Storage-クライアントの初期化処理と同様に、以下のように-AI-Search-の検索用クライアントを初期化する処理を記載します。ここで-4-で設定した値を使用します。"><a href="#6-SPA-src-azureManagement-js-にある、Blob-Storage-クライアントの初期化処理と同様に、以下のように-AI-Search-の検索用クライアントを初期化する処理を記載します。ここで-4-で設定した値を使用します。" class="headerlink" title="6. SPA&#x2F;src&#x2F;azureManagement.js にある、Blob Storage クライアントの初期化処理と同様に、以下のように AI Search の検索用クライアントを初期化する処理を記載します。ここで 4. で設定した値を使用します。"></a>6. <a href="https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/2-Authorization-I/2-call-arm/SPA/src/azureManagement.js#L22">SPA&#x2F;src&#x2F;azureManagement.js</a> にある、Blob Storage クライアントの初期化処理と同様に、以下のように AI Search の検索用クライアントを初期化する処理を記載します。ここで 4. で設定した値を使用します。</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">getSearchClient</span> = <span class="keyword">async</span> (<span class="params">accessToken</span>) =&gt; &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> credential = <span class="keyword">new</span> <span class="title class_">StaticTokenCredential</span>(&#123;</span><br><span class="line">      <span class="attr">token</span>: accessToken,</span><br><span class="line">      <span class="attr">expiresOnTimestamp</span>: accessToken.<span class="property">exp</span>,</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> client = <span class="keyword">new</span> <span class="title class_">SearchClient</span>(<span class="string">`https://<span class="subst">$&#123;searchInformation.serviceName&#125;</span>.search.windows.net`</span>, searchInformation.<span class="property">indexName</span>, credential);</span><br><span class="line">  <span class="keyword">return</span> client;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-検索結果を取得するコードを記載します。"><a href="#7-検索結果を取得するコードを記載します。" class="headerlink" title="7. 検索結果を取得するコードを記載します。"></a>7. 検索結果を取得するコードを記載します。</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">Search</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; instance &#125; = <span class="title function_">useMsal</span>();</span><br><span class="line">    <span class="keyword">const</span> [searchWord, setsearchWord] = <span class="title function_">useState</span>(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 中略</span></span><br><span class="line">    <span class="keyword">const</span> <span class="title function_">handleSubmit</span> = <span class="keyword">async</span> (<span class="params">e</span>) =&gt; &#123;</span><br><span class="line">        e.<span class="title function_">preventDefault</span>();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> client = <span class="keyword">await</span> <span class="title function_">getSearchClient</span>(result.<span class="property">accessToken</span>);</span><br><span class="line">            <span class="keyword">const</span> searchResults = <span class="keyword">await</span> client.<span class="title function_">search</span>(searchWord);</span><br><span class="line">            <span class="keyword">let</span> r = <span class="string">&quot;&quot;</span>;</span><br><span class="line">            <span class="keyword">for</span> <span class="title function_">await</span> (<span class="keyword">const</span> result <span class="keyword">of</span> searchResults.<span class="property">results</span>) &#123;</span><br><span class="line">                r += result.<span class="property">document</span>.<span class="property">HotelName</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="title function_">setMessage</span>(r);</span><br><span class="line">            <span class="title function_">setShowMessage</span>(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 中略</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;<span class="title class_">Container</span>&gt;</span><br><span class="line">            <span class="language-xml"><span class="tag">&lt;<span class="name">Row</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;<span class="name">Form</span> <span class="attr">onSubmit</span>=<span class="string">&#123;handleSubmit&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">&quot;searchWord&quot;</span> <span class="attr">name</span>=<span class="string">&quot;searchWord&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;search word&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">onChange</span>=<span class="string">&#123;handleChangesearchWord&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">                    <span class="tag">&lt;<span class="name">Button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span>Submit<span class="tag">&lt;/<span class="name">Button</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">                <span class="tag">&lt;/<span class="name">Form</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">            <span class="tag">&lt;/<span class="name">Row</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>例えば以下のようにフォームに記載した内容に基づいて検索し、検索結果を取得することができます。<br/></p>
+<p><img src="/jpazpaas/2024/01/29/search-microsoft-entra-web-token/image-222496ff-aa66-4b58-a445-165a436ce1df.png" alt="image-222496ff-aa66-4b58-a445-165a436ce1df.png"></p>
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><ul>
+<li><a href="https://learn.microsoft.com/ja-jp/entra/identity-platform/sample-v2-code?tabs=apptype#samples-and-guides">Microsoft ID プラットフォームのコード サンプル</a></li>
+</ul>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2024 年 04 月 09 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2024/01/29/search-microsoft-entra-web-token.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../30/Improvements-to-DNS-configuration-and-name-resolution-in-App-Service.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          App Service における DNS の構成と名前解決のいくつかの改善について
+        
+      </div>
+    </a>
+  
+  
+    <a href="../26/Howto-troubleshoot-network-connectivity-with-api.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">API を用いた App Service のネットワークトラブルシューティング</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

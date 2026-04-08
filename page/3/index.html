@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Japan PaaS Support Team Blog">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/page/3/index.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Example">
+<meta property="article:tag" content="Information">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../favicon-16x16.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <link rel="mask-icon" href="../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html" class="article-date">
+  <time datetime="2025-02-25T15:00:00.000Z" itemprop="datePublished">2025-02-26</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html">AI Search のカスタムスキルで Azure Functions を呼び出す際、マネージド ID で認証する方法について</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        Azure AI Search サービスのカスタムスキル機能を使い、Azure Function App の Web API スキルを呼び出すことができます。スキルセット内のカスタム Web API スキル - Azure AI Search | Microsoft Learnそこでキーではなく、システムマネージド ID に RBAC 権限を付与して認証する方法をご案内致します。
+設定不備の際、発生するエラーの例Web Api response status: &#39;Forbidden&#39;, Web Api response details
+手順既に Web API を利用するスキルセットが用意されている前提で、それぞれのリソースごとに設定方法をご案内致します。
+Function App関数アプリを開き、「認証」ブレードから「ID プロバイダー」のリンクを押下し、下記画像の通り ...
+        <p class="article-readmore">
+          <a href="../../2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html" data-id="cuidGqnaDYv2X_SSVGXsjCC9-" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2025/02/14/How-to-Handle-Errors-When-Retrieving-Large-Documents-Using-AI-Search" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2025/02/14/How-to-Handle-Errors-When-Retrieving-Large-Documents-Using-AI-Search.html" class="article-date">
+  <time datetime="2025-02-13T15:00:00.000Z" itemprop="datePublished">2025-02-14</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2025/02/14/How-to-Handle-Errors-When-Retrieving-Large-Documents-Using-AI-Search.html">AI Search で 10 万件を超えるドキュメントを取得する際に発生するエラーの回避法</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        10 万件を超えるドキュメントが格納されたインデックスに対して、Python SDK を使用してすべてのドキュメントを取得しようとした時、エラーが出て取得できない。大量データのドキュメントを取得するにはどのようにしたら良いでしょうか。
+エラー内容1234azure.core.exceptions.HttpResponseError: (InvalidRequestParameter) Value must be between 0 and 100000.  Parameter name: $skip  Code: InvalidRequestParameter  Message: Value must be between 0 and 100000.  
+
+エラーが発生するコード例123456789101112search_client = SearchClient(    endpoin...
+        <p class="article-readmore">
+          <a href="../../2025/02/14/How-to-Handle-Errors-When-Retrieving-Large-Documents-Using-AI-Search.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2025/02/14/How-to-Handle-Errors-When-Retrieving-Large-Documents-Using-AI-Search.html" data-id="cuidmWI7j8ws2RcxvyUnRRveH" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/12/06/Default-root-certificate-on-Windows-App-Service" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/12/06/Default-root-certificate-on-Windows-App-Service.html" class="article-date">
+  <time datetime="2024-12-05T15:00:00.000Z" itemprop="datePublished">2024-12-06</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/12/06/Default-root-certificate-on-Windows-App-Service.html">Windows 版の App Service にインストールされている既定のルート証明書</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        App Serviceサポート担当の谷津です。この投稿では、Windows 版の App Service にて既定でインストールされるルート証明書について解説いたします。
+インストールされているルート証明書の確認方法以下の弊社公式ブログならびに記事内で引用されている公式ドキュメントにて言及があるように、Windows の場合は PowerShell にて dir cert:\localmachine\root を実行することで確認可能です。PowerShell コマンドは Kudu サイト (高度なツール) にて以下のように実行いただけます。
+Root CA on App Service - Azure App Service
+
+既定でインストールされているルート証明書がどのように決定されるかWindows のみならず、既定でインストールされている証明書については開発元のセキュリティポリシ...
+        <p class="article-readmore">
+          <a href="../../2024/12/06/Default-root-certificate-on-Windows-App-Service.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/12/06/Default-root-certificate-on-Windows-App-Service.html" data-id="cuidRyX_2qHGNXbjUCPwOxpJQ" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html" class="article-date">
+  <time datetime="2024-09-24T15:00:00.000Z" itemprop="datePublished">2024-09-25</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html">Azure Cache for Redis の最小 TLS バージョンの確認、変更方法</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+トランスポート層セキュリティ (TLS) バージョン 1.2 以降の排他的使用に向けた業界全体の推進活動に対応するために、Azure Cache for Redis は、2025 年 4 月に TLS 1.2 の使用を求める方向に進んでいます。TLS バージョン 1.0 と 1.1 は、BEAST や POODLE などの攻撃を受けやすく、またその他の共通脆弱性識別子 (CVE) の弱点を持つことが知られています。そのため、2025 年 4 月 1 日以降段階的に、Azure Cache for Redis の 最小 TLS バージョンの設定は自動的に 1.2となり、TLS 1.0 と 1.1 を使用した通信は接続できなくなります。
+■ ご参考：  
+
+Azure Cache for Redis での使用から TLS 1.0 と 1.1 を削除する - Azure Cache for R...
+        <p class="article-readmore">
+          <a href="../../2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html" data-id="cuidxcj7ZC3ukssKlPassKPC2" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html" class="article-date">
+  <time datetime="2024-08-29T15:00:00.000Z" itemprop="datePublished">2024-08-30</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html">API Management カスタム ドメインの設定及び証明書の更新方法とその影響</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+Azure Cloud で Azure API Management サービス インスタンスを作成すると、Azure によってそれに azure-api.net サブドメイン (例: apim-service-name.azure-api.net) が割り当てられます。また、独自のカスタム ドメイン名 (例: contoso.com) を使用して API Management エンドポイントを公開することもできます。本記事では、Azure Portal を使った Azure API Management のカスタム ドメイン名の設定および証明書の更新方法とその影響について説明します。
+ご参考：Azure API Management インスタンスのカスタム ドメイン名を構成する
+
+(目次)1. 前提2. カスタム ドメイン設定の作成3. 証明書の更新について4. カスタム ドメイン設定の...
+        <p class="article-readmore">
+          <a href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html" data-id="cuidgB_ZjGziba1BtEqUqQr7W" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/08/30/migrate-azure-functions-inprocess-to-isolated-using-slot" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/08/30/migrate-azure-functions-inprocess-to-isolated-using-slot.html" class="article-date">
+  <time datetime="2024-08-29T15:00:00.000Z" itemprop="datePublished">2024-08-30</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/08/30/migrate-azure-functions-inprocess-to-isolated-using-slot.html">スロットを使用した Azure Functions のインプロセスモデル から 分離ワーカープロセスモデル への移行手順について</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        お世話になっております。App Service サポート担当の間山です。
+2026 年 11 月 10 日より、Azure Functions .NET アプリケーションの インプロセスモデル がサポート終了となります。インプロセスモデルにてお使いの .NET の関数コード アプリケーションを引き続き製品サポートを受ける場合には、分離ワーカープロセスモデル への変更をする必要がございます。
+Azure Functions .NET アプリケーションの インプロセスモデル がサポート終了の詳細な情報につきましては、以下の弊社サポートブログにて補足をしております。
+Azure Functions インプロセス モデル のサポート終了について(追跡 ID FVN7-7PZ)
+弊社提供の公開情報では、インプロセスモデル から 分離ワーカープロセスモデル への移行手順について公開しております。商用環...
+        <p class="article-readmore">
+          <a href="../../2024/08/30/migrate-azure-functions-inprocess-to-isolated-using-slot.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/30/migrate-azure-functions-inprocess-to-isolated-using-slot.html" data-id="cuid5ujodgDiNwhMFPyrViAdw" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/08/16/Use%20Azure%20AD%20B2C%20authenticating%20API%20in%20API%20Management" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/08/16/Use%20Azure%20AD%20B2C%20authenticating%20API%20in%20API%20Management.html" class="article-date">
+  <time datetime="2024-08-15T15:00:00.000Z" itemprop="datePublished">2024-08-16</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/08/16/Use%20Azure%20AD%20B2C%20authenticating%20API%20in%20API%20Management.html">API Management で Azure AD B2C を利用した認証の構成手順について</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        こんにちは、PaaS Developer チームの陳です。
+API Management（以下 APIM）の資格情報マネージャーを構成して、バックエンドを認証する方法について、Entra ID をプロバイダとして構成する方法を以下のドキュメントに掲載されていますが、
+資格情報マネージャーの構成 - Microsoft Graph API
+Azure AD B2C を使用して構成する方法はないため、今回は APIM で Azure AD B2C を用いた バックエンド認証の構成手順についてまとめます。
+APIM での バックエンド認証には、Entra ID ではなく、Azure AD B2C を使用する予定ですが、Credential Manager とポリシーの構成方法について知りたい。
+回答本ブログは以下の流れで説明していきます。
+
+Azure AD B2C の構成手順
+APIM Cre...
+        <p class="article-readmore">
+          <a href="../../2024/08/16/Use%20Azure%20AD%20B2C%20authenticating%20API%20in%20API%20Management.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/16/Use%20Azure%20AD%20B2C%20authenticating%20API%20in%20API%20Management.html" data-id="cuidgxbL3M1CKZ0LmBvQvYBAG" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/08/16/search-ai-skills-on-private-environment" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/08/16/search-ai-skills-on-private-environment.html" class="article-date">
+  <time datetime="2024-08-15T15:00:00.000Z" itemprop="datePublished">2024-08-16</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/08/16/search-ai-skills-on-private-environment.html">AI Search で OCR 等の組み込みスキルを Azure AI Service でパブリックアクセスを無効化した状態で実行したい</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        AI Search のスキルセットで、AI マルチサービス リソースの OCR スキルを設定しています。しかし、AI マルチサービス リソースのパブリックネットワークアクセスを無効にするとエラーが発生しました。回避する方法はありますか?
+回答まず、本ブログは Azure OpenAI の Embedding スキル以外 の、「AI マルチサービス リソース」によって提供される組み込みスキル (OCR スキル等) をターゲットとしております。Azure OpenAI の Embedding スキルをご利用の場合は以下のブログに詳細がございますので、参考になれば幸いです。Azure AI Search から Azure OpenAI Service へ可能な限りセキュアに接続したい
+AI マルチサービス リソースのパブリックネットワークアクセスを無効にする場合、共有プライベートリンクを利用する...
+        <p class="article-readmore">
+          <a href="../../2024/08/16/search-ai-skills-on-private-environment.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/16/search-ai-skills-on-private-environment.html" data-id="cuid7NMGsIk7QtanczXLhNOXe" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/08/05/change-lease-status-from-broken-to-available" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/08/05/change-lease-status-from-broken-to-available.html" class="article-date">
+  <time datetime="2024-08-04T15:00:00.000Z" itemprop="datePublished">2024-08-05</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/08/05/change-lease-status-from-broken-to-available.html">BLOB やコンテナーのリース状態を、[解約済み] から [利用可能] にする方法</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        Azure ポータルで BLOB やコンテナーのリース状態を操作していたら、[解約済み] というステータスになってしまいました。これを他のコンテナーなどと同じように [利用可能] に戻すにはどうすればいいですか。
+
+回答手順手順自体は以下の方法を取ります。ここではコンテナーを対象に作業を行います。実施している概要としては、一度リースを取得しなおし、リース ID を指定してリースを解放するという作業をしています。実行環境としては Azure ポータルで Cloud Shell を利用し、ストレージへの認証方法はアクセスキーを利用し、Azure CLI を用いて実施しています。あくまで一例ですので、実行環境や認証方法などはお手元の状況に応じて調整ください。
+12345678account=&lt;ストレージアカウント名&gt;container=&lt;コンテナー名&gt;key=&quot;...
+        <p class="article-readmore">
+          <a href="../../2024/08/05/change-lease-status-from-broken-to-available.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/05/change-lease-status-from-broken-to-available.html" data-id="cuid_cY_-vm-yPC-DAajM3-Pc" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/07/30/How-to-use-GithubApp-for-self-hosted-runner-on-ContainerApps-Job" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/07/30/How-to-use-GithubApp-for-self-hosted-runner-on-ContainerApps-Job.html" class="article-date">
+  <time datetime="2024-07-29T15:00:00.000Z" itemprop="datePublished">2024-07-30</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/07/30/How-to-use-GithubApp-for-self-hosted-runner-on-ContainerApps-Job.html">ContainerApps ジョブのセルフホステッドランナーを Github App で運用する方法</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        以下、公開されているチュートリアルでは、PAT (Personal Access Token) を利用して GitHub のSelf-Hosted RunnerをContainer Appsで構築しているが、GitHub App で運用する方法はあるか。チュートリアル:Azure Container Apps ジョブを使用してセルフホスト型 CI&#x2F;CD ランナーとエージェントをデプロイする
+回答Container Apps ジョブの利用例として、PAT を使ったセルフホスト型の CI&#x2F;CD ランナーの構築方法をチュートリアルにて紹介していますが、代わりに Github App で運用することも可能となります。以下に必要な手順について記載いたします。
+&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&...
+        <p class="article-readmore">
+          <a href="../../2024/07/30/How-to-use-GithubApp-for-self-hosted-runner-on-ContainerApps-Job.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/07/30/How-to-use-GithubApp-for-self-hosted-runner-on-ContainerApps-Job.html" data-id="cuid1SNjleu_ldHW_NxtecGLK" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="../2/">&laquo; 戻る</a><a class="page-number" href="../../">1</a><a class="page-number" href="../2/">2</a><span class="page-number current">3</span><a class="page-number" href="../4/">4</a><a class="page-number" href="../5/">5</a><span class="space">&hellip;</span><a class="page-number" href="../19/">19</a><a class="extend next" rel="next" href="../4/">次へ &raquo;</a>
+  </nav>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

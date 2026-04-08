@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Functions での「Azure Functions Runtime に到達できません」のよくある原因と対応策 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Azure Functions を利用しており、「Azure Functions Runtime に到達できません」とエラーが表示されます。対応を教えてください。  回答Azure Functions が何かしらの理由で正常に起動ができていないことを表します。多くの原因はストレージ アカウントとの接続ができないことに起因し、原因は Application Insights ログに記録されていない場">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Functions での「Azure Functions Runtime に到達できません」のよくある原因と対応策">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Azure Functions を利用しており、「Azure Functions Runtime に到達できません」とエラーが表示されます。対応を教えてください。  回答Azure Functions が何かしらの理由で正常に起動ができていないことを表します。多くの原因はストレージ アカウントとの接続ができないことに起因し、原因は Application Insights ログに記録されていない場">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-5e22ac13-1e1b-4f56-9355-8ff737735036.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-1eca6a87-5197-47a3-a16e-2f13baeda221.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-e60b96db-7a37-4a8d-9872-f8481423dcd5.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-cbcd2ef1-0eb9-448e-9ab7-b90a7c5df073.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-d15e533e-1f8a-4f94-a5d9-43d6eb2698e1.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-8b4728be-1d6f-4aad-9be8-22d3eefb5934.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-24067dee-d4b0-4872-bfff-7099faa79b69.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-bf34df67-8c43-48a1-af7c-7a958455a742.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-34cf08a0-a87f-4990-af5a-e9dd063f3fe8.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-9cbcfe36-142d-458a-a00b-66b422acfad0.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-41ea3ec8-be78-4c96-aa86-8b7fc91d485d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-951caa7c-0616-4229-9bb1-bcc4daf379e6.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-7bc56981-f731-4882-8e75-219a8c2346ce.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-24c9e0df-ddca-4909-a347-07097e7452a2.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-a74bcd49-3a56-4fa3-9fdf-2a6058a95025.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-901d5b7d-3b54-4415-80dc-12b09e2f9b93.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-e626b835-dd43-4bab-8df2-2a9d168eeb7d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-66af2f95-b0df-433c-a8f5-ace367e2abde.png">
+<meta property="article:published_time" content="2023-04-24T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.615Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function App">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-5e22ac13-1e1b-4f56-9355-8ff737735036.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Functions での「Azure Functions Runtime に到達できません」のよくある原因と対応策
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-04-24T15:00:00.000Z" itemprop="datePublished">2023-04-25</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+9a8e6543-df81-5e4e-82ee-6edab271f174%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Functions+%E3%81%A7%E3%81%AE%E3%80%8CAzure+Functions+Runtime+%E3%81%AB%E5%88%B0%E9%81%94%E3%81%A7%E3%81%8D%E3%81%BE%E3%81%9B%E3%82%93%E3%80%8D%E3%81%AE%E3%82%88%E3%81%8F%E3%81%82%E3%82%8B%E5%8E%9F%E5%9B%A0%E3%81%A8%E5%AF%BE%E5%BF%9C%E7%AD%96%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F04%2F25%2Fhow-to-check-azurefunctions-runtimeis-unreachable.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F04%2F25%2Fhow-to-check-azurefunctions-runtimeis-unreachable.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F04%2F25%2Fhow-to-check-azurefunctions-runtimeis-unreachable.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable.html" data-id="cuidZSkgj7Cx69ureHrNHsNVs" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Azure Functions を利用しており、「Azure Functions Runtime に到達できません」とエラーが表示されます。対応を教えてください。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-5e22ac13-1e1b-4f56-9355-8ff737735036.png" alt="image-5e22ac13-1e1b-4f56-9355-8ff737735036.png"></p>
+<h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>Azure Functions が何かしらの理由で正常に起動ができていないことを表します。<br>多くの原因はストレージ アカウントとの接続ができないことに起因し、原因は Application Insights ログに記録されていない場合が多いです。よくあるシナリオに分けて解説します。</p>
+<p>Azure Functions Runtime に到達できませんについては、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-recover-storage-account">こちら</a>にご案内もありますが、本稿ではより具体的なトラブルシューティング方法と追加のシナリオをご案内します。</p>
+<h2 id="Azure-Functions-が規定で利用するストレージ-アカウント"><a href="#Azure-Functions-が規定で利用するストレージ-アカウント" class="headerlink" title="Azure Functions が規定で利用するストレージ アカウント"></a>Azure Functions が規定で利用するストレージ アカウント</h2><p>Azure Functions ではその動作のためにストレージ アカウントを利用しますが、それぞれの用途に応じて別々のアプリケーション設定に定義されています。代表的な 2 つを説明します。</p>
+<ul>
+<li>AzureWebJobsStorage</li>
+</ul>
+<p>Azure Functions ランタイムにて利用される汎用ストレージ アカウントを指定する接続文字列を保持するアプリケーション設定になります。従量課金、Premium または専用プランに依らずすべての Azure Functions が各トリガーの管理や関数実行のログ管理などの操作にストレージ アカウントを使用します。Azure Functions 作成時にストレージ アカウントが同時に作成されるのはこれらに利用されるためです。</p>
+<p>トリガーを作成していない初期状態では、azure-webjobs-hosts と azure-webjobs-secrets の BLOB が作成されます。<br><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-1eca6a87-5197-47a3-a16e-2f13baeda221.png" alt="image-1eca6a87-5197-47a3-a16e-2f13baeda221.png"></p>
+<p>Azure Functions が利用する<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/storage-considerations?tabs=azure-cli#storage-account-requirements">ストレージ アカウントの要件</a>と本アプリケーション設定の説明(<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#azurewebjobsstorage">AzureWebJobsStorage</a>)があります。</p>
+<ul>
+<li>WEBSITE_CONTENTAZUREFILECONNECTIONSTRING と WEBSITE_CONTENTSHARE</li>
+</ul>
+<p>Azure Functions の Premium プランと Windows の従量課金プランで、ファイル システムとして Azure Files が既定で設定されています。 この Azure Files のストレージ アカウントの接続文字列と Azure Files 名を指定するためのアプリケーション設定になり、セットで利用されます。下記例の設定では、ストレージ アカウント&#x2F;blogresourcesa87a のファイル共有&#x2F;hakurodacontosofunc8aff を使うような設定となります。<br><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-e60b96db-7a37-4a8d-9872-f8481423dcd5.png" alt="image-e60b96db-7a37-4a8d-9872-f8481423dcd5.png"></p>
+<p>こちらに、本アプリケーション設定の説明(<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#website_contentazurefileconnectionstring">WEBSITE_CONTENTAZUREFILECONNECTIONSTRING</a>、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-app-settings#website_contentshare">WEBSITE_CONTENTSHARE</a>)があります。</p>
+<h2 id="Azure-Functions-Runtime-に到達できませんの発生シナリオ"><a href="#Azure-Functions-Runtime-に到達できませんの発生シナリオ" class="headerlink" title="Azure Functions Runtime に到達できませんの発生シナリオ"></a>Azure Functions Runtime に到達できませんの発生シナリオ</h2><h3 id="各シナリオのチートシート"><a href="#各シナリオのチートシート" class="headerlink" title="各シナリオのチートシート"></a>各シナリオのチートシート</h3><p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-cbcd2ef1-0eb9-448e-9ab7-b90a7c5df073.png" alt="image-cbcd2ef1-0eb9-448e-9ab7-b90a7c5df073.png"></p>
+<h3 id="シナリオ１：ストレージ-アカウント用のアプリケーション設定が無い場合"><a href="#シナリオ１：ストレージ-アカウント用のアプリケーション設定が無い場合" class="headerlink" title="シナリオ１：ストレージ アカウント用のアプリケーション設定が無い場合"></a>シナリオ１：ストレージ アカウント用のアプリケーション設定が無い場合</h3><p>「Azure Functions が規定で利用するストレージ アカウント」で説明したいずれかのアプリケーション設定が無い場合には Azure Functions が正常に起動しません。<br><em><strong>Azure ポータル &gt; 構成</strong></em> から、AzureWebJobsStorage、(ご利用のプランに応じて)WEBSITE_CONTENTAZUREFILECONNECTIONSTRING 及び WEBSITE_CONTENTSHAREアプリケーション設定が存在することを確認ください。</p>
+<p>[AzureWebJobsStorage が無い場合の例]</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-d15e533e-1f8a-4f94-a5d9-43d6eb2698e1.png" alt="image-d15e533e-1f8a-4f94-a5d9-43d6eb2698e1.png"></p>
+<h3 id="シナリオ２：ストレージ-アカウントの接続文字列が不正の場合"><a href="#シナリオ２：ストレージ-アカウントの接続文字列が不正の場合" class="headerlink" title="シナリオ２：ストレージ アカウントの接続文字列が不正の場合"></a>シナリオ２：ストレージ アカウントの接続文字列が不正の場合</h3><p>「Azure Functions が規定で利用するストレージ アカウント」で説明したアプリケーション設定に指定した接続文字列が正しい形式ではない場合には Azure Functions が正常に起動しません。</p>
+<p>接続想定のストレージ アカウントの接続文字列との一致を確認します。以下の例は、ストレージ アカウントの接続文字列を確認する画面となります。<br><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-8b4728be-1d6f-4aad-9be8-22d3eefb5934.png" alt="image-8b4728be-1d6f-4aad-9be8-22d3eefb5934.png"></p>
+<h3 id="シナリオ３：ストレージ-アカウントが削除されている場合"><a href="#シナリオ３：ストレージ-アカウントが削除されている場合" class="headerlink" title="シナリオ３：ストレージ アカウントが削除されている場合"></a>シナリオ３：ストレージ アカウントが削除されている場合</h3><p>「Azure Functions が規定で利用するストレージ アカウント」で説明したアプリケーション設定に指定したストレージ アカウントが無い場合には Azure Functions が正常に起動しません。<br><em><strong>Azure ポータル &gt; 構成</strong></em> から、AzureWebJobsStorage、(ご利用のプランに応じて)WEBSITE_CONTENTAZUREFILECONNECTIONSTRING に指定したストレージ アカウントが存在することを確認ください。</p>
+<h3 id="シナリオ４：ストレージ-アカウントにアクセスできない場合"><a href="#シナリオ４：ストレージ-アカウントにアクセスできない場合" class="headerlink" title="シナリオ４：ストレージ アカウントにアクセスできない場合"></a>シナリオ４：ストレージ アカウントにアクセスできない場合</h3><p>ストレージ アカウントにアクセス制限や Azure Functions の通信経路上で通信が拒否されており、Azure Functions からストレージ アカウントへ通信ができない場合には Azure Functions が正常に起動しません。</p>
+<p>もし Azure Functions が利用するストレージ アカウントでアクセス制限を設けたい場合には、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/configure-networking-how-to?tabs=portal#restrict-your-storage-account-to-a-virtual-network">こちら</a>の手順に従って構成します。</p>
+<h3 id="シナリオ４ー１：ストレージ-アカウントにアクセス制限を設けている場合"><a href="#シナリオ４ー１：ストレージ-アカウントにアクセス制限を設けている場合" class="headerlink" title="シナリオ４ー１：ストレージ アカウントにアクセス制限を設けている場合"></a>シナリオ４ー１：ストレージ アカウントにアクセス制限を設けている場合</h3><p>ストレージ アカウントのアクセス制限の設定状況を確認します。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-24067dee-d4b0-4872-bfff-7099faa79b69.png" alt="image-24067dee-d4b0-4872-bfff-7099faa79b69.png"></p>
+<p>ご確認いただいても事象が解消しない場合にはストレージ アカウントの診断設定を有効化します。少なくとも BLOB の診断設定を有効化し、ストレージ アカウントへのアクセス ログを確認します。<br><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-bf34df67-8c43-48a1-af7c-7a958455a742.png" alt="image-bf34df67-8c43-48a1-af7c-7a958455a742.png"></p>
+<p>また Azure Functions とストレージ アカウントが同一リージョンにある場合には IP アドレスによる<a href="https://learn.microsoft.com/ja-jp/azure/storage/common/storage-network-security?tabs=azure-portal#grant-access-from-an-internet-ip-range">アクセス制限</a>は構成いただけませんためご注意ください。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-34cf08a0-a87f-4990-af5a-e9dd063f3fe8.png" alt="image-34cf08a0-a87f-4990-af5a-e9dd063f3fe8.png"></p>
+<h3 id="シナリオ４ー２：Azure-Functions-が-VNet-統合している場合"><a href="#シナリオ４ー２：Azure-Functions-が-VNet-統合している場合" class="headerlink" title="シナリオ４ー２：Azure Functions が VNet 統合している場合"></a>シナリオ４ー２：Azure Functions が VNet 統合している場合</h3><p>ストレージ アカウントのアクセス制限設定が問題ない場合には、Azure Functions からストレージ アカウントへの通信経路を確認します。比較的多く利用いただいているシナリオでは <code>Azure Functions -[VNet 統合]-&gt; 仮想ネットワーク|サブネット -[NSG]-&gt; プライベート エンドポイント(BLOB など) -&gt; ストレージ アカウント</code> や <code>Azure Functions -[VNet 統合]-&gt; 仮想ネットワーク|サブネット -[NSG]-[ルートテーブル]-&gt; ファイア ウォール -&gt; プライベート エンドポイント(BLOB など) -&gt; ストレージ アカウント</code> が考えられます。VNet 統合しているサブネット以降の通信経路にて（NSG やファイア ウォールなど）ストレージ アカウントへのアクセスを遮断していないかを確認します。</p>
+<h3 id="シナリオ５：Azure-Functions-の再起動が繰り返されている場合"><a href="#シナリオ５：Azure-Functions-の再起動が繰り返されている場合" class="headerlink" title="シナリオ５：Azure Functions の再起動が繰り返されている場合"></a>シナリオ５：Azure Functions の再起動が繰り返されている場合</h3><p>Azure Functions の再起動が繰り返されている場合、一時的に「Azure Functions Runtime に到達できません」が表示されたり解消される動作となります。これは Azure Functions はアプリケーションの起動を試みる一方で、何かしらの理由によってシャットダウンすることで非常に不安定な動作となるためです。</p>
+<h4 id="シナリオ５ー１：アプリケーションの起動に時間がかかっている場合"><a href="#シナリオ５ー１：アプリケーションの起動に時間がかかっている場合" class="headerlink" title="シナリオ５ー１：アプリケーションの起動に時間がかかっている場合"></a>シナリオ５ー１：アプリケーションの起動に時間がかかっている場合</h4><p>Azure Functions の Linux OS をご利用の場合、アプリケーションの起動時間の上限が <a href="https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/faqs-app-service-linux?toc=/azure/app-service/toc.json#-----------------------------------------------------------">230 秒(標準値)</a>となっています。アプリケーションの起動に 230 秒以上要する場合には、Azure Functions の再起動が繰り返されてしまいます。</p>
+<p>Linux OS をご利用の場合、&#x2F;home&#x2F;LogFiles に docker ログ(YYYY_MM_DD_&lt;インスタンスID&gt;_docker.log 形式)が出力されます。docker ログには、アプリケーションの起動時の記録が残るため、そちらを確認します。230 秒以上要しており起動に失敗した場合には下記のようなログが出力されます。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-9cbcfe36-142d-458a-a00b-66b422acfad0.png" alt="image-9cbcfe36-142d-458a-a00b-66b422acfad0.png"></p>
+<p>アプリケーションの起動に 230 秒以上要しないことが望ましいものの、どうしても時間を要する場合にはアプリケーション設定 <a href="https://learn.microsoft.com/ja-jp/azure/app-service/reference-app-settings?tabs=kudu,dotnet#custom-containers">WEBSITES_CONTAINER_START_TIME_LIMIT</a> を追加して 230 秒以上要しても起動を続けるように設定します。<br>また、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/run-functions-from-deployment-package#enable-functions-to-run-from-a-package">パッケージからの実行</a>を行うように設定しアプリケーションがなるべく早く起動するようにします。</p>
+<h4 id="シナリオ５ー２：アプリケーションが正しく起動できていない場合"><a href="#シナリオ５ー２：アプリケーションが正しく起動できていない場合" class="headerlink" title="シナリオ５ー２：アプリケーションが正しく起動できていない場合"></a>シナリオ５ー２：アプリケーションが正しく起動できていない場合</h4><p>例えば C# をご利用の場合には、<a href="https://learn.microsoft.com/ja-jp/aspnet/core/fundamentals/startup?view=aspnetcore-6.0">Startup.cs</a> を定義することで起動時の初期処理など(アプリケーション スタートアップ コード)を実装いただけます。<br>アプリケーションの起動時(実行時ではない)に例外が発出されると、Azure Functions は起動に失敗し永遠と再度起動を試みます。結果として再起動が繰り返されるため「Azure Functions Runtime に到達できません」が表示されます。</p>
+<p>この場合には、アプリケーション ログが記録される場合があります。具体例で、下記のようなログが確認できる場合があります。今回は Startup.cs に例外を発生させるコードを仕込んでます。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-41ea3ec8-be78-4c96-aa86-8b7fc91d485d.png" alt="image-41ea3ec8-be78-4c96-aa86-8b7fc91d485d.png"></p>
+<h4 id="シナリオ５ー３：１度もアプリケーションをデプロイしていないもののパッケージからの実行を構成している場合"><a href="#シナリオ５ー３：１度もアプリケーションをデプロイしていないもののパッケージからの実行を構成している場合" class="headerlink" title="シナリオ５ー３：１度もアプリケーションをデプロイしていないもののパッケージからの実行を構成している場合"></a>シナリオ５ー３：１度もアプリケーションをデプロイしていないもののパッケージからの実行を構成している場合</h4><p>App Service をご利用の際、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/run-functions-from-deployment-package">パッケージからの実行</a>(ZIP ファイルにアプリケーション コード一式をアーカイブし、実行する方法)を構成できます。<br><code>WEBSITE_RUN_FROM_PACKAGE=1</code> を構成している場合には、<code>/home/data/SitePackages</code> から ZIP ファイルを読み込み起動します。<br>何もアプリケーションをデプロイしていない状態で <code>WEBSITE_RUN_FROM_PACKAGE=1</code> とした場合には、<code>/home/data/SitePackages</code> に ZIP ファイルが無いために「Azure Functions Runtime に到達できません」が発生します。この場合には、アプリケーション ログが記録されません。</p>
+<p>パッケージからの実行に失敗しているかどうかは、Kudu より <code>/home/site/wwwroot</code> に <code>FAILED TO INITIALIZE RUN FROM PACKAGE.txt</code> があることを確認します。本ファイルがある場合には、パッケージからの実行に失敗していることを表します。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-951caa7c-0616-4229-9bb1-bcc4daf379e6.png" alt="image-951caa7c-0616-4229-9bb1-bcc4daf379e6.png"></p>
+<p>また、<code>/home/data/SitePackages</code> にアプリケーション コード一式をアーカイブした ZIP ファイルがあることを確認し、アプリケーションが無い場合には任意の方法でデプロイします。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-7bc56981-f731-4882-8e75-219a8c2346ce.png" alt="image-7bc56981-f731-4882-8e75-219a8c2346ce.png"></p>
+<h3 id="シナリオ６：Azure-Functions-が-BYOS-を利用している場合"><a href="#シナリオ６：Azure-Functions-が-BYOS-を利用している場合" class="headerlink" title="シナリオ６：Azure Functions が BYOS を利用している場合"></a>シナリオ６：Azure Functions が BYOS を利用している場合</h3><p>ストレージ アカウントの Azure Files を<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/storage-considerations?tabs=azure-cli#mount-file-shares">任意のディレクトリにマウント</a>して利用いただくことができます。この時の設定誤りなどの理由により正しくマウントできない場合には「Azure Functions Runtime に到達できません」が発生します。</p>
+<p>以下はマウントした Azure Files が存在しない場合の例です。&#x2F;mounted を Azure Files にマウントしていましたが、マウント先の Azure Files の削除しています。この状態になっている場合には Kudu や SSH が起動しません。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-24c9e0df-ddca-4909-a347-07097e7452a2.png" alt="image-24c9e0df-ddca-4909-a347-07097e7452a2.png"></p>
+<p>Azure ポータルの問題の診断と解決から、”コンテナの問題”を確認します。一例ですが、マウントが原因の旨確認できます。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-a74bcd49-3a56-4fa3-9fdf-2a6058a95025.png" alt="image-a74bcd49-3a56-4fa3-9fdf-2a6058a95025.png"></p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-901d5b7d-3b54-4415-80dc-12b09e2f9b93.png" alt="image-901d5b7d-3b54-4415-80dc-12b09e2f9b93.png"></p>
+<h3 id="シナリオ７：デイリーのクォータを超過している場合"><a href="#シナリオ７：デイリーのクォータを超過している場合" class="headerlink" title="シナリオ７：デイリーのクォータを超過している場合"></a>シナリオ７：デイリーのクォータを超過している場合</h3><p>Azure Functions の従量課金プランでは、1 日当たりに利用できるクォータの上限を設定可能です。設定状況は、<em><strong>Azure ポータル &gt; 構成 - 関数のランタイム設定</strong></em> から確認可能です。<br><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-e626b835-dd43-4bab-8df2-2a9d168eeb7d.png" alt="image-e626b835-dd43-4bab-8df2-2a9d168eeb7d.png"></p>
+<p>従量課金プランをご利用の場合には、こちらを確認いただき必要に応じてクォータの上限の変更と Azure Functions の再起動ください。</p>
+<h3 id="シナリオ８：App-Offline-htm-が配置されている場合"><a href="#シナリオ８：App-Offline-htm-が配置されている場合" class="headerlink" title="シナリオ８：App_Offline.htm が配置されている場合"></a>シナリオ８：App_Offline.htm が配置されている場合</h3><p>Azure Functions へのアプリケーションのデプロイ中など一時的に Azure Functions を停止させるために &#x2F;home&#x2F;site&#x2F;wwwroot に App_Offline.htm が作成されます。App_Offline.htm が削除されれば「Azure Functions Runtime に到達できません」は解消されます。</p>
+<p><img src="/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable/image-66af2f95-b0df-433c-a8f5-ace367e2abde.png" alt="image-66af2f95-b0df-433c-a8f5-ace367e2abde.png"></p>
+<p>App_Offline.htm は、<a href="https://learn.microsoft.com/ja-jp/aspnet/core/host-and-deploy/app-offline?view=aspnetcore-7.0">ASP.NET Core 用</a>のファイルとなり、利用者での手動作成は推奨されません。</p>
+<p>今回は以上のとなります。他にも発生するシナリオがあれば随時追記していきますため今後のアップデートをご期待ください。お読みいただき、ありがとうございました。</p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2023 年 05 月 15 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../05/10/Inside-the-Azure-App-Service-Architecture.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          [日本語訳] Inside the Azure App Service Architecture
+        
+      </div>
+    </a>
+  
+  
+    <a href="../21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">ストレージアカウント → Event Grid → Service Bus → Functions の経路で可能な限りプライベートでイベントを配信する設定手順</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

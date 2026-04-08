@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure AI Search から Azure OpenAI Service へ可能な限りセキュアに接続したい | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Azure AI Search でベクトル検索を利用するために、インデクサー実行時に Azure OpenAI Embedding スキルでコンテンツをベクトル化したいです。しかし、Azure OpenAI Service のネットワーク設定でパブリックアクセスを無効とすると、Azure OpenAI Embedding スキルが失敗します。可能な限り Azure AI Search から Azu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure AI Search から Azure OpenAI Service へ可能な限りセキュアに接続したい">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Azure AI Search でベクトル検索を利用するために、インデクサー実行時に Azure OpenAI Embedding スキルでコンテンツをベクトル化したいです。しかし、Azure OpenAI Service のネットワーク設定でパブリックアクセスを無効とすると、Azure OpenAI Embedding スキルが失敗します。可能な限り Azure AI Search から Azu">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-afddb292-ce11-42dc-a5d6-c25aeb92e136.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/search-private-access-9a3051ea-003c-4767-9d32-88cc714bb4ca.jpg">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-98f65f48-6c67-4845-86d2-f8d48411b208.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-582712e4-1123-4e50-89a3-999ae9bc1223.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/search-private-access-Page-2-a143ba1e-96bc-474d-88eb-0e80128750eb.jpg">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-207eddb1-ca9f-4ab0-bf38-69ff93f63c0b.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-344d3179-b354-4978-8281-966606aaea45.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-e3a414bd-d40d-48ea-bfd6-e21fb1b4140c.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-631d1172-f493-4659-8ac5-82d475769dcc.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-997b6bee-19e4-4c0b-bbcf-67fd668f114f.png">
+<meta property="article:published_time" content="2024-01-24T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.720Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="AI Search">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai/image-afddb292-ce11-42dc-a5d6-c25aeb92e136.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2024/01/25/search-private-access-to-openai" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure AI Search から Azure OpenAI Service へ可能な限りセキュアに接続したい
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2024-01-24T15:00:00.000Z" itemprop="datePublished">2024-01-25</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+572bb503-36bd-5591-b1d6-a23f957e3d7d%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+AI+Search+%E3%81%8B%E3%82%89+Azure+OpenAI+Service+%E3%81%B8%E5%8F%AF%E8%83%BD%E3%81%AA%E9%99%90%E3%82%8A%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AB%E6%8E%A5%E7%B6%9A%E3%81%97%E3%81%9F%E3%81%84%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2024%2F01%2F25%2Fsearch-private-access-to-openai.html%29%0A*+Content+Source%3A+%5Barticles%2F2024%2F01%2F25%2Fsearch-private-access-to-openai.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2024%2F01%2F25%2Fsearch-private-access-to-openai.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai.html" data-id="cuidisfWCx3zD7mX8IwuauVLx" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Azure AI Search でベクトル検索を利用するために、インデクサー実行時に Azure OpenAI Embedding スキルでコンテンツをベクトル化したいです。<br/><br>しかし、Azure OpenAI Service のネットワーク設定でパブリックアクセスを無効とすると、Azure OpenAI Embedding スキルが失敗します。<br/><br>可能な限り Azure AI Search から Azure OpenAI Service への接続をセキュアにする方法はありますでしょうか。</p>
+<p>インデクサーを実行すると以下のようなエラーが発生します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">メッセージ</span><br><span class="line">Could not execute skill because the Web Api request failed.</span><br><span class="line">詳細</span><br><span class="line">Web Api response status: &#x27;Forbidden&#x27;, Web Api response details: &#x27;&#123;&quot;error&quot;:&#123;&quot;code&quot;:&quot;403&quot;,&quot;message&quot;: &quot;Public access is disabled. Please configure private endpoint.&quot;&#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+<p><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/image-afddb292-ce11-42dc-a5d6-c25aeb92e136.png" alt="image-afddb292-ce11-42dc-a5d6-c25aeb92e136.png"></p>
+<p>また、Azure OpenAI Service のパブリックアクセスを無効化せず、「選択したネットワークとプライベート エンドポイント」からのアクセスに制限している場合は以下のエラーが発生します。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">メッセージ</span><br><span class="line">Could not execute skill because the Web Api request failed.</span><br><span class="line">詳細</span><br><span class="line">Web Api response status: &#x27;Forbidden&#x27;, Web Api response details: &#x27;&#123;&quot;error&quot;:&#123;&quot;code&quot;:&quot;403&quot;,&quot;message&quot;: &quot;Access denied due to Virtual Network/Firewall rules.&quot;&#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>現在は以下の 2 点の選択肢がございます。<br/><br>それぞれ長所と短所を記載いたしましたので、ご検討いただけますと幸いです。<br/><br>恐れ入りますが、2 つ目のマネージド ID を利用する方法は、Azure OpenAI Service がパブリックアクセスを無効としているとご利用することがかないませんのでご注意ください。</p>
+<ol>
+<li><strong>Azure AI Search の Azure OpenAI Service への共有プライベートリンク経由でアクセスするように設定します。</strong><ul>
+<li>長所<ul>
+<li>Azure AI Search から Azure OpenAI Service へプライベート接続ができます。</li>
+<li>手順として共有プライベートリンクの作成とインデクサーの設定を変更すればよく、管理が容易です。</li>
+</ul>
+</li>
+<li>短所<ul>
+<li>Azure AI Search サービスの作成日、リージョン、およびスキルの構成によっては、Standard 1 以上のプランが必要となり、ご利用料金が高くなる可能性があります。</li>
+<li>プライベートエンドポイントを利用することによる料金が追加で請求されます。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Azure AI Search から Azure OpenAI Service に対してマネージド ID 認証を利用して接続します。</strong>  <ul>
+<li>長所<ul>
+<li>マネージド ID は Azure AI Search の Basic プランから利用可能であるため、垂直統合以外のスキルを利用する場合、Basic プランを選択でき、料金が安くなります。<ul>
+<li>垂直統合以外のスキルを利用する場合、さらに共有プライベートリンクを利用するには Standard 1 が必要です。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>短所<ul>
+<li>Azure AI Search から Azure OpenAI Service へのアクセスは Microsoft バックボーンネットワークを経由するため、パブリックインターネットを経由することはございませんが、プライベート接続とはなりません。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>以下に 2 つの選択肢の詳細を記載いたします。</p>
+<h2 id="1-Azure-AI-Search-の-Azure-OpenAI-Service-への共有プライベートリンク経由でアクセスするように設定します。"><a href="#1-Azure-AI-Search-の-Azure-OpenAI-Service-への共有プライベートリンク経由でアクセスするように設定します。" class="headerlink" title="1. Azure AI Search の Azure OpenAI Service への共有プライベートリンク経由でアクセスするように設定します。"></a>1. Azure AI Search の Azure OpenAI Service への共有プライベートリンク経由でアクセスするように設定します。</h2><p><a href="https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create">共有プライベートリンク</a> は、Azure AI Search から別の Azure サービスへのプライベート接続が必要な場合に利用します。<br/><br>共有プライベートリンクを作成し、インデクサーでプライベート接続を利用する設定を追加するだけでご利用可能になります。また、共有プライベートリンクによって作成されるプライベートエンドポイントリソースは Microsoft で管理されるため、お客様にてプライベートエンドポイントやプライベート DNS ゾーン等を管理する必要はございません。<br/></p>
+<p>共有プライベートリンクの利用によって以下の構成となります。<br/><br><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/search-private-access-9a3051ea-003c-4767-9d32-88cc714bb4ca.jpg" alt="search-private-access-9a3051ea-003c-4767-9d32-88cc714bb4ca.jpg"><br><br/><br><br/><br>ただし、共有プライベートリンクを利用する上で <a href="https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#prerequisites">前提条件</a> がありますため、予め前提条件を満たすかご確認ください。</p>
+<p>あくまで参考情報となりますが、以前はスキルセットが必要な場合は Standard 2 以上のレベルの Azure AI Search サービスが必要でした。<br>2024 年 11 月以降、上記の前提条件を満たせば、Basic レベルでも Azure OpenAI の埋め込みスキルをプライベート環境で実行することが可能となりました。<br>さらに、2025 年 5 月以降、Standard 1 レベルでもカスタムスキルをプライベート環境で実行することが可能となりました。</p>
+<h3 id="設定手順"><a href="#設定手順" class="headerlink" title="設定手順"></a>設定手順</h3><p>以下に設定手順について参考となるドキュメントと、手順実施の際の参考情報を記載いたします。</p>
+<h4 id="1-共有プライベート-リンクを作成する-を参考に設定します。"><a href="#1-共有プライベート-リンクを作成する-を参考に設定します。" class="headerlink" title="1. 共有プライベート リンクを作成する を参考に設定します。"></a>1. <a href="https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#1---create-a-shared-private-link">共有プライベート リンクを作成する</a> を参考に設定します。</h4><p>Azure OpenAI Service へ接続するため、以下の画像のように「リソースの種類」 は <code>Microsoft.CognitiveServices/accounts</code>、「対象サブリソース」は <code>openai_account</code> とします。<br/><br><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/image-98f65f48-6c67-4845-86d2-f8d48411b208.png" alt="image-98f65f48-6c67-4845-86d2-f8d48411b208.png"></p>
+<h4 id="2-プライベート-エンドポイント接続を承認する-を参考に設定します。"><a href="#2-プライベート-エンドポイント接続を承認する-を参考に設定します。" class="headerlink" title="2. プライベート エンドポイント接続を承認する を参考に設定します。"></a>2. <a href="https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#1---create-a-shared-private-link">プライベート エンドポイント接続を承認する</a> を参考に設定します。</h4><h4 id="3-共有プライベート-リンクの状態を確認する-を参考に設定します。"><a href="#3-共有プライベート-リンクの状態を確認する-を参考に設定します。" class="headerlink" title="3. 共有プライベート リンクの状態を確認する を参考に設定します。"></a>3. <a href="https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#3---check-shared-private-link-status">共有プライベート リンクの状態を確認する</a> を参考に設定します。</h4><h4 id="4-プライベート環境で実行されるようにインデクサーを構成する-を参考に設定します。"><a href="#4-プライベート環境で実行されるようにインデクサーを構成する-を参考に設定します。" class="headerlink" title="4. プライベート環境で実行されるようにインデクサーを構成する を参考に設定します。"></a>4. <a href="https://learn.microsoft.com/ja-jp/azure/search/search-indexer-howto-access-private?tabs=portal-create#4---configure-the-indexer-to-run-in-the-private-environment">プライベート環境で実行されるようにインデクサーを構成する</a> を参考に設定します。</h4><p>既にインデクサーが存在する場合は、Azure Portal より以下のように <code>&quot;executionEnvironment&quot;: &quot;private&quot;</code> を追記して保存いただけますと幸いです。<br/><br><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/image-582712e4-1123-4e50-89a3-999ae9bc1223.png" alt="image-582712e4-1123-4e50-89a3-999ae9bc1223.png"></p>
+<h2 id="2-Azure-AI-Search-から-Azure-OpenAI-Service-に対してマネージドID認証を利用して接続します。"><a href="#2-Azure-AI-Search-から-Azure-OpenAI-Service-に対してマネージドID認証を利用して接続します。" class="headerlink" title="2. Azure AI Search から Azure OpenAI Service に対してマネージドID認証を利用して接続します。"></a>2. Azure AI Search から Azure OpenAI Service に対してマネージドID認証を利用して接続します。</h2><p>1 の共有プライベートリンクを利用する方法は、Azure AI Search サービスの作成日、リージョン、およびスキルの構成によっては、Standard 1 以上のプランが必要となり、ご利用料金が高くなる可能性があります。また、Standard 1 以上のプランでなくとも、共有プライベートリンクを利用する以上、プライベート エンドポイントの料金が追加で発生いたします。<br/></p>
+<p>一方で、プライベート接続はできないものの、Azure OpenAI Service のアクセス制限を構成しつつ、Azure AI Search からアクセスする方法として、マネージド ID 認証を利用する方法がございます。プライベート エンドポイントの料金がないため、共有プライベートリンクを利用する場合と比較して安くなります。<br/><br>Azure OpenAI Service のドキュメントに以下の記載がございますので、参考になれば幸いです。</p>
+<blockquote>
+<p>他のアプリのネットワーク規則を維持しながら、信頼された Azure サービスのサブセットに Azure OpenAI へのアクセス権を付与することができます。 その後、これらの信頼されたこれらのサービスでは、マネージド ID を使用して、Azure OpenAI サービスの認証が行われます。<br/><br>次の表は、これらのサービスのマネージド ID に適切なロールが割り当てられている場合に Azure OpenAI にアクセスできるサービスを示しています。<br/><br>(中略)<br/><br>Azure AI Search<br/></p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/ai-services/cognitive-services-virtual-networks?tabs=portal#grant-access-to-trusted-azure-services-for-azure-openai">Azure OpenAI の信頼された Azure サービスへのアクセス権を付与する</a></p>
+<p>以下のような構成になります。<br/><br><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/search-private-access-Page-2-a143ba1e-96bc-474d-88eb-0e80128750eb.jpg" alt="search-private-access-Page-2-a143ba1e-96bc-474d-88eb-0e80128750eb.jpg"></p>
+<p>もちろん、プライベート接続はできないものの、<a href="https://learn.microsoft.com/ja-jp/azure/networking/microsoft-global-network#get-the-premium-cloud-network">マイクロソフトのグローバル ネットワーク</a> のドキュメントに記載がある通り、Microsoft のサービス間の通信はパブリックインターネットを経由することはございませんので、その点はご安心ください。<br/></p>
+<p>また、質問に記載の 2 番目のエラーメッセージ <code>Access denied due to Virtual Network/Firewall rules.</code> を解消する方法にもなっています。</p>
+<h3 id="設定手順-1"><a href="#設定手順-1" class="headerlink" title="設定手順"></a>設定手順</h3><p>以下に設定手順を記載いたします。</p>
+<h4 id="1-Azure-OpenAI-Service-側でネットワーク規則の例外を許可します。"><a href="#1-Azure-OpenAI-Service-側でネットワーク規則の例外を許可します。" class="headerlink" title="1. Azure OpenAI Service 側でネットワーク規則の例外を許可します。"></a>1. Azure OpenAI Service 側でネットワーク規則の例外を許可します。</h4><p><a href="https://learn.microsoft.com/ja-jp/azure/ai-services/cognitive-services-virtual-networks?tabs=portal#using-the-azure-portal">Azure OpenAI の信頼された Azure サービスへのアクセス権を付与する - Azure Portal の使用</a> のドキュメントにしたがい、対象の Azure OpenAI Service に対してネットワーク規則の例外を作成します。<br/></p>
+<p>具体的には、Azure OpenAI の「ネットワーク」ブレードから、「選択したネットワークとプライベートエンドポイント」を選択し、<br>「Allow Azure services on the trusted services list to access this cognitive services account.」をチェックします。<br/><br>以下のスクリーンショットが参考になれば幸いです。<br/><br><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/image-207eddb1-ca9f-4ab0-bf38-69ff93f63c0b.png" alt="image-207eddb1-ca9f-4ab0-bf38-69ff93f63c0b.png"></p>
+<p>また、<a href="https://learn.microsoft.com/ja-jp/azure/ai-services/cognitive-services-virtual-networks?tabs=portal#using-the-azure-cli">Azure CLI の使用</a> の「Azure portal から信頼できるサービスが有効になっているかどうかを確認する」の手順にしたがい、<code>bypass: AzureServices</code> となっており、ネットワーク規則の例外が設定されているか念のため確認しておきましょう。</p>
+<ol>
+<li>Azure OpenAI リソースの概要ページから <strong>[JSON ビュー]</strong> を使用します。<br/><br><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/image-344d3179-b354-4978-8281-966606aaea45.png" alt="image-344d3179-b354-4978-8281-966606aaea45.png">    </li>
+<li><strong>[API バージョン]</strong> で最新の API バージョンを選択します。<br/><br><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/image-e3a414bd-d40d-48ea-bfd6-e21fb1b4140c.png" alt="image-e3a414bd-d40d-48ea-bfd6-e21fb1b4140c.png"></li>
+</ol>
+<h4 id="2-Azure-AI-Search-側で-システム-マネージド-ID-を作成する-を参考に、システム割り当てマネージドIDを有効化します。"><a href="#2-Azure-AI-Search-側で-システム-マネージド-ID-を作成する-を参考に、システム割り当てマネージドIDを有効化します。" class="headerlink" title="2. Azure AI Search 側で システム マネージド ID を作成する を参考に、システム割り当てマネージドIDを有効化します。"></a>2. Azure AI Search 側で <a href="https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys,portal-user#create-a-system-managed-identity">システム マネージド ID を作成する</a> を参考に、システム割り当てマネージドIDを有効化します。</h4><h4 id="3-Azure-OpenAI-Service-リソースのスコープで、手順-2-で作成したシステム割り当てマネージド-ID-に対して「Cognitive-Services-OpenAI-ユーザー」ロールを割り当てます。ロールの割り当て-の手順をご確認ください。"><a href="#3-Azure-OpenAI-Service-リソースのスコープで、手順-2-で作成したシステム割り当てマネージド-ID-に対して「Cognitive-Services-OpenAI-ユーザー」ロールを割り当てます。ロールの割り当て-の手順をご確認ください。" class="headerlink" title="3. Azure OpenAI Service リソースのスコープで、手順 2 で作成したシステム割り当てマネージド ID に対して「Cognitive Services OpenAI ユーザー」ロールを割り当てます。ロールの割り当て の手順をご確認ください。"></a>3. Azure OpenAI Service リソースのスコープで、手順 2 で作成したシステム割り当てマネージド ID に対して「Cognitive Services OpenAI ユーザー」ロールを割り当てます。<a href="https://learn.microsoft.com/ja-jp/azure/search/search-howto-managed-identities-data-sources?tabs=portal-sys,portal-user#assign-a-role">ロールの割り当て</a> の手順をご確認ください。</h4><p>必要なロールについては以下のドキュメントに記載がございます。</p>
+<blockquote>
+<p>Azure OpenAI にテキストを送信するには、マネージド ID に Cognitive Services OpenAI ユーザー アクセス許可が必要です。<br/></p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/search/cognitive-search-skill-azure-openai-embedding#skill-parameters">Azure OpenAI Embedding スキル</a></p>
+<h4 id="4-スキルセットで-apiKey-と-authIdentity-を-null-にします。もし既存の定義に記載がない場合はそのままで問題ございません。"><a href="#4-スキルセットで-apiKey-と-authIdentity-を-null-にします。もし既存の定義に記載がない場合はそのままで問題ございません。" class="headerlink" title="4. スキルセットで apiKey と authIdentity を null にします。もし既存の定義に記載がない場合はそのままで問題ございません。"></a>4. スキルセットで <code>apiKey</code> と <code>authIdentity</code> を <code>null</code> にします。もし既存の定義に記載がない場合はそのままで問題ございません。</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;@odata.type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;#1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;context&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/document/pages/*&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;resourceUri&quot;</span><span class="punctuation">:</span> https<span class="punctuation">:</span><span class="comment">//airesource.openai.azure.com,</span></span><br><span class="line">  <span class="attr">&quot;apiKey&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;deploymentId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;****&quot;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+<p>以下のドキュメントにマネージド ID を利用する方法について記載がございますので、参考になれば幸いです。</p>
+<blockquote>
+<p>Azure OpenAI に接続するために検索サービスによって使用されるユーザー マネージド ID。 システムまたはユーザーのマネージド ID を使用できます。 システム マネージド ID を使用するには、apiKey と authIdentity を空白のままにします。 システム マネージド ID が自動的に使用されます。 <br/></p>
+</blockquote>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/search/cognitive-search-skill-azure-openai-embedding#skill-parameters">Azure OpenAI Embedding スキル</a></p>
+<h4 id="5-インデックスの設定で-Azure-OpenAI-Service-への接続でマネージド-ID-を利用するようにします。"><a href="#5-インデックスの設定で-Azure-OpenAI-Service-への接続でマネージド-ID-を利用するようにします。" class="headerlink" title="5. インデックスの設定で Azure OpenAI Service への接続でマネージド ID を利用するようにします。"></a>5. インデックスの設定で Azure OpenAI Service への接続でマネージド ID を利用するようにします。</h4><p>ベクトル検索をする場合、検索文字列に対しても Azure OpenAI Service の API を利用してベクトル化する必要があります。<br>マネージド ID を利用する設定がインデックスにないと、検索時に以下のようなエラーが発生します。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not complete vectorization action. Could not reach the vectorization endpoint.</span><br></pre></td></tr></table></figure>
+<p><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/image-631d1172-f493-4659-8ac5-82d475769dcc.png" alt="image-631d1172-f493-4659-8ac5-82d475769dcc.png"></p>
+<p>インデクサーの設定と同様に、インデックス定義の以下の部分で <code>apiKey</code> と <code>authIdentity</code> を <code>null</code> にして保存します。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;vectorizers&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vector-1706146801319-vectorizer&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;kind&quot;</span><span class="punctuation">:</span> <span class="string">&quot;azureOpenAI&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;azureOpenAIParameters&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;resourceUri&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://********.openai.azure.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;deploymentId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;tsample&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;apiKey&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;authIdentity&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;customWebApiParameters&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+<p>Azure Portal では以下のように変更し、保存します。<br/><br><img src="/jpazpaas/2024/01/25/search-private-access-to-openai/image-997b6bee-19e4-4c0b-bbcf-67fd668f114f.png" alt="image-997b6bee-19e4-4c0b-bbcf-67fd668f114f.png"></p>
+<h4 id="6-インデクサーを実行しエラーなく処理が完了することと、インデックスの検索でエラーが発生しないことを確認します。"><a href="#6-インデクサーを実行しエラーなく処理が完了することと、インデックスの検索でエラーが発生しないことを確認します。" class="headerlink" title="6. インデクサーを実行しエラーなく処理が完了することと、インデックスの検索でエラーが発生しないことを確認します。"></a>6. インデクサーを実行しエラーなく処理が完了することと、インデックスの検索でエラーが発生しないことを確認します。</h4><br>
+<br>
+
+<h1 id="変更履歴"><a href="#変更履歴" class="headerlink" title="変更履歴"></a>変更履歴</h1><p>2025 年 07 月 25 日：Standard1 でも共有プライベートリンクでカスタムスキルを利用できるようになったため、前提条件の記載を修正しました。</p>
+<hr>
+<br>
+<br>
+
+<p>2025 年 07 月 25 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2024/01/25/search-private-access-to-openai.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="backup-search-service.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          AI Search の設定やインデックスデータをバックアップしたい
+        
+      </div>
+    </a>
+  
+  
+    <a href="../19/Azure-Role-for-using-Azure-Email-Services.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">メール通信サービスを使用するための Azure ロールについて</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>カスタムポリシーの作成手順について | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="私たちの要件を満たすカスタムポリシーを作成したいです。サポートリクエストを起票することで要件を満たすポリシーを作成してくれませんか？ 回答大変恐縮ながら、サポートリクエストでは、Azure Policy や ARM Template、各種クエリ等の開発依頼を受け付けておりません。必要に応じてサンプル等のご提供をさせて頂く場合もございますが、基本的には、製品のご利用方法や仕様などについて公開情報をも">
+<meta property="og:type" content="article">
+<meta property="og:title" content="カスタムポリシーの作成手順について">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2024/07/30/How-to-create-custom-policy.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="私たちの要件を満たすカスタムポリシーを作成したいです。サポートリクエストを起票することで要件を満たすポリシーを作成してくれませんか？ 回答大変恐縮ながら、サポートリクエストでは、Azure Policy や ARM Template、各種クエリ等の開発依頼を受け付けておりません。必要に応じてサンプル等のご提供をさせて頂く場合もございますが、基本的には、製品のご利用方法や仕様などについて公開情報をも">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2024/07/30/How-to-create-custom-policy/image-5431be42-f4d8-4f48-adad-2a12742276a9.png">
+<meta property="article:published_time" content="2024-07-29T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.787Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Policy">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2024/07/30/How-to-create-custom-policy/image-5431be42-f4d8-4f48-adad-2a12742276a9.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2024/07/30/How-to-create-custom-policy" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      カスタムポリシーの作成手順について
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2024-07-29T15:00:00.000Z" itemprop="datePublished">2024-07-30</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+531f61ef-22f5-5862-92ca-b9958999063c%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5B%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%A0%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC%E3%81%AE%E4%BD%9C%E6%88%90%E6%89%8B%E9%A0%86%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2024%2F07%2F30%2FHow-to-create-custom-policy.html%29%0A*+Content+Source%3A+%5Barticles%2F2024%2F07%2F30%2FHow-to-create-custom-policy.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2024%2F07%2F30%2FHow-to-create-custom-policy.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2024/07/30/How-to-create-custom-policy.html" data-id="cuid7yQhXnv9JZxkW_JDzd3b9" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>私たちの要件を満たすカスタムポリシーを作成したいです。<br><br>サポートリクエストを起票することで要件を満たすポリシーを作成してくれませんか？</p>
+<h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>大変恐縮ながら、サポートリクエストでは、<br><br>Azure Policy や ARM Template、各種クエリ等の開発依頼を受け付けておりません。<br><br>必要に応じてサンプル等のご提供をさせて頂く場合もございますが、<br><br>基本的には、製品のご利用方法や仕様などについて公開情報をもととしたご案内をいたしておりまして、<br><br>お客様が Azure Policy の定義や ARM テンプレートの作成をするにあたりお役に立つ情報のご提供を行っております。<br><br><br><br>「カスタムポリシーでの対応を行いたいが、作成方法が分からない」という方も多いかと思います。<br><br>本記事では、カスタムポリシーの作成手順についてご案内します。<br></p>
+<h2 id="＜Azure-Policy-の作成の基礎について＞"><a href="#＜Azure-Policy-の作成の基礎について＞" class="headerlink" title="＜Azure Policy の作成の基礎について＞"></a>＜Azure Policy の作成の基礎について＞</h2><p>カスタムポリシーの作成方法の大まかな流れは下記の資料が参考になるかと思います。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/governance/policy/tutorials/create-custom-policy-definition">チュートリアル:カスタム ポリシー定義の作成 - Azure Policy | Microsoft Learn</a><br><br><br><br>Azure Policy の構造については下記の資料を一度ご確認下さい。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/governance/policy/concepts/definition-structure-basics">ポリシー定義の構造の基本の詳細 - Azure Policy | Microsoft Learn</a><br><br><br><br>Azure Policy の効果については下記の資料をご確認下さい。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/governance/policy/concepts/effect-basics">Azure Policy 定義の効果の基本 - Azure Policy | Microsoft Learn</a><br><br><br><br>カスタムポリシーを作成する際には、上記の資料、<bR><br>特に Azure Policy の構造に関する資料と、Azure Policy の効果に関する資料を参照頂きながら、<br><br>作業をするケースが多いかと思います。</p>
+<h2 id="＜ビルトインポリシーについて＞"><a href="#＜ビルトインポリシーについて＞" class="headerlink" title="＜ビルトインポリシーについて＞"></a>＜ビルトインポリシーについて＞</h2><p>ビルトイン（組み込みの）ポリシーも数多く用意されております。<br><br>まずは、目的のポリシーに極力近しいビルトインポリシーを探してみると良いかと思います。<br><br>下記の資料では、提供されている組み込みのポリシーが記載されております。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/governance/policy/samples/built-in-policies">組み込みのポリシー定義の一覧 - Azure Policy | Microsoft Learn</a><br><br><br><br>サービスによっては、サービスの資料中にて、そのサービスに関するポリシーをまとめている例もございます。<br><br>こちらの方が目的に近いポリシーを探すことが容易かとも思います。<br><br>一例として、Azure VM や Azure Storage の場合は下記の様な資料がございました。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/virtual-machines/policy-reference">Azure Virtual Machines 用の組み込みポリシー定義 - Azure Virtual Machines | Microsoft Learn</a><br><br><a href="https://learn.microsoft.com/ja-jp/azure/storage/common/policy-reference">Azure Storage 用の組み込みポリシー定義 | Microsoft Learn</a><br><br><br><br>監査対象のプロパティが異なっていたとしても、<br><br>対象の type など、ある程度は一致する部分があるかとは思いますので、<br><br>ビルトインポリシーをひな型として、カスタムポリシーを作成されると良いかと思います。<br></p>
+<h2 id=""><a href="#" class="headerlink" title="&lt;カスタムポリシーの作成例について&gt;"></a>&lt;カスタムポリシーの作成例について&gt;</h2><p>下記のWebサイト、”AzAdvertizer” ではカスタムポリシーの作成例を確認することが可能です。<br><br><a href="https://www.azadvertizer.net/azpolicyadvertizer_all.html">AzPolicyAdvertizer (azadvertizer.net)</a><br><br><br><br>AzAdvertizer は Microsoft の従業員によって開発されていますが、<br><br>Microsoft のサービスや製品ではないことにご注意ください。<br><br>つまり、ここで掲載されているポリシーについてサポートなどは提供されておりません。<br><br>また、このサイトの問題や掲載されているポリシーの問題についてはお問い合わせを受け付けておりません。<br><br><br><br>ご利用者様自身で検証頂く必要はございますが、<br><br>より目的に近しいポリシーのひな型が見つかる可能性もございます。<br><br>ビルトインポリシーと合わせて、AzPolicyAdvertizer もご確認頂き、<br><br>ご希望のポリシーにより近いカスタムポリシーを、<br><br>作成されるカスタムポリシーのひな型として選択頂くと良いかと思います。<br></p>
+<h2 id="＜エイリアスの確認方法について＞"><a href="#＜エイリアスの確認方法について＞" class="headerlink" title="＜エイリアスの確認方法について＞"></a>＜エイリアスの確認方法について＞</h2><p>そもそも、Azure Policy はデプロイされる ARM Template、<br><br>あるいは既存のリソースの構成を ARM Template で取得することによって、プロパティを確認しています。<br><br>プロパティを確認した際に、条件に一致しているかどうかを確認の上、制限している構成に一致していれば、<br><br>ポリシーの効果を適用するというものです。<br><br><br><br>よって、カスタムポリシーを作成する上では、<br><br>作成したいリソースの ARM Template のリファレンスもご確認頂くと良いかと思います。<br><br>一例として、Azure VM や Azure Storage の ARM Template リファレンスを下記に記載します。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/templates/microsoft.compute/virtualmachines?pivots=deployment-language-arm-template">Microsoft.Compute&#x2F;virtualMachines - Bicep, ARM template &amp; Terraform AzAPI reference | Microsoft Learn</a><br><br><a href="https://learn.microsoft.com/ja-jp/azure/templates/microsoft.storage/storageaccounts?pivots=deployment-language-arm-template">Microsoft.Storage&#x2F;storageAccounts - Bicep, ARM template &amp; Terraform AzAPI reference | Microsoft Learn</a><br><br><br><br>「（対象のサービス名） ARM Template リファレンス」<br><br>などと検索頂くと、上記の様なリファレンスがご確認頂けるかと思います。<br><br><br><br>上述のビルトインポリシーや ARM Template リファレンスから、<br><br>対象のリソースのタイプを特定します。<br></p>
+<blockquote>
+<p>例）Microsoft.Storage&#x2F;storageAccounts</p>
+</blockquote>
+<p>また、ARM Template リファレンスを確認し、監査したい目的のプロパティのパスを特定します。<br></p>
+<blockquote>
+<p>例）properties.publicNetworkAccess</p>
+</blockquote>
+<p>対象のプロパティに入る値についても確認しておきます。<br></p>
+<blockquote>
+<p>例）publicNetworkAccess の場合、’Disabled’ または ‘Enabled’</p>
+</blockquote>
+<p>対象のプロパティのパスを確認しましたが、<br><br>実は、Azure Policy の定義において、監査をするプロパティの指定方法は ARM Template と同じパスではなく、<br><br>Azure Policy 用のエイリアスが定義されており、このエイリアスを利用して対象の項目を監査します。<br><br><br><br>エイリアスの確認方法については下記の資料をご確認下さい。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/governance/policy/concepts/effect-deny">ポリシー定義構造の別名の詳細 - Azure Policy | Microsoft Learn</a><br><br><br><br>端的には、例えば Azure Storage のエイリアスの場合、<br><br>下記の様なPowershellコマンドでご確認頂くことが可能です。<br></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$allAliases = Get-AzPolicyAlias -NamespaceMatch &#x27;Microsoft.storage&#x27; -ResourceTypeMatch &#x27;storageAccounts&#x27;</span><br><span class="line">$allAliases.Aliases</span><br></pre></td></tr></table></figure>
+<p>エイリアスの中から、上記の例に挙げたような、<br><br>properties.publicNetworkAccess を監査するためのエイリアスを探すと、<br></p>
+<blockquote>
+<p>Microsoft.Storage&#x2F;storageAccounts&#x2F;publicNetworkAccess</p>
+</blockquote>
+<p><img src="/jpazpaas/2024/07/30/How-to-create-custom-policy/image-5431be42-f4d8-4f48-adad-2a12742276a9.png" alt="image-5431be42-f4d8-4f48-adad-2a12742276a9.png"></p>
+<p>であることが分かります。<br><br>なお、エイリアスが提供されていない場合もございます。<br><br>その場合はそのプロパティを監査するカスタムポリシーを作成することができません。<br><br><br></p>
+<h2 id="＜実際に作成してみる＞"><a href="#＜実際に作成してみる＞" class="headerlink" title="＜実際に作成してみる＞"></a>＜実際に作成してみる＞</h2><p>以上がカスタムポリシーを作成する際のヒントとなりますが、<br><br>最後に、実際にカスタムポリシーを作成してみます。<br><br><br><br>今回は、Azure Storage のポリシーを作成してみます。<br><br>「ストレージアカウントのSKUを制限しつつ、ストレージアカウントのパブリックネットワークアクセスも制限したい」<br><br>という想定で、<br><br>「ストレージアカウントの SKU が許可されたものではない、またはパブリックネットワークアクセスが有効になっていたら、作成や更新を拒否する」<br><br>というカスタムポリシーを作成してみます。<br><br><br><br>まずはひな型となるポリシーを探してみます。<br><br>下記のポリシーが目的のポリシーに近そうです。<br><br><br><br>「ストレージ アカウントを許可されている SKU で制限する必要がある」<br><br>（&#x2F;providers&#x2F;Microsoft.Authorization&#x2F;policyDefinitions&#x2F;7433c107-6db4-4ad1-b57a-a76dce0154a1）<br><br><br><br>ここに、<br><br>「またはパブリックネットワークアクセスが有効になっていたら」<br><br>という条件を追加する方針でカスタムポリシーを作ります。<br><br>パブリックネットワークアクセスを設定している Azure Storage 上のプロパティは、<br><br>“エイリアスの確認方法について” の章に記載した方法で確認をすると、</p>
+<blockquote>
+<p>properties.publicNetworkAccess</p>
+</blockquote>
+<p>であることが分かります。また、その項目を監査するためのエイリアスは、</p>
+<blockquote>
+<p>Microsoft.Storage&#x2F;storageAccounts&#x2F;publicNetworkAccess</p>
+</blockquote>
+<p>でした。<br><br>よって、ポリシー定義の条件に、<br><br>「”Microsoft.Storage&#x2F;storageAccounts&#x2F;publicNetworkAccess” が、Enabled であれば」<br><br>という条件を追加すればよいことが分かります。<br><br><br><br>複数の条件を取り入れる際には、allOf、または anyOf を利用してルールを定義します。<br><br>詳細は下記の資料をご参照下さい。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/governance/policy/concepts/definition-structure-policy-rule">ポリシー定義の構造ポリシー ルールの詳細 - Azure Policy | Microsoft Learn</a><br><br><br><br>簡潔には、allOf は論理式で言う”AND”、文章で表現するところの “かつ” であり、<br><br>anyOf は論理式で言う”OR”、文章で表現するところの “または” に該当します。<br><br><br><br>これらのことを踏まえて、<br><br>「ストレージアカウントの SKU が許可されたものではない、またはパブリックネットワークアクセスが有効になっていたら」<br><br>という条件は、Azure Policy の条件としては下記の3つの条件に分解できます。<br></p>
+<ol>
+<li>リソースのタイプが “Microsoft.StorageAccounts” である</li>
+<li>“Microsoft.Storage&#x2F;storageAccounts&#x2F;sku.name” が許可された SKU に当てはまらない</li>
+<li>“Microsoft.Storage&#x2F;storageAccounts&#x2F;publicNetworkAccess” が、Enabledである</li>
+</ol>
+<p>1、2は既に発見しているビルトインポリシーに記載があるので、その形式を参考にします。<br><br>3の条件を1、2とどのようにつなぐと正しいかを考えると、<br><br>1 AND (2 OR 3)<br><br>であることが分かります。<br><br>また「拒否する」という効果は “deny” が該当します。<br><br><br><br>以上の事から、ビルトインポリシー「ストレージ アカウントを許可されている SKU で制限する必要がある」をもとに、<br><br>下記の様なポリシーを作ります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;mode&quot;: &quot;Indexed&quot;,</span><br><span class="line">  &quot;policyRule&quot;: &#123;</span><br><span class="line">    &quot;if&quot;: &#123;</span><br><span class="line">      &quot;allOf&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;field&quot;: &quot;type&quot;,</span><br><span class="line">          &quot;equals&quot;: &quot;Microsoft.Storage/storageAccounts&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;anyOf&quot;: [</span><br><span class="line">            &#123;</span><br><span class="line">              &quot;not&quot;: &#123;</span><br><span class="line">                &quot;field&quot;: &quot;Microsoft.Storage/storageAccounts/sku.name&quot;,</span><br><span class="line">                &quot;in&quot;: &quot;[parameters(&#x27;listOfAllowedSKUs&#x27;)]&quot;</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">              &quot;field&quot;: &quot;Microsoft.Storage/storageAccounts/publicNetworkAccess&quot;,</span><br><span class="line">              &quot;equals&quot;: &quot;Enabled&quot;</span><br><span class="line">            &#125;</span><br><span class="line">          ]</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;then&quot;: &#123;</span><br><span class="line">      &quot;effect&quot;: &quot;deny&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;parameters&quot;: &#123;</span><br><span class="line">    &quot;listOfAllowedSKUs&quot;: &#123;</span><br><span class="line">      &quot;type&quot;: &quot;Array&quot;,</span><br><span class="line">      &quot;metadata&quot;: &#123;</span><br><span class="line">        &quot;displayName&quot;: &quot;許可されている SKU&quot;,</span><br><span class="line">        &quot;description&quot;: &quot;ストレージ アカウントに指定できる SKU の一覧。&quot;,</span><br><span class="line">        &quot;strongType&quot;: &quot;StorageSKUs&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>anyOf の中身、及び effect の部分がビルトインポリシーから変更した箇所となります。<br><br><br><br>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;<br><br><br><br>上述の様な流れでカスタムポリシーを作成していきます。<br><br>なお、ポリシーは割り当ててから実際に評価を実施して、コンプライアンス結果に反映するまでに時間がかかります。<br><br>ポリシーを割り当てた後、明示的に下記の監査を実行するコマンドを実施頂き、<br><br>実行完了をお待ち頂くと良いかと思います。<br><br><a href="https://learn.microsoft.com/en-us/cli/azure/policy/state?view=azure-cli-latest#az-policy-state-trigger-scan">az policy state | Microsoft Learn</a><br><br><a href="https://learn.microsoft.com/en-us/powershell/module/az.policyinsights/start-azpolicycompliancescan?view=azps-11.6.0&viewFallbackFrom=azps-4.7.0">Start-AzPolicyComplianceScan (Az.PolicyInsights) | Microsoft Learn</a><br><br><br><br>上記の様な流れでカスタムポリシーを作成します。<br><br>カスタムポリシーを作成した上で、ご希望のような動作にならない、<br><br>という場合にはサポートリクエストを起票頂き、作成されたカスタムポリシーと共にお問い合わせ頂けますと幸いです。</p>
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><p><a href="https://azure.github.io/jpazpaas/2020/10/01/hint-for-creating-policy.html">Policy 作成のヒント集 - Japan PaaS Support Team Blog (azure.github.io)</a></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2024 年 7 月 18 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2024/07/30/How-to-create-custom-policy.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="How-to-use-GithubApp-for-self-hosted-runner-on-ContainerApps-Job.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          ContainerApps ジョブのセルフホステッドランナーを Github App で運用する方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../05/27/Logs-of-python-logging-library-recorded-in-AppServiceConsoleLogs.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Python logging ライブラリで出力したログが全て AppServiceConsoleLogs にて Error レベルと記録される</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

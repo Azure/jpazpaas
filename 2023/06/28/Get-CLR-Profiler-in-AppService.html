@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>App Service で CLR Profiler (プロファイラー) を取得する | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="App Service で CLR Profiler を取得する方法を教えてください。 回答App Service では 問題の診断と解決 よりご利用いただける以下 2 つの方法でそれぞれ .NET アプリケーションの解析に用いられる CLR Profiler を取得できます。ご要件に応じて CLR Profiler の取得方法をご選択ください。  Collect a Profiler Trace">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App Service で CLR Profiler (プロファイラー) を取得する">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="App Service で CLR Profiler を取得する方法を教えてください。 回答App Service では 問題の診断と解決 よりご利用いただける以下 2 つの方法でそれぞれ .NET アプリケーションの解析に用いられる CLR Profiler を取得できます。ご要件に応じて CLR Profiler の取得方法をご選択ください。  Collect a Profiler Trace">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-9e1d4d02-86e4-4c8f-9ac5-b2987539d734.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-d2521075-7bf6-4848-b05c-9af690aa7827.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-0db6ad48-0749-43e5-8714-0d41399b2b30.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-14e85ccb-7688-42c3-ae38-17af5858e494.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-6244323f-384a-4892-8735-e5c01c8e62ed.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-6fa428b6-fc16-4436-8600-80484a66f258.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-5d936830-4a80-434c-a5d7-7c338e89381d.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-1f8d9772-bb5e-49de-95a7-ea9a92156a79.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-f6612ec3-92ca-4e3d-b13e-ab99a2371cd0.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-2e384a44-b772-45ee-861e-fb2212a661f9.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-9e1d4d02-86e4-4c8f-9ac5-b2987539d734.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-36aa75d5-0d7b-4ee3-a3c3-327624f8e174.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-68a1f0b2-bda1-4e2a-8fe0-207d3919a57a.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-e3886774-b1aa-4058-bfee-03988c858e56.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-ed86afeb-233a-4ee1-8c3a-a6cac016ff9b.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-b614a0a3-57d9-4f27-95a8-4efe1ba23427.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-822c5a72-ce2d-40e6-a429-b1f6b9cfdab1.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-e0a84a60-ea59-460e-8397-ffa7786e0a6e.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-83e84840-758f-4ee6-91fb-ac4495fc0061.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-280737b6-d4cd-48ca-8352-2d650060ebe0.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-684e6c4f-8fd8-4d80-ba14-d3e516a9280a.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-2a0617ef-81ef-4cca-98cb-1b3c4f8277c9.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-5a09be3f-0b69-4649-9d80-cf990d868c0f.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-0ea51a31-4e0f-4161-9009-1e1b5bb57125.png">
+<meta property="article:published_time" content="2023-06-27T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-08T02:21:19.657Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="App Service">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-9e1d4d02-86e4-4c8f-9ac5-b2987539d734.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/06/28/Get-CLR-Profiler-in-AppService" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      App Service で CLR Profiler (プロファイラー) を取得する
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2023-06-27T15:00:00.000Z" itemprop="datePublished">2023-06-28</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+878df2ff-0f8a-53c7-8a71-6c3bb21462d3%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BApp+Service+%E3%81%A7+CLR+Profiler+%28%E3%83%97%E3%83%AD%E3%83%95%E3%82%A1%E3%82%A4%E3%83%A9%E3%83%BC%29+%E3%82%92%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2023%2F06%2F28%2FGet-CLR-Profiler-in-AppService.html%29%0A*+Content+Source%3A+%5Barticles%2F2023%2F06%2F28%2FGet-CLR-Profiler-in-AppService.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2023%2F06%2F28%2FGet-CLR-Profiler-in-AppService.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService.html" data-id="cuidsX2Ryp-0iAlTo0jIX3LIK" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>App Service で CLR Profiler を取得する方法を教えてください。</p>
+<h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>App Service では <a href="https://learn.microsoft.com/ja-jp/azure/app-service/overview-diagnostics">問題の診断と解決</a> よりご利用いただける以下 2 つの方法でそれぞれ <a href="https://learn.microsoft.com/ja-jp/dotnet/framework/unmanaged-api/profiling/profiling-overview">.NET アプリケーションの解析に用いられる CLR Profiler</a> を取得できます。ご要件に応じて CLR Profiler の取得方法をご選択ください。</p>
+<ol>
+<li>Collect a Profiler Trace (お客様よりボタンを押下してプロファイリングを開始します)</li>
+<li>Auto-Heal (条件に合致した場合にプロファイリングを開始します)</li>
+</ol>
+<p>取得した CLR Profiler は <a href="https://jpdsi.github.io/blog/web-apps/LogCollection3/">PerfView</a> 等のツールでお客様より解析いただくことが出来ます。CLR Profiler により取得したデータは、アプリケーションの動作が遅い・応答しない、CPUやメモリーが高いといったパフォーマンス系の問題が発生した場合に原因の追究に有効となる場合があります。</p>
+<p><strong>&lt;注意事項&gt;</strong></p>
+<p>CLR Profiler を使用した調査では、プロファイリングの開始から終了までの間に調査対象とする事象が含まれている必要があります。Option2 Auto-Heal を使用した取得方法では問題発生時に自動的にプロファイリングが行われますが、Option1 ではお客様により手動でプロファイリングを開始する必要があるため、プロファイリングの開始から終了までの間に App Service 上で調査対象とする事象が発生していることをご確認ください。</p>
+<h1 id="Option1-Collect-a-Profiler-Trace"><a href="#Option1-Collect-a-Profiler-Trace" class="headerlink" title="Option1 ) Collect a Profiler Trace"></a>Option1 ) Collect a Profiler Trace</h1><ol>
+<li>Azure ポータルで対象の App Service を選択し、左側ブレード [問題の診断と解決] &gt; <strong>Collect .NET Profiler Trace</strong> を選択します。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-9e1d4d02-86e4-4c8f-9ac5-b2987539d734.png" alt="image-9e1d4d02-86e4-4c8f-9ac5-b2987539d734.png"></li>
+<li>対象とするインスタンスと Mode “Collect and Analyze Data”を選択します。<strong>Collect Profiler Trace</strong> ボタンを押下して CLR Profiler によるプロファイリングを開始します。※常時接続(Always On)を有効化してくださいといった旨の警告が表示される場合には、本記事末尾のよくあるFAQをご参照ください。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-d2521075-7bf6-4848-b05c-9af690aa7827.png" alt="image-d2521075-7bf6-4848-b05c-9af690aa7827.png"></li>
+<li>“Step2: Reproduce the issue now” に移行した後、プロファイリングが終了するまでの時間 (デフォルトでは 60 秒) 以内に調査対象とする事象を App Service 上で再現します。プロファイリングの取得時間は アプリケーション設定 IIS_PROFILING_TIMEOUT_IN_SECONDS にて変更いただけます。詳細は本記事末尾のよくある FAQ をご確認ください。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-0db6ad48-0749-43e5-8714-0d41399b2b30.png" alt="image-0db6ad48-0749-43e5-8714-0d41399b2b30.png"></li>
+<li>プロファイリングが終了した後、画面中央に表示される Reports リンクから、分析結果を確認します。複数インスタンスに対してプロファイリングを行った場合には、対象とするインスタンスもしくは任意にどれか一つのインスタンスの分析結果を選択します。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-14e85ccb-7688-42c3-ae38-17af5858e494.png" alt="image-14e85ccb-7688-42c3-ae38-17af5858e494.png"></li>
+<li>分析結果の左上に表示されている “Trace Duration” がデフォルトの 60 秒または、アプリケーション設定 IIS_PROFILING_TIMEOUT_IN_SECONDS で設定した時間(秒) とおおよそ一致することを確認します。想定した取得時間と大幅に異なる場合には、正しくプロファイリングが行えていない可能性があるため、アプリケーション設定 IIS_PROFILING_TIMEOUT_IN_SECONDS の値を改めて確認し、再度手順 3 からプロファイリングを開始します。下図は取得時間を 200 秒にした場合の例です。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-6244323f-384a-4892-8735-e5c01c8e62ed.png" alt="image-6244323f-384a-4892-8735-e5c01c8e62ed.png"></li>
+<li>分析結果の下部にある “Top 100 Slowest Requests in the Trace” セクションに調査対象とするリクエストが記載されていることを確認します。対象のリクエストが記載されていない場合には、その他のインスタンスの分析結果を確認します。すべてのインスタンスで対象のリクエストが確認できない場合には、取得対象とするインスタンスが正しいことや、プロファイリングの取得時間が十分であるかを確認の上、再度手順 3 からプロファイリングを開始します。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-6fa428b6-fc16-4436-8600-80484a66f258.png" alt="image-6fa428b6-fc16-4436-8600-80484a66f258.png"></li>
+<li>手順 5. , 6. にて想定したデータであることを確認しましたら、 分析結果上部にある ”Trace File” のリンクからデータを取得します。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-5d936830-4a80-434c-a5d7-7c338e89381d.png" alt="image-5d936830-4a80-434c-a5d7-7c338e89381d.png"></li>
+</ol>
+<h1 id="Option2-Auto-Heal"><a href="#Option2-Auto-Heal" class="headerlink" title="Option2 ) Auto-Heal"></a>Option2 ) Auto-Heal</h1><ol>
+<li>Azure ポータルで対象の App Service を選択し、左側ブレード [問題の診断と解決] &gt; <strong>Auto-Heal</strong> を選択します。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-1f8d9772-bb5e-49de-95a7-ea9a92156a79.png" alt="image-1f8d9772-bb5e-49de-95a7-ea9a92156a79.png"></li>
+<li>Define Conditions から CLR Profiler の取得条件を入力します。例えば、120 秒以上応答に時間が掛かるリクエストが 300 秒以内に 2 回発生したことを条件にする場合には、Define Conditions に [Request Duration] を選択し、下図のように構成し、[OK] ボタンを押下します。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-f6612ec3-92ca-4e3d-b13e-ab99a2371cd0.png" alt="image-f6612ec3-92ca-4e3d-b13e-ab99a2371cd0.png"></li>
+<li>Configure Actions で [Custom Action] から <strong>CLR Profiler With Thread Stacks</strong> を選択します。プロファイリングが終了したら、プロセスを再起動させる場合には “CollectKillAnalyze” を選択します。条件が入力できたら、[Save] ボタンを押下します。<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-2e384a44-b772-45ee-861e-fb2212a661f9.png" alt="image-2e384a44-b772-45ee-861e-fb2212a661f9.png"></li>
+<li>すべて入力が完了したら、[Save] ボタンを押下します。これで条件に合致した場合に自動的にプロファイリングが行われます。なお、プロファイリングの取得時間は規定で 60 秒となっております。プロファイリングの取得時間は アプリケーション設定 IIS_PROFILING_TIMEOUT_IN_SECONDS にて変更いただけます。詳細は本記事末尾のよくある FAQ をご確認ください。</li>
+<li>プロファイリングが終了した後、SCM サイト (https:&#x2F;&#x2F;&lt;AppService名&gt;.scm.azurewebsites.net&#x2F;) より \home\data\DaaS\logs 配下にデータが保存されます。これらのデータは、ブラウザーより SCM サイトの URL (https:&#x2F;&#x2F;&lt;AppService名&gt;.scm.azurewebsites.net&#x2F;api&#x2F;zip&#x2F;Data&#x2F;DaaS&#x2F;logs&#x2F;) へアクセスいただくことでまとめてダウンロードできますので、ご状況に応じてご活用ください。</li>
+</ol>
+<h1 id="CLR-Profiler-で取得したデータを解析する"><a href="#CLR-Profiler-で取得したデータを解析する" class="headerlink" title="CLR Profiler で取得したデータを解析する"></a>CLR Profiler で取得したデータを解析する</h1><p>CLR Profiler で取得したデータは、App Service の解析結果や PerfView を使用して解析することが出来ます。<br>データの解析方法について参考例をご紹介いたします。</p>
+<p>今回ご参考例として、ASP.NET Core 6 アプリケーションに対して、以下のようにループ処理内で Thread.Sleep を実装しています。CLR Profiler のデータを解析し、以下処理にて時間が掛かっている様子を確認します。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> IActionResult <span class="title">Whileloop</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    _logger.LogInformation(<span class="string">$&quot;C# while loop started at: <span class="subst">&#123;DateTime.Now&#125;</span>&quot;</span>);</span><br><span class="line">    <span class="built_in">int</span> a = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        _logger.LogInformation(<span class="string">$&quot;C# while loop count: <span class="subst">&#123;a&#125;</span>&quot;</span>);</span><br><span class="line">        a++;</span><br><span class="line">        <span class="keyword">if</span> (a%<span class="number">10000</span>==<span class="number">0</span>) Thread.Sleep(TimeSpan.FromSeconds(<span class="number">10</span>));</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">100</span> * <span class="number">100</span> * <span class="number">100</span> * <span class="number">100</span> &lt; a) <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    _logger.LogInformation(<span class="string">&quot;C# while loop completed.&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> View();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Option1-App-Service-の解析結果にて確認する方法"><a href="#Option1-App-Service-の解析結果にて確認する方法" class="headerlink" title="Option1 ) App Service の解析結果にて確認する方法"></a>Option1 ) App Service の解析結果にて確認する方法</h2><p>Azure ポータルにて対象の App Service を選択後、左側ブレード [問題の診断と解決] &gt; <strong>Collect .NET Profiler Trace</strong> を選択します。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-9e1d4d02-86e4-4c8f-9ac5-b2987539d734.png" alt="image-9e1d4d02-86e4-4c8f-9ac5-b2987539d734.png"></p>
+<p><strong>Collect .NET Profiler Trace</strong> を選択した後、表示される画面下部に表示されている “Last 5 profiling sessions” から対象とするデータの Reports のリンクを選択します。直近 5 回に調査対象とするデータが含まれていない場合には、”View all sessions” リンクから対象とするデータのリンクを選択します。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-36aa75d5-0d7b-4ee3-a3c3-327624f8e174.png" alt="image-36aa75d5-0d7b-4ee3-a3c3-327624f8e174.png"></p>
+<p>Reports のリンクを選択すると、下図のような分析結果が表示されます。応答時間が遅い原因の調査では、”Slow Requests” タブを選択します。”Slow Requests” タブでは、処理に時間が掛かっているモジュールやリクエスト、及び対象リクエストの処理を開始したスレッドIDや Request Id(ContextId) を確認することが出来ます。<br>下図では、AspNetCoreModuleV2(ASP.NET Core アプリケーション) で 99.99 % ほど時間を要しており、&#x2F;Home&#x2F;Whileloop というパスで受け付けたリクエストで 177.66 秒ほど処理が行われたことが分かります。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-68a1f0b2-bda1-4e2a-8fe0-207d3919a57a.png" alt="image-68a1f0b2-bda1-4e2a-8fe0-207d3919a57a.png"></p>
+<p>次に “.NET Core Slow Requests” タブを選択し、上記で確認したパスのリクエストの “Stack Trace” ボタンを押下します。すると、対象パスで行われた処理のスタックトレースやアプリケーションで出力しているトレース内容が表示され、こちらから対象パス内でどのような処理が行われていたのか確認することが出来ます。下図では、dotnetcore6.Controllers.HomeController.Whileloop メソッドまで 1 秒未満で処理が進みましたが、そこから先の処理はメソッドの変更等は記録されていないので左記メソッド内で何らかの処理が時間を要している状況が推測されます。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-e3886774-b1aa-4058-bfee-03988c858e56.png" alt="image-e3886774-b1aa-4058-bfee-03988c858e56.png"></p>
+<p>処理がスタックしていると推測されるメソッドが確認されたら、”Thread Callstacks” タブから、対象のメソッドを検索します。<br>今回の例では、上記の通り dotnetcore6.Controllers.HomeController.Whileloop メソッドを検索すると、対象メソッド内で Thread.Sleep が行われており、これにより応答が遅い事象が発生していることが分かります。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-ed86afeb-233a-4ee1-8c3a-a6cac016ff9b.png" alt="image-ed86afeb-233a-4ee1-8c3a-a6cac016ff9b.png"></p>
+<h2 id="Option2-PerfView-にて確認する方法"><a href="#Option2-PerfView-にて確認する方法" class="headerlink" title="Option2 ) PerfView にて確認する方法"></a>Option2 ) PerfView にて確認する方法</h2><p>PerfView は GitHub 上で共同開発、公開されているパフォーマンス解析ユーティリティで、下記よりダウンロードいただくことが出来ます。</p>
+<p><a href="https://github.com/Microsoft/perfview/releases">PerfView Release</a></p>
+<p>PerfView.exe (または PerfView64.exe) を実行し、左上のアドレスバーに CLR Profiler にて取得した zip ファイルを展開したフォルダパスを指定します。<br>対象のフォルダーから diagsession ファイルを開きますと、elt ファイルが取り出され、内部の各種メトリック状況をご確認いただくことが可能です。</p>
+<p>調査対象のイベントの確認のため、まずは “Events” をダブルクリックで開きます。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-b614a0a3-57d9-4f27-95a8-4efe1ba23427.png" alt="image-b614a0a3-57d9-4f27-95a8-4efe1ba23427.png"></p>
+<p>アプリケーションログなどから関連と思われるアプリケーションメッセージなどが分かっている場合には、そのメッセージを Text Filter に入力します。その後、Event Types 欄から任意の Type をクリックし、Ctrl+A ですべての Event Types を選択後、Enter を押します。対象となるメッセージが CLR Profiler で取得したデータに含まれている場合には、メッセージを出力したプロセス名と TreadID が確認できます。下図では、プロセス w3wp(1956) と ThreadID(6624) が確認できます。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-822c5a72-ce2d-40e6-a429-b1f6b9cfdab1.png" alt="image-822c5a72-ce2d-40e6-a429-b1f6b9cfdab1.png"></p>
+<p>“Events” から調査対象とするプロセスと ThreadID を確認した後、”Thread Time (with StartStop Activities) Stacks” をダブルクリックで開きます。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-e0a84a60-ea59-460e-8397-ffa7786e0a6e.png" alt="image-e0a84a60-ea59-460e-8397-ffa7786e0a6e.png"></p>
+<p>先ほど確認したプロセス w3wp(1956) をクリックし、”OK” ボタンを押下します。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-83e84840-758f-4ee6-91fb-ac4495fc0061.png" alt="image-83e84840-758f-4ee6-91fb-ac4495fc0061.png"></p>
+<p>内容が表示されますので、[CallTree] タブへ移動して、先ほど確認した ThreadID のスレッドにチェックを入れます。<br>その配下の関数のスタックトレースが表示されますので、繰り返しチェックを入れていきます。<br>十数回ドリルダウンしていくと、対象となるコードが表示されます。下図例では、dotnetcore6.Controllers.HomeController.Whileloop メソッドにて Thread.Sleep が行われており、これにより 150 秒ほど要していることが分かります。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-280737b6-d4cd-48ca-8352-2d650060ebe0.png" alt="image-280737b6-d4cd-48ca-8352-2d650060ebe0.png"></p>
+<p>PerfView を使用した解析の詳細については、PerfView のドキュメント並びにチュートリアルをご確認いただけますと幸いです。</p>
+<p><a href="https://github.com/Microsoft/perfview">GitHub - PerfView Project</a><br><a href="https://channel9.msdn.com/Series/PerfView-Tutorial">Channel9 - PerfView Tutorial</a></p>
+<h1 id="よくある-FAQ"><a href="#よくある-FAQ" class="headerlink" title="よくある FAQ"></a>よくある FAQ</h1><h2 id="CLR-Profiler-の取得時間を変更する方法はありますか？"><a href="#CLR-Profiler-の取得時間を変更する方法はありますか？" class="headerlink" title="CLR Profiler の取得時間を変更する方法はありますか？"></a>CLR Profiler の取得時間を変更する方法はありますか？</h2><p>CLR Profiler の取得時間は、デフォルトで 60 秒です。アプリケーション設定 IIS_PROFILING_TIMEOUT_IN_SECONDS により最大 900 秒まで取得時間を変更することが出来ます。下図は取得時間を 200 秒に設定した例です。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-684e6c4f-8fd8-4d80-ba14-d3e516a9280a.png" alt="image-684e6c4f-8fd8-4d80-ba14-d3e516a9280a.png"></p>
+<p><a href="https://azure.github.io/AppService/2018/06/06/App-Service-Diagnostics-Profiling-an-ASP.NET-Web-App-on-Azure-App-Service.html#:~:text=It%20is%20possible%20to%20increase%20the%20default%20profiling%20duration%20by,to%20the%2060%20second%20value">参考: App Service Diagnostics – Profiling an ASP.NET Web App on Azure App Service</a></p>
+<p><a href="https://jpdsi.github.io/blog/web-apps/webapps-dotnet-profiler/#%E5%8F%96%E5%BE%97%E6%99%82%E9%96%93%E3%81%AE%E5%A4%89%E6%9B%B4">参考: Azure Web Apps の .NET Profiler の取得時間を変更する方法について</a></p>
+<h2 id="CLR-Profiler-で取得したデータはどこに保存されますか？どのように取得すればよいですか？"><a href="#CLR-Profiler-で取得したデータはどこに保存されますか？どのように取得すればよいですか？" class="headerlink" title="CLR Profiler で取得したデータはどこに保存されますか？どのように取得すればよいですか？"></a>CLR Profiler で取得したデータはどこに保存されますか？どのように取得すればよいですか？</h2><p>CLR Profiler で取得したデータは App Service のファイルサーバー \home\data\DaaS\logs 配下に保存されます。</p>
+<p>CLR Profiler で取得したデータ及び、App Service による分析結果のレポートは、SCM サイトの URL (https:&#x2F;&#x2F;&lt;AppService名&gt;.scm.azurewebsites.net&#x2F;api&#x2F;zip&#x2F;Data&#x2F;DaaS&#x2F;logs&#x2F;) からまとめてダウンロードいただけます。</p>
+<h2 id="CLR-Profiler-の取得対象とするインスタンスはどこから確認できますか？"><a href="#CLR-Profiler-の取得対象とするインスタンスはどこから確認できますか？" class="headerlink" title="CLR Profiler の取得対象とするインスタンスはどこから確認できますか？"></a>CLR Profiler の取得対象とするインスタンスはどこから確認できますか？</h2><p>メトリックの分割機能をご活用いただければと存じます。App Service プランの CPU Percentage や App Service の Response Time、Average memory working set といったメトリックはインスタンスごとに分割することができ、この機能を使用して対象となるインスタンスをご確認いただけます。</p>
+<p>例えば、App Service の応答時間が遅い原因を調査する場合には、対象の App Service を選択し、[メトリック] ブレード &gt; Response Time にて [分割を適用する] ボタンよりインスタンスごとに応答時間が表示されます。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-2a0617ef-81ef-4cca-98cb-1b3c4f8277c9.png" alt="image-2a0617ef-81ef-4cca-98cb-1b3c4f8277c9.png"></p>
+<p>こちらのメトリック結果をご参考に調査対象とするインスタンスをご確認ください。</p>
+<p><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-5a09be3f-0b69-4649-9d80-cf990d868c0f.png" alt="image-5a09be3f-0b69-4649-9d80-cf990d868c0f.png"></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-monitor/essentials/metric-chart-samples#website-cpu-utilization-by-server-instances">参考: Azure Monitor のメトリック グラフの例 - Azure Monitor</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-monitor/essentials/metrics-aggregation-explained">参考: Azure Monitor メトリックによる集計と表示の説明 - Azure Monitor</a></p>
+<h2 id="警告が表示され-Collect-Profiler-Trace-ボタンが表示されない場合はどうしたらよいですか？"><a href="#警告が表示され-Collect-Profiler-Trace-ボタンが表示されない場合はどうしたらよいですか？" class="headerlink" title="警告が表示され Collect Profiler Trace ボタンが表示されない場合はどうしたらよいですか？"></a>警告が表示され <strong>Collect Profiler Trace</strong> ボタンが表示されない場合はどうしたらよいですか？</h2><p> [問題の診断と解決] &gt; <strong>Collect .NET Profiler Trace</strong> 画面で以下のような警告が表示された場合には、Azure ポータルから対象 App Service を選択し、左側ブレード [構成] &gt; 全般設定 タブから 常時接続(Always On) を有効化ください。<br>常時接続は、20 分以上リクエストを受信していない場合にも、App Service 上でお客様のアプリケーションを読み込まれたままにする機能です。これにより長期間リクエストの受付が無い場合にも、要求の待機時間を短くすることが出来ます。</p>
+<p>左記手順の詳細については<a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-common?tabs=portal#configure-general-settings">こちら</a>を<br>ご参照ください。 </p>
+<blockquote>
+<p>Error - We determined that the web app does not have Always-On enabled and due to these the diagnostic tools will not work reliably with AutoHeal. Please turn on the Always-On setting by going to the Application Settings for the web app and then run these tools.<br><img src="/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService/image-0ea51a31-4e0f-4161-9009-1e1b5bb57125.png" alt="image-0ea51a31-4e0f-4161-9009-1e1b5bb57125.png"></p>
+</blockquote>
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><ul>
+<li><a href="https://azure.github.io/AppService/2018/06/06/App-Service-Diagnostics-Profiling-an-ASP.NET-Web-App-on-Azure-App-Service.html">App Service Diagnostics – Profiling an ASP.NET Web App on Azure App Service</a></li>
+<li><a href="https://azure-advice.com/2020/10/23/azure-auto-heal/">Azure Auto-heal – Azure Advice</a></li>
+<li><a href="https://jpdsi.github.io/blog/web-apps/webapps-diagnostic-tools/#3-Azure-Web-Apps-%E3%81%A7-NET-%E3%81%AE-Profiler-%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9-ETW-%E3%81%A3%E3%81%A6%E5%8F%96%E3%82%8C%E3%82%8B%E3%81%AE%EF%BC%9F">Azure Web Apps でオンプレ IIS と同じような情報は取れるのか？</a></li>
+</ul>
+<br>
+<br>
+---
+<br>
+<br>
+2023 年 06 月 28 日時点の内容となります。<br>
+本記事の内容は予告なく変更される場合がございますので予めご了承ください。
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2023/06/28/Get-CLR-Profiler-in-AppService.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../07/03/Introduction-to-AppService-Networking.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          App Service をセキュアに運用するためのネットワーク機能について
+        
+      </div>
+    </a>
+  
+  
+    <a href="../23/2023-06-09-Connect-an-email-domain-to-a-Communication-Service-Resource.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">通信サービスにドメインを接続する方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../../2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="../../09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+          <li>
+            <a href="../../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <!-- <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>  -->
+      <ul class="tag-list"></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
