@@ -81,12 +81,12 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service" class="article article-type-post" itemscope itemprop="blogPost">
 
   <div class="article-inner">
     <!-- post date -->
     <div class="article-meta">
-      <a href="../../2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html" class="article-date">
+      <a href="../../2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html" class="article-date">
   <time datetime="2023-02-15T15:00:00.000Z" itemprop="datePublished">2023-02-16</time>
 </a>
       
@@ -99,7 +99,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="../../2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html">Blob Storageにおいて操作ログからユーザーを特定したい</a>
+      <a class="article-title" href="../../2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html">Azure App Service の計画メンテナンスの事前通知</a>
     </h1>
   
 
@@ -109,29 +109,19 @@
     <!-- post caption -->
     <div class="article-entry" itemprop="articleBody">
       
-        Azure Portal での Blob Storage のデータ操作について、誰がどのような操作を行ったかを診断設定ログから特定したいです。可能でしょうか。
-回答はい。診断設定ログに含まれる RequesterObjectId 又は RequesterUpn などから、どの Microsoft Entra ユーザーなのかを特定することが可能でございます。
-診断設定ログでの確認例  
-
-Azure Portal ではアクセス認証の方式は、以下の 2 種類がございます。
-
-アクセス キー
-Microsoft Entra ユーザー認証
-
-
-アクセスキーでの認証の場合は Microsoft Entra ユーザーを特定可能な情報を残すことが出来ませんので、監視対象のユーザーには、必ず Microsoft Entra ユーザー認証をさせる必要がございます。
-Azure Portal のストレージ ア...
+        本記事は 2022 年 2 月 1 日に公開されました Routine Planned Maintenance Notifications for Azure App Service の日本語訳です。(現在の内容に合わせて一部変更を行っています。)
+App Service は、新しい機能、新しいランタイムバージョン、パフォーマンスの改善、および不具合修正のために定期的に更新されます。お客様から頂戴しますご要望の 1 つにプラットフォームの更新が発生する前に通知を受け取ることができる機能がございました。このたび、2022 年 3 月上旬より、App Service Environments V3 (ASE v3) およびマルチテナントで動作するアプリケーション (App Service &#x2F; 関数アプリ 等) を対象として、App Service の計画メンテナンスの事前通知がご利用...
         <p class="article-readmore">
-          <a href="../../2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html">Read more</a>
+          <a href="../../2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html">Read more</a>
         </p>
       
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html" data-id="cuidy9jf7ijz9RtV0qmErduk3" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html" data-id="cuidzr2yB9zNdcBWCOh2xbSUB" class="article-share-link">共有</a-->
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Web-Apps/" rel="tag">Web Apps</a></li></ul>
 
     </footer>
   </div>
@@ -181,7 +171,7 @@ Sometimes, a user ma...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/15/Docker-User-Namespace-remapping-issues.html" data-id="cuidSFhoeDoXMgTbAPINVAgwN" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/15/Docker-User-Namespace-remapping-issues.html" data-id="cuid4ZDIk_ICLAqlz8GN-wdUo" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
@@ -233,7 +223,7 @@ App Service 証明書の有効期間は既定では 1 年です。 有効期限�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html" data-id="cuidioVr_n_bjSc_dKi7uUtz-" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html" data-id="cuid4OC5_h_1_xRQbr4E33U_P" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
@@ -289,7 +279,7 @@ staticwebapp.config.jsonの networking.allowedIpRanges　を利用する方法
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/20/Static-web-apps-how-to-restrict-access.html" data-id="cuidsumxakp-wakvLal88A-0S" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/20/Static-web-apps-how-to-restrict-access.html" data-id="cuidMyIuGrJTIQcBhcCH2kYxR" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li></ul>
@@ -349,7 +339,7 @@ Video Indexer では、大きく下記の 3 つのアカウントがございま
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/19/How-to-display-ARM-account-on-VI-portal.html" data-id="cuid8LrObesBmxve6gCpNcq-S" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/19/How-to-display-ARM-account-on-VI-portal.html" data-id="cuidsRdVsXcQu1vVl0fV93FE-" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li></ul>
@@ -406,7 +396,7 @@ Azure Monitor リソース ログの形式変更のための準備 - Azure Monit
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/18/How-To-Move-Diagnostics-logs-to-Archive-tier.html" data-id="cuidyX0SsH-PsY8ccqV-Er8tc" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/18/How-To-Move-Diagnostics-logs-to-Archive-tier.html" data-id="cuiduXj2TZL86y8KQACBJxAFW" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
@@ -455,7 +445,7 @@ Windows の Java スタックにおける App Service にて Tomcat の設定変
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/29/Alternative-for-using-HttpPlatformHandler-in-Java-app.html" data-id="cuidfXqdFH_4fUZlLMf5D0hAE" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/29/Alternative-for-using-HttpPlatformHandler-in-Java-app.html" data-id="cuid6M1QXr2ElVZBHl6lUAKwp" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li></ul>
@@ -507,7 +497,7 @@ Monitor Activity on a Web Server (IIS 7)
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/19/taking-fullFREB-in-App-Service.html" data-id="cuidq_EBbCto3V70uyS3E8uFJ" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/19/taking-fullFREB-in-App-Service.html" data-id="cuidbih8GqZWS5PdhC88pkm4O" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
@@ -570,7 +560,7 @@ a ) Log Analytics を使用して診断...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/16/How-to-change-TIMEZONE-in-AppService-logs.html" data-id="cuidM1l5IsNvtC8xf-rekHOz4" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/16/How-to-change-TIMEZONE-in-AppService-logs.html" data-id="cuidl5NRNCecFQrkKcuGjoEjW" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
@@ -627,7 +617,7 @@ App Service の運用段階において、特定のインスタンスだけ動�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/16/How-to-restart-unhealty-instance.html" data-id="cuid5NBCPlbUI-ySIoxq6YM_P" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/16/How-to-restart-unhealty-instance.html" data-id="cuidA_i-nwtkg55tb3VkuAa8w" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>

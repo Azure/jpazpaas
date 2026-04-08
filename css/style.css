@@ -317,7 +317,7 @@ body {
   font-weight: bold;
 }
 #header {
-  height: 140px;
+  min-height: 140px;
   position: relative;
   border-bottom: 1px solid #d2d2d2;
 }
@@ -338,8 +338,8 @@ body {
 /* background: linear-gradient(transparent, rgba(0, 0, 0, 0.2)) */
 }
 #header-outer {
-  height: 100%;
   position: relative;
+  overflow: hidden;
 }
 #header-inner {
   position: relative;
@@ -350,16 +350,16 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 40%;
+  height: 56px;
   background-color: #fff;
   z-index: -1;
 }
 #site-header-blog-wrapper {
   position: absolute;
-  top: 40%;
+  top: 56px;
   left: 0;
   width: 100%;
-  height: 60%;
+  bottom: 0;
 /* background: url(banner-url) center #000 */
 /* background-size: cover */
   background-color: #333;
@@ -367,13 +367,15 @@ body {
 }
 #header-title {
 /* text-align: center */
-  height: 27px;
-  position: absolute;
-  top: 53%;
-  left: 0;
+  position: relative;
+  display: block;
+  float: none;
+  width: auto;
   margin-left: 36px;
+  margin-right: 0;
+  padding-top: 18px;
+  padding-bottom: 10px;
 /* margin-top: logo-size * -0.5 */
-  width: 90%;
 }
 #logo,
 #subtitle {
@@ -396,6 +398,8 @@ body {
 }
 #subtitle-wrap {
   margin-top: 7px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 #main-nav {
   float: left;
