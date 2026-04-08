@@ -81,12 +81,12 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-2020/08/28/troubleshooting-developmentquotaexceeded" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2020/08/28/cloud-service-log-with-azuretools" class="article article-type-post" itemscope itemprop="blogPost">
 
   <div class="article-inner">
     <!-- post date -->
     <div class="article-meta">
-      <a href="../../2020/08/28/troubleshooting-developmentquotaexceeded.html" class="article-date">
+      <a href="../../2020/08/28/cloud-service-log-with-azuretools.html" class="article-date">
   <time datetime="2020-08-27T15:00:00.000Z" itemprop="datePublished">2020-08-28</time>
 </a>
       
@@ -99,7 +99,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="../../2020/08/28/troubleshooting-developmentquotaexceeded.html">DeploymentQuotaExceeded のエラーについて</a>
+      <a class="article-title" href="../../2020/08/28/cloud-service-log-with-azuretools.html">AzureTools を使って Cloud Service のログを採取する方法</a>
     </h1>
   
 
@@ -109,19 +109,28 @@
     <!-- post caption -->
     <div class="article-entry" itemprop="articleBody">
       
-        サービスをデプロイしようとしたときに以下のエラーに遭遇した。対処方法を教えてほしい。Creating the deployment &#39;cra3000_website-20190131-150417-7d5f&#39; would exceed the quota of &#39;800&#39;. The current deployment count is &#39;800&#39;, please delete some deployments before creating a new one. Please see https://aka.ms/arm-deploy for usage details.
-原因各リソース グループには、そのデプロイ履歴が 800 までという上限があります。 このエラーメッセージは、デプロイを行うときに、デプロイ履歴が許可されている 800 ...
+        Cloud Service で発生したエラーの原因を調査する際、お客様にログの採取をお願いする場合があります。本記事では、AzureTools を使って Cloud Service のログを採取する方法について説明します。
+Azure Tools では、Cloud Service 環境上の各種ログ、および構成情報を一括して採取することができます。採取できる情報は以下の通りです。
+
+Azure クラウド サービスを動作させているエージェント プロセスのログ
+Azure 診断ログ
+IIS アクセス ログ
+Windows イベント ログ
+デプロイされているアプリケーション アセンブリ
+デプロイ構成情報
+
+英文のみのご提供となりますが、AzureTools の詳細については以下のページがございますのでご参考ください。AzureTools - The Diagnostic Utility used ...
         <p class="article-readmore">
-          <a href="../../2020/08/28/troubleshooting-developmentquotaexceeded.html">Read more</a>
+          <a href="../../2020/08/28/cloud-service-log-with-azuretools.html">Read more</a>
         </p>
       
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/08/28/troubleshooting-developmentquotaexceeded.html" data-id="cuid_7mKWkbKNmDEWE_tfB_Sh" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/08/28/cloud-service-log-with-azuretools.html" data-id="cuidHDHUkKML67r5UG3zUb7A2" class="article-share-link">共有</a-->
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/ARM/" rel="tag">ARM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li></ul>
 
     </footer>
   </div>
@@ -170,7 +179,7 @@
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/08/26/nhub-ip-address.html" data-id="cuid7Q6CiNrAA59t0tMPFPnwb" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/08/26/nhub-ip-address.html" data-id="cuidcV8Sq02s97gpUr_bFdEqF" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li></ul>
@@ -221,7 +230,7 @@ Azure Functions を従量課金プラン...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html" data-id="cuidgbDY8ZmAYLyPZIMhtoVMs" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html" data-id="cuid5vaaMT8zKrjSHaaoGhzNx" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
@@ -274,7 +283,7 @@ Azure Functions を従量課金プラン...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/07/20/avoid-deleting-resource-group.html" data-id="cuidL-ixniDXvbKzALYFnJogq" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/07/20/avoid-deleting-resource-group.html" data-id="cuid1H1_W2G__rm0cE4kt_bBM" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/ARM/" rel="tag">ARM</a></li></ul>
@@ -328,7 +337,7 @@ Developer レベルでは、SLA が提供されていません。1 ユニ...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/06/03/apim-downtime.html" data-id="cuidbZSeiu1o7uu0actkpInBF" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/06/03/apim-downtime.html" data-id="cuidmg-SUany3y1H_hj85RqsK" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
@@ -390,7 +399,7 @@ Japan Azu...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/06/01/about-blog.html" data-id="cuidJr8SovkgdeDDETRdMtDtX" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/06/01/about-blog.html" data-id="cuidK_gSJqXOsDSUsdBUOYvl9" class="article-share-link">共有</a-->
       
       
     </footer>
