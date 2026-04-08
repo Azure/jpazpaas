@@ -81,12 +81,12 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-2023/03/10/AppService-How-to-bind-AppService-Certificate-with-NewUI" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2023/03/10/How-to-Verify-the-Contents-of-33-or-More-Messages-in-Queue-Storage" class="article article-type-post" itemscope itemprop="blogPost">
 
   <div class="article-inner">
     <!-- post date -->
     <div class="article-meta">
-      <a href="../../2023/03/10/AppService-How-to-bind-AppService-Certificate-with-NewUI.html" class="article-date">
+      <a href="../../2023/03/10/How-to-Verify-the-Contents-of-33-or-More-Messages-in-Queue-Storage.html" class="article-date">
   <time datetime="2023-03-09T15:00:00.000Z" itemprop="datePublished">2023-03-10</time>
 </a>
       
@@ -99,7 +99,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="../../2023/03/10/AppService-How-to-bind-AppService-Certificate-with-NewUI.html">App Service の TLS/SSL 証明書の更新手順</a>
+      <a class="article-title" href="../../2023/03/10/How-to-Verify-the-Contents-of-33-or-More-Messages-in-Queue-Storage.html">Queueストレージのメッセージの33件目以降を確認する方法</a>
     </h1>
   
 
@@ -109,19 +109,22 @@
     <!-- post caption -->
     <div class="article-entry" itemprop="articleBody">
       
-        これまで App Service に存在していた “Custom domains (Classic)”, “TLS&#x2F;SSL settings (Classic)” ブレードが 2023 年 2 月半ば頃に非表示となりました。これに伴い “Custom domains (Classic)” は “Custom domains” ブレードに、”TLS&#x2F;SSL settings (Classic)” は “Certificates” ブレードに移行しています。公式ドキュメントの更新が遅れておりますため、特に変更点の多い “TLS&#x2F;SSL Settings (Classic)” から “Certificats” ブレードの変更点を中心として、新しい UI で App Service にバインドされた TLS&#x2F;SSL 証明書の更新方法をご案内します。   
-“...
+        こんにちは。Azure PaaS サポート担当の李です。
+Azure ポータルやストレージエクスプローラ、PowerShell などのツールを用いて Azure キューストレージのメッセージ数を確認すると、32 件を超える場合、最初の 32 件のみが表示され、33 件目以降が確認できないことがございます。図1 Azure ポータルで確認した結果
+図2 Azureストレージエクスプローラで確認した結果
+これは下記の記事の内容通り、キューサービスの REST API でメッセージを取得する際、取得するメッセージ数のパラメーター「numofmessages」の上限が 32 件までであり、クライアント側で、繰り返しの取得を想定していないことが考えられます。・キューサービスの REST API ‐ メッセージの取得 - URI パラメーター
+そのため、 33 件以上のメッセージを一挙に取得・表示した...
         <p class="article-readmore">
-          <a href="../../2023/03/10/AppService-How-to-bind-AppService-Certificate-with-NewUI.html">Read more</a>
+          <a href="../../2023/03/10/How-to-Verify-the-Contents-of-33-or-More-Messages-in-Queue-Storage.html">Read more</a>
         </p>
       
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/10/AppService-How-to-bind-AppService-Certificate-with-NewUI.html" data-id="cuid3jnu0O5Aplghg0guiQob2" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/10/How-to-Verify-the-Contents-of-33-or-More-Messages-in-Queue-Storage.html" data-id="cuidQBvep6kt2StyhqnHUHz--" class="article-share-link">共有</a-->
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
 
     </footer>
   </div>
@@ -169,60 +172,10 @@ App Service に Azure AD B2C というサービスを連携する事で、好み
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/10/azure-ad-b2c-apgw.html" data-id="cuid0NTKHjQrCuYBWTcMG9LS_" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/10/azure-ad-b2c-apgw.html" data-id="cuidQqpEzz38PV-62NAuBpqVL" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2023/03/08/AppServiceLinux-robots933456-in-logs" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <div class="article-inner">
-    <!-- post date -->
-    <div class="article-meta">
-      <a href="../../2023/03/08/AppServiceLinux-robots933456-in-logs.html" class="article-date">
-  <time datetime="2023-03-07T15:00:00.000Z" itemprop="datePublished">2023-03-08</time>
-</a>
-      
-    </div>
-
-    
-    <!-- post title -->
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2023/03/08/AppServiceLinux-robots933456-in-logs.html">App Service on Linux における robots933456.txt について</a>
-    </h1>
-  
-
-      </header>
-    
-
-    <!-- post caption -->
-    <div class="article-entry" itemprop="articleBody">
-      
-        お世話になっております。App Service サポート担当の押田です。
-本記事では App Service on Linux において 組み込みイメージおよびカスタム Linux コンテナー(Web App for Containers) がどのように起動確認が行われるのかについて解説します。
-起動確認に用いられるリクエスト (GET &#x2F;robots933456.txt)App Service on Linux において、組み込みイメージおよびカスタムイメージはプラットフォーム上で、docker コマンドによって起動されます。App Service のプラットフォームは、docker コマンドで起動したコンテナが動作可能な状態であるかの確認のため、アプリケーションに対して、GET /robots933456.txt リクエストを実行します。このリクエストに応答ができない場合、コ...
-        <p class="article-readmore">
-          <a href="../../2023/03/08/AppServiceLinux-robots933456-in-logs.html">Read more</a>
-        </p>
-      
-    </div>
-
-    <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs.html" data-id="cuid2cnqD_lQEVFF4YT5AbI3u" class="article-share-link">共有</a-->
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Node-js/" rel="tag">Node.js</a></li></ul>
 
     </footer>
   </div>
@@ -279,10 +232,60 @@ Kay Vault を利用する
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/08/How-to-put-newline-in-app-settings-of-App-Service.html" data-id="cuidjwyJ1sTjm8L1DUNJnYnJc" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/08/How-to-put-newline-in-app-settings-of-App-Service.html" data-id="cuidNGykV95a0Ovzbotu-dr_V" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2023/03/08/AppServiceLinux-robots933456-in-logs" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2023/03/08/AppServiceLinux-robots933456-in-logs.html" class="article-date">
+  <time datetime="2023-03-07T15:00:00.000Z" itemprop="datePublished">2023-03-08</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2023/03/08/AppServiceLinux-robots933456-in-logs.html">App Service on Linux における robots933456.txt について</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        お世話になっております。App Service サポート担当の押田です。
+本記事では App Service on Linux において 組み込みイメージおよびカスタム Linux コンテナー(Web App for Containers) がどのように起動確認が行われるのかについて解説します。
+起動確認に用いられるリクエスト (GET &#x2F;robots933456.txt)App Service on Linux において、組み込みイメージおよびカスタムイメージはプラットフォーム上で、docker コマンドによって起動されます。App Service のプラットフォームは、docker コマンドで起動したコンテナが動作可能な状態であるかの確認のため、アプリケーションに対して、GET /robots933456.txt リクエストを実行します。このリクエストに応答ができない場合、コ...
+        <p class="article-readmore">
+          <a href="../../2023/03/08/AppServiceLinux-robots933456-in-logs.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs.html" data-id="cuidCf4PZd9ns-6xQGuime-zp" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Node-js/" rel="tag">Node.js</a></li></ul>
 
     </footer>
   </div>
@@ -329,7 +332,7 @@ OAuth 2.0 ではアクセス トークンを取得するための承認フロー
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/07/Debug-JWT-validation-on-APIM.html" data-id="cuid_YnE88hY0T07u4Le6y_WS" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/07/Debug-JWT-validation-on-APIM.html" data-id="cuidndid6ABO7rvBa54HwYLw1" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
@@ -380,7 +383,7 @@ Function Apps には任意の HTTP トリガーをデプロイします。仕組
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/07/FunctionAndAPIM-FundamentalTroubleShootingSteps.html" data-id="cuidccGWkL4daX1icL17OJCBb" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/07/FunctionAndAPIM-FundamentalTroubleShootingSteps.html" data-id="cuidZwZZfqY9IXbcieft9RG_7" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
@@ -437,7 +440,7 @@ API Management は、クライアントサイドからバックエンドの API 
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/07/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-1.html" data-id="cuidHl6eAEIcmwhLQVRtUga1H" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/07/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-1.html" data-id="cuidZEh8NfBZvA116zHWV8XPr" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
@@ -488,7 +491,7 @@ API Management は、クライアントサイドからバックエンドの API 
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/02/LogSampling-OnAzureFunctions.html" data-id="cuidEyGLiocAvdiwvlKubsg-l" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/02/LogSampling-OnAzureFunctions.html" data-id="cuidE45-f_tRQUpIbASREK2vO" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
@@ -538,7 +541,7 @@ Azure ストレージアカウントではネットワーク設定機能を用�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/21/Use-AzureFrontDoor-to-restrict-access-to-StorageAccounts-to-HTTP-Headers.html" data-id="cuidDo47H8I3JwWNr3EYDpa0H" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/21/Use-AzureFrontDoor-to-restrict-access-to-StorageAccounts-to-HTTP-Headers.html" data-id="cuidk7I7ZugbXoeiSZCFGve7s" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
@@ -550,12 +553,12 @@ Azure ストレージアカウントではネットワーク設定機能を用�
 
 
   
-    <article id="post-2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service" class="article article-type-post" itemscope itemprop="blogPost">
 
   <div class="article-inner">
     <!-- post date -->
     <div class="article-meta">
-      <a href="../../2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html" class="article-date">
+      <a href="../../2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html" class="article-date">
   <time datetime="2023-02-15T15:00:00.000Z" itemprop="datePublished">2023-02-16</time>
 </a>
       
@@ -568,7 +571,7 @@ Azure ストレージアカウントではネットワーク設定機能を用�
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="../../2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html">Blob Storageにおいて操作ログからユーザーを特定したい</a>
+      <a class="article-title" href="../../2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html">Azure App Service の計画メンテナンスの事前通知</a>
     </h1>
   
 
@@ -578,29 +581,19 @@ Azure ストレージアカウントではネットワーク設定機能を用�
     <!-- post caption -->
     <div class="article-entry" itemprop="articleBody">
       
-        Azure Portal での Blob Storage のデータ操作について、誰がどのような操作を行ったかを診断設定ログから特定したいです。可能でしょうか。
-回答はい。診断設定ログに含まれる RequesterObjectId 又は RequesterUpn などから、どの Microsoft Entra ユーザーなのかを特定することが可能でございます。
-診断設定ログでの確認例  
-
-Azure Portal ではアクセス認証の方式は、以下の 2 種類がございます。
-
-アクセス キー
-Microsoft Entra ユーザー認証
-
-
-アクセスキーでの認証の場合は Microsoft Entra ユーザーを特定可能な情報を残すことが出来ませんので、監視対象のユーザーには、必ず Microsoft Entra ユーザー認証をさせる必要がございます。
-Azure Portal のストレージ ア...
+        本記事は 2022 年 2 月 1 日に公開されました Routine Planned Maintenance Notifications for Azure App Service の日本語訳です。(現在の内容に合わせて一部変更を行っています。)
+App Service は、新しい機能、新しいランタイムバージョン、パフォーマンスの改善、および不具合修正のために定期的に更新されます。お客様から頂戴しますご要望の 1 つにプラットフォームの更新が発生する前に通知を受け取ることができる機能がございました。このたび、2022 年 3 月上旬より、App Service Environments V3 (ASE v3) およびマルチテナントで動作するアプリケーション (App Service &#x2F; 関数アプリ 等) を対象として、App Service の計画メンテナンスの事前通知がご利用...
         <p class="article-readmore">
-          <a href="../../2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html">Read more</a>
+          <a href="../../2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html">Read more</a>
         </p>
       
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html" data-id="cuidjW40x6QrMqFYM9hNC7iuj" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html" data-id="cuidsjyzuZzSzKfgLqT9cSz3X" class="article-share-link">共有</a-->
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Web-Apps/" rel="tag">Web Apps</a></li></ul>
 
     </footer>
   </div>
@@ -654,7 +647,7 @@ Azure Portal のストレージ ア...
   <div class="widget-wrap">
     <h3 class="widget-title">タグ</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Servce/" rel="tag">App Servce</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
       <!-- <ul class="tag-list"></ul> -->
     </div>
   </div>
@@ -675,7 +668,7 @@ Azure Portal のストレージ ア...
   <div class="widget-wrap">
     <h3 class="widget-title">タグクラウド</h3>
     <div class="widget tagcloud">
-      <a href="../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../tags/App-Servce/" style="font-size: 10px;">App Servce</a> <a href="../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+      <a href="../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
     </div>
   </div>
 
