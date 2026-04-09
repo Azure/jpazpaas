@@ -81,12 +81,12 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2025/02/26/Azure-functions-trigger-and-binding-series-queue" class="article article-type-post" itemscope itemprop="blogPost">
 
   <div class="article-inner">
     <!-- post date -->
     <div class="article-meta">
-      <a href="../../2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html" class="article-date">
+      <a href="../../2025/02/26/Azure-functions-trigger-and-binding-series-queue.html" class="article-date">
   <time datetime="2025-02-25T15:00:00.000Z" itemprop="datePublished">2025-02-26</time>
 </a>
       
@@ -99,7 +99,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="../../2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html">AI Search のカスタムスキルで Azure Functions を呼び出す際、マネージド ID で認証する方法について</a>
+      <a class="article-title" href="../../2025/02/26/Azure-functions-trigger-and-binding-series-queue.html">Azure Functions トリガー・バインディング シリーズ - Queue トリガー</a>
     </h1>
   
 
@@ -109,21 +109,21 @@
     <!-- post caption -->
     <div class="article-entry" itemprop="articleBody">
       
-        Azure AI Search サービスのカスタムスキル機能を使い、Azure Function App の Web API スキルを呼び出すことができます。スキルセット内のカスタム Web API スキル - Azure AI Search | Microsoft Learnそこでキーではなく、システムマネージド ID に RBAC 権限を付与して認証する方法をご案内致します。
-設定不備の際、発生するエラーの例Web Api response status: &#39;Forbidden&#39;, Web Api response details
-手順既に Web API を利用するスキルセットが用意されている前提で、それぞれのリソースごとに設定方法をご案内致します。
-Function App関数アプリを開き、「認証」ブレードから「ID プロバイダー」のリンクを押下し、下記画像の通り ...
+        Queue トリガーは、指定されたキューからメッセージを取得し実行される関数です。キューに格納されたメッセージをロックし、処理が成功した場合にはメッセージを削除し、失敗した場合にはメッセージが Queue に戻されます。しかし、Queue メッセージにロック機構はないため、代わりにメッセージごとに可視と不可視の状態を切り替えることで実質的なロックを実現しています。詳細な動作イメージはこちらに紹介がございます。
+
+作成手順Queue トリガーの作成方法はチュートリアルで紹介されているテンプレートをご利用ください。チュートリアルでは HTTP トリガーを利用しておりますが、同画面にて Queue トリガーを選択いただくことができます。
+また、処理先の Queue 名を、アプリケーション設定に外だしすることができます。C# の例ですが、QueueTrigger の引数で Queue 名を % 括...
         <p class="article-readmore">
-          <a href="../../2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html">Read more</a>
+          <a href="../../2025/02/26/Azure-functions-trigger-and-binding-series-queue.html">Read more</a>
         </p>
       
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html" data-id="cuidp2199-i17sbNqDmen83GV" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2025/02/26/Azure-functions-trigger-and-binding-series-queue.html" data-id="cuidwHYDlbH8QBslOgS-vRW46" class="article-share-link">共有</a-->
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
 
     </footer>
   </div>
@@ -171,7 +171,7 @@ Function App関数アプリを開き、「認証」ブレードから「ID プ�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2025/02/14/How-to-Handle-Errors-When-Retrieving-Large-Documents-Using-AI-Search.html" data-id="cuidez4X9EtGNYuZcqx_uyGWG" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2025/02/14/How-to-Handle-Errors-When-Retrieving-Large-Documents-Using-AI-Search.html" data-id="cuidMDocWpGj3fiDObQqjhkUO" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
@@ -223,7 +223,7 @@ Root CA on App Service - Azure App Service
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/12/06/Default-root-certificate-on-Windows-App-Service.html" data-id="cuid92Z6QDVNDNK-FXsa_M_Xa" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/12/06/Default-root-certificate-on-Windows-App-Service.html" data-id="cuidCNMBpwZY3MZQRkoQ30o-I" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
@@ -275,62 +275,10 @@ Azure Cache for Redis での使用から TLS 1.0 と 1.1 を削除する - Azure
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html" data-id="cuidRCrxH-x6UikRBayd3cUHa" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html" data-id="cuidGaFF6u35pLc9HkgFaUPQA" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <div class="article-inner">
-    <!-- post date -->
-    <div class="article-meta">
-      <a href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html" class="article-date">
-  <time datetime="2024-08-29T15:00:00.000Z" itemprop="datePublished">2024-08-30</time>
-</a>
-      
-    </div>
-
-    
-    <!-- post title -->
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html">API Management カスタム ドメインの設定及び証明書の更新方法とその影響</a>
-    </h1>
-  
-
-      </header>
-    
-
-    <!-- post caption -->
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-Azure Cloud で Azure API Management サービス インスタンスを作成すると、Azure によってそれに azure-api.net サブドメイン (例: apim-service-name.azure-api.net) が割り当てられます。また、独自のカスタム ドメイン名 (例: contoso.com) を使用して API Management エンドポイントを公開することもできます。本記事では、Azure Portal を使った Azure API Management のカスタム ドメイン名の設定および証明書の更新方法とその影響について説明します。
-ご参考：Azure API Management インスタンスのカスタム ドメイン名を構成する
-
-(目次)1. 前提2. カスタム ドメイン設定の作成3. 証明書の更新について4. カスタム ドメイン設定の...
-        <p class="article-readmore">
-          <a href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html">Read more</a>
-        </p>
-      
-    </div>
-
-    <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html" data-id="cuidHf4ck_tzRTnyeJXK42m_h" class="article-share-link">共有</a-->
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
 
     </footer>
   </div>
@@ -379,10 +327,62 @@ Azure Functions インプロセス モデル のサポート終了について(�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/30/migrate-azure-functions-inprocess-to-isolated-using-slot.html" data-id="cuidHgfO5yAZNKa41vrqnK72C" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/30/migrate-azure-functions-inprocess-to-isolated-using-slot.html" data-id="cuidjSV0WUrVlwzRQKooV8ma4" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html" class="article-date">
+  <time datetime="2024-08-29T15:00:00.000Z" itemprop="datePublished">2024-08-30</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html">API Management カスタム ドメインの設定及び証明書の更新方法とその影響</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+Azure Cloud で Azure API Management サービス インスタンスを作成すると、Azure によってそれに azure-api.net サブドメイン (例: apim-service-name.azure-api.net) が割り当てられます。また、独自のカスタム ドメイン名 (例: contoso.com) を使用して API Management エンドポイントを公開することもできます。本記事では、Azure Portal を使った Azure API Management のカスタム ドメイン名の設定および証明書の更新方法とその影響について説明します。
+ご参考：Azure API Management インスタンスのカスタム ドメイン名を構成する
+
+(目次)1. 前提2. カスタム ドメイン設定の作成3. 証明書の更新について4. カスタム ドメイン設定の...
+        <p class="article-readmore">
+          <a href="../../2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html" data-id="cuidSNCO8PMiL95vSntRCcAQS" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
 
     </footer>
   </div>
@@ -435,7 +435,7 @@ APIM Cre...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/16/Use%20Azure%20AD%20B2C%20authenticating%20API%20in%20API%20Management.html" data-id="cuidswwnNhaxYSk93Ox__imWk" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/16/Use%20Azure%20AD%20B2C%20authenticating%20API%20in%20API%20Management.html" data-id="cuid2pwbV2UpZG8C43R_AR3bu" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
@@ -485,7 +485,7 @@ AI マルチサービス リソースのパブリックネットワークアク�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/16/search-ai-skills-on-private-environment.html" data-id="cuid5RWQvO3nbOl-KtBk1sqBP" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/16/search-ai-skills-on-private-environment.html" data-id="cuido7zGHAhJenE7n9-l8b5j0" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
@@ -536,7 +536,7 @@ AI マルチサービス リソースのパブリックネットワークアク�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/05/change-lease-status-from-broken-to-available.html" data-id="cuidC4qaUvapRTDrkibdsoXax" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/08/05/change-lease-status-from-broken-to-available.html" data-id="cuidRX2l8-p6NYRvc3Tj-yb1b" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
@@ -586,7 +586,7 @@ AI マルチサービス リソースのパブリックネットワークアク�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/07/30/How-to-create-custom-policy.html" data-id="cuid-_1TI2YpcWv_myeFXflfo" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/07/30/How-to-create-custom-policy.html" data-id="cuidaRVPtDIvDC0EpF6yHFQOR" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Policy/" rel="tag">Policy</a></li></ul>
