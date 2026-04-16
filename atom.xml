@@ -10,27 +10,7 @@
   <rights>All rights reserved 2026, Web Developer Platform WebApps Japan</rights>
   <subtitle>日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</subtitle>
   <title>Japan PaaS Support Team Blog</title>
-  <updated>2026-04-16T03:06:28.346Z</updated>
-  <entry>
-    <author>
-      <name>Web Developer Platform WebApps Japan</name>
-    </author>
-    <category term="AI Search" scheme="https://azure.github.io/jpazpaas/tags/AI-Search/"/>
-    <content>
-      <![CDATA[<p>Azure AI Search サービスでパブリック ネットワーク アクセスを無効化し、プライベート エンドポイント経由のみでアクセス可能な構成としています。</p><p>この状態で Azure ポータルの Azure AI Search から</p><ul><li>「インデックス」</li><li>「インデクサー」</li><li>「データソース」</li><li>「スキルセット」</li></ul><p>などの画面で、次のようなエラーが表示されます。</p><ul><li><strong>「インデックスの一覧の読み込み中にエラーが発生しました」</strong></li><li>概要欄のエラーメッセージに <strong>“Failed to fetch”</strong></li></ul><p><img src="/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint/image-e35b4520-5f43-4e98-98ab-e46b675e9c51.png" alt="インデックスの一覧の読み込み中にエラーが発生"></p><p>ネットワークや DNS は問題なく、VM から <code>curl</code> や SDK 経由で AI Search エンドポイントへは正常に到達できています。<br>このようなケースでは何が原因で、どのように対処すればよいでしょうか？</p><hr><h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>この事象はAzure ポータルから Azure AI Search 内部 API を呼び出す際、<strong>ブラウザ側のローカル ネットワーク アクセス制限機能により通信がブロックされる</strong>ことが原因で発生する可能性があります。</p><p>これにより、Azure ポータルのデータ取得 API が実行されず “Failed to fetch” が返る状況が発生します。</p><hr><h2 id="発生しやすいケース"><a href="#発生しやすいケース" class="headerlink" title="発生しやすいケース"></a>発生しやすいケース</h2><ul><li>Azure AI Search へのアクセスが <strong>Private Endpoint 経由のみ許可</strong>されている  </li><li>同一環境でもユーザーによって再現したりしなかったりする（＝ブラウザの個別設定差による）</li></ul><hr><h2 id="対処方法"><a href="#対処方法" class="headerlink" title="対処方法"></a>対処方法</h2><p>Azure ポータル (portal.azure.com) に対して、ブラウザ側のローカル ネットワーク アクセスを許可する。</p><h3 id="Microsoft-Edge-を利用する場合の対応"><a href="#Microsoft-Edge-を利用する場合の対応" class="headerlink" title="Microsoft Edge を利用する場合の対応"></a>Microsoft Edge を利用する場合の対応</h3><p>エラーが発生する画面において、以下の設定を実施する<br>        <img src="/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint/==image_0==-a8a2a9af-c36e-4545-bf41-d6461f53dcc5.png" alt="Microsoft Edge のローカル ネットワーク アクセスを許可する"> </p><h3 id="Google-Chrome-を利用する場合の対応"><a href="#Google-Chrome-を利用する場合の対応" class="headerlink" title="Google Chrome を利用する場合の対応"></a>Google Chrome を利用する場合の対応</h3><p>エラーが発生する画面において、以下の設定を実施する<br>        <img src="/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint/==image_0==-cb60a7ca-420f-4a3f-b7ed-3f1c7659d723.png" alt="Google Chrome のローカル ネットワーク アクセスを許可する"> </p><hr><h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><p><a href="https://learn.microsoft.com/ja-jp/azure/search/service-create-private-endpoint#use-the-azure-portal-to-access-a-private-search-service">安全な接続のためにプライベート エンドポイントを作成する - Azure AI Search | Microsoft Learn</a><br><br><br><br></p><hr><br><br><p>2026 年 02 月 17 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p><br><br>]]>
-    </content>
-    <id>https://azure.github.io/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html</id>
-    <link href="https://azure.github.io/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html"/>
-    <published>2026-04-16T03:07:22.615Z</published>
-    <summary>
-      <![CDATA[<p>Azure AI Search サービスでパブリック ネットワーク アクセスを無効化し、プライベート エンドポイント経由のみでアクセス可能な構成としています。</p>
-<p>この状態で Azure ポータルの Azure AI Search から</p>
-<ul>
-<li>]]>
-    </summary>
-    <title>プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &quot;Failed to fetch&quot; が表示される場合の対処方法</title>
-    <updated>2026-04-16T03:06:28.346Z</updated>
-  </entry>
+  <updated>2026-04-16T07:45:44.353Z</updated>
   <entry>
     <author>
       <name>Web Developer Platform WebApps Japan</name>
@@ -47,7 +27,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2?tabs=isolated-process,extensionv4&pivots=]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</title>
-    <updated>2026-04-16T03:06:28.353Z</updated>
+    <updated>2026-04-16T07:45:44.353Z</updated>
   </entry>
   <entry>
     <author>
@@ -64,7 +44,7 @@
       <![CDATA[<p>Azure Functions に<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-deployment-technologies?tabs=windows#trigger-]]>
     </summary>
     <title>Azure Functions のトリガーの同期とは</title>
-    <updated>2026-04-16T03:06:28.180Z</updated>
+    <updated>2026-04-16T07:45:44.138Z</updated>
   </entry>
   <entry>
     <author>
@@ -83,7 +63,7 @@
       <![CDATA[<p>お世話になっております。Azure App Service サポート担当の押田です。<br>本記事は、Azure App Service の <strong>Triggered WebJob</strong> において、デプロイ直後に WebJob が意図せず即実行されるケ]]>
     </summary>
     <title>Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</title>
-    <updated>2026-04-16T03:06:28.353Z</updated>
+    <updated>2026-04-16T07:45:44.353Z</updated>
   </entry>
   <entry>
     <author>
@@ -102,7 +82,27 @@
       <![CDATA[<p>お世話になっております。Azure App Service サポート担当の押田です。<br>本記事では、App Service &#x2F; Azure Functions の Windows 環境において、 <code>Node.js 24</code> を利用する際の注]]>
     </summary>
     <title>App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</title>
-    <updated>2026-04-16T03:06:28.349Z</updated>
+    <updated>2026-04-16T07:45:44.348Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Web Developer Platform WebApps Japan</name>
+    </author>
+    <category term="AI Search" scheme="https://azure.github.io/jpazpaas/tags/AI-Search/"/>
+    <content>
+      <![CDATA[<p>Azure AI Search サービスでパブリック ネットワーク アクセスを無効化し、プライベート エンドポイント経由のみでアクセス可能な構成としています。</p><p>この状態で Azure ポータルの Azure AI Search から</p><ul><li>「インデックス」</li><li>「インデクサー」</li><li>「データソース」</li><li>「スキルセット」</li></ul><p>などの画面で、次のようなエラーが表示されます。</p><ul><li><strong>「インデックスの一覧の読み込み中にエラーが発生しました」</strong></li><li>概要欄のエラーメッセージに <strong>“Failed to fetch”</strong></li></ul><p><img src="/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint/image-e35b4520-5f43-4e98-98ab-e46b675e9c51.png" alt="インデックスの一覧の読み込み中にエラーが発生"></p><p>ネットワークや DNS は問題なく、VM から <code>curl</code> や SDK 経由で AI Search エンドポイントへは正常に到達できています。<br>このようなケースでは何が原因で、どのように対処すればよいでしょうか？</p><hr><h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>この事象はAzure ポータルから Azure AI Search 内部 API を呼び出す際、<strong>ブラウザ側のローカル ネットワーク アクセス制限機能により通信がブロックされる</strong>ことが原因で発生する可能性があります。</p><p>これにより、Azure ポータルのデータ取得 API が実行されず “Failed to fetch” が返る状況が発生します。</p><hr><h2 id="発生しやすいケース"><a href="#発生しやすいケース" class="headerlink" title="発生しやすいケース"></a>発生しやすいケース</h2><ul><li>Azure AI Search へのアクセスが <strong>Private Endpoint 経由のみ許可</strong>されている  </li><li>同一環境でもユーザーによって再現したりしなかったりする（＝ブラウザの個別設定差による）</li></ul><hr><h2 id="対処方法"><a href="#対処方法" class="headerlink" title="対処方法"></a>対処方法</h2><p>Azure ポータル (portal.azure.com) に対して、ブラウザ側のローカル ネットワーク アクセスを許可する。</p><h3 id="Microsoft-Edge-を利用する場合の対応"><a href="#Microsoft-Edge-を利用する場合の対応" class="headerlink" title="Microsoft Edge を利用する場合の対応"></a>Microsoft Edge を利用する場合の対応</h3><p>エラーが発生する画面において、以下の設定を実施する<br>        <img src="/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint/==image_0==-a8a2a9af-c36e-4545-bf41-d6461f53dcc5.png" alt="Microsoft Edge のローカル ネットワーク アクセスを許可する"> </p><h3 id="Google-Chrome-を利用する場合の対応"><a href="#Google-Chrome-を利用する場合の対応" class="headerlink" title="Google Chrome を利用する場合の対応"></a>Google Chrome を利用する場合の対応</h3><p>エラーが発生する画面において、以下の設定を実施する<br>        <img src="/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint/==image_0==-cb60a7ca-420f-4a3f-b7ed-3f1c7659d723.png" alt="Google Chrome のローカル ネットワーク アクセスを許可する"> </p><hr><h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><p><a href="https://learn.microsoft.com/ja-jp/azure/search/service-create-private-endpoint#use-the-azure-portal-to-access-a-private-search-service">安全な接続のためにプライベート エンドポイントを作成する - Azure AI Search | Microsoft Learn</a><br><br><br><br></p><hr><br><br><p>2026 年 02 月 17 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p><br><br>]]>
+    </content>
+    <id>https://azure.github.io/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html</id>
+    <link href="https://azure.github.io/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html"/>
+    <published>2026-02-16T15:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>Azure AI Search サービスでパブリック ネットワーク アクセスを無効化し、プライベート エンドポイント経由のみでアクセス可能な構成としています。</p>
+<p>この状態で Azure ポータルの Azure AI Search から</p>
+<ul>
+<li>]]>
+    </summary>
+    <title>プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &quot;Failed to fetch&quot; が表示される場合の対処方法</title>
+    <updated>2026-04-16T07:45:44.345Z</updated>
   </entry>
   <entry>
     <author>
@@ -122,7 +122,7 @@
 <p><a href=]]>
     </summary>
     <title>Azure Communication Services Email クォータ緩和について</title>
-    <updated>2026-04-16T03:06:28.345Z</updated>
+    <updated>2026-04-16T07:45:44.345Z</updated>
   </entry>
   <entry>
     <author>
@@ -139,7 +139,7 @@
       <![CDATA[<p>Azure 仮想マシン上でブラウザを起動して Azure ポータルを表示しています。また、該当の Azure 仮想マシンが属している仮想ネットワークのサブネットに、今回操作対象のストレージアカウントの blob のプライベート エンドポイントはすでに作成済みです。</p>]]>
     </summary>
     <title>Azure ポータルで BLOB のリストやダウンロードはできるけれど削除ができないときに考えられること</title>
-    <updated>2026-04-16T03:06:28.345Z</updated>
+    <updated>2026-04-16T07:45:44.344Z</updated>
   </entry>
   <entry>
     <author>
@@ -156,7 +156,7 @@
       <![CDATA[<p>Blob ストレージをデータソースとする AI Search を利用して、インデクサーを実行した際に 「<code>Document key cannot be longer than 1024 characters</code>」というエラーが発生し、インデクサーの実行が]]>
     </summary>
     <title>ドキュメントキー文字数制限エラーの解消法</title>
-    <updated>2026-04-16T03:06:28.344Z</updated>
+    <updated>2026-04-16T07:45:44.343Z</updated>
   </entry>
   <entry>
     <author>
@@ -176,7 +176,7 @@
 <p><a href="https://techcommunity.microsoft.com/blog/exchange/exchange-online]]>
     </summary>
     <title>Azure Communication Services メール機能でよく頂くご質問</title>
-    <updated>2026-04-16T03:06:28.335Z</updated>
+    <updated>2026-04-16T07:45:44.335Z</updated>
   </entry>
   <entry>
     <author>
@@ -194,7 +194,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-service-bus?tabs=isolated-process,extensionv5,extensi]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Service Bus トリガー</title>
-    <updated>2026-04-16T03:06:28.336Z</updated>
+    <updated>2026-04-16T07:45:44.335Z</updated>
   </entry>
   <entry>
     <author>
@@ -211,7 +211,7 @@
       <![CDATA[<p>お世話になっております。App Service サポート担当の仲野です。いつも Azure Functions（関数アプリ）をご利用いただき誠にありがとうございます。Azure Functions では拡張バンドルのコンテンツを Contents Delivery Netw]]>
     </summary>
     <title>Azure Functions で使用している CDN ドメインの移行について</title>
-    <updated>2026-04-16T03:06:28.335Z</updated>
+    <updated>2026-04-16T07:45:44.334Z</updated>
   </entry>
   <entry>
     <author>
@@ -228,7 +228,7 @@
       <![CDATA[<h2 id="はじめに"><a href="#はじめに" class="headerlink" title="はじめに"></a>はじめに</h2><p>お世話になっております。App Service サポート担当の仲野です。いつも Azure Functions（関数アプリ）]]>
     </summary>
     <title>Azure Functions の古いランタイム バージョンに対する潜在的な破壊的変更（2025年10月）</title>
-    <updated>2026-04-16T03:06:28.333Z</updated>
+    <updated>2026-04-16T07:45:44.334Z</updated>
   </entry>
   <entry>
     <author>
@@ -247,7 +247,7 @@
 <p>Azure Functions を使用してサーバーレスアプリケーションを開発・運用]]>
     </summary>
     <title>Azure Functions .NET Isolated（分離ワーカー）モデルで Dependency の一部のログをフィルタリングして Application Insights に送信する方法</title>
-    <updated>2026-04-16T03:06:28.331Z</updated>
+    <updated>2026-04-16T07:45:44.331Z</updated>
   </entry>
   <entry>
     <author>
@@ -267,7 +267,7 @@
       <![CDATA[<p>本記事は 2025 年 4 月 29 日に公開されました <a href="https://azure.github.io/AppService/2025/04/29/Azure-App-Service-Notifications-Improvements.html">Ro]]>
     </summary>
     <title>Azure App Service の計画メンテナンス通知の改善</title>
-    <updated>2026-04-16T03:06:28.329Z</updated>
+    <updated>2026-04-16T07:45:44.328Z</updated>
   </entry>
   <entry>
     <author>
@@ -285,7 +285,7 @@
 <p>Azure Functions を使用してサーバーレスアプリケーションを開発・運用する際、]]>
     </summary>
     <title>Azure Functions .NET Isolated（分離ワーカー）モデルで Application Insights を利用する際の注意点</title>
-    <updated>2026-04-16T03:06:28.330Z</updated>
+    <updated>2026-04-16T07:45:44.329Z</updated>
   </entry>
   <entry>
     <author>
@@ -303,7 +303,7 @@
 <p>AI Search インデックスを作成する際に、選択したアナライザーでドキュメントがどのようにトークナイズされるのかを確認する方法、および正規表現を使用したクエリで検索を行う際の注意点について例を交え]]>
     </summary>
     <title>AI Search アナライザーのトークナイズと正規表現による検索の動作について</title>
-    <updated>2026-04-16T03:06:28.327Z</updated>
+    <updated>2026-04-16T07:45:44.328Z</updated>
   </entry>
   <entry>
     <author>
@@ -323,7 +323,7 @@
 <]]>
     </summary>
     <title>Azure サービスをバックアップする一般的な考え方</title>
-    <updated>2026-04-16T03:06:28.323Z</updated>
+    <updated>2026-04-16T07:45:44.324Z</updated>
   </entry>
   <entry>
     <author>
@@ -341,7 +341,7 @@
 <h1 id="解説">]]>
     </summary>
     <title>BLOB のコンテナーレベルでのアクセス制御</title>
-    <updated>2026-04-16T03:06:28.323Z</updated>
+    <updated>2026-04-16T07:45:44.322Z</updated>
   </entry>
   <entry>
     <author>
@@ -359,7 +359,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-storage-blob?tabs=isolated-process,extensionv5,extens]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - BLOB トリガー</title>
-    <updated>2026-04-16T03:06:28.309Z</updated>
+    <updated>2026-04-16T07:45:44.309Z</updated>
   </entry>
   <entry>
     <author>
@@ -377,6 +377,6 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-event-iot?tabs=isolated-process,extensionv5&pivots=pr]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - IoT Hub トリガー</title>
-    <updated>2026-04-16T03:06:28.315Z</updated>
+    <updated>2026-04-16T07:45:44.316Z</updated>
   </entry>
 </feed>
