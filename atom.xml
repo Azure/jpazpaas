@@ -10,7 +10,7 @@
   <rights>All rights reserved 2026, Web Developer Platform WebApps Japan</rights>
   <subtitle>日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</subtitle>
   <title>Japan PaaS Support Team Blog</title>
-  <updated>2026-04-16T02:50:04.064Z</updated>
+  <updated>2026-04-16T03:06:28.346Z</updated>
   <entry>
     <author>
       <name>Web Developer Platform WebApps Japan</name>
@@ -21,7 +21,7 @@
     </content>
     <id>https://azure.github.io/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html</id>
     <link href="https://azure.github.io/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html"/>
-    <published>2026-04-16T02:52:13.363Z</published>
+    <published>2026-04-16T03:07:22.615Z</published>
     <summary>
       <![CDATA[<p>Azure AI Search サービスでパブリック ネットワーク アクセスを無効化し、プライベート エンドポイント経由のみでアクセス可能な構成としています。</p>
 <p>この状態で Azure ポータルの Azure AI Search から</p>
@@ -29,7 +29,7 @@
 <li>]]>
     </summary>
     <title>プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &quot;Failed to fetch&quot; が表示される場合の対処方法</title>
-    <updated>2026-04-16T02:50:04.064Z</updated>
+    <updated>2026-04-16T03:06:28.346Z</updated>
   </entry>
   <entry>
     <author>
@@ -47,7 +47,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2?tabs=isolated-process,extensionv4&pivots=]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</title>
-    <updated>2026-04-16T02:50:04.071Z</updated>
+    <updated>2026-04-16T03:06:28.353Z</updated>
   </entry>
   <entry>
     <author>
@@ -64,7 +64,7 @@
       <![CDATA[<p>Azure Functions に<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-deployment-technologies?tabs=windows#trigger-]]>
     </summary>
     <title>Azure Functions のトリガーの同期とは</title>
-    <updated>2026-04-16T02:50:03.901Z</updated>
+    <updated>2026-04-16T03:06:28.180Z</updated>
   </entry>
   <entry>
     <author>
@@ -83,7 +83,7 @@
       <![CDATA[<p>お世話になっております。Azure App Service サポート担当の押田です。<br>本記事は、Azure App Service の <strong>Triggered WebJob</strong> において、デプロイ直後に WebJob が意図せず即実行されるケ]]>
     </summary>
     <title>Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</title>
-    <updated>2026-04-16T02:50:04.071Z</updated>
+    <updated>2026-04-16T03:06:28.353Z</updated>
   </entry>
   <entry>
     <author>
@@ -102,7 +102,7 @@
       <![CDATA[<p>お世話になっております。Azure App Service サポート担当の押田です。<br>本記事では、App Service &#x2F; Azure Functions の Windows 環境において、 <code>Node.js 24</code> を利用する際の注]]>
     </summary>
     <title>App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</title>
-    <updated>2026-04-16T02:50:04.067Z</updated>
+    <updated>2026-04-16T03:06:28.349Z</updated>
   </entry>
   <entry>
     <author>
@@ -122,7 +122,7 @@
 <p><a href=]]>
     </summary>
     <title>Azure Communication Services Email クォータ緩和について</title>
-    <updated>2026-04-16T02:50:04.063Z</updated>
+    <updated>2026-04-16T03:06:28.345Z</updated>
   </entry>
   <entry>
     <author>
@@ -139,7 +139,7 @@
       <![CDATA[<p>Azure 仮想マシン上でブラウザを起動して Azure ポータルを表示しています。また、該当の Azure 仮想マシンが属している仮想ネットワークのサブネットに、今回操作対象のストレージアカウントの blob のプライベート エンドポイントはすでに作成済みです。</p>]]>
     </summary>
     <title>Azure ポータルで BLOB のリストやダウンロードはできるけれど削除ができないときに考えられること</title>
-    <updated>2026-04-16T02:50:04.062Z</updated>
+    <updated>2026-04-16T03:06:28.345Z</updated>
   </entry>
   <entry>
     <author>
@@ -156,7 +156,7 @@
       <![CDATA[<p>Blob ストレージをデータソースとする AI Search を利用して、インデクサーを実行した際に 「<code>Document key cannot be longer than 1024 characters</code>」というエラーが発生し、インデクサーの実行が]]>
     </summary>
     <title>ドキュメントキー文字数制限エラーの解消法</title>
-    <updated>2026-04-16T02:50:04.061Z</updated>
+    <updated>2026-04-16T03:06:28.344Z</updated>
   </entry>
   <entry>
     <author>
@@ -176,7 +176,7 @@
 <p><a href="https://techcommunity.microsoft.com/blog/exchange/exchange-online]]>
     </summary>
     <title>Azure Communication Services メール機能でよく頂くご質問</title>
-    <updated>2026-04-16T02:50:04.053Z</updated>
+    <updated>2026-04-16T03:06:28.335Z</updated>
   </entry>
   <entry>
     <author>
@@ -194,7 +194,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-service-bus?tabs=isolated-process,extensionv5,extensi]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Service Bus トリガー</title>
-    <updated>2026-04-16T02:50:04.053Z</updated>
+    <updated>2026-04-16T03:06:28.336Z</updated>
   </entry>
   <entry>
     <author>
@@ -211,7 +211,7 @@
       <![CDATA[<p>お世話になっております。App Service サポート担当の仲野です。いつも Azure Functions（関数アプリ）をご利用いただき誠にありがとうございます。Azure Functions では拡張バンドルのコンテンツを Contents Delivery Netw]]>
     </summary>
     <title>Azure Functions で使用している CDN ドメインの移行について</title>
-    <updated>2026-04-16T02:50:04.053Z</updated>
+    <updated>2026-04-16T03:06:28.335Z</updated>
   </entry>
   <entry>
     <author>
@@ -228,7 +228,7 @@
       <![CDATA[<h2 id="はじめに"><a href="#はじめに" class="headerlink" title="はじめに"></a>はじめに</h2><p>お世話になっております。App Service サポート担当の仲野です。いつも Azure Functions（関数アプリ）]]>
     </summary>
     <title>Azure Functions の古いランタイム バージョンに対する潜在的な破壊的変更（2025年10月）</title>
-    <updated>2026-04-16T02:50:04.052Z</updated>
+    <updated>2026-04-16T03:06:28.333Z</updated>
   </entry>
   <entry>
     <author>
@@ -247,7 +247,7 @@
 <p>Azure Functions を使用してサーバーレスアプリケーションを開発・運用]]>
     </summary>
     <title>Azure Functions .NET Isolated（分離ワーカー）モデルで Dependency の一部のログをフィルタリングして Application Insights に送信する方法</title>
-    <updated>2026-04-16T02:50:04.049Z</updated>
+    <updated>2026-04-16T03:06:28.331Z</updated>
   </entry>
   <entry>
     <author>
@@ -267,7 +267,7 @@
       <![CDATA[<p>本記事は 2025 年 4 月 29 日に公開されました <a href="https://azure.github.io/AppService/2025/04/29/Azure-App-Service-Notifications-Improvements.html">Ro]]>
     </summary>
     <title>Azure App Service の計画メンテナンス通知の改善</title>
-    <updated>2026-04-16T02:50:04.047Z</updated>
+    <updated>2026-04-16T03:06:28.329Z</updated>
   </entry>
   <entry>
     <author>
@@ -285,7 +285,7 @@
 <p>Azure Functions を使用してサーバーレスアプリケーションを開発・運用する際、]]>
     </summary>
     <title>Azure Functions .NET Isolated（分離ワーカー）モデルで Application Insights を利用する際の注意点</title>
-    <updated>2026-04-16T02:50:04.047Z</updated>
+    <updated>2026-04-16T03:06:28.330Z</updated>
   </entry>
   <entry>
     <author>
@@ -303,7 +303,7 @@
 <p>AI Search インデックスを作成する際に、選択したアナライザーでドキュメントがどのようにトークナイズされるのかを確認する方法、および正規表現を使用したクエリで検索を行う際の注意点について例を交え]]>
     </summary>
     <title>AI Search アナライザーのトークナイズと正規表現による検索の動作について</title>
-    <updated>2026-04-16T02:50:04.045Z</updated>
+    <updated>2026-04-16T03:06:28.327Z</updated>
   </entry>
   <entry>
     <author>
@@ -323,7 +323,7 @@
 <]]>
     </summary>
     <title>Azure サービスをバックアップする一般的な考え方</title>
-    <updated>2026-04-16T02:50:04.041Z</updated>
+    <updated>2026-04-16T03:06:28.323Z</updated>
   </entry>
   <entry>
     <author>
@@ -341,7 +341,7 @@
 <h1 id="解説">]]>
     </summary>
     <title>BLOB のコンテナーレベルでのアクセス制御</title>
-    <updated>2026-04-16T02:50:04.041Z</updated>
+    <updated>2026-04-16T03:06:28.323Z</updated>
   </entry>
   <entry>
     <author>
@@ -359,7 +359,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-storage-blob?tabs=isolated-process,extensionv5,extens]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - BLOB トリガー</title>
-    <updated>2026-04-16T02:50:04.027Z</updated>
+    <updated>2026-04-16T03:06:28.309Z</updated>
   </entry>
   <entry>
     <author>
@@ -377,6 +377,6 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-event-iot?tabs=isolated-process,extensionv5&pivots=pr]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - IoT Hub トリガー</title>
-    <updated>2026-04-16T02:50:04.033Z</updated>
+    <updated>2026-04-16T03:06:28.315Z</updated>
   </entry>
 </feed>
