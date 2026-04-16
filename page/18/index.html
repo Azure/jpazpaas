@@ -81,6 +81,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-2021/02/12/app-service-client-certificate" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2021/02/12/app-service-client-certificate.html" class="article-date">
+  <time datetime="2021-02-11T15:00:00.000Z" itemprop="datePublished">2021-02-12</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2021/02/12/app-service-client-certificate.html">App Service にてクライアント証明書モードを有効にし大量のデータを送信したが通信ができない</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        App Service の 構成 内には、Web Apps や Functions Apps がクライアント証明書を受け入れるための設定がございます。デフォルトでは、無視 となっており送信元となるアプリケーションがクライアント証明書を設定する必要はございませんが、必須 にするとクライアント証明書を付与する必要がございます。
+ 
+
+クライアント証明書モードを 必須 に設定を行い、大量のデータ（約 100 KB 以上）を POST するとユーザ側では長時間の通信が発生してしまい、HTTP Status Code 403 が返却されます。しかし、少量のデータ（約 100 KB 以下）を POST すると通信に成功します。この動作の原因としては、App Service の内部に存在する内部ロードバランサーの仕様になります。詳しい情報は以下の内容をご覧ください。
+質問App Service (Web...
+        <p class="article-readmore">
+          <a href="../../2021/02/12/app-service-client-certificate.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2021/02/12/app-service-client-certificate.html" data-id="cuidgFUynBnCJ0rwYYZS8Pq1l" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Web-Apps/" rel="tag">Web Apps</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-2021/01/29/storage-permission-mismatch" class="article article-type-post" itemscope itemprop="blogPost">
 
   <div class="article-inner">
@@ -118,7 +170,7 @@
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2021/01/29/storage-permission-mismatch.html" data-id="cuidS2vJ9qFiQyrf1kNyiG946" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2021/01/29/storage-permission-mismatch.html" data-id="cuidc9HDyenLht0OSQmXYU2o5" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
@@ -168,7 +220,7 @@
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/12/10/self-restore-deleted-apim.html" data-id="cuidKWUibZvJ9SPnaph0YzxMk" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/12/10/self-restore-deleted-apim.html" data-id="cuidtjQwPEmHlDV3u4ufmNnGh" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
@@ -223,7 +275,7 @@ Save Error エラーの回避方...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/12/07/apim-operationlist-grouped.html" data-id="cuid5V9EoyY1i5SJvh_0Rc7a2" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/12/07/apim-operationlist-grouped.html" data-id="cuidfKflcZeEgYUKO-FVTlnl7" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
@@ -275,7 +327,7 @@ REST API Api Management Service - Create Or Update で、リクエストボデ�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/12/06/apim-disable-cipher-suites.html" data-id="cuidgrQ_vI10WPC9BnWBGmicb" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/12/06/apim-disable-cipher-suites.html" data-id="cuidSshqZat_fifFyDdRSxTrn" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
@@ -327,7 +379,7 @@ Azure Cache for Redis のフェールオーバーと修正プログラムの適�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/12/02/cache-failover.html" data-id="cuidOBDxx9XvprL6Nq4SyQCLd" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/12/02/cache-failover.html" data-id="cuidFHssfZpYcezJ91AjYLez6" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li></ul>
@@ -376,7 +428,7 @@ Azure Cache for Redis のフェールオーバーと修正プログラムの適�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/11/04/apim-content-length-mismatch.html" data-id="cuidZkQqmzGo9jDdbnEXeXx3-" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/11/04/apim-content-length-mismatch.html" data-id="cuidwcsv7pzB424Er9IbTqleM" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/API-Management/" rel="tag">API Management</a></li></ul>
@@ -426,7 +478,7 @@ Azure Cache for Redis のフェールオーバーと修正プログラムの適�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/10/13/policy-activity-log.html" data-id="cuid0VM0oxCRVJe0KcxKzCrx1" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/10/13/policy-activity-log.html" data-id="cuidKmZrB7NjciSQi7KCCPtSe" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Policy/" rel="tag">Policy</a></li></ul>
@@ -483,7 +535,7 @@ CLI コマンドや PowerShell コマンドでエイリアスを見つける
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/10/01/hint-for-creating-policy.html" data-id="cuid_3c5wtg--3HEPO7KoYzla" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/10/01/hint-for-creating-policy.html" data-id="cuidDU4U3tq0z-Q35KVGAYGSE" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Policy/" rel="tag">Policy</a></li></ul>
@@ -532,59 +584,10 @@ Application Gateway と App Service 証明書を直接紐づけることによ�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/09/23/how-to-export-appservice-certificate.html" data-id="cuidR1NM2R1w9B9ubaU43Ms2s" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2020/09/23/how-to-export-appservice-certificate.html" data-id="cuid6ueqzEljVfmHBzoUSu28E" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2020/08/28/troubleshooting-developmentquotaexceeded" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <div class="article-inner">
-    <!-- post date -->
-    <div class="article-meta">
-      <a href="../../2020/08/28/troubleshooting-developmentquotaexceeded.html" class="article-date">
-  <time datetime="2020-08-27T15:00:00.000Z" itemprop="datePublished">2020-08-28</time>
-</a>
-      
-    </div>
-
-    
-    <!-- post title -->
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2020/08/28/troubleshooting-developmentquotaexceeded.html">DeploymentQuotaExceeded のエラーについて</a>
-    </h1>
-  
-
-      </header>
-    
-
-    <!-- post caption -->
-    <div class="article-entry" itemprop="articleBody">
-      
-        サービスをデプロイしようとしたときに以下のエラーに遭遇した。対処方法を教えてほしい。Creating the deployment &#39;cra3000_website-20190131-150417-7d5f&#39; would exceed the quota of &#39;800&#39;. The current deployment count is &#39;800&#39;, please delete some deployments before creating a new one. Please see https://aka.ms/arm-deploy for usage details.
-原因各リソース グループには、そのデプロイ履歴が 800 までという上限があります。 このエラーメッセージは、デプロイを行うときに、デプロイ履歴が許可されている 800 ...
-        <p class="article-readmore">
-          <a href="../../2020/08/28/troubleshooting-developmentquotaexceeded.html">Read more</a>
-        </p>
-      
-    </div>
-
-    <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2020/08/28/troubleshooting-developmentquotaexceeded.html" data-id="cuidXcgH86u3jnjzv8DSQk0no" class="article-share-link">共有</a-->
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/ARM/" rel="tag">ARM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li></ul>
 
     </footer>
   </div>
@@ -614,6 +617,10 @@ Application Gateway と App Service 証明書を直接紐づけることによ�
           </li>
         
           <li>
+            <a href="../../2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</a>
+          </li>
+        
+          <li>
             <a href="../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
           </li>
         
@@ -623,10 +630,6 @@ Application Gateway と App Service 証明書を直接紐づけることによ�
         
           <li>
             <a href="../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
-          </li>
-        
-          <li>
-            <a href="../../2026/01/27/ACS-Email-quota-increase.html">Azure Communication Services Email クォータ緩和について</a>
           </li>
         
       </ul>
@@ -659,7 +662,7 @@ Application Gateway と App Service 証明書を直接紐づけることによ�
   <div class="widget-wrap">
     <h3 class="widget-title">タグクラウド</h3>
     <div class="widget tagcloud">
-      <a href="../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../tags/Container-Apps/" style="font-size: 15px;">Container Apps</a> <a href="../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+      <a href="../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../tags/AI-Search/" style="font-size: 16.15px;">AI Search</a> <a href="../../tags/API-Management/" style="font-size: 17.69px;">API Management</a> <a href="../../tags/ARM/" style="font-size: 11.54px;">ARM</a> <a href="../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../tags/App-Service/" style="font-size: 19.23px;">App Service</a> <a href="../../tags/App-Service-Environment/" style="font-size: 12.31px;">App Service Environment</a> <a href="../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 13.85px;">App Service 証明書</a> <a href="../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../tags/Application-Gateway/" style="font-size: 10.77px;">Application Gateway</a> <a href="../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../tags/Azure/" style="font-size: 10.77px;">Azure</a> <a href="../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../tags/Azure-Cache-for-Redis/" style="font-size: 10.77px;">Azure Cache for Redis</a> <a href="../../tags/Azure-Communication-Services/" style="font-size: 13.08px;">Azure Communication Services</a> <a href="../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../tags/Azure-Resource-Graph/" style="font-size: 10.77px;">Azure Resource Graph</a> <a href="../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../tags/Azure-Support/" style="font-size: 10.77px;">Azure Support</a> <a href="../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../tags/Container-Apps/" style="font-size: 14.62px;">Container Apps</a> <a href="../../tags/Durable-Functions/" style="font-size: 10.77px;">Durable Functions</a> <a href="../../tags/Email/" style="font-size: 10.77px;">Email</a> <a href="../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../tags/Event-Hubs/" style="font-size: 11.54px;">Event Hubs</a> <a href="../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../tags/Function-Apps/" style="font-size: 10.77px;">Function Apps</a> <a href="../../tags/Kudu/" style="font-size: 10.77px;">Kudu</a> <a href="../../tags/Lighthouse/" style="font-size: 10.77px;">Lighthouse</a> <a href="../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../tags/Notification-Hubs/" style="font-size: 10.77px;">Notification Hubs</a> <a href="../../tags/Policy/" style="font-size: 12.31px;">Policy</a> <a href="../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../tags/Service-Bus/" style="font-size: 10.77px;">Service Bus</a> <a href="../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../tags/Storage/" style="font-size: 18.46px;">Storage</a> <a href="../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../tags/Web-Apps/" style="font-size: 16.92px;">Web Apps</a> <a href="../../tags/WebJobs/" style="font-size: 11.54px;">WebJobs</a> <a href="../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.77px;">デプロイ履歴</a> <a href="../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15.38px;">トリガー・バインディング シリーズ</a>
     </div>
   </div>
 

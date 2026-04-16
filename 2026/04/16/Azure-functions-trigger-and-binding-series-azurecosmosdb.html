@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Azure Cosmos DB トリガー は Azure Cosmos DB の 変更フィード を利用し、Azure Cosmos DB のコンテナーに対するドキュメントの作成・更新を検知して実行される関数です。 Azure Cosmos DB トリガーは、内部的に Azure Cosmos DB SDK の変更フィード プロセッサを利用して動作しています。Azure Functions Host">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Azure Cosmos DB トリガー は Azure Cosmos DB の 変更フィード を利用し、Azure Cosmos DB のコンテナーに対するドキュメントの作成・更新を検知して実行される関数です。 Azure Cosmos DB トリガーは、内部的に Azure Cosmos DB SDK の変更フィード プロセッサを利用して動作しています。Azure Functions Host">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/create_2.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/localsettings.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/listenerstart.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/changefeed.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/execute.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/404.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/401.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/403.png">
+<meta property="article:published_time" content="2026-04-13T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-16T02:50:04.071Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function App">
+<meta property="article:tag" content="トリガー・バインディング シリーズ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/create_2.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2026-04-13T15:00:00.000Z" itemprop="datePublished">2026-04-14</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+2e95150a-a7a7-5ee8-b236-0b260e92b88d%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Functions+%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0+%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA+-+Azure+Cosmos+DB+%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2026%2F04%2F16%2FAzure-functions-trigger-and-binding-series-azurecosmosdb.html%29%0A*+Content+Source%3A+%5Barticles%2F2026%2F04%2F16%2FAzure-functions-trigger-and-binding-series-azurecosmosdb.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2026%2F04%2F16%2FAzure-functions-trigger-and-binding-series-azurecosmosdb.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html" data-id="cuidf0M7KbH5kdZDrICunF9mc" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2?tabs=isolated-process,extensionv4&pivots=programming-language-csharp">Azure Cosmos DB トリガー</a> は Azure Cosmos DB の <a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/change-feed">変更フィード</a> を利用し、Azure Cosmos DB のコンテナーに対するドキュメントの作成・更新を検知して実行される関数です。</p>
+<p>Azure Cosmos DB トリガーは、内部的に Azure Cosmos DB SDK の<a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/change-feed-processor?tabs=dotnet">変更フィード プロセッサ</a>を利用して動作しています。Azure Functions Host は起動時に変更フィード プロセッサ (<code>ChangeFeedProcessor</code>) のインスタンスを構築し、監視対象のコンテナーに対してポーリングを行います。変更が検出されると、変更されたドキュメントのコレクションをトリガーの入力として関数が実行されます。</p>
+<h2 id="動作の仕組み"><a href="#動作の仕組み" class="headerlink" title="動作の仕組み"></a>動作の仕組み</h2><p>Azure Cosmos DB トリガーの動作は以下の流れとなります。</p>
+<ol>
+<li><strong>変更フィード プロセッサの構築</strong>: Azure Functions Host が <code>ChangeFeedProcessorBuilder</code> を利用して変更フィード プロセッサを構築します。この際、監視対象コンテナーとリース コンテナーへの参照が設定されます。</li>
+<li><strong>ポーリング</strong>: 変更フィード プロセッサが監視対象コンテナーの各物理パーティションに対してポーリングを行い、変更を検出します。ポーリング間隔は <code>FeedPollDelay</code> 属性で制御でき、既定値は <strong>5,000 ミリ秒 (5 秒)</strong> です。</li>
+<li><strong>リースの管理</strong>: 各パーティションの処理進行状況は「リース」と呼ばれる仕組みで管理され、専用の<a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/change-feed-processor?tabs=dotnet#components-of-the-change-feed-processor">リース コンテナー</a>にチェックポイント情報として格納されます。リース コンテナーの既定名は <strong><code>leases</code></strong> です。</li>
+<li><strong>関数の実行</strong>: 変更が検出されると、変更されたドキュメントのコレクション (<code>IReadOnlyCollection&lt;T&gt;</code>) を引数として関数が実行されます。</li>
+<li><strong>チェックポイントの更新</strong>: 関数の実行が正常に完了すると、リース コンテナーのチェックポイントが更新され、処理済み位置が記録されます。関数実行が<strong>失敗した場合はチェックポイントが更新されず</strong>、次のポーリングで同じ変更が再度処理されます。</li>
+</ol>
+<p>※ Azure Cosmos DB トリガーは既定の変更フィード モード (LatestVersion) で動作し、各ドキュメントの<strong>最新バージョンの変更のみ</strong>を処理します。ドキュメントの削除は検知されず、中間バージョンも取得されません。Azure Cosmos DB には削除や中間バージョンの変更も取得できる <a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/change-feed-modes?tabs=all-versions-and-deletes">AllVersionsAndDeletes モード</a>（プレビュー機能）が存在しますが、<strong>Azure Functions トリガーではこのモードはサポートされていません</strong>。削除や全バージョンの変更を処理する必要がある場合は、<a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/change-feed-pull-model">変更フィード プル モデル</a>や<a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/change-feed-processor?tabs=dotnet">変更フィード プロセッサ</a>を直接使用する方法をご検討ください。</p>
+<h2 id="リースについて"><a href="#リースについて" class="headerlink" title="リースについて"></a>リースについて</h2><p>リースは Azure Cosmos DB の変更フィード プロセッサが処理の進行状況を追跡するための仕組みです。リースの状態は専用の<strong>リース コンテナー</strong>に格納され、リース コンテナー内の各ドキュメントが監視対象コンテナーの物理パーティション範囲に対応しています。</p>
+<h3 id="リース-コンテナーの構成"><a href="#リース-コンテナーの構成" class="headerlink" title="リース コンテナーの構成"></a>リース コンテナーの構成</h3><p>リース コンテナーは、変更フィード プロセッサが各物理パーティションの処理位置（チェックポイント）やリースの所有権情報を永続化するための専用コンテナーです。変更フィード プロセッサが複数のインスタンス間でパーティションの処理を分散・調整する際にも、このリース コンテナーが中心的な役割を果たします。</p>
+<p>リース コンテナーは、監視対象のコンテナーとは<strong>異なるコンテナー</strong>である必要があります。ソースコード上で監視対象コンテナーとリース コンテナーが同一の場合はエラーが発生するよう検証されています。</p>
+<p>リース コンテナーの配置先や接続先、リース コンテナー自体の構成に関する設定はトリガーの<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?tabs=python-v2,isolated-process,extensionv4,nodejs-v4&pivots=programming-language-csharp#attributes">属性</a>で設定できます。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>既定値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LeaseContainerName</code></td>
+<td><code>leases</code></td>
+<td>リース コンテナーの名称</td>
+</tr>
+<tr>
+<td><code>LeaseDatabaseName</code></td>
+<td>監視対象と同じデータベース</td>
+<td>リース コンテナーが存在するデータベース名</td>
+</tr>
+<tr>
+<td><code>LeaseConnection</code></td>
+<td><code>Connection</code> と同じ接続先</td>
+<td>リース コンテナーの接続文字列（監視対象と異なる Cosmos DB アカウントにリースを配置する場合に設定）</td>
+</tr>
+<tr>
+<td><code>CreateLeaseContainerIfNotExists</code></td>
+<td><code>false</code></td>
+<td>リース コンテナーが存在しない場合に自動作成するかどうか。<strong>接続文字列認証時のみ有効</strong>です。<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?tabs=python-v2,isolated-process,extensionv4,nodejs-v4&pivots=programming-language-csharp#identity-based-connections">マネージド ID (Entra ID) 認証</a>時はコンテナーの作成が許可された操作ではないため使用できません。リース コンテナーを事前に作成してください</td>
+</tr>
+<tr>
+<td><code>LeasesContainerThroughput</code></td>
+<td>0 (未設定)</td>
+<td>自動作成時のリース コンテナーのスループット</td>
+</tr>
+<tr>
+<td><code>LeaseContainerPrefix</code></td>
+<td>なし</td>
+<td>リース ドキュメントのプレフィックス。同一のリース コンテナーを複数トリガーで共有する場合に有用</td>
+</tr>
+</tbody></table>
+<h3 id="リースのパラメーター"><a href="#リースのパラメーター" class="headerlink" title="リースのパラメーター"></a>リースのパラメーター</h3><p>リースの更新間隔や有効期限といった動作に関する<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?tabs=python-v2,isolated-process,extensionv4,nodejs-v4&pivots=programming-language-csharp#attributes">主要なパラメーター</a>は以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>パラメーター</th>
+<th>既定値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LeaseRenewInterval</code></td>
+<td>17,000 ミリ秒 (17 秒)</td>
+<td>現在保持しているリースの更新間隔</td>
+</tr>
+<tr>
+<td><code>LeaseAcquireInterval</code></td>
+<td>13,000 ミリ秒 (13 秒)</td>
+<td>パーティションが既知のホスト インスタンス間で均等に分散されているかを検出するタスクを開始する間隔</td>
+</tr>
+<tr>
+<td><code>LeaseExpirationInterval</code></td>
+<td>60,000 ミリ秒 (60 秒)</td>
+<td>リースの有効期限。この期間内にリースが更新されない場合、リースが失効し、他のインスタンスに所有権が移動</td>
+</tr>
+</tbody></table>
+<p>ソースコード上では、<a href="https://github.com/Azure/azure-webjobs-sdk-extensions/blob/dev/src/WebJobs.Extensions.CosmosDB/Trigger/CosmosDBTriggerListener.cs#L165"><code>CosmosDBTriggerListener</code> の <code>InitializeBuilder</code> メソッド</a>にて <code>ChangeFeedProcessorBuilder</code> にこれらのリースパラメーターが設定されています。</p>
+<p>※ リースの失効や再取得が発生した場合、<code>CosmosDBTriggerHealthMonitor</code> にて <code>PreconditionFailed</code> (HTTP 412) のログが記録されることがあります。スケーリングや初期化時のリース再分散中に<strong>一時的に</strong>発生するのは想定された動作となりますが、412 が継続的に発生し、かつ変更フィードの処理が進行していない場合は、リース競合やインスタンス間の構成不整合が疑われるため、リース コンテナーの状態やインスタンス数を確認してください。</p>
+<h1 id="作成手順"><a href="#作成手順" class="headerlink" title="作成手順"></a>作成手順</h1><p>Azure Cosmos DB トリガーの作成方法は<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-your-first-function-visual-studio#create-a-function-app-project">チュートリアル</a>で紹介されているテンプレートをご利用ください。チュートリアルでは HTTP トリガーを利用しておりますが、同画面にて Cosmos DB トリガーを選択いただけます。その後、ローカル環境にて実行した際に接続する Cosmos DB の環境を選択しますが、その際に Azure 上のリソースを参照させずに <a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/emulator">エミュレーター</a> を使用することも可能なため、要件に合わせて選択ください。</p>
+<p>Cosmos DB の環境選択画面：</p>
+<p><img src="/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/create_2.png" alt="image.png"></p>
+<p>また、各<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?tabs=python-v2,isolated-process,extensionv4,nodejs-v4&pivots=programming-language-csharp#attributes">属性</a>情報は、アプリケーション設定にて管理できます。C# の例ですが、<code>CosmosDBTrigger</code> の引数で各属性情報を <code>%</code> 括りのアプリケーション設定名とします(上段黄色枠)。ローカルの実行のため <code>local.settings.json</code> となりますが(下段黄色枠)、設定値の中身を宣言します。</p>
+<p>Cosmos DB の<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?tabs=python-v2,isolated-process,extensionv4,nodejs-v4&pivots=programming-language-csharp#connection-string">接続文字列</a>については <code>Connection</code> プロパティで指定した値と一致する名前のアプリケーション設定（青色枠）を定義します。</p>
+<p>Azure 上の Azure Functions リソースの場合には local.settings.json にて定義いただいた同項目をアプリケーション設定に設定してください。</p>
+<p>例：</p>
+<p><img src="/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/localsettings.png" alt="image.png"></p>
+<h1 id="実行状況をログで確認する"><a href="#実行状況をログで確認する" class="headerlink" title="実行状況をログで確認する"></a>実行状況をログで確認する</h1><p>Cosmos DB トリガーの実行詳細をログから確認します。host.json の logging で下記のカテゴリのログを出力するように設定します。デバッグ用となるため、運用状況によって有効&#x2F;無効化を検討ください。</p>
+<h2 id="host-json"><a href="#host-json" class="headerlink" title="host.json"></a>host.json</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;logging&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;logLevel&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Microsoft.Azure.WebJobs.Hosting&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Host.Triggers.CosmosDB&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Application-Insights-で利用するクエリ"><a href="#Application-Insights-で利用するクエリ" class="headerlink" title="Application Insights で利用するクエリ"></a>Application Insights で利用するクエリ</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">traces</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where customDimensions.Category startswith &quot;Host.Triggers.CosmosDB&quot; or operation_Name =~ &quot;&lt;関数名&gt;&quot;</span><br><span class="line">| project timestamp, message, customDimensions</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure>
+
+<p>上記の設定を行った際に記録されるログの例です。</p>
+<h3 id="リスナーの開始"><a href="#リスナーの開始" class="headerlink" title="リスナーの開始"></a>リスナーの開始</h3><p>Azure Functions Host 起動時に、変更フィード プロセッサのリスナーが開始されます。<code>Host.Triggers.CosmosDB</code> カテゴリにて ”Started the listener for ~” というログが記録されます。<br>リスナーが正常に開始されたこと、監視対象のコンテナーとリース コンテナーの情報を確認できます。</p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/listenerstart.png" alt="image.png"></p>
+<h3 id="リースの取得・解放-変更の配信"><a href="#リースの取得・解放-変更の配信" class="headerlink" title="リースの取得・解放,変更の配信"></a>リースの取得・解放,変更の配信</h3><p>変更フィード プロセッサがリースを取得・解放した際に、以下のログ（黄色ハイライト）が記録されます。</p>
+<ul>
+<li>取得: <code>Lease {LeaseToken} was acquired to start processing.</code></li>
+<li>解放: <code>Lease {LeaseToken} was released.</code></li>
+</ul>
+<p>変更フィードから変更を取得して関数に配信した際には下記のログ（青色ハイライト）が記録されます。</p>
+<ul>
+<li><code>Events delivered to lease {LeaseToken}, Continuation {Continuation} with diagnostics {Diagnostics}</code></li>
+</ul>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/changefeed.png" alt="image.png"></p>
+<h3 id="実行ログ"><a href="#実行ログ" class="headerlink" title="実行ログ"></a>実行ログ</h3><p>Cosmos DB の変更フィードが読み込まれることで、トリガーの実行され、<code>Executing~</code> と <code>Executed~</code> が記録されます。</p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/execute.png" alt="image.png"></p>
+<h1 id="並行処理とチューニング"><a href="#並行処理とチューニング" class="headerlink" title="並行処理とチューニング"></a>並行処理とチューニング</h1><h2 id="並行処理の考え方"><a href="#並行処理の考え方" class="headerlink" title="並行処理の考え方"></a>並行処理の考え方</h2><p>Cosmos DB トリガーの並行処理は、<strong>監視対象コンテナーの物理パーティション数</strong>と<strong>ホスト インスタンス数</strong>の関係で決まります。</p>
+<p>変更フィード プロセッサは、監視対象コンテナーの各物理パーティションに対してリースを作成します。1 つのリースは同時に 1 つのホスト インスタンスのみが保持できるため、<strong>物理パーティション数がインスタンス間の並行処理の上限</strong>となります。</p>
+<p>例えば、監視対象コンテナーに 4 つの物理パーティションがある場合：</p>
+<ul>
+<li>インスタンス 1 台: 1 台で 4 つのパーティション全てを処理</li>
+<li>インスタンス 2 台: 各インスタンスが 2 つのパーティションを処理</li>
+<li>インスタンス 4 台: 各インスタンスが 1 つのパーティションを処理</li>
+<li>インスタンス 5 台以上: 4 台が各 1 パーティション、残りのインスタンスはアイドル状態</li>
+</ul>
+<!-- TODO: 図挿入 - パーティションとインスタンスの対応関係の概念図（例: 4 パーティション × 2 インスタンスの分散イメージ） -->
+
+<p>この動作は <a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/change-feed-processor?tabs=dotnet#dynamic-scaling">Azure Cosmos DB 変更フィード プロセッサのドキュメント</a>にも記載されています。</p>
+<h2 id="トリガー動作のチューニング"><a href="#トリガー動作のチューニング" class="headerlink" title="トリガー動作のチューニング"></a>トリガー動作のチューニング</h2><p>トリガー実行の際に受信する最大件数やポーリング間隔、処理を行う開始位置の調整などのトリガーの動作をチューニングする場合は以下の<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?tabs=python-v2,isolated-process,extensionv4,nodejs-v4&pivots=programming-language-csharp#attributes">パラメーター</a>を変更します。</p>
+<table>
+<thead>
+<tr>
+<th>パラメーター</th>
+<th>既定値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MaxItemsPerInvocation</code></td>
+<td>0 (未設定)</td>
+<td>1 回のトリガー実行で受け取るドキュメントの最大件数。未設定 (0) の場合、Azure Cosmos DB SDK の既定動作に従います</td>
+</tr>
+<tr>
+<td><code>FeedPollDelay</code></td>
+<td>5,000 ミリ秒 (5 秒)</td>
+<td>変更フィードのポーリング間隔。現在の変更が全て処理された後に次のポーリングを行うまでの遅延時間</td>
+</tr>
+<tr>
+<td><code>StartFromBeginning</code></td>
+<td><code>false</code></td>
+<td>コンテナーの先頭から変更の読み取りを開始するかどうか。リースの状態が既に存在する場合、この設定は無視されます</td>
+</tr>
+<tr>
+<td><code>StartFromTime</code></td>
+<td>なし</td>
+<td>変更フィードの読み取り開始位置を日時で指定。例: <code>2021-02-16T14:19:29Z</code>。リースの状態が既に存在する場合、この設定は無視されます</td>
+</tr>
+<tr>
+<td><code>PreferredLocations</code></td>
+<td>なし</td>
+<td>geo レプリケーションされたアカウントの優先リージョン（カンマ区切り）</td>
+</tr>
+</tbody></table>
+<p>※ <code>StartFromBeginning</code> と <code>StartFromTime</code> は同時に設定することはできません。ソースコード上で両方が設定された場合は <code>InvalidOperationException</code> がスローされます。また、これらの設定はリース コンテナーにチェックポイント情報がまだ存在しない初回開始時のみ有効です。一度リースの状態が作成された後は、変更しても影響しません。</p>
+<h2 id="スケーリングの仕組み"><a href="#スケーリングの仕組み" class="headerlink" title="スケーリングの仕組み"></a>スケーリングの仕組み</h2><p>従量課金プラン、Flex 従量課金プランおよび Elastic Premium プランでは、Cosmos DB トリガーは<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-target-based-scaling?tabs=v4,csharp#azure-cosmos-db">ターゲットベースのスケーリング</a>によりインスタンス数が制御されます。スケーリング判断には以下の指標が使用されます。</p>
+<ul>
+<li><strong>パーティション数</strong>: リース コンテナーから取得された物理パーティション数</li>
+<li><strong>残りの変更件数 (RemainingWork)</strong>: 変更フィード エスティメーター (<code>ChangeFeedEstimator</code>) を使用して各パーティションの未処理の変更推定数の合計を計算</li>
+</ul>
+<p>ターゲットベースのスケーリングでは、残りの変更件数を同時実行数で割ることにより、必要なワーカー数を直接算出します。同時実行数は <code>MaxItemsPerInvocation</code> が設定されている場合はその値、未設定の場合は既定値 100 が使用されます。算出される target worker count はパーティション数を上限とするため、パーティション数を超える追加インスタンスは処理効率向上に寄与しません。</p>
+<h1 id="よくお問い合わせいただく動作"><a href="#よくお問い合わせいただく動作" class="headerlink" title="よくお問い合わせいただく動作"></a>よくお問い合わせいただく動作</h1><p>弊サポートにてよくお問い合わせいただく事例について紹介します。下記に記載しますログ出力例は、Function Host のランタイム バージョン が v4.1047.100.26071 時点の例となります。バージョンが異なることにより出力内容が異なる可能性がありますことをご留意ください。なお、ログは <a href="#application-insights-%E3%81%A7%E5%88%A9%E7%94%A8%E3%81%99%E3%82%8B%E3%82%AF%E3%82%A8%E3%83%AA">Application Insights で利用するクエリ</a> にて記載したクエリ、及び、以下のエラー詳細を確認するクエリを実行した結果より確認しています。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">exceptions</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| project timestamp, outerMessage, details</span><br></pre></td></tr></table></figure>
+
+<h2 id="デプロイ後に-Cosmos-DB-トリガーが実行されない"><a href="#デプロイ後に-Cosmos-DB-トリガーが実行されない" class="headerlink" title="デプロイ後に Cosmos DB トリガーが実行されない"></a>デプロイ後に Cosmos DB トリガーが実行されない</h2><p>Azure 上に展開した後に動作しない場合の代表的な原因のひとつに、Cosmos DB の接続情報が正しく設定されていないことがあります。下記のようなログが記録されている場合は設定を見直していただくことで、事象が解消する可能性があります。</p>
+<h3 id="監視対象コンテナーまたはリース-コンテナーが存在しない（404-NotFound）"><a href="#監視対象コンテナーまたはリース-コンテナーが存在しない（404-NotFound）" class="headerlink" title="監視対象コンテナーまたはリース コンテナーが存在しない（404 NotFound）"></a>監視対象コンテナーまたはリース コンテナーが存在しない（404 NotFound）</h3><p>変更フィード プロセッサの起動時に <code>CosmosException</code> の <code>NotFound</code> (404) がエラーメッセージとして出力されます。<br>下記のログからリソースが見つからない（404）ことに起因して、リスナー起動に失敗していることを確認できます。</p>
+<p>exceptions ログ：</p>
+<p><img src="/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/404.png" alt="image.png"></p>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>監視対象コンテナーとリース コンテナーが存在することを確認してください</li>
+<li>接続文字列認証をご利用の場合、リース コンテナーを自動作成するには <code>CreateLeaseContainerIfNotExists</code> を <code>true</code> に設定してください。なお、マネージド ID (Entra ID) 認証をご利用の場合はこの設定は使用できないため、リース コンテナーを事前に作成してください</li>
+<li>データベース名、コンテナー名が正しいことを確認してください</li>
+</ul>
+<h3 id="Cosmos-DB-の認証情報が正しくない"><a href="#Cosmos-DB-の認証情報が正しくない" class="headerlink" title="Cosmos DB の認証情報が正しくない"></a>Cosmos DB の認証情報が正しくない</h3><p>Azure Functions にて設定している接続文字列やマネージド ID が不正である場合に、認証エラーが発生します。<br>以下のログはアクセス許可のないマネージド ID 使用した場合に、 401 エラーが記録されたログとなります。</p>
+<p>exceptions ログ：</p>
+<p><img src="/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/401.png" alt="image.png"></p>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>アプリケーション設定にて接続文字列が正しく設定されているか確認してください</li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?tabs=python-v2,isolated-process,extensionv4,nodejs-v4&pivots=programming-language-csharp#identity-based-connections">マネージド ID</a> 認証を利用する場合は、<code>Connection</code> で指定した接頭辞に <code>__accountEndpoint</code> を付与したアプリケーション設定が正しいか確認してください</li>
+</ul>
+<h3 id="Cosmos-DB-側のネットワーク制限による接続エラー"><a href="#Cosmos-DB-側のネットワーク制限による接続エラー" class="headerlink" title="Cosmos DB 側のネットワーク制限による接続エラー"></a>Cosmos DB 側のネットワーク制限による接続エラー</h3><p>Cosmos DB のネットワーク設定（ファイアウォール、VNet サービス エンドポイント、プライベート エンドポイント）により Azure Functions からの接続がブロックされている場合があります。<br>その際には下記のログのように、403 エラーによりアクセスできなかったことが記録されます。</p>
+<p>exceptions ログ：</p>
+<p><img src="/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb/403.png" alt="image.png"></p>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>Cosmos DB アカウントの [ネットワーク] 設定にて、Azure Functions からのアクセスが許可されていることを確認してください</li>
+<li>Azure Functions にて VNet 統合を使用している場合は、NSG の Outbound 通信で Cosmos DB への接続（ポート 443）が許可されているか確認してください</li>
+<li><code>connectionMode</code> が <code>Direct</code> の場合は TCP やポート範囲 10000-20000 への通信も必要となるため、<a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/sdk-connection-modes">接続モード</a>のドキュメントを参照してください</li>
+</ul>
+<h2 id="Cosmos-DB-トリガーが二重実行される"><a href="#Cosmos-DB-トリガーが二重実行される" class="headerlink" title="Cosmos DB トリガーが二重実行される"></a>Cosmos DB トリガーが二重実行される</h2><p>変更フィード プロセッサの仕組みとして、<strong>少なくとも 1 回 (at-least-once)</strong> 処理されますが、以下のシナリオでは同じドキュメントが再度処理される場合があります。</p>
+<ul>
+<li>関数実行中にアプリケーション コードで例外が発生した場合（チェックポイントが更新されない）</li>
+<li>インスタンスのスケーリングやリスタートによりリースが再分散された場合</li>
+<li>変更フィード プロセッサが停止される際にチェックポイントの更新前であった場合</li>
+</ul>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>アプリケーション コードを<a href="https://learn.microsoft.com/ja-jp/azure/architecture/reference-architectures/serverless/event-processing#exactly-once-delivery">冪等（べきとう）に設計</a>してください。同じ変更イベントが再度処理されても副作用が発生しないよう、出力先での重複許容や条件付き書き込み（ETag やバージョン管理の活用）を検討してください</li>
+</ul>
+<h2 id="StartFromBeginning-を変更してもコンテナーの先頭から処理されない"><a href="#StartFromBeginning-を変更してもコンテナーの先頭から処理されない" class="headerlink" title="StartFromBeginning を変更してもコンテナーの先頭から処理されない"></a>StartFromBeginning を変更してもコンテナーの先頭から処理されない</h2><p><code>StartFromBeginning</code> および <code>StartFromTime</code> は、リース コンテナーにチェックポイント情報が存在しない<strong>初回起動時のみ</strong>有効です。</p>
+<p>既にリース状態がある場合にコンテナーの先頭から処理し直したい場合は、以下の対応を検討してください。</p>
+<ol>
+<li><strong><code>LeaseContainerPrefix</code> を新しい値に変更する</strong>（推奨）: 既存のリース コンテナーを維持したまま、新しいプレフィックスで別のリース状態を作成します。他のトリガー関数に影響を与えずに再処理を開始できます</li>
+<li><strong>リース コンテナーを削除して再作成する</strong>: 同じリース コンテナーを利用する<strong>全ての</strong>トリガー関数に影響があるため、本番環境での実施は慎重に検討してください。削除前に、対象リース コンテナーを参照する関数が他にないか確認が必要です</li>
+</ol>
+<blockquote>
+<p><strong>注意</strong>: いずれの方法でも、コンテナーの先頭から全ての変更が再処理されることになります。再処理範囲が広い場合はアプリケーションの負荷や処理時間に影響する可能性があるため、計画的に実施してください。</p>
+</blockquote>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>本ブログでは Cosmos DB トリガー関数の動作及び作成方法について整理しました。Cosmos DB トリガーのトラブルシューティングの参考になれば幸いです。</p>
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><p><a href="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management.html">Azure Functions（関数アプリ）の内部アーキテクチャ概要や関連する用語について</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?tabs=python-v2,isolated-process,extensionv4,nodejs-v4&pivots=programming-language-csharp">Azure Functions の Azure Cosmos DB トリガー</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/change-feed">Azure Cosmos DB の変更フィード</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/change-feed-processor?tabs=dotnet">Azure Cosmos DB の変更フィード プロセッサ</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-target-based-scaling?tabs=v4,csharp#azure-cosmos-db">Azure Functions の Azure Cosmos DB トリガーでのターゲットベースのスケーリング</a></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2026 年 4 月 16 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../../2023/09/15/what-is-sync-trigger.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure Functions のトリガーの同期とは</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html">プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &#34;Failed to fetch&#34; が表示される場合の対処方法</a>
+          </li>
+        
+          <li>
+            <a href="">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+      <!-- <ul class="tag-list"></ul> -->
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 16.15px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.69px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.54px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Service/" style="font-size: 19.23px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.31px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 13.85px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.77px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.77px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.77px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.08px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.77px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.77px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 14.62px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.77px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.77px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.54px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.77px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.77px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.77px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.77px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.31px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.77px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.46px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.92px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.54px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.77px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15.38px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
