@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>App Service 証明書の更新に伴うドメイン検証作業の必要について | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本記事は App Service 証明書の自動更新に伴うドメイン検証 (有効期間 395 日) 作業の必要について の更新版です。  2026 年 3 月より、CA&#x2F;Browser フォーラム (SC-081v3) の業界要件に準拠するため、以下の変更が適用されました。  ドメイン検証の有効期間が 198 日に短縮されました。これにより、App Service 証明書の自動更新をオンに">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App Service 証明書の更新に伴うドメイン検証作業の必要について">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="本記事は App Service 証明書の自動更新に伴うドメイン検証 (有効期間 395 日) 作業の必要について の更新版です。  2026 年 3 月より、CA&#x2F;Browser フォーラム (SC-081v3) の業界要件に準拠するため、以下の変更が適用されました。  ドメイン検証の有効期間が 198 日に短縮されました。これにより、App Service 証明書の自動更新をオンに">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert-overview.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/Items.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert-screenshot.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert-timeline.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/domain_verification_notify_email.jpg">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert1.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert2.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert3.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert4.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert5.png">
+<meta property="article:published_time" content="2026-04-24T10:55:23.056Z">
+<meta property="article:modified_time" content="2026-04-24T10:53:28.276Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="App Service 証明書">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert-overview.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2026/04/21/App-Service-Certificate-Renewal" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      App Service 証明書の更新に伴うドメイン検証作業の必要について
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2026-04-24T10:55:23.056Z" itemprop="datePublished">2026-04-24</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+cd1a3a23-bb8b-5c6f-9159-8722503e4230%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BApp+Service+%E8%A8%BC%E6%98%8E%E6%9B%B8%E3%81%AE%E6%9B%B4%E6%96%B0%E3%81%AB%E4%BC%B4%E3%81%86%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3%E6%A4%9C%E8%A8%BC%E4%BD%9C%E6%A5%AD%E3%81%AE%E5%BF%85%E8%A6%81%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2026%2F04%2F21%2FApp-Service-Certificate-Renewal.html%29%0A*+Content+Source%3A+%5Barticles%2F2026%2F04%2F21%2FApp-Service-Certificate-Renewal.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2026%2F04%2F21%2FApp-Service-Certificate-Renewal.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal.html" data-id="cuidNvH_iS7LQBDXSryAyhjIJ" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p><strong>本記事は <a href="https://azure.github.io/jpazpaas/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html">App Service 証明書の自動更新に伴うドメイン検証 (有効期間 395 日) 作業の必要について</a> の更新版です。</strong></p>
+</blockquote>
+<p>2026 年 3 月より、CA&#x2F;Browser フォーラム (<a href="https://cabforum.org/2025/04/11/ballot-sc081v3-introduce-schedule-of-reducing-validity-and-data-reuse-periods/">SC-081v3</a>) の業界要件に準拠するため、以下の変更が適用されました。</p>
+<ul>
+<li><strong>ドメイン検証の有効期間が 198 日に短縮</strong>されました。これにより、App Service 証明書の自動更新をオンにしていても、<strong>概ね年 2 回程度のドメイン検証が必要</strong>となります。</li>
+<li><strong>証明書の有効期間が 198 日未満に短縮</strong>されました。ただし、Azure App Service が重複する証明書を追加コストなしで自動的に発行するため、<strong>1 年間の証明書カバレッジは維持されます。</strong></li>
+<li><strong>2026 年 3 月より前に完了したドメイン検証は再利用できません。</strong> 2026 年 3 月以降の証明書の発行・更新には、新たにドメイン所有権の検証が必要です。</li>
+</ul>
+<p>この記事では、App Service 証明書を継続的に利用される際に必要な “更新” と “検証” 作業の方法およびそれらを実施いただける期間についてご紹介します。</p>
+<br>
+
+
+<ul>
+<li><a href="#task">実施いただく必要がある作業</a></li>
+<li><a href="#background">背景</a></li>
+<li><a href="#expected">想定される事象</a></li>
+<li><a href="#schedule">App Service 証明書の更新およびドメイン検証を実施できる期間の例</a></li>
+<li><a href="#operational-notes">2026 年 3 月以降の運用上の注意事項</a></li>
+<li><a href="#appendix">Appendix : 検証方法について</a></li>
+<li><a href="#reference">参考ドキュメント</a></li>
+</ul>
+<br>
+
+<h1 id="実施いただく必要がある作業"><a href="#実施いただく必要がある作業" class="headerlink" title="実施いただく必要がある作業"></a><a id="task">実施いただく必要がある作業</a></h1><p>App Service 証明書の更新時、前回のドメイン検証の有効期間 (<strong>198 日</strong>) を過ぎていた場合、お客さまにて再度ドメイン検証を行っていただく必要があります。</p>
+<blockquote>
+<p><strong>重要:</strong> 2026 年 3 月より前に完了したドメイン検証は再利用できません。2026 年 3 月以降に証明書の発行・更新・キー更新を行う場合は、新たにドメイン検証を完了する必要があります。</p>
+</blockquote>
+<p>ドメインの再検証は、前回のドメイン検証を行った日の <strong>198 日後</strong> から行うことができます。</p>
+<p>そのため、”前回のドメイン検証の 198 日後” から “App Service 証明書の更新作業” までの間にドメイン検証を行う必要があります。</p>
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert-overview.png" alt="cert-overview.png"></p>
+<!--
+::: mermaid
+gantt
+    title App Service 証明書の更新とドメイン検証の概要
+    dateFormat YYYY-MM-DD
+    axisFormat %Y/%m
+    todayMarker off
+
+    section 検証の有効期間 (198 日)
+    発行＆検証                               :milestone, m0, 2026-04-01, 0d
+    検証の有効期間                            :active, dv1, 2026-04-01, 198d
+    自動更新 (検証不要)                       :milestone, m1, 2026-09-14, 0d
+
+    section お客さまにてドメイン検証を行える期間
+    お客さまにてドメイン検証を行える期間       :crit, action1, 2026-10-16, 2027-02-26
+    発行から1年後の自動更新 (★再検証必要)     :milestone, m2, 2027-02-26, 0d
+:::
+-->
+
+<br>
+
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a><a id="background">背景</a></h1><h2 id="更新"><a href="#更新" class="headerlink" title="&lt; 更新 &gt;"></a>&lt; 更新 &gt;</h2><p>App Service 証明書を利用する場合、App Service 証明書の有効期限は既定で 1 年となっています。App Service 証明書は自動更新による機能、または手動で更新することができます。</p>
+<p>2026 年 3 月以降、CA&#x2F;Browser フォーラムの業界要件に準拠するため、<strong>App Service 証明書は有効期間が 198 日未満で発行されるようになりました。</strong> 1 年間の証明書カバレッジを維持するために、Azure App Service は重複する証明書を追加コストなしで自動的に発行します。App Service 証明書が Azure App Service 内でのみ使用されている場合、アクションは必要ありません。<br><br>今後、CA&#x2F;Browser フォーラムの業界要件に基づき、証明書の最大有効期間は今後さらに短縮される可能性はございますが、現時点では特に予定は決まっておりません。詳細が決まりましたら<a href="#reference">参考ドキュメント</a>などに記載の、弊社公式ドキュメントにて案内させていただきます。</p>
+<p>なお、App Service 証明書には以下の 2 つの期限が存在する点にご注意ください。</p>
+<table>
+<thead>
+<tr>
+<th>ポータル上の項目</th>
+<th>対象</th>
+<th>期限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>End of purchased period</td>
+<td>App Service 証明書リソース (Azure リソース) としての有効期限 (課金単位)</td>
+<td>1 年</td>
+</tr>
+<tr>
+<td>Validity Period</td>
+<td>実際の TLS 通信に使用される証明書の有効期限</td>
+<td>198 日 (2026 年 3 月以降)</td>
+</tr>
+</tbody></table>
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/Items.png" alt="Items.png"></p>
+<p>内部で利用される証明書 (実際の TLS 通信に使用される証明書) が業界要件に準拠するために 198 日の有効期限となりますが、App Service 証明書の Azure リソースとしての有効期限 (課金単位) は従来通り 1 年です。</p>
+<br>
+
+<h2 id="ドメイン検証"><a href="#ドメイン検証" class="headerlink" title="&lt; ドメイン検証 &gt;"></a>&lt; ドメイン検証 &gt;</h2><p>App Service 証明書の発行時において、証明するドメインの所有権を検証するためにドメイン検証を行う必要があります。</p>
+<p>また、App Service 証明書を更新する際にも、検証の有効期間 (<strong>198日</strong>) を過ぎていた場合には再度ドメイン検証が必要となります。</p>
+<p>App Service 証明書のドメイン検証は自動化されていないため、定期的にドメイン検証を行う必要があります。ドメイン検証の方法については <a href="#appendix">Appendix</a> にてご紹介します。</p>
+<blockquote>
+<p><strong>ドメイン検証の有効期限の確認について:</strong> ドメイン検証の有効期限 (何日にドメイン検証期限が満了するか) は Azure ポータル上では直接確認することができません。ただし、ドメイン検証が必要になった際に通知を受け取ることは可能です。詳細は <a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-ssl-app-service-certificate?tabs=portal#use-azure-advisor-for-app-service-certificates">Azure Advisor を利用した App Service 証明書の通知</a> をご参照ください。</p>
+</blockquote>
+<br>
+
+<h1 id="想定される事象"><a href="#想定される事象" class="headerlink" title="想定される事象"></a><a id="expected">想定される事象</a></h1><p>ドメインが検証されていない状態では、App Service 証明書の [概要] ブレードにおいて証明書の状態が “発行の保留中” と表示され、更新が保留されます。</p>
+<p>この場合、更新時もしくは更新前にお客さまにてドメイン検証を行う必要があります。</p>
+<blockquote>
+<p><strong>注意:</strong> ドメイン検証を完了しないと、証明書の発行または更新が失敗し、証明書の有効期限が切れ、サービスが中断される可能性があります。<br>ただし、<strong>ドメイン検証の有効期限が切れただけでは、即座にサービスに影響することはありません。</strong> 証明書の自動更新試行時にドメイン検証が未完了の場合に更新が保留されます。更新は継続して試行されるため、証明書の有効期限内にドメイン検証を完了すれば更新が実行されます。</p>
+</blockquote>
+<br>
+
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert-screenshot.png" alt="cert-screenshot.png"></p>
+<br>
+
+<h1 id="App-Service-証明書の更新およびドメイン検証を実施できる期間の例"><a href="#App-Service-証明書の更新およびドメイン検証を実施できる期間の例" class="headerlink" title="App Service 証明書の更新およびドメイン検証を実施できる期間の例"></a><a id="schedule">App Service 証明書の更新およびドメイン検証を実施できる期間の例</a></h1><p>2026 年 3 月以降の動作として、App Service 証明書の更新およびドメイン検証を実施できる期間について、以下の図で具体例を示します。</p>
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert-timeline.png" alt="cert-timeline.png"></p>
+<!--
+::: mermaid
+%%{init: {'gantt': {'leftPadding': 100}}}%%
+gantt
+    title App Service 証明書のドメイン検証タイムライン
+    dateFormat YYYY-MM-DD
+    axisFormat %Y/%m
+    todayMarker off
+
+    section ドメイン検証
+    検証の有効期間 (198 日)       :active, verify1, 2026-04-01, 198d
+
+    section 証明書 (1 枚目)
+    発行〜期限                   :cert1, 2026-04-01, 198d
+
+    section 証明書 (2 枚目)
+    自動更新 (検証不要)          :cert2, 2026-09-14, 198d
+
+    section 証明書 (3 枚目)
+    自動更新 (★再検証必要)      :crit, cert3, 2027-02-26, 198d
+
+    section マイルストーン
+    ドメイン検証実施             :milestone, 2026-04-01, 0d
+    198 日経過ライン             :milestone, 2026-10-16, 0d
+    自動更新試行 (★再検証必要)  :milestone, 2027-02-26, 0d
+    2枚目 証明書有効期限         :milestone, 2027-03-31, 0d
+:::
+-->
+
+<br>
+
+<ul>
+<li><strong>App Service 証明書の購入 : 2026 年 4 月 1 日</strong><ul>
+<li>App Service 証明書の購入時、ドメイン検証が必要となります。</li>
+<li>初回証明書が発行されます (有効期間 最大 198 日) 。</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<ul>
+<li><strong>重複証明書の自動発行 : 2026 年 9 月頃</strong><ul>
+<li>初回証明書の有効期限前に、Azure App Service が重複する証明書を自動的に発行します。</li>
+<li>2026 年 9 月時点では、購入時に行ったドメイン検証から約 167 日であり、検証の有効期間 (198 日) 内であるため、ドメイン検証を行う必要はありません。</li>
+<li>重複証明書が発行されることで、1 年間の証明書カバレッジが維持されます。</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<ul>
+<li><strong>ドメイン検証の有効期間の終了 : 2026 年 10 月 16 日頃</strong><ul>
+<li>ドメイン検証を購入時に行ってから 198 日が経過したため、ドメイン検証の有効期間が終了します。</li>
+<li>2026 年 10 月 16 日から次の重複証明書発行時までの間に、以下のキー更新の手順でドメイン検証を行うことも出来ます。<ol>
+<li>Azure Portal 上 App Service 証明書の「キー更新と同期」メニューから「キー更新」をクリックしてキー更新を実行します。</li>
+<li>App Service 証明書の「証明書の構成」メニューよりドメイン検証用のトークンが新しく発行されるか確認します。新しいトークンを確認できましたら、ドメイン検証作業は、App Service 証明書を購入時のドメイン検証と同じ作業となります。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<ul>
+<li><strong>次の証明書発行時 : 2027 年 3 月頃</strong><ul>
+<li>Azure App Service が次の証明書の発行を試行します。</li>
+<li>購入時のドメイン検証から 198 日を超過しているため、<strong>ドメインが検証されていない状態となり更新が保留されます。</strong></li>
+<li>この場合、<strong>お客さまにてドメイン検証を行っていただく</strong>ことで証明書の発行が再開されます。ドメイン検証作業は、App Service 証明書を購入時のドメイン検証と同じ作業となり、App Service 証明書の「証明書の構成」メニューから実施できます。</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<ul>
+<li><strong>ドメイン検証の実施後</strong><ul>
+<li>ドメイン再検証が完了すると、新たに 198 日間ドメイン検証が有効となります。</li>
+<li>以降も同様に、198 日間の有効期間が過ぎた後の証明書発行時には、再度ドメイン検証が必要となります。</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<h1 id="2026-年-3-月以降の運用上の注意事項"><a href="#2026-年-3-月以降の運用上の注意事項" class="headerlink" title="2026 年 3 月以降の運用上の注意事項"></a><a id="operational-notes">2026 年 3 月以降の運用上の注意事項</a></h1><h2 id="自動更新を-ON-にしている場合の動作"><a href="#自動更新を-ON-にしている場合の動作" class="headerlink" title="&lt; 自動更新を ON にしている場合の動作 &gt;"></a>&lt; 自動更新を ON にしている場合の動作 &gt;</h2><table>
+<thead>
+<tr>
+<th>状態</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>証明書の更新開始時の動作</td>
+<td>証明書の有効期限の <strong>32 日前</strong>になると更新が試行される</td>
+</tr>
+<tr>
+<td>証明書の更新保留時の動作</td>
+<td>32 日前のタイミングでドメイン検証が未完了の場合、更新は保留されるが<strong>継続して試行される</strong>ため、有効期限内にドメイン検証を完了すれば更新が実行される</td>
+</tr>
+<tr>
+<td>更新期限切れ時の動作</td>
+<td>ドメイン検証が証明書の有効期限内に完了しなかった場合、証明書が失効する (ドメイン検証の有効期限が切れただけでは、即座にサービスに影響しません)</td>
+</tr>
+</tbody></table>
+<br>
+
+<h2 id="自動更新を-OFF-にしている場合の動作"><a href="#自動更新を-OFF-にしている場合の動作" class="headerlink" title="&lt; 自動更新を OFF にしている場合の動作 &gt;"></a>&lt; 自動更新を OFF にしている場合の動作 &gt;</h2><table>
+<thead>
+<tr>
+<th>状況</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>App Service 証明書の期限内の場合</td>
+<td><strong>重複する証明書 (オーバーラップ) は自動的に発行される</strong>。購入済みの App Service 証明書としての期間をカバーするため</td>
+</tr>
+<tr>
+<td>重複証明書の発行時にドメイン検証期間が失効している場合</td>
+<td>ドメイン検証を完了する必要がある</td>
+</tr>
+<tr>
+<td>重複証明書の期限が切れた場合</td>
+<td>新しい 1 年分の証明書は発行・課金されない</td>
+</tr>
+<tr>
+<td>翌年も App Service 証明書を利用したい場合</td>
+<td><strong>手動更新が必要</strong>。手動更新により次の 1 年間が延長される</td>
+</tr>
+</tbody></table>
+<br>
+
+<h2 id="証明書のエクスポートについて"><a href="#証明書のエクスポートについて" class="headerlink" title="&lt; 証明書のエクスポートについて &gt;"></a>&lt; 証明書のエクスポートについて &gt;</h2><p>App Service 証明書を Azure App Service の外部でエクスポートして使用している場合、証明書の有効期間が 198 日未満に短縮されたため、<strong>証明書の再エクスポートがより頻繁に必要</strong>となります。</p>
+<p>App Service 証明書が Azure App Service 内でのみ使用されている場合、プラットフォームが証明書を自動的に同期して更新するため、エクスポートに関するアクションは必要ありません。</p>
+<br>
+
+<h2 id="その他の注意事項"><a href="#その他の注意事項" class="headerlink" title="&lt; その他の注意事項 &gt;"></a>&lt; その他の注意事項 &gt;</h2><p>その他の注意事項については以下の公式ドキュメントをご参照ください。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/app-service/industry-wide-certificate-changes">Azure App Service に影響する業界全体の証明書の変更</a></li>
+</ul>
+<br>
+
+<h2 id="補足"><a href="#補足" class="headerlink" title="&lt; 補足 &gt;"></a>&lt; 補足 &gt;</h2><p>ドメイン検証の確認が必要となる場合、以下のようにメールの通知が届きます。<br><br></p>
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/domain_verification_notify_email.jpg" alt="domain_verification_notify_email.jpg"></p>
+<br>
+
+<h1 id="Appendix-検証方法について"><a href="#Appendix-検証方法について" class="headerlink" title="Appendix : 検証方法について"></a><a id="appendix">Appendix : 検証方法について</a></h1><p>ドメイン検証の手法については上記資料において紹介されていますが、詳細な内容については実際に検証を行わなければ確認することができません。そのため、付録としてドメイン検証の方法についてご紹介します。</p>
+<p>ドメイン検証方法は、&lt; App Service &gt; &lt; ドメイン &gt; &lt; メール &gt; &lt; 手動 &gt;の 4 種類がサポートされています。ここで、&lt;手動&gt; は 2 通りの方法があります。</p>
+<p>ドメイン検証では、App Service 証明書発行機関から発行されたトークン値をもとに検証が行われます。<br>このトークン値は、ドメイン検証の度に新たに発行される値となるため、過去のトークン値は不要となります。</p>
+<h2 id="App-Service"><a href="#App-Service" class="headerlink" title="&lt; App Service &gt;"></a>&lt; App Service &gt;</h2><p>該当ドメインが既に同一のサブスクリプション内の App Service で使用されている場合、 Azure Portal 上で [確認] を選択することで手動 (2. HTML Web ページ) の手順が自動化されドメイン所有権の検証が実施されます。</p>
+<br>
+
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert1.png" alt="cert1.png"></p>
+<br>
+
+<h2 id="ドメイン"><a href="#ドメイン" class="headerlink" title="&lt; ドメイン &gt;"></a>&lt; ドメイン &gt;</h2><p>該当ドメインが Azure で購入した App Service ドメインの場合、Azure Portal 上で [確認] を選択することで手動 (1. DNS TXT レコード) の手順が自動化されドメイン所有権の検証が実施されます。</p>
+<br>
+
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert2.png" alt="cert2.png"></p>
+<br>
+
+<h2 id="メール"><a href="#メール" class="headerlink" title="&lt; メール &gt;"></a>&lt; メール &gt;</h2><p>該当ドメインを使用する以下メールアドレスにメールが送信されます。受信したメール内のリンクをクリックすることでドメイン所有権の検証が実施されます。<br>なお、メールアドレスを任意のアドレスとすることは叶いません。</p>
+<ul>
+<li>administrator@&lt;該当ドメイン&gt;</li>
+<li>hostmaster@&lt;該当ドメイン&gt;</li>
+<li>admin@&lt;該当ドメイン&gt;</li>
+<li>webmaster@&lt;該当ドメイン&gt;</li>
+<li>postmaster@&lt;該当ドメイン&gt;</li>
+</ul>
+<br>
+
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert3.png" alt="cert3.png"></p>
+<br>
+
+<h2 id="手動-1-DNS-TXT-レコード"><a href="#手動-1-DNS-TXT-レコード" class="headerlink" title="&lt; 手動 (1. DNS TXT レコード) &gt;"></a>&lt; 手動 (1. DNS TXT レコード) &gt;</h2><p>DNS サーバーの該当ドメインに対して、以下の DNS TXT レコードを追加することでドメイン所有権の検証が実施されます。</p>
+<ul>
+<li>名前 : @</li>
+<li>種類 : TXT レコード</li>
+<li>値 : ドメイン検証トークン</li>
+</ul>
+<br>
+
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert4.png" alt="cert4.png"></p>
+<br>
+
+<h2 id="手動-2-HTML-Web-ページ"><a href="#手動-2-HTML-Web-ページ" class="headerlink" title="&lt; 手動 (2. HTML Web ページ) &gt;"></a>&lt; 手動 (2. HTML Web ページ) &gt;</h2><p>ドメイン検証トークンを記載した HTML ファイルを作成し、 該当ドメインの所定のパスに配置します。このファイルをインターネットから参照できるようにすることで、ドメイン所有権の検証が実施されます。具体的な配置先ファイル名は Azure Portal の「証明書の構成」メニューに表示されます。</p>
+<br>
+
+<p><img src="/jpazpaas/2026/04/21/App-Service-Certificate-Renewal/cert5.png" alt="cert5.png"></p>
+<br>
+
+
+<br>
+
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a><a id="reference">参考ドキュメント</a></h1><ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/app-service/industry-wide-certificate-changes">Azure App Service に影響する業界全体の証明書の変更</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/app-service/configure-ssl-certificate?tabs=apex,portal#verify-domain-ownership">Azure App Service で TLS&#x2F;SSL 証明書を追加および管理する</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/security/fundamentals/managed-tls-changes">マネージド TLS 機能の変更</a></li>
+</ul>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2026 年 4 月 22 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2026/04/21/App-Service-Certificate-Renewal.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="../16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="">App Service 証明書の更新に伴うドメイン検証作業の必要について</a>
+          </li>
+        
+          <li>
+            <a href="../16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+          <li>
+            <a href="../../03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+      <!-- <ul class="tag-list"></ul> -->
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/02/">2026 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 14.17px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -2,9 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -13,7 +13,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2026/04/01/notes-on-webjobs-delete-and-deploy.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -22,16 +31,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2026/01/27/ACS-Email-quota-increase.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -40,16 +40,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2026/02/17/How-to-resolve-failed-to-fetch-on-azure-ai-search-when-using-private-endpoint.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2026/01/16/i-can-listblobs-but-i-cant-deleteblobs.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2026/01/27/ACS-Email-quota-increase.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -58,34 +58,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/12/22/How-to-resolve-the-document-key-character-limit-error.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2025/09/08/ACS-Email-Onboarding-FAQ.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2026/01/16/i-can-listblobs-but-i-cant-deleteblobs.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2025/09/08/Azure-functions-trigger-and-binding-series-servicebus.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2025/07/31/Potential-breaking-change-for-older-versions.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -94,7 +76,34 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/09/05/Migration-of-functionscdn.azureedge.net-Subdomain.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2025/09/08/ACS-Email-Onboarding-FAQ.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2025/09/08/Azure-functions-trigger-and-binding-series-servicebus.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2025/07/31/Potential-breaking-change-for-older-versions.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -103,25 +112,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/07/16/Azure-functions-dotnet-isolated-application-insights-filtering-dependency-log.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2025/05/07/Azure-functions-dotnet-isolated-application-insights-key-considerations.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2025/04/22/ai-search-analyzer-and-queries-using-regular-expression.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -130,7 +121,25 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/05/07/Azure-App-Service-Notifications-Improvements.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2025/05/07/Azure-functions-dotnet-isolated-application-insights-key-considerations.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2025/04/22/ai-search-analyzer-and-queries-using-regular-expression.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -139,7 +148,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/04/21/general-perspective-in-IaC.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -148,7 +157,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -157,7 +166,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/02/26/How-to-authenticate-with-managedID-when-calling-AzureFunctionApp-with-AISearch-customskills.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -166,7 +175,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/02/26/Azure-functions-trigger-and-binding-series-iothub.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -175,16 +184,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/02/26/Azure-functions-trigger-and-binding-series-queue.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2025/02/26/Azure-functions-trigger-and-binding-series-blob.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -193,7 +193,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2025/02/14/How-to-Handle-Errors-When-Retrieving-Large-Documents-Using-AI-Search.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2025/02/26/Azure-functions-trigger-and-binding-series-blob.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -202,7 +211,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/12/06/Default-root-certificate-on-Windows-App-Service.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -211,7 +220,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/09/25/How-to-Check-and-Change-the-Minimum-TLS-Version-for-Azure-Cache-for-Redis.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -220,16 +229,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/08/30/migrate-azure-functions-inprocess-to-isolated-using-slot.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -238,7 +238,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/08/16/search-ai-skills-on-private-environment.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2024/08/30/How-to-configure-or-update-API-Management-custom-domain-and-the-effect.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -247,16 +256,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/08/16/Use%20Azure%20AD%20B2C%20authenticating%20API%20in%20API%20Management.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/08/05/change-lease-status-from-broken-to-available.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -265,7 +265,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/07/30/How-to-use-GithubApp-for-self-hosted-runner-on-ContainerApps-Job.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2024/08/05/change-lease-status-from-broken-to-available.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -274,7 +283,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/07/30/How-to-create-custom-policy.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -283,7 +292,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/05/23/behavior-when-accessing-blob-that-is-being-uploaded.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -292,7 +301,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/05/27/Logs-of-python-logging-library-recorded-in-AppServiceConsoleLogs.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -301,7 +310,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/04/24/down-of-availability-metric-of-storage-account.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -310,7 +319,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/05/08/how-to-check-tls-version-of-storage-accounts.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -319,7 +328,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/04/24/Calculate-the-size-or-capacity-of-Table-storage.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -328,16 +337,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/04/09/arm-Azure-Export-for-Terraform.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/03/26/Prevent-crashes-Kudu.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -346,7 +346,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/04/01/azure-functions-inprocess-end-of-support-FVN7-7PZ.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2024/03/26/Prevent-crashes-Kudu.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -355,7 +364,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/03/13/Troubleshoot%20intermittent%20connectivity%20issue%20in%20azure%20app%20service.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -364,7 +373,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/03/13/Managing-Node.js-Minor-Version-in-Windows-App-Service-Without-Hardcoding.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -373,7 +382,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/03/13/How-to-get-data-from-storage-via-FW-in-AI-Search.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -382,7 +391,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/03/12/DNS%20records%20for%20internal%20container%20app.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -391,7 +400,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/02/29/Troubleshoot%20Network%20Connectivity%20issues%20using%20Network%20Troubleshooter.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -400,7 +409,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/02/26/Procedure-for-creating-a-Storage-Service-SAS-token.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -409,16 +418,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/02/22/Azure-functions-trigger-and-binding-series-timer.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/02/22/Azure-functions-trigger-and-binding-series-cover.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -427,7 +427,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/02/22/Azure-functions-trigger-and-binding-series-eventhubs.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2024/02/22/Azure-functions-trigger-and-binding-series-cover.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -436,16 +445,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/02/19/Procedure-for-creating-a-Storage-Account-SAS-token.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/02/13/Migration-stv1-to-stv2-for-APIM.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -454,25 +454,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/02/13/how-to-enable-diagnostic-setting-for-azure-storage.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2024/01/30/Improvements-to-DNS-configuration-and-name-resolution-in-App-Service.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2024/02/13/Migration-stv1-to-stv2-for-APIM.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/01/31/Failed-to-create-Functions-when-selecting-an-existing-storage-account-from-Azure-Portal.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -481,16 +472,25 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/02/09/Diagnostics-tools-for-App-Service-on-Linux-Node.js-apps.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2024/01/26/change-paas-blog-url.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2024/01/31/Failed-to-create-Functions-when-selecting-an-existing-storage-account-from-Azure-Portal.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2024/01/30/Improvements-to-DNS-configuration-and-name-resolution-in-App-Service.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -499,7 +499,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/01/29/search-microsoft-entra-web-token.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2024/01/26/change-paas-blog-url.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -508,16 +517,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/01/26/Howto-troubleshoot-network-connectivity-with-api.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/01/25/backup-search-service.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -526,7 +526,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2024/01/25/backup-search-service.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -535,25 +544,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2024/01/19/Azure-Role-for-using-Azure-Email-Services.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/01/05/Do-not-include-confidential-information-in-your-SR.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2024/01/05/appservice-windows-mount-byos-over-vnet.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -562,16 +553,25 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/12/27/Running-gRPC-with-Container-Apps.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2023/11/28/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2024/01/05/Do-not-include-confidential-information-in-your-SR.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2024/01/05/appservice-windows-mount-byos-over-vnet.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -580,7 +580,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/11/29/check-app-service-certificate-expiration-with-azure-resource-graph-part2.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2023/11/28/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -589,7 +598,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/11/10/Troubleshooting-ingress-issues-on-Azure-Container-Apps.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -598,7 +607,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/11/16/Container-Apps-and-failed-revisions.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -607,16 +616,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/11/20/cognitive-search-synonyms.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2023/11/09/how-to-check-email-logs-on-azure-communication-services.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -625,7 +625,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/11/07/azure-container-apps-testing-DNS-connectivity.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -634,16 +634,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/11/08/difference-between-flat-and-hierarchical-namespaces.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2023/11/09/how-to-check-email-logs-on-azure-communication-services.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -652,7 +652,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/10/18/Singleton-lock-renewal-failed-for-blob-logs-in-Functions.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2023/10/23/access-to-easyauth-enabled-appservice-or-functions.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -661,7 +670,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/09/15/what-is-sync-trigger.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -670,7 +679,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -679,7 +688,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/08/17/Differences-in-authentication-methods-when-accessing-BLOB.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -688,7 +697,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/07/27/AppServiceOnLinux-Log.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -697,7 +706,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/07/24/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-2.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -706,7 +715,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/07/06/How-to-add-domain-to-Email-Communication-Service.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -715,7 +724,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/07/03/Introduction-to-AppService-Networking.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -724,16 +733,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/06/28/Get-CLR-Profiler-in-AppService.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2023/06/20/cognitive-search-unexpected-search-results.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -742,7 +742,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/06/23/2023-06-09-Connect-an-email-domain-to-a-Communication-Service-Resource.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2023/06/20/cognitive-search-unexpected-search-results.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -751,7 +760,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/06/15/How-To-Expire-SAS-Token.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -760,7 +769,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/06/01/how-to-download-multiple-blobs.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -769,7 +778,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/31/Access-to-EasyAuth-enabled-App-Service-via-Azure-Front-Door.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -778,7 +787,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/25/Kudu-login-faq.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -787,7 +796,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/22/eventhubs-standard-throughput-units.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -796,7 +805,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/19/About-update-for-default-security-settings-for-new-Azure-Storage-accounts-LVK-RT8.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -805,7 +814,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/17/The-Ultimate-Guide-to-Running-Healthy-Apps-in-the-Cloud.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -814,7 +823,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/15/queuetrigger-visibility-timeout.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -823,7 +832,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/12/preview-events-of-eventhubs.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -832,7 +841,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/11/what-is-appserviceauthentication.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -841,7 +850,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/10/Inside-the-Azure-App-Service-Architecture.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -850,7 +859,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/05/10/Appservice-components.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -859,16 +868,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/04/25/how-to-check-azurefunctions-runtimeis-unreachable.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2023/04/17/AppService-will-no-longer-be-placed-in-DISASTER-RECOVERY-MODE.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -877,7 +877,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/04/21/Storage_EventGrid_Servicebus_FunctionApps_Connecting_to_PEP.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2023/04/17/AppService-will-no-longer-be-placed-in-DISASTER-RECOVERY-MODE.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -886,7 +895,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/04/13/Customize-Nginx-On-PHP-8.X.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -895,7 +904,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/04/05/How-to-Troubleshoot-Durable-Functions.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -904,7 +913,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/10/azure-ad-b2c-apgw.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -913,7 +922,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/10/How-to-Verify-the-Contents-of-33-or-More-Messages-in-Queue-Storage.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -922,7 +931,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/10/AppService-How-to-bind-AppService-Certificate-with-NewUI.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -931,7 +940,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/08/How-to-put-newline-in-app-settings-of-App-Service.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -940,7 +949,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/08/AppServiceLinux-robots933456-in-logs.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -949,7 +958,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/07/Troubleshooting-4xx-and-5xx-Errors-with-Azure-APIM-services-Part-1.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -958,7 +967,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/07/FunctionAndAPIM-FundamentalTroubleShootingSteps.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -967,7 +976,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/07/Debug-JWT-validation-on-APIM.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -976,7 +985,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/03/02/LogSampling-OnAzureFunctions.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -985,7 +994,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/02/21/Use-AzureFrontDoor-to-restrict-access-to-StorageAccounts-to-HTTP-Headers.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -994,16 +1003,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1012,7 +1012,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/02/15/Docker-User-Namespace-remapping-issues.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1021,7 +1030,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1030,7 +1039,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/01/20/Static-web-apps-how-to-restrict-access.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1039,7 +1048,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/01/19/How-to-display-ARM-account-on-VI-portal.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1048,7 +1057,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2023/01/18/How-To-Move-Diagnostics-logs-to-Archive-tier.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1057,7 +1066,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/12/29/Alternative-for-using-HttpPlatformHandler-in-Java-app.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1066,7 +1075,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/12/19/taking-fullFREB-in-App-Service.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1075,7 +1084,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/12/16/How-to-restart-unhealty-instance.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1084,7 +1093,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/12/16/How-to-change-TIMEZONE-in-AppService-logs.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1093,7 +1102,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/12/05/2022-10-14-Graceful-Shutdown-Azure-Functions.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1102,7 +1111,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/12/02/Tips-for-App-Service-authentication.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1111,7 +1120,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/11/15/PHP7.4_EoL.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1120,16 +1129,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/11/28/How-to-use-Kudu-site.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2022/10/28/Developing-Powershell-script-on-Azure-Functions.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1138,7 +1138,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/10/18/2022-05-07-ASEv3%20VS%20ASEv2%20-%20Difference%20Overview%20(in%20Japanese).html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2022/10/28/Developing-Powershell-script-on-Azure-Functions.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1147,7 +1156,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/09/26/2022-09-22-How-to-check-IP-address-of-access-error.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1156,7 +1165,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/09/16/How-to-import-ASC-to-AppGW.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1165,7 +1174,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/09/12/2022-09-09-Types-of-BLOB-for-Lifecycle-Management.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1174,7 +1183,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/09/09/2022-09-08-BLOB-public-access.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1183,7 +1192,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/09/06/RBAC-custom-role-with-minimum-permissions.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1192,7 +1201,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1201,7 +1210,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/08/09/how-to-check-elastic-premium-plan-function-app-allocated-instance-counts-history.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1210,7 +1219,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/07/01/how-to-use-self-hosted-gateway-with-internal-vnet-apim.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1219,16 +1228,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/06/24/retire-functionsv2v3-MT12-HD0-faq.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2022/06/07/PHP-minor-update.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1237,16 +1237,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/06/17/upgrade-azure-functions-runtime-from-v3-to-v4-using-slot.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2022/05/16/Compute-Platform-Versions-for-Azure-API-management-service.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2022/06/07/PHP-minor-update.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1255,7 +1255,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/05/20/protect-functions-storage.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2022/05/16/Compute-Platform-Versions-for-Azure-API-management-service.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1264,7 +1273,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/05/11/How-to-stream-video-with-capture-on-Azure-Media-Services.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1273,16 +1282,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/04/21/blob-md5-verification.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2022/04/20/tls-certificate-changes.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1291,16 +1291,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/04/06/app-service-web-apps-functions-and-logic-apps-tls-certificate-changes-and-what-you-need-to-know.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2022/03/15/get-blob-list-in-container.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2022/04/20/tls-certificate-changes.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1309,7 +1309,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/04/01/important-notice-of-apim-with-dev-or-basic-sku.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2022/03/15/get-blob-list-in-container.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1318,16 +1327,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/03/09/Application-Gateway-front-of-App-Service-auth.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2021/12/13/log4shell-on-appservice.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1336,7 +1336,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2022/02/25/www-subdomain-appservice-certificate.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2021/12/13/log4shell-on-appservice.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1345,7 +1354,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/11/30/multi-private-endpoint-for-one-resource.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1354,7 +1363,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/11/29/introduce-Start-Stop-VMs-v2.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1363,16 +1372,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/10/06/blob-container-usage-per-container.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2021/09/22/css-from-interns-point-of-view.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1381,7 +1381,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/09/29/app-service-snat.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2021/09/22/css-from-interns-point-of-view.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1390,7 +1399,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/09/21/support-engineer-intern2021.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1399,7 +1408,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/09/16/app-service-cipher-suite.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1408,7 +1417,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/09/01/monitor-aps-file-system-storage-usage.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1417,7 +1426,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/09/10/faile-to-enable-zone-redundancy.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1426,7 +1435,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/08/27/howto-get-registrations.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1435,7 +1444,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/08/13/unable-to-see-mycustomer.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1444,25 +1453,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/07/09/load-balancing-btw-regions-for-backend-in-apim.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2021/07/09/content-type-unable-to-export-is-included.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2021/06/04/armtemplate-deply-policy-definition-include-parameter.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1471,16 +1462,25 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/06/04/usererror-servererror.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/2021/04/23/storage-analytics-log.html</loc>
+    <loc>https://azure.github.io/jpazpaas/2021/06/04/armtemplate-deply-policy-definition-include-parameter.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2021/07/09/content-type-unable-to-export-is-included.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1489,7 +1489,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/07/01/sendgrid.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1498,7 +1498,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/04/07/subscriptions-under-investigation-in-azure-support.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2021/04/23/storage-analytics-log.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1507,7 +1516,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/03/19/workaround-the-event-which-cannot-add-fw-rule-on-storage-account.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1516,7 +1525,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/03/19/lighthouse-limit.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1525,7 +1534,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/01/29/storage-permission-mismatch.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1534,7 +1543,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/02/12/app-service-client-certificate.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1543,7 +1552,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2021/02/24/web-job-monitoring.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1552,7 +1561,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/11/04/apim-content-length-mismatch.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1561,16 +1570,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/12/02/cache-failover.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2020/12/07/apim-operationlist-grouped.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1579,7 +1579,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/12/06/apim-disable-cipher-suites.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2020/12/07/apim-operationlist-grouped.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1588,16 +1597,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/12/10/self-restore-deleted-apim.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2020/10/13/policy-activity-log.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1606,7 +1606,16 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/10/01/hint-for-creating-policy.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2020/10/13/policy-activity-log.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1615,7 +1624,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/09/23/how-to-export-appservice-certificate.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1624,7 +1633,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/08/28/troubleshooting-developmentquotaexceeded.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1633,7 +1642,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/08/28/cloud-service-log-with-azuretools.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1642,25 +1651,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/08/26/nhub-ip-address.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/2020/07/20/avoid-deleting-resource-group.html</loc>
-    
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1669,7 +1660,7 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/06/03/apim-downtime.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1678,7 +1669,25 @@
   <url>
     <loc>https://azure.github.io/jpazpaas/2020/06/01/about-blog.html</loc>
     
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2020/07/29/how-to-restrict-access-to-storage-used-by-azure-functions.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/2020/07/20/avoid-deleting-resource-group.html</loc>
+    
+    <lastmod>2026-04-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1687,372 +1696,372 @@
 
   <url>
     <loc>https://azure.github.io/jpazpaas</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/tags/Function-App/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <loc>https://azure.github.io/jpazpaas/tags/API-Management/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/tags/Notification-Hubs/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <loc>https://azure.github.io/jpazpaas/tags/Function-App/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/ARM/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Cloud-Service/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/tags/Notification-Hubs/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/</loc>
-    <lastmod>2026-04-16</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/</loc>
-    <lastmod>2026-04-16</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/tags/Application-Gateway/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Policy/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://azure.github.io/jpazpaas/tags/API-Management/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <loc>https://azure.github.io/jpazpaas/tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/tags/Application-Gateway/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Cache-for-Redis/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Storage/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/App-Service/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Web-Apps/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/WebJobs/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Lighthouse/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Support/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Subscription/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Service-Bus/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Event-Hubs/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/ARM-Template/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/etc/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Media-Service/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/App-Service-Environment/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/PowerShell/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-App-Service/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Functions/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Function-Apps/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Durable-Functions/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/App-Service-Web-Apps-Java/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Media-Services/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Video-Indexer/</loc>
-    <lastmod>2026-04-16</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://azure.github.io/jpazpaas/tags/Azure-Resource-Graph/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Static-Web-Apps/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://azure.github.io/jpazpaas/tags/Azure-Resource-Graph/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Application-Insights/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/App-Service-on-Linux/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Node-js/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Event-Grid/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Kudu/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Front-Door/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-AD%E8%AA%8D%E8%A8%BC/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/AI-Search/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Communication-Services/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Web-App/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Container-Apps/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/app-service/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Metric/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Azure-Resource-Manager-ARM/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/ACS/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/SMTP/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://azure.github.io/jpazpaas/tags/Email/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -2061,7 +2070,7 @@
   
   <url>
     <loc>https://azure.github.io/jpazpaas/categories/apim/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
