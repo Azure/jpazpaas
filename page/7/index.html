@@ -81,12 +81,12 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-2024/01/25/search-private-access-to-openai" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2024/01/25/backup-search-service" class="article article-type-post" itemscope itemprop="blogPost">
 
   <div class="article-inner">
     <!-- post date -->
     <div class="article-meta">
-      <a href="../../2024/01/25/search-private-access-to-openai.html" class="article-date">
+      <a href="../../2024/01/25/backup-search-service.html" class="article-date">
   <time datetime="2024-01-24T15:00:00.000Z" itemprop="datePublished">2024-01-25</time>
 </a>
       
@@ -99,7 +99,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="../../2024/01/25/search-private-access-to-openai.html">Azure AI Search から Azure OpenAI Service へ可能な限りセキュアに接続したい</a>
+      <a class="article-title" href="../../2024/01/25/backup-search-service.html">AI Search の設定やインデックスデータをバックアップしたい</a>
     </h1>
   
 
@@ -109,17 +109,20 @@
     <!-- post caption -->
     <div class="article-entry" itemprop="articleBody">
       
-        Azure AI Search でベクトル検索を利用するために、インデクサー実行時に Azure OpenAI Embedding スキルでコンテンツをベクトル化したいです。しかし、Azure OpenAI Service のネットワーク設定でパブリックアクセスを無効とすると、Azure OpenAI Embedding スキルが失敗します。可能な限り Azure AI Search から Azure OpenAI Service への接続をセキュアにする方法はありますでしょうか。
-インデクサーを実行すると以下のようなエラーが発生します。
-1234メッセージCould not execute skill because the Web Api request failed.詳細Web Api response status: &#x27;Forbidden&#x27;, Web Api r...
+        AI Search を削除後に同じ設定で復元したり、同じ設定の別の環境を用意するために、AI Search の設定やインデックスデータをバックアップ&#x2F;リストアする方法はありますでしょうか。※ 以前は AI Search でのレベル変更がサポートされておりませんでしたが、以下のドキュメントに記載されますとおり、現在はレベル変更が可能となっております。レベル変更に柔軟に対応できるように、予め設定をバックアップしておきたいという要望にお応えするのが本記事の当初の目的でした。
+
+Azure portal と サービス - 更新プログラム (REST API) では 、Basic レベルと Standard レベル (S1、S2、S3) レベル間の変更がサポートされます。 
+
+価格レベルを変更する
+回答AI Search の設定とインデックスデータそれぞれのバックアップ&#x2F;リストア...
         <p class="article-readmore">
-          <a href="../../2024/01/25/search-private-access-to-openai.html">Read more</a>
+          <a href="../../2024/01/25/backup-search-service.html">Read more</a>
         </p>
       
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/01/25/search-private-access-to-openai.html" data-id="cuiddnkPY13zcVB6bYpWxoasX" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/01/25/backup-search-service.html" data-id="cuid0ekHHo7jfm2aKrMlxMyam" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
@@ -169,7 +172,7 @@
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/01/19/Azure-Role-for-using-Azure-Email-Services.html" data-id="cuidf1o8i5fpHte6nVleuV-1U" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/01/19/Azure-Role-for-using-Azure-Email-Services.html" data-id="cuidygAbkPQGK8o7jqRHdj7Pl" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li></ul>
@@ -220,7 +223,7 @@ Azure サポート要求を作成する
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/01/05/Do-not-include-confidential-information-in-your-SR.html" data-id="cuidZfYUfyBbhDV705rMJcpi0" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/01/05/Do-not-include-confidential-information-in-your-SR.html" data-id="cuidhtQwUu8dgeVOg2n8YlVLk" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure/" rel="tag">Azure</a></li></ul>
@@ -274,7 +277,7 @@ Azure Files の観点においては Private Endpoint を構成し...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2024/01/05/appservice-windows-mount-byos-over-vnet.html" data-id="cuid5KCHfMUyrHQTEdkFFgpC7" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2024/01/05/appservice-windows-mount-byos-over-vnet.html" data-id="cuidsijTHHTlBLZAWlnU3TBzn" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
@@ -329,7 +332,7 @@ transport プロパティ
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/12/27/Running-gRPC-with-Container-Apps.html" data-id="cuidrm9CKsvqp8s4-FoeFE7ni" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/12/27/Running-gRPC-with-Container-Apps.html" data-id="cuidwds7EbBgIPKd2EoewpxwD" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li></ul>
@@ -379,7 +382,7 @@ transport プロパティ
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/29/check-app-service-certificate-expiration-with-azure-resource-graph-part2.html" data-id="cuidF0oEpZYjrfFsZHIlCTTdP" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/29/check-app-service-certificate-expiration-with-azure-resource-graph-part2.html" data-id="cuid6MVfvFqvoTF2TtRphHK1n" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li></ul>
@@ -431,7 +434,7 @@ Azure Container Apps は Kubernetes 上に構築されているため、Kubernet
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/28/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes.html" data-id="cuid53vJ_NX4fd0NgD0zLLWF4" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/28/Container-Apps-Troubleshooting-and-configuration-with-Health-Probes.html" data-id="cuidzMzIRABochNYiadjfJGkb" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li></ul>
@@ -494,7 +497,7 @@ Azure Container Apps は Kubernetes 上に構築されているため、Kubernet
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/20/cognitive-search-synonyms.html" data-id="cuidV_9QhjNRjKNob18i7Ts_y" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/20/cognitive-search-synonyms.html" data-id="cuidxNfPwfczxqIS4RWoYzwmV" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/AI-Search/" rel="tag">AI Search</a></li></ul>
@@ -548,7 +551,7 @@ Container Apps の導入により、リビジョンの概念が導入されま�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/16/Container-Apps-and-failed-revisions.html" data-id="cuid2GDcERTqwbk-tcSNfrKp4" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/16/Container-Apps-and-failed-revisions.html" data-id="cuidg760l3bR0iTLjPU0PBwAh" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li></ul>
@@ -601,7 +604,7 @@ Azure Container Apps は、Envoy をプロキシとして使用してイング�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/10/Troubleshooting-ingress-issues-on-Azure-Container-Apps.html" data-id="cuidvOQYtk9064PjomrHqBs2f" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/11/10/Troubleshooting-ingress-issues-on-Azure-Container-Apps.html" data-id="cuidkamdbph5prBFe9B7raPK4" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Container-Apps/" rel="tag">Container Apps</a></li></ul>
