@@ -81,6 +81,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-2023/03/02/LogSampling-OnAzureFunctions" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <div class="article-inner">
+    <!-- post date -->
+    <div class="article-meta">
+      <a href="../../2023/03/02/LogSampling-OnAzureFunctions.html" class="article-date">
+  <time datetime="2023-03-01T15:00:00.000Z" itemprop="datePublished">2023-03-02</time>
+</a>
+      
+    </div>
+
+    
+    <!-- post title -->
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2023/03/02/LogSampling-OnAzureFunctions.html">Azure Functions のログサンプリング</a>
+    </h1>
+  
+
+      </header>
+    
+
+    <!-- post caption -->
+    <div class="article-entry" itemprop="articleBody">
+      
+        Azure Functions のログが欠落しています。解消方法を教えてください。
+回答Azure Functions では既定でアダプティブ ログサンプリングが有効化されているため、ログ データが Application Insights へ送られる場合にサンプリングされて送られるためログが欠落する場合があります。これはご利用のプランなどにはよらず、host.json の設定に従います。
+サンプリング設定host.json に設定されている箇所は下記の samplingSettings の isEnabled 項目になります。
+1234567891011&#123;    &quot;version&quot;: &quot;2.0&quot;,    &quot;logging&quot;: &#123;      &quot;applicationInsights&quot;: &#...
+        <p class="article-readmore">
+          <a href="../../2023/03/02/LogSampling-OnAzureFunctions.html">Read more</a>
+        </p>
+      
+    </div>
+
+    <footer class="article-footer">
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/03/02/LogSampling-OnAzureFunctions.html" data-id="cuida-4I8tvxKxBuaqZ7NwyJs" class="article-share-link">共有</a-->
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-2023/02/21/Use-AzureFrontDoor-to-restrict-access-to-StorageAccounts-to-HTTP-Headers" class="article article-type-post" itemscope itemprop="blogPost">
 
   <div class="article-inner">
@@ -119,7 +170,7 @@ Azure ストレージアカウントではネットワーク設定機能を用�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/21/Use-AzureFrontDoor-to-restrict-access-to-StorageAccounts-to-HTTP-Headers.html" data-id="cuidUYy6VIsec-_j911AgCwNu" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/21/Use-AzureFrontDoor-to-restrict-access-to-StorageAccounts-to-HTTP-Headers.html" data-id="cuidneonA2LtTVs39c_JvOFkP" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
@@ -178,7 +229,7 @@ Azure Portal のストレージ ア...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html" data-id="cuidv7kj-AmSn2KRhHCXly_Et" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/16/How-to-identify-the-user-performed-BLOB-operations-in-Azure-Portal.html" data-id="cuidiwfo0appHqSovG4j09I9Q" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
@@ -227,7 +278,7 @@ App Service は、新しい機能、新しいランタイムバージョン、�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html" data-id="cuidRS0k5ydM2uL7UJ6mZKuMm" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/16/Routine-Planned-Maintenance-Notifications-for-Azure-App-Service.html" data-id="cuidFaWtETPpd2QlT8Tx_oEee" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Web-Apps/" rel="tag">Web Apps</a></li></ul>
@@ -280,7 +331,7 @@ Sometimes, a user ma...
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/15/Docker-User-Namespace-remapping-issues.html" data-id="cuidJuhCH_XwB6dtVL6ya1vCR" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/02/15/Docker-User-Namespace-remapping-issues.html" data-id="cuidTK1uNLjQHhmEdRIlOKNCz" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
@@ -332,7 +383,7 @@ App Service 証明書の有効期間は既定では 1 年です。 有効期限�
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html" data-id="cuid4jv4hatLSIbAGRrfjEFCi" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/30/check-app-service-certificate-expiration-with-azure-resource-graph.html" data-id="cuiduULXhX-V8thtQFpMZyRIT" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Function-App/" rel="tag">Function App</a></li></ul>
@@ -388,7 +439,7 @@ staticwebapp.config.jsonの networking.allowedIpRanges　を利用する方法
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/20/Static-web-apps-how-to-restrict-access.html" data-id="cuid88_PrJhi9WVialSUfYbxE" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/20/Static-web-apps-how-to-restrict-access.html" data-id="cuidrru7y-XKyLWePHCBBOe3T" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li></ul>
@@ -448,7 +499,7 @@ Video Indexer では、大きく下記の 3 つのアカウントがございま
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/19/How-to-display-ARM-account-on-VI-portal.html" data-id="cuid9FnYtp7fI8-1v5kQDh-89" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/19/How-to-display-ARM-account-on-VI-portal.html" data-id="cuid7LrILRfd7mgJH6ALsGRwr" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li></ul>
@@ -505,7 +556,7 @@ Azure Monitor リソース ログの形式変更のための準備 - Azure Monit
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/18/How-To-Move-Diagnostics-logs-to-Archive-tier.html" data-id="cuidx1w-YlImr1kRYM4bVBNEd" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2023/01/18/How-To-Move-Diagnostics-logs-to-Archive-tier.html" data-id="cuidWFoMkP7rWAHmta05DzPBe" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Storage/" rel="tag">Storage</a></li></ul>
@@ -554,62 +605,10 @@ Windows の Java スタックにおける App Service にて Tomcat の設定変
     </div>
 
     <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/29/Alternative-for-using-HttpPlatformHandler-in-Java-app.html" data-id="cuidEqRJkeiatJ1Uj7sOiHAeI" class="article-share-link">共有</a-->
+      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/29/Alternative-for-using-HttpPlatformHandler-in-Java-app.html" data-id="cuidB6YSP1ipXNfvSS1w4f8Xu" class="article-share-link">共有</a-->
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2022/12/19/taking-fullFREB-in-App-Service" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <div class="article-inner">
-    <!-- post date -->
-    <div class="article-meta">
-      <a href="../../2022/12/19/taking-fullFREB-in-App-Service.html" class="article-date">
-  <time datetime="2022-12-18T15:00:00.000Z" itemprop="datePublished">2022-12-19</time>
-</a>
-      
-    </div>
-
-    
-    <!-- post title -->
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2022/12/19/taking-fullFREB-in-App-Service.html">App Service で full FREB (失敗した要求トレース) を取得する方法</a>
-    </h1>
-  
-
-      </header>
-    
-
-    <!-- post caption -->
-    <div class="article-entry" itemprop="articleBody">
-      
-        App Service (windows) では、Internet Information Services (IIS) と呼ばれる Web サーバーが動作しています。App Service ではオンプレミス環境で動作している IIS と同様に、要求のトレース機能を提供しており、失敗した要求トレース (FREB) を取得できます。これにより、お客様より Web サーバー内部の挙動や各コンポーネントの処理に要した時間などをご確認いただくことが出来ます。
-FREB の詳細については、以下ドキュメントをご参照ください。
-Monitor Activity on a Web Server (IIS 7)
-インターネット Web サーバー構築ガイドライン【ドラフト版】  第 9 章： ログやトレースを活用しよう(PDF) 
-本記事では、要求のトレース機能を使用して FREB ファイルを取得する方法につ...
-        <p class="article-readmore">
-          <a href="../../2022/12/19/taking-fullFREB-in-App-Service.html">Read more</a>
-        </p>
-      
-    </div>
-
-    <footer class="article-footer">
-      <!--a data-url="https://azure.github.io/jpazpaas/2022/12/19/taking-fullFREB-in-App-Service.html" data-id="cuid1nI4djIyYSUBDPrGdWbH3" class="article-share-link">共有</a-->
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/App-Service/" rel="tag">App Service</a></li></ul>
 
     </footer>
   </div>
@@ -639,6 +638,10 @@ Monitor Activity on a Web Server (IIS 7)
           </li>
         
           <li>
+            <a href="../../2026/05/22/Azure-functions-trigger-and-binding-eventgrid.html">Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー</a>
+          </li>
+        
+          <li>
             <a href="../../2026/04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</a>
           </li>
         
@@ -648,10 +651,6 @@ Monitor Activity on a Web Server (IIS 7)
         
           <li>
             <a href="../../2026/04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
-          </li>
-        
-          <li>
-            <a href="../../2026/03/03/AppService-Node24-on-windows-needs-64bit-process.html">App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</a>
           </li>
         
       </ul>

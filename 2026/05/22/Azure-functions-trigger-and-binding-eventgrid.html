@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Event Grid トリガー は、Azure Event Grid から送信されるイベントを受信して実行されるトリガーです。Azure Storage、Key Vault、Custom Topic、System Topic などのイベント ソースから通知を受け取り、イベント駆動で関数を起動できます。 Event Grid トリガーはプッシュ型のトリガーであり、関数アプリ側がイベントをポーリングす">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Event Grid トリガー は、Azure Event Grid から送信されるイベントを受信して実行されるトリガーです。Azure Storage、Key Vault、Custom Topic、System Topic などのイベント ソースから通知を受け取り、イベント駆動で関数を起動できます。 Event Grid トリガーはプッシュ型のトリガーであり、関数アプリ側がイベントをポーリングす">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid/startup.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid/Execute.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid/same_eventid.png">
+<meta property="article:published_time" content="2026-05-22T08:23:32.843Z">
+<meta property="article:modified_time" content="2026-05-22T08:22:40.004Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function App">
+<meta property="article:tag" content="トリガー・バインディング シリーズ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid/startup.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2026/05/22/Azure-functions-trigger-and-binding-eventgrid" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2026-05-22T08:23:32.843Z" itemprop="datePublished">2026-05-22</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+37b548ff-fcb0-55ec-8b33-b188a662914c%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Functions+%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0+%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA+-+Event+Grid+%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2026%2F05%2F22%2FAzure-functions-trigger-and-binding-eventgrid.html%29%0A*+Content+Source%3A+%5Barticles%2F2026%2F05%2F22%2FAzure-functions-trigger-and-binding-eventgrid.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2026%2F05%2F22%2FAzure-functions-trigger-and-binding-eventgrid.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid.html" data-id="cuid4TksXnXZaepyCZMsn9JdB" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-event-grid-trigger">Event Grid トリガー</a> は、<a href="https://learn.microsoft.com/ja-jp/azure/event-grid/overview">Azure Event Grid</a> から送信されるイベントを受信して実行されるトリガーです。Azure Storage、Key Vault、Custom Topic、System Topic などのイベント ソースから通知を受け取り、イベント駆動で関数を起動できます。</p>
+<p>Event Grid トリガーはプッシュ型のトリガーであり、関数アプリ側がイベントをポーリングするのではなく、Event Grid が HTTP 経由でイベントを配信します。そのため、イベントの到達性、サブスクリプション設定、エンドポイント検証が動作成立の前提となります。</p>
+<p>公式ドキュメントにも記載のとおり、Event Grid トリガーは内部ロード バランサー構成の App Service Environment (ASE) ではネイティブにはサポートされません。仮想ネットワーク越しの到達性に制約がある環境では、イベントが関数アプリまで届かない場合があります。</p>
+<h2 id="動作の仕組み"><a href="#動作の仕組み" class="headerlink" title="動作の仕組み"></a>動作の仕組み</h2><p>Event Grid トリガーの動作は以下の流れとなります。</p>
+<ol>
+<li><strong>イベント ソースの変更発生</strong>: Blob 作成、リソース変更、カスタム イベント発行などが発生します。</li>
+<li><strong>イベント サブスクリプションによる配信先決定</strong>: Event Grid が構成済みのイベント サブスクリプションに従い、関数アプリのエンドポイントへイベントを送信します。</li>
+<li><strong>エンドポイント検証</strong>: サブスクリプション作成時や必要に応じて、Event Grid がエンドポイントの到達性と応答を検証します。</li>
+<li><strong>関数の実行</strong>: 受信したイベントが、利用する言語やプログラミング モデルに応じた型または JSON ペイロードとして関数へ渡されます。</li>
+<li><strong>処理結果に応じた再試行</strong>: 配信が成功しない場合、Event Grid 側の再試行ポリシーに基づき再配信される場合があります。</li>
+</ol>
+<p>受信イベントのスキーマは、イベント ソースやイベント サブスクリプションの設定にも依存します。共通プロパティとイベント固有プロパティについて詳しくは、Event Grid のドキュメントの<a href="https://learn.microsoft.com/ja-jp/azure/event-grid/event-schema#event-properties">イベントのプロパティ</a>にまとめられています。</p>
+<h2 id="Webhook-エンドポイントについて"><a href="#Webhook-エンドポイントについて" class="headerlink" title="Webhook エンドポイントについて"></a>Webhook エンドポイントについて</h2><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/event-grid-how-tos?tabs=v2,portal#get-the-webhook-endpoint-url"><code>/runtime/webhooks/eventgrid</code> エンドポイント</a>が使用されます。</p>
+<p>Azure Event Grid からの HTTP プッシュ配信を Functions ランタイムが受け付ける拡張 Webhook 入口です。Functions 側では Event Grid 拡張がこの入口で要求を受け取り、該当の EventGrid トリガー関数を起動します。</p>
+<h2 id="システムキーについて"><a href="#システムキーについて" class="headerlink" title="システムキーについて"></a>システムキーについて</h2><p>EventGrid トリガーでは、 Event Grid Webhook に固有の承認キーである<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/function-keys-how-to?tabs=azure-portal">システム キー</a>を Event Grid トリガーのエンドポイント URL への要求に含める必要があります。</p>
+<h1 id="作成手順"><a href="#作成手順" class="headerlink" title="作成手順"></a>作成手順</h1><p>Event Grid トリガーの作成方法は <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-your-first-function-visual-studio#create-a-function-app-project">チュートリアル</a> で紹介されているテンプレートをご利用ください。チュートリアルでは HTTP トリガーを利用しておりますが、同画面にて Event Grid トリガーを選択いただくことができます。<br>Event Grid は HTTP プッシュ配信であるため、Functions 側でのコード作成に加えて、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/event-grid-how-tos?tabs=v2,portal#create-the-subscription">イベント サブスクリプション設定</a>が必須です。コードだけ作成してもイベントは自動では流れてこない点に注意してください。</p>
+<h1 id="実行状況をログで確認する"><a href="#実行状況をログで確認する" class="headerlink" title="実行状況をログで確認する"></a>実行状況をログで確認する</h1><p>実行詳細をログから確認します。host.json の logging で下記のカテゴリのログを出力するように設定します。デバッグ用となるため、運用状況によって有効&#x2F;無効化を検討ください。</p>
+<h3 id="host-json"><a href="#host-json" class="headerlink" title="host.json"></a>host.json</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&quot;logging&quot;: &#123;</span><br><span class="line">  &quot;logLevel&quot;: &#123;</span><br><span class="line">    &quot;default&quot;: &quot;Debug&quot;,</span><br><span class="line">    &quot;Function&quot;: &quot;Debug&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Application-Insights-で利用するクエリ"><a href="#Application-Insights-で利用するクエリ" class="headerlink" title="Application Insights で利用するクエリ"></a>Application Insights で利用するクエリ</h2><h3 id="実行ログ"><a href="#実行ログ" class="headerlink" title="実行ログ"></a>実行ログ</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">traces</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| project timestamp, message, customDimensions, severityLevel, operation_Id</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure>
+
+<h3 id="例外ログ"><a href="#例外ログ" class="headerlink" title="例外ログ"></a>例外ログ</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">exceptions</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| project timestamp, outerMessage, details, operation_Id</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure>
+
+<p>上記の設定を行った際に記録されるログの例です。</p>
+<p>関数起動時には Webhook として受け付けるエンドポイントがログに記録されます。</p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid/startup.png" alt="image.png"></p>
+<p>正常実行時では、システム キーを使用し、認証に成功した後に、関数の実行ログである <code>Executing~</code> と <code>Executed~</code> が記録されていることを確認できます。</p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid/Execute.png" alt="image.png"></p>
+<h1 id="並行処理とチューニング"><a href="#並行処理とチューニング" class="headerlink" title="並行処理とチューニング"></a>並行処理とチューニング</h1><h2 id="並行処理の考え方"><a href="#並行処理の考え方" class="headerlink" title="並行処理の考え方"></a>並行処理の考え方</h2><p>Event Grid トリガーはプッシュ型であり、イベント到着に応じて関数が実行されます。イベント（Webhook へのリクエスト）が短時間に集中した場合、Azure Functions は受信した要求を処理するために複数インスタンスへスケール アウトが行われます。</p>
+<p>そのため、並行度のチューニングは HTTP トリガー同様に <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook?tabs=isolated-process,functionsv2&pivots=programming-language-csharp#hostjson-settings">host.json</a> で構成可能な <code>maxConcurrentRequests</code> （実際に処理が行われる並行実行数）と <code>maxOutstandingRequests</code> （実行中のリクエストを含めて、保持しておくリクエスト数）を調整します。</p>
+<h1 id="よくお問い合わせいただく動作"><a href="#よくお問い合わせいただく動作" class="headerlink" title="よくお問い合わせいただく動作"></a>よくお問い合わせいただく動作</h1><h2 id="イベント-サブスクリプションを作成したが関数が実行されない"><a href="#イベント-サブスクリプションを作成したが関数が実行されない" class="headerlink" title="イベント サブスクリプションを作成したが関数が実行されない"></a>イベント サブスクリプションを作成したが関数が実行されない</h2><p>Event Grid トリガーで最も多い確認ポイントは、イベント サブスクリプション自体が正しく構成されているか、また配信先エンドポイントに到達できるかです。<br>この場合、Azure Functions までリクエストが到達していない状況となるため、Azure Functions ではログが記録されません。<br>また、Event Grid 側では配信失敗の場合には記録がされますが、フィルタにて除外されている場合は記録されない点も注意が必要です。</p>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>イベント サブスクリプションが正しいイベント ソースとイベント種別を対象にしているか確認してください</li>
+<li>配信先として正しい関数エンドポイントを指定しているか確認してください</li>
+<li>関数アプリが Event Grid から到達可能なネットワーク構成であることを確認してください</li>
+<li>Event Grid 側の配信失敗や検証失敗が記録されていないか確認してください</li>
+</ul>
+<h2 id="サブスクリプション作成時の検証に失敗する"><a href="#サブスクリプション作成時の検証に失敗する" class="headerlink" title="サブスクリプション作成時の検証に失敗する"></a>サブスクリプション作成時の検証に失敗する</h2><p>Event Grid は配信先エンドポイントの検証を行います。検証要求に対して期待どおりの応答が返せない場合、サブスクリプション作成や更新に失敗する場合があります。</p>
+<p>例）ネットワーク制限のかかった Azure Functions に <code>az eventgrid</code> でサブスクリプションを作成しようとすると以下のようにエラーが出力されます。</p>
+<blockquote>
+<p>(URL validation) Webhook validation handshake failed for<br>https:&#x2F;&#x2F;&lt;関数リソース名&gt;.azurewebsites.net&#x2F;runtime&#x2F;webhooks&#x2F;eventgrid.<br>Http POST request failed with response code Unknown.</p>
+</blockquote>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>関数エンドポイントが外部から到達可能であることを確認してください</li>
+<li>必要な認証設定が Event Grid の配信方式と整合しているか確認してください</li>
+<li>ネットワーク制限、アクセス制限、プライベート エンドポイント設定を確認してください</li>
+</ul>
+<h2 id="同じイベントが複数回処理されたように見える"><a href="#同じイベントが複数回処理されたように見える" class="headerlink" title="同じイベントが複数回処理されたように見える"></a>同じイベントが複数回処理されたように見える</h2><p>Event Grid では、配信失敗やタイムアウト時に<a href="https://learn.microsoft.com/ja-jp/azure/event-grid/delivery-and-retry#retry-schedule">イベントが再試行</a>される場合があります。そのため、関数側から見ると同一イベントが複数回届いたように見えることがあります。</p>
+<p>以下は例外時にイベント ID を記録するように実装した際の例となりますが、同一のイベント ID で再試行されていることが確認できます。</p>
+<p>exceptions ログ：</p>
+<p><img src="/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid/same_eventid.png" alt="image.png"></p>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>イベント ID や関連キーを用いて重複処理を判定できるようにしてください</li>
+<li>出力先の更新処理は<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-idempotent">冪等に設計</a>してください</li>
+<li>一時的な失敗であるか恒常的な失敗であるかをログで切り分けてください</li>
+</ul>
+<h2 id="ASE-や閉域構成で動作しない"><a href="#ASE-や閉域構成で動作しない" class="headerlink" title="ASE や閉域構成で動作しない"></a>ASE や閉域構成で動作しない</h2><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-event-grid-trigger?tabs=python-v2,isolated-process,nodejs-v4,extensionv3&pivots=programming-language-csharp">公式ドキュメント</a>にもある通り、Event Grid トリガーは内部ロード バランサーの App Service Environment (ASE) ではネイティブにサポートされません。閉域構成で Event Grid からの HTTP リクエストが到達しない場合には、正常に動作しない可能性があります。</p>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>配信元からエンドポイントへ到達できる構成かを確認してください</li>
+<li>必要に応じて中継コンポーネントや代替アーキテクチャを検討してください</li>
+</ul>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>本記事では Event Grid トリガーの基本動作、作成方法、ログ確認、よくある問い合わせの観点を整理しました。Event Grid トリガーは Azure リソースのイベント駆動連携に適しており、ポーリング不要でリアルタイムに近い処理を実装できます。一方で、配信先の到達性、イベント サブスクリプション構成、再試行を前提とした冪等設計が安定運用のポイントとなります。</p>
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-event-grid-trigger">Azure Functions の Event Grid トリガー</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-event-grid">Azure Functions の Event Grid バインディングの概要</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/event-grid/overview">Azure Event Grid とは</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/event-grid/manage-event-subscriptions">Event Grid サブスクリプションの作成</a></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2026 年 5 月 22 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2026/05/22/Azure-functions-trigger-and-binding-eventgrid.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="../../04/21/App-Service-Certificate-Renewal.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          App Service 証明書の更新に伴うドメイン検証作業の必要について
+        
+      </div>
+    </a>
+  
+  
+    <a href="../../04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="../../04/21/App-Service-Certificate-Renewal.html">App Service 証明書の更新に伴うドメイン検証作業の必要について</a>
+          </li>
+        
+          <li>
+            <a href="">Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+          <li>
+            <a href="../../04/01/notes-on-webjobs-delete-and-deploy.html">Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+      <!-- <ul class="tag-list"></ul> -->
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/05/">2026 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/02/">2026 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 14.17px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
