@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Functions トリガー・バインディング シリーズ - HTTP / Webhook トリガー | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="HTTP トリガー は、HTTP 要求を受信したタイミングで関数を実行するトリガーです。Azure Functions で API エンドポイントを公開する用途のほか、Webhook の受信口としても広く利用されます。 HTTP トリガーでは、受信した HTTP メソッド、URL パス、クエリ文字列、ヘッダー、本文を関数コードで扱うことができます。具体的な要求オブジェクトや応答オブジェクトの型は、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Functions トリガー・バインディング シリーズ - HTTP &#x2F; Webhook トリガー">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="HTTP トリガー は、HTTP 要求を受信したタイミングで関数を実行するトリガーです。Azure Functions で API エンドポイントを公開する用途のほか、Webhook の受信口としても広く利用されます。 HTTP トリガーでは、受信した HTTP メソッド、URL パス、クエリ文字列、ヘッダー、本文を関数コードで扱うことができます。具体的な要求オブジェクトや応答オブジェクトの型は、">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/startup.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/execute_request.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/execute_trace.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxConcurrentRequests_request.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxConcurrentRequests_trace.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxOutstandingRequests.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/401.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/long_request.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/long_trace.png">
+<meta property="article:published_time" content="2026-06-25T05:44:14.425Z">
+<meta property="article:modified_time" content="2026-06-25T05:43:20.027Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function App">
+<meta property="article:tag" content="トリガー・バインディング シリーズ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/startup.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2026/06/23/Azure-functions-trigger-and-binding-http-webhook" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Functions トリガー・バインディング シリーズ - HTTP / Webhook トリガー
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2026-06-25T05:44:14.425Z" itemprop="datePublished">2026-06-25</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+15b9caf8-2047-50be-aa2d-77e5f9ed0232%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Functions+%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0+%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA+-+HTTP+%2F+Webhook+%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2026%2F06%2F23%2FAzure-functions-trigger-and-binding-http-webhook.html%29%0A*+Content+Source%3A+%5Barticles%2F2026%2F06%2F23%2FAzure-functions-trigger-and-binding-http-webhook.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2026%2F06%2F23%2FAzure-functions-trigger-and-binding-http-webhook.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook.html" data-id="cuidimDKOzYiz1sFB2WkqwLzg" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger">HTTP トリガー</a> は、HTTP 要求を受信したタイミングで関数を実行するトリガーです。Azure Functions で API エンドポイントを公開する用途のほか、Webhook の受信口としても広く利用されます。</p>
+<p>HTTP トリガーでは、受信した HTTP メソッド、URL パス、クエリ文字列、ヘッダー、本文を関数コードで扱うことができます。具体的な要求オブジェクトや応答オブジェクトの型は、利用する言語やプログラミング モデルによって異なりますが、いずれも HTTP 要求を受け取り、HTTP 応答を返すという基本的な考え方は共通です。</p>
+<p>HTTP でトリガーされた関数の既定の戻り値は、Functions 2.x 以降では本文が空の <code>HTTP 204 No Content</code> です。任意のステータス コードやレスポンス本文を返したい場合は、出力として明示的に HTTP 応答を構成します。</p>
+<h2 id="動作の仕組み"><a href="#動作の仕組み" class="headerlink" title="動作の仕組み"></a>動作の仕組み</h2><p>HTTP &#x2F; Webhook トリガーの動作は、概ね以下の流れとなります。</p>
+<ol>
+<li><strong>HTTP 要求の受信</strong>: Azure Functions Host が公開している HTTP エンドポイントに対してクライアントまたは外部サービスから要求が送信されます。</li>
+<li><strong>ルーティング</strong>: Host が関数名や <code>Route</code> 設定に基づき、対象の HTTP トリガー関数へ要求を振り分けます。</li>
+<li><strong>認証・認可の判定</strong>: <code>AuthorizationLevel</code> や App Service Authentication &#x2F; Authorization などの設定に応じて、要求の許可可否が判定されます。</li>
+<li><strong>関数の実行</strong>: 関数コードが実行され、要求本文、ヘッダー、クエリ文字列、ルート パラメーターなどが処理されます。</li>
+<li><strong>HTTP 応答の返却</strong>: 関数の戻り値またはレスポンス オブジェクトに基づいて、クライアントへ応答が返されます。</li>
+</ol>
+<p>Webhook シナリオでも基本的な流れは同様ですが、送信元サービス固有の署名検証やチャレンジ応答が必要となる場合があります。その場合は、送信元サービスの仕様に従ってヘッダーや要求本文を検証してください。</p>
+<h1 id="作成手順"><a href="#作成手順" class="headerlink" title="作成手順"></a>作成手順</h1><p>HTTP トリガーの作成方法は、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-your-first-function-visual-studio#create-a-function-app-project">チュートリアル</a>で紹介されているテンプレートをご利用ください。<br>コード例として、以下では C# で HTTP トリガーを定義しています。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Function(<span class="string">&quot;HttpFunction&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HttpResponseData <span class="title">Run</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">    [HttpTrigger(AuthorizationLevel.Function, <span class="string">&quot;get&quot;</span>, <span class="string">&quot;post&quot;</span>, Route = <span class="string">&quot;items/&#123;id?&#125;&quot;</span></span>)] HttpRequestData req,</span></span><br><span class="line"><span class="function">    FunctionContext context)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> response = req.CreateResponse(HttpStatusCode.OK);</span><br><span class="line">    response.WriteString(<span class="string">&quot;OK&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要な設定項目は以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>主な設定値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AuthorizationLevel</code></td>
+<td><code>Anonymous</code> &#x2F; <code>Function</code> &#x2F; <code>Admin</code></td>
+<td>関数キーの要否を制御します</td>
+</tr>
+<tr>
+<td><code>methods</code></td>
+<td><code>get</code>, <code>post</code>, <code>put</code>, <code>delete</code> など</td>
+<td>許可する HTTP メソッドを制限します</td>
+</tr>
+<tr>
+<td><code>Route</code></td>
+<td>任意のルート テンプレート</td>
+<td>URL パスを関数へマッピングします</td>
+</tr>
+</tbody></table>
+<p>Azure 上にデプロイする場合、HTTP エンドポイントは関数アプリの URL 配下に公開されます。Webhook の送信先として利用する場合は、送信元サービスから到達できる URL であること、必要に応じてキーまたは認証を設定していることを確認してください。</p>
+<h1 id="実行状況をログで確認する"><a href="#実行状況をログで確認する" class="headerlink" title="実行状況をログで確認する"></a>実行状況をログで確認する</h1><p>HTTP トリガーの実行詳細をログから確認します。host.json の logging で下記のカテゴリのログを出力するように設定します。デバッグ用となるため、運用状況によって有効&#x2F;無効化を検討ください。</p>
+<h2 id="host-json"><a href="#host-json" class="headerlink" title="host.json"></a>host.json</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;logging&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;logLevel&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Information&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Host.Results&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Host.Aggregator&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Function&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Application-Insights-で利用するクエリ"><a href="#Application-Insights-で利用するクエリ" class="headerlink" title="Application Insights で利用するクエリ"></a>Application Insights で利用するクエリ</h2><p>HTTP トリガーは要求駆動で実行されるため、Application Insights では <code>requests</code> テーブルと <code>traces</code> テーブルを中心に確認することが一般的です。関数実行時のアプリケーション ログは <code>traces</code>、HTTP 要求単位の成否や応答時間は <code>requests</code> に記録されます。</p>
+<h3 id="HTTP-要求の成否と応答時間"><a href="#HTTP-要求の成否と応答時間" class="headerlink" title="HTTP 要求の成否と応答時間"></a>HTTP 要求の成否と応答時間</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">requests</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| where operation_Name =~ &quot;&lt;関数名&gt;&quot;</span><br><span class="line">| project timestamp, name, resultCode, success, duration, operation_Id</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure>
+
+<h3 id="実行時ログの確認"><a href="#実行時ログの確認" class="headerlink" title="実行時ログの確認"></a>実行時ログの確認</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">traces</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| where operation_Name =~ &quot;&lt;関数名&gt;&quot;</span><br><span class="line">| project timestamp, message, severityLevel, operation_Id</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure>
+
+<h3 id="例外ログの確認"><a href="#例外ログの確認" class="headerlink" title="例外ログの確認"></a>例外ログの確認</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">exceptions</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| project timestamp, outerMessage, details, operation_Id</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure>
+
+<p>上記の設定を行った際に記録されるログの例です。</p>
+<h3 id="起動時のログ"><a href="#起動時のログ" class="headerlink" title="起動時のログ"></a>起動時のログ</h3><p>起動処理を行った際に、定義している関数のルートをマッピングしていることがわかります。<br>下記の例では 5 つの関数を定義しており、それぞれのパス、及び、許可しているメソッドが確認できます。</p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/startup.png" alt="image.png"></p>
+<h3 id="実行ログ"><a href="#実行ログ" class="headerlink" title="実行ログ"></a>実行ログ</h3><p>HTTP のリクエストを受け付けるとトリガーが実行されます。<br>requests テーブルでは HTTP 要求としてのステータス コードや処理時間が確認でき、traces テーブルでは HTTP 要求の認証を行った後に、<code>Executing~</code> と <code>Executed~</code> にて実行状況が記録されます。<br>アプリケーションが正常に終了した場合でも、ステータスコードを意図的に変更している場合は、両テーブルにおける実行結果の記録が異なる点にご留意ください。<br>それぞれのテーブルは operation_Id の値で関連付けが可能です。</p>
+<p>requests ログ：</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/execute_request.png" alt="image.png"></p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/execute_trace.png" alt="image.png"></p>
+<h1 id="並行処理とチューニング"><a href="#並行処理とチューニング" class="headerlink" title="並行処理とチューニング"></a>並行処理とチューニング</h1><h2 id="並行処理の考え方"><a href="#並行処理の考え方" class="headerlink" title="並行処理の考え方"></a>並行処理の考え方</h2><p>HTTP トリガーは HTTP 要求を受けて都度実行されるため、HTTP 要求が短時間に集中した場合、Azure Functions は受信した要求を処理するために複数インスタンスへスケール アウトが行われます。</p>
+<h2 id="チューニングの観点"><a href="#チューニングの観点" class="headerlink" title="チューニングの観点"></a>チューニングの観点</h2><p>HTTP トリガーは <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook?tabs=isolated-process,functionsv2&pivots=programming-language-csharp#hostjson-settings">host.json</a> で構成可能な <code>maxConcurrentRequests</code> と <code>maxOutstandingRequests</code> をチューニングして並列度を調整します。</p>
+<p><code>maxConcurrentRequests</code> は並行実行数の定義となり、リソース使用率に直結するため、アプリケーションの処理内容に応じた値に調整する必要があります。値が大きいほど同時に処理できる量は増えますが、リソース消費量が多くなります。</p>
+<p>例として、応答に約 15 秒がかかる アプリケーションにて <code>maxConcurrentRequests</code> を 2 として設定した際に同時に複数リクエストを発行します。<br>HTTP 要求を記録する requests テーブルでは、0:07:43 ～ 0:07:44 間に 5 件リクエストが来ていますが、応答まで要した時刻に差が生じます。<br>traces テーブルを確認するとアプリケーションの処理開始となる <code>Executing ~</code> の記録が並行実行数の 2 を上限に前の処理が終わるのを待ち合わせていることがわかります（各マーカーの色にてテーブル間のログの関連性を示しています）。<br>また、処理時間はいずれも 15 秒程となり、アプリケーションの処理に時間を要したわけではなく、キューに滞留したため、HTTP 応答として時間がかかったことを確認できます。</p>
+<p>requests ログ：</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxConcurrentRequests_request.png" alt="image.png"></p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxConcurrentRequests_trace.png" alt="image.png"></p>
+<p><code>maxOutstandingRequests</code> は実行中のリクエストを含め、処理待ちとして許可するリクエスト数を定義し、この値を超過することでスケール アウトの判断が行われます。値が大きすぎると、HTTP の要求数に対して、待機数が多いためスケール アウトが遅延する可能性があります。逆に小さすぎるとスケール条件が厳しくなるため、リソース状況に余裕があるにも関わらず、過剰にインスタンスを確保する状況となります。</p>
+<p>こちらも例として、応答に約 15 秒がかかる アプリケーションにて <code>maxConcurrentRequests</code> 、及び <code>maxOutstandingRequests</code> を 2 で設定し、複数のリクエストを発行します。<br><code>maxOutstandingRequests</code> を超過した場合には Azure Functions の HTTP 要求を受け付ける <a href="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management.html">Front End という内部ロード バランサー</a>にて要求が破棄されるため、アプリケーションまでリクエストが到達せずに requests テーブル、及び、traces テーブルにはログが残りません。<br>クライアントには下記の図のようにステータス コード 429 が応答されます。</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxOutstandingRequests.png" alt="image.png"></p>
+<p>リソース状況を鑑みて、2 つのパラメーターを定義することで、何件まで並行実行するか、どのくらいのトラフィック量でスケール アウトさせるべきかを調整することができます。</p>
+<h1 id="よくお問い合わせいただく動作"><a href="#よくお問い合わせいただく動作" class="headerlink" title="よくお問い合わせいただく動作"></a>よくお問い合わせいただく動作</h1><p>弊サポートにてよくお問い合わせいただく事例について紹介します。下記に記載しますログ出力例は、Function Host のランタイム バージョンが v4.1048.200.26180 時点の例となります。バージョンが異なることにより出力内容が異なる可能性がありますことをご留意ください。なお、ログは <a href="#application-insights-%E3%81%A7%E5%88%A9%E7%94%A8%E3%81%99%E3%82%8B%E3%82%AF%E3%82%A8%E3%83%AA">Application Insights で利用するクエリ</a>、及び、以下のエラー詳細を確認するクエリを実行した結果より確認しています。</p>
+<h2 id="デプロイ後に-HTTP-エンドポイントへアクセスできない"><a href="#デプロイ後に-HTTP-エンドポイントへアクセスできない" class="headerlink" title="デプロイ後に HTTP エンドポイントへアクセスできない"></a>デプロイ後に HTTP エンドポイントへアクセスできない</h2><p>本事象は Azure Functions までリクエストが到達していない可能性が高く、クライアント側で 404 エラーが記録されるものの、Application Insights のログに記録されないことがあります。<br>Azure 上へ展開した後にエンドポイントへアクセスできない場合、まず URL、ルート、ネットワーク制限を確認します。</p>
+<p><strong>確認ポイント:</strong></p>
+<ul>
+<li>関数 URL が正しいことを確認してください</li>
+<li><code>Route</code> の設定により期待するパスと実際のパスがずれていないか確認してください</li>
+<li>アクセス制限、プライベート エンドポイント等で到達性が制限されていないか確認してください</li>
+</ul>
+<h2 id="Webhook-の送信元から-401-403-が返る"><a href="#Webhook-の送信元から-401-403-が返る" class="headerlink" title="Webhook の送信元から 401 &#x2F; 403 が返る"></a>Webhook の送信元から 401 &#x2F; 403 が返る</h2><p>Webhook 受信で 401 &#x2F; 403 が返る場合、Functions 側の認証設定と送信元サービスの送信仕様が一致していない可能性があります。<br>traces テーブルで認証失敗していることが確認できます。<br>なお、処理としては正常（意図したアクセス拒否）なため、exceptions テーブルにはログが出力されない点をご留意ください。</p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/401.png" alt="image.png"></p>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>関数キーが必要な構成である場合、送信元がキーを付与できるか確認してください</li>
+<li>送信元でカスタム ヘッダーを送れる場合、署名検証ロジックと合わせて受信側実装を確認してください</li>
+<li>Functions の組み込み認証やネットワーク制限が送信元からの通信を拒否していないか確認してください</li>
+</ul>
+<h2 id="長時間処理でタイムアウトや再試行が発生する"><a href="#長時間処理でタイムアウトや再試行が発生する" class="headerlink" title="長時間処理でタイムアウトや再試行が発生する"></a>長時間処理でタイムアウトや再試行が発生する</h2><p>HTTP トリガーは、呼び出し元が同期的に応答を待つケースが多いため、処理時間が長いとクライアント側タイムアウトや送信元の再試行が発生することがあります。</p>
+<p>また、Azure Functions において、HTTP 要求は <a href="https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/web-request-times-out-app-service">約 240 秒でタイムアウト</a>(Windows アプリでは 230 秒、Linux アプリでは 240 秒)となるため、処理時間が長い場合にはエラーとなります。</p>
+<p>HTTP 要求としてはタイムアウトとなった場合でもバックエンドで動作する関数が正常に完了した場合、ログ上はエラーとして記録がされない状況となります。<br>そのため、再試行処理が生じた際も同一結果となるよう<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-idempotent">冪等性</a>を保つことが重要となります。</p>
+<p>requests ログ：</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/long_request.png" alt="image.png"></p>
+<p>traces ログ：</p>
+<p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/long_trace.png" alt="image.png"></p>
+<p><strong>対処方法:</strong></p>
+<ul>
+<li>即時応答が必要な部分と時間のかかる処理を分離してください</li>
+<li>重い処理は Queue Storage、Service Bus、Durable Functions などへ委譲する構成を検討してください</li>
+</ul>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>本記事では HTTP &#x2F; Webhook トリガーの基本動作、作成方法、ログ確認、運用時の留意点を整理しました。HTTP トリガーは Azure Functions でもっとも利用機会の多いトリガーのひとつであり、API と Webhook の両面で広く利用されます。安定運用のためには、認証、入力検証、外部接続管理、長時間処理の分離を合わせて検討することが重要です。</p>
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger">Azure Functions の HTTP トリガー</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-output">Azure Functions の HTTP 出力バインディング</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/manage-connections">Azure Functions で接続を管理する方法</a></p>
+<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-scale">Azure Functions のスケールとホスティング</a></p>
+<br>
+<br>
+
+<hr>
+<br>
+<br>
+
+<p>2026 年 6 月 23 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2026/06/23/Azure-functions-trigger-and-binding-http-webhook.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="../../05/22/Azure-functions-trigger-and-binding-eventgrid.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="">Azure Functions トリガー・バインディング シリーズ - HTTP / Webhook トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../05/22/Azure-functions-trigger-and-binding-eventgrid.html">Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../04/21/App-Service-Certificate-Renewal.html">App Service 証明書の更新に伴うドメイン検証作業の必要について</a>
+          </li>
+        
+          <li>
+            <a href="../../04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../../2023/09/15/what-is-sync-trigger.html">Azure Functions のトリガーの同期とは</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+      <!-- <ul class="tag-list"></ul> -->
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/06/">2026 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/02/">2026 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 14.17px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

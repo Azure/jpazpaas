@@ -10,7 +10,25 @@
   <rights>All rights reserved 2026, Web Developer Platform WebApps Japan</rights>
   <subtitle>日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</subtitle>
   <title>Japan PaaS Support Team Blog</title>
-  <updated>2026-06-22T06:10:13.651Z</updated>
+  <updated>2026-06-25T05:43:20.027Z</updated>
+  <entry>
+    <author>
+      <name>Web Developer Platform WebApps Japan</name>
+    </author>
+    <category term="Function App" scheme="https://azure.github.io/jpazpaas/tags/Function-App/"/>
+    <category term="トリガー・バインディング シリーズ" scheme="https://azure.github.io/jpazpaas/tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/"/>
+    <content>
+      <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger">HTTP トリガー</a> は、HTTP 要求を受信したタイミングで関数を実行するトリガーです。Azure Functions で API エンドポイントを公開する用途のほか、Webhook の受信口としても広く利用されます。</p><p>HTTP トリガーでは、受信した HTTP メソッド、URL パス、クエリ文字列、ヘッダー、本文を関数コードで扱うことができます。具体的な要求オブジェクトや応答オブジェクトの型は、利用する言語やプログラミング モデルによって異なりますが、いずれも HTTP 要求を受け取り、HTTP 応答を返すという基本的な考え方は共通です。</p><p>HTTP でトリガーされた関数の既定の戻り値は、Functions 2.x 以降では本文が空の <code>HTTP 204 No Content</code> です。任意のステータス コードやレスポンス本文を返したい場合は、出力として明示的に HTTP 応答を構成します。</p><h2 id="動作の仕組み"><a href="#動作の仕組み" class="headerlink" title="動作の仕組み"></a>動作の仕組み</h2><p>HTTP &#x2F; Webhook トリガーの動作は、概ね以下の流れとなります。</p><ol><li><strong>HTTP 要求の受信</strong>: Azure Functions Host が公開している HTTP エンドポイントに対してクライアントまたは外部サービスから要求が送信されます。</li><li><strong>ルーティング</strong>: Host が関数名や <code>Route</code> 設定に基づき、対象の HTTP トリガー関数へ要求を振り分けます。</li><li><strong>認証・認可の判定</strong>: <code>AuthorizationLevel</code> や App Service Authentication &#x2F; Authorization などの設定に応じて、要求の許可可否が判定されます。</li><li><strong>関数の実行</strong>: 関数コードが実行され、要求本文、ヘッダー、クエリ文字列、ルート パラメーターなどが処理されます。</li><li><strong>HTTP 応答の返却</strong>: 関数の戻り値またはレスポンス オブジェクトに基づいて、クライアントへ応答が返されます。</li></ol><p>Webhook シナリオでも基本的な流れは同様ですが、送信元サービス固有の署名検証やチャレンジ応答が必要となる場合があります。その場合は、送信元サービスの仕様に従ってヘッダーや要求本文を検証してください。</p><h1 id="作成手順"><a href="#作成手順" class="headerlink" title="作成手順"></a>作成手順</h1><p>HTTP トリガーの作成方法は、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-your-first-function-visual-studio#create-a-function-app-project">チュートリアル</a>で紹介されているテンプレートをご利用ください。<br>コード例として、以下では C# で HTTP トリガーを定義しています。</p><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Function(<span class="string">&quot;HttpFunction&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HttpResponseData <span class="title">Run</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">    [HttpTrigger(AuthorizationLevel.Function, <span class="string">&quot;get&quot;</span>, <span class="string">&quot;post&quot;</span>, Route = <span class="string">&quot;items/&#123;id?&#125;&quot;</span></span>)] HttpRequestData req,</span></span><br><span class="line"><span class="function">    FunctionContext context)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> response = req.CreateResponse(HttpStatusCode.OK);</span><br><span class="line">    response.WriteString(<span class="string">&quot;OK&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>主要な設定項目は以下の通りです。</p><table><thead><tr><th>属性</th><th>主な設定値</th><th>説明</th></tr></thead><tbody><tr><td><code>AuthorizationLevel</code></td><td><code>Anonymous</code> &#x2F; <code>Function</code> &#x2F; <code>Admin</code></td><td>関数キーの要否を制御します</td></tr><tr><td><code>methods</code></td><td><code>get</code>, <code>post</code>, <code>put</code>, <code>delete</code> など</td><td>許可する HTTP メソッドを制限します</td></tr><tr><td><code>Route</code></td><td>任意のルート テンプレート</td><td>URL パスを関数へマッピングします</td></tr></tbody></table><p>Azure 上にデプロイする場合、HTTP エンドポイントは関数アプリの URL 配下に公開されます。Webhook の送信先として利用する場合は、送信元サービスから到達できる URL であること、必要に応じてキーまたは認証を設定していることを確認してください。</p><h1 id="実行状況をログで確認する"><a href="#実行状況をログで確認する" class="headerlink" title="実行状況をログで確認する"></a>実行状況をログで確認する</h1><p>HTTP トリガーの実行詳細をログから確認します。host.json の logging で下記のカテゴリのログを出力するように設定します。デバッグ用となるため、運用状況によって有効&#x2F;無効化を検討ください。</p><h2 id="host-json"><a href="#host-json" class="headerlink" title="host.json"></a>host.json</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;logging&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;logLevel&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Information&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Host.Results&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Host.Aggregator&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;Function&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><h2 id="Application-Insights-で利用するクエリ"><a href="#Application-Insights-で利用するクエリ" class="headerlink" title="Application Insights で利用するクエリ"></a>Application Insights で利用するクエリ</h2><p>HTTP トリガーは要求駆動で実行されるため、Application Insights では <code>requests</code> テーブルと <code>traces</code> テーブルを中心に確認することが一般的です。関数実行時のアプリケーション ログは <code>traces</code>、HTTP 要求単位の成否や応答時間は <code>requests</code> に記録されます。</p><h3 id="HTTP-要求の成否と応答時間"><a href="#HTTP-要求の成否と応答時間" class="headerlink" title="HTTP 要求の成否と応答時間"></a>HTTP 要求の成否と応答時間</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">requests</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| where operation_Name =~ &quot;&lt;関数名&gt;&quot;</span><br><span class="line">| project timestamp, name, resultCode, success, duration, operation_Id</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure><h3 id="実行時ログの確認"><a href="#実行時ログの確認" class="headerlink" title="実行時ログの確認"></a>実行時ログの確認</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">traces</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| where operation_Name =~ &quot;&lt;関数名&gt;&quot;</span><br><span class="line">| project timestamp, message, severityLevel, operation_Id</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure><h3 id="例外ログの確認"><a href="#例外ログの確認" class="headerlink" title="例外ログの確認"></a>例外ログの確認</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">exceptions</span><br><span class="line">| where timestamp &gt; datetime(&quot;yyyy-mm-dd hh:mi&quot;)</span><br><span class="line">| where cloud_RoleName =~ &quot;&lt;関数アプリ名&gt;&quot;</span><br><span class="line">| project timestamp, outerMessage, details, operation_Id</span><br><span class="line">| order by timestamp asc</span><br></pre></td></tr></table></figure><p>上記の設定を行った際に記録されるログの例です。</p><h3 id="起動時のログ"><a href="#起動時のログ" class="headerlink" title="起動時のログ"></a>起動時のログ</h3><p>起動処理を行った際に、定義している関数のルートをマッピングしていることがわかります。<br>下記の例では 5 つの関数を定義しており、それぞれのパス、及び、許可しているメソッドが確認できます。</p><p>traces ログ：</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/startup.png" alt="image.png"></p><h3 id="実行ログ"><a href="#実行ログ" class="headerlink" title="実行ログ"></a>実行ログ</h3><p>HTTP のリクエストを受け付けるとトリガーが実行されます。<br>requests テーブルでは HTTP 要求としてのステータス コードや処理時間が確認でき、traces テーブルでは HTTP 要求の認証を行った後に、<code>Executing~</code> と <code>Executed~</code> にて実行状況が記録されます。<br>アプリケーションが正常に終了した場合でも、ステータスコードを意図的に変更している場合は、両テーブルにおける実行結果の記録が異なる点にご留意ください。<br>それぞれのテーブルは operation_Id の値で関連付けが可能です。</p><p>requests ログ：</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/execute_request.png" alt="image.png"></p><p>traces ログ：</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/execute_trace.png" alt="image.png"></p><h1 id="並行処理とチューニング"><a href="#並行処理とチューニング" class="headerlink" title="並行処理とチューニング"></a>並行処理とチューニング</h1><h2 id="並行処理の考え方"><a href="#並行処理の考え方" class="headerlink" title="並行処理の考え方"></a>並行処理の考え方</h2><p>HTTP トリガーは HTTP 要求を受けて都度実行されるため、HTTP 要求が短時間に集中した場合、Azure Functions は受信した要求を処理するために複数インスタンスへスケール アウトが行われます。</p><h2 id="チューニングの観点"><a href="#チューニングの観点" class="headerlink" title="チューニングの観点"></a>チューニングの観点</h2><p>HTTP トリガーは <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook?tabs=isolated-process,functionsv2&pivots=programming-language-csharp#hostjson-settings">host.json</a> で構成可能な <code>maxConcurrentRequests</code> と <code>maxOutstandingRequests</code> をチューニングして並列度を調整します。</p><p><code>maxConcurrentRequests</code> は並行実行数の定義となり、リソース使用率に直結するため、アプリケーションの処理内容に応じた値に調整する必要があります。値が大きいほど同時に処理できる量は増えますが、リソース消費量が多くなります。</p><p>例として、応答に約 15 秒がかかる アプリケーションにて <code>maxConcurrentRequests</code> を 2 として設定した際に同時に複数リクエストを発行します。<br>HTTP 要求を記録する requests テーブルでは、0:07:43 ～ 0:07:44 間に 5 件リクエストが来ていますが、応答まで要した時刻に差が生じます。<br>traces テーブルを確認するとアプリケーションの処理開始となる <code>Executing ~</code> の記録が並行実行数の 2 を上限に前の処理が終わるのを待ち合わせていることがわかります（各マーカーの色にてテーブル間のログの関連性を示しています）。<br>また、処理時間はいずれも 15 秒程となり、アプリケーションの処理に時間を要したわけではなく、キューに滞留したため、HTTP 応答として時間がかかったことを確認できます。</p><p>requests ログ：</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxConcurrentRequests_request.png" alt="image.png"></p><p>traces ログ：</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxConcurrentRequests_trace.png" alt="image.png"></p><p><code>maxOutstandingRequests</code> は実行中のリクエストを含め、処理待ちとして許可するリクエスト数を定義し、この値を超過することでスケール アウトの判断が行われます。値が大きすぎると、HTTP の要求数に対して、待機数が多いためスケール アウトが遅延する可能性があります。逆に小さすぎるとスケール条件が厳しくなるため、リソース状況に余裕があるにも関わらず、過剰にインスタンスを確保する状況となります。</p><p>こちらも例として、応答に約 15 秒がかかる アプリケーションにて <code>maxConcurrentRequests</code> 、及び <code>maxOutstandingRequests</code> を 2 で設定し、複数のリクエストを発行します。<br><code>maxOutstandingRequests</code> を超過した場合には Azure Functions の HTTP 要求を受け付ける <a href="https://azure.github.io/jpazpaas/2023/08/24/azure-functions-words-relative-management.html">Front End という内部ロード バランサー</a>にて要求が破棄されるため、アプリケーションまでリクエストが到達せずに requests テーブル、及び、traces テーブルにはログが残りません。<br>クライアントには下記の図のようにステータス コード 429 が応答されます。</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/maxOutstandingRequests.png" alt="image.png"></p><p>リソース状況を鑑みて、2 つのパラメーターを定義することで、何件まで並行実行するか、どのくらいのトラフィック量でスケール アウトさせるべきかを調整することができます。</p><h1 id="よくお問い合わせいただく動作"><a href="#よくお問い合わせいただく動作" class="headerlink" title="よくお問い合わせいただく動作"></a>よくお問い合わせいただく動作</h1><p>弊サポートにてよくお問い合わせいただく事例について紹介します。下記に記載しますログ出力例は、Function Host のランタイム バージョンが v4.1048.200.26180 時点の例となります。バージョンが異なることにより出力内容が異なる可能性がありますことをご留意ください。なお、ログは <a href="#application-insights-%E3%81%A7%E5%88%A9%E7%94%A8%E3%81%99%E3%82%8B%E3%82%AF%E3%82%A8%E3%83%AA">Application Insights で利用するクエリ</a>、及び、以下のエラー詳細を確認するクエリを実行した結果より確認しています。</p><h2 id="デプロイ後に-HTTP-エンドポイントへアクセスできない"><a href="#デプロイ後に-HTTP-エンドポイントへアクセスできない" class="headerlink" title="デプロイ後に HTTP エンドポイントへアクセスできない"></a>デプロイ後に HTTP エンドポイントへアクセスできない</h2><p>本事象は Azure Functions までリクエストが到達していない可能性が高く、クライアント側で 404 エラーが記録されるものの、Application Insights のログに記録されないことがあります。<br>Azure 上へ展開した後にエンドポイントへアクセスできない場合、まず URL、ルート、ネットワーク制限を確認します。</p><p><strong>確認ポイント:</strong></p><ul><li>関数 URL が正しいことを確認してください</li><li><code>Route</code> の設定により期待するパスと実際のパスがずれていないか確認してください</li><li>アクセス制限、プライベート エンドポイント等で到達性が制限されていないか確認してください</li></ul><h2 id="Webhook-の送信元から-401-403-が返る"><a href="#Webhook-の送信元から-401-403-が返る" class="headerlink" title="Webhook の送信元から 401 &#x2F; 403 が返る"></a>Webhook の送信元から 401 &#x2F; 403 が返る</h2><p>Webhook 受信で 401 &#x2F; 403 が返る場合、Functions 側の認証設定と送信元サービスの送信仕様が一致していない可能性があります。<br>traces テーブルで認証失敗していることが確認できます。<br>なお、処理としては正常（意図したアクセス拒否）なため、exceptions テーブルにはログが出力されない点をご留意ください。</p><p>traces ログ：</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/401.png" alt="image.png"></p><p><strong>対処方法:</strong></p><ul><li>関数キーが必要な構成である場合、送信元がキーを付与できるか確認してください</li><li>送信元でカスタム ヘッダーを送れる場合、署名検証ロジックと合わせて受信側実装を確認してください</li><li>Functions の組み込み認証やネットワーク制限が送信元からの通信を拒否していないか確認してください</li></ul><h2 id="長時間処理でタイムアウトや再試行が発生する"><a href="#長時間処理でタイムアウトや再試行が発生する" class="headerlink" title="長時間処理でタイムアウトや再試行が発生する"></a>長時間処理でタイムアウトや再試行が発生する</h2><p>HTTP トリガーは、呼び出し元が同期的に応答を待つケースが多いため、処理時間が長いとクライアント側タイムアウトや送信元の再試行が発生することがあります。</p><p>また、Azure Functions において、HTTP 要求は <a href="https://learn.microsoft.com/ja-jp/troubleshoot/azure/app-service/web-request-times-out-app-service">約 240 秒でタイムアウト</a>(Windows アプリでは 230 秒、Linux アプリでは 240 秒)となるため、処理時間が長い場合にはエラーとなります。</p><p>HTTP 要求としてはタイムアウトとなった場合でもバックエンドで動作する関数が正常に完了した場合、ログ上はエラーとして記録がされない状況となります。<br>そのため、再試行処理が生じた際も同一結果となるよう<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-idempotent">冪等性</a>を保つことが重要となります。</p><p>requests ログ：</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/long_request.png" alt="image.png"></p><p>traces ログ：</p><p><img src="/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook/long_trace.png" alt="image.png"></p><p><strong>対処方法:</strong></p><ul><li>即時応答が必要な部分と時間のかかる処理を分離してください</li><li>重い処理は Queue Storage、Service Bus、Durable Functions などへ委譲する構成を検討してください</li></ul><h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>本記事では HTTP &#x2F; Webhook トリガーの基本動作、作成方法、ログ確認、運用時の留意点を整理しました。HTTP トリガーは Azure Functions でもっとも利用機会の多いトリガーのひとつであり、API と Webhook の両面で広く利用されます。安定運用のためには、認証、入力検証、外部接続管理、長時間処理の分離を合わせて検討することが重要です。</p><h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger">Azure Functions の HTTP トリガー</a></p><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-output">Azure Functions の HTTP 出力バインディング</a></p><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/manage-connections">Azure Functions で接続を管理する方法</a></p><p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-scale">Azure Functions のスケールとホスティング</a></p><br><br><hr><br><br><p>2026 年 6 月 23 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p><br><br>]]>
+    </content>
+    <id>https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook.html</id>
+    <link href="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook.html"/>
+    <published>2026-06-25T05:44:14.425Z</published>
+    <summary>
+      <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger">HTTP トリガー</a> は、HTTP 要求を受信したタイミ]]>
+    </summary>
+    <title>Azure Functions トリガー・バインディング シリーズ - HTTP / Webhook トリガー</title>
+    <updated>2026-06-25T05:43:20.027Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Web Developer Platform WebApps Japan</name>
@@ -22,12 +40,12 @@
     </content>
     <id>https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid.html</id>
     <link href="https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid.html"/>
-    <published>2026-06-22T06:12:03.019Z</published>
+    <published>2026-06-25T05:44:14.424Z</published>
     <summary>
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-event-grid-trigger">Event Grid トリガー</a> は、<a href="ht]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー</title>
-    <updated>2026-06-22T06:10:13.651Z</updated>
+    <updated>2026-06-25T05:43:20.027Z</updated>
   </entry>
   <entry>
     <author>
@@ -39,13 +57,13 @@
     </content>
     <id>https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal.html</id>
     <link href="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal.html"/>
-    <published>2026-06-22T06:12:03.018Z</published>
+    <published>2026-06-25T05:44:14.423Z</published>
     <summary>
       <![CDATA[<blockquote>
 <p><strong>本記事は <a href="https://azure.github.io/jpazpaas/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html">App Servi]]>
     </summary>
     <title>App Service 証明書の更新に伴うドメイン検証作業の必要について</title>
-    <updated>2026-06-22T06:10:13.622Z</updated>
+    <updated>2026-06-25T05:43:19.998Z</updated>
   </entry>
   <entry>
     <author>
@@ -63,7 +81,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2?tabs=isolated-process,extensionv4&pivots=]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</title>
-    <updated>2026-06-22T06:10:13.619Z</updated>
+    <updated>2026-06-25T05:43:19.995Z</updated>
   </entry>
   <entry>
     <author>
@@ -80,7 +98,7 @@
       <![CDATA[<p>Azure Functions に<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-deployment-technologies?tabs=windows#trigger-]]>
     </summary>
     <title>Azure Functions のトリガーの同期とは</title>
-    <updated>2026-06-22T06:10:13.444Z</updated>
+    <updated>2026-06-25T05:43:19.827Z</updated>
   </entry>
   <entry>
     <author>
@@ -99,7 +117,7 @@
       <![CDATA[<p>お世話になっております。Azure App Service サポート担当の押田です。<br>本記事は、Azure App Service の <strong>Triggered WebJob</strong> において、デプロイ直後に WebJob が意図せず即実行されるケ]]>
     </summary>
     <title>Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</title>
-    <updated>2026-06-22T06:10:13.619Z</updated>
+    <updated>2026-06-25T05:43:19.995Z</updated>
   </entry>
   <entry>
     <author>
@@ -118,7 +136,7 @@
       <![CDATA[<p>お世話になっております。Azure App Service サポート担当の押田です。<br>本記事では、App Service &#x2F; Azure Functions の Windows 環境において、 <code>Node.js 24</code> を利用する際の注]]>
     </summary>
     <title>App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</title>
-    <updated>2026-06-22T06:10:13.615Z</updated>
+    <updated>2026-06-25T05:43:19.991Z</updated>
   </entry>
   <entry>
     <author>
@@ -138,7 +156,7 @@
 <li>]]>
     </summary>
     <title>プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &quot;Failed to fetch&quot; が表示される場合の対処方法</title>
-    <updated>2026-06-22T06:10:13.612Z</updated>
+    <updated>2026-06-25T05:43:19.988Z</updated>
   </entry>
   <entry>
     <author>
@@ -158,7 +176,7 @@
 <p><a href=]]>
     </summary>
     <title>Azure Communication Services Email クォータ緩和について</title>
-    <updated>2026-06-22T06:10:13.611Z</updated>
+    <updated>2026-06-25T05:43:19.987Z</updated>
   </entry>
   <entry>
     <author>
@@ -175,7 +193,7 @@
       <![CDATA[<p>Azure 仮想マシン上でブラウザを起動して Azure ポータルを表示しています。また、該当の Azure 仮想マシンが属している仮想ネットワークのサブネットに、今回操作対象のストレージアカウントの blob のプライベート エンドポイントはすでに作成済みです。</p>]]>
     </summary>
     <title>Azure ポータルで BLOB のリストやダウンロードはできるけれど削除ができないときに考えられること</title>
-    <updated>2026-06-22T06:10:13.611Z</updated>
+    <updated>2026-06-25T05:43:19.987Z</updated>
   </entry>
   <entry>
     <author>
@@ -192,7 +210,7 @@
       <![CDATA[<p>Blob ストレージをデータソースとする AI Search を利用して、インデクサーを実行した際に 「<code>Document key cannot be longer than 1024 characters</code>」というエラーが発生し、インデクサーの実行が]]>
     </summary>
     <title>ドキュメントキー文字数制限エラーの解消法</title>
-    <updated>2026-06-22T06:10:13.610Z</updated>
+    <updated>2026-06-25T05:43:19.986Z</updated>
   </entry>
   <entry>
     <author>
@@ -212,7 +230,7 @@
 <p><a href="https://techcommunity.microsoft.com/blog/exchange/exchange-online]]>
     </summary>
     <title>Azure Communication Services メール機能でよく頂くご質問</title>
-    <updated>2026-06-22T06:10:13.599Z</updated>
+    <updated>2026-06-25T05:43:19.977Z</updated>
   </entry>
   <entry>
     <author>
@@ -230,7 +248,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-service-bus?tabs=isolated-process,extensionv5,extensi]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Service Bus トリガー</title>
-    <updated>2026-06-22T06:10:13.599Z</updated>
+    <updated>2026-06-25T05:43:19.978Z</updated>
   </entry>
   <entry>
     <author>
@@ -247,7 +265,7 @@
       <![CDATA[<p>お世話になっております。App Service サポート担当の仲野です。いつも Azure Functions（関数アプリ）をご利用いただき誠にありがとうございます。Azure Functions では拡張バンドルのコンテンツを Contents Delivery Netw]]>
     </summary>
     <title>Azure Functions で使用している CDN ドメインの移行について</title>
-    <updated>2026-06-22T06:10:13.598Z</updated>
+    <updated>2026-06-25T05:43:19.977Z</updated>
   </entry>
   <entry>
     <author>
@@ -264,7 +282,7 @@
       <![CDATA[<h2 id="はじめに"><a href="#はじめに" class="headerlink" title="はじめに"></a>はじめに</h2><p>お世話になっております。App Service サポート担当の仲野です。いつも Azure Functions（関数アプリ）]]>
     </summary>
     <title>Azure Functions の古いランタイム バージョンに対する潜在的な破壊的変更（2025年10月）</title>
-    <updated>2026-06-22T06:10:13.597Z</updated>
+    <updated>2026-06-25T05:43:19.976Z</updated>
   </entry>
   <entry>
     <author>
@@ -283,7 +301,7 @@
 <p>Azure Functions を使用してサーバーレスアプリケーションを開発・運用]]>
     </summary>
     <title>Azure Functions .NET Isolated（分離ワーカー）モデルで Dependency の一部のログをフィルタリングして Application Insights に送信する方法</title>
-    <updated>2026-06-22T06:10:13.595Z</updated>
+    <updated>2026-06-25T05:43:19.974Z</updated>
   </entry>
   <entry>
     <author>
@@ -303,7 +321,7 @@
       <![CDATA[<p>本記事は 2025 年 4 月 29 日に公開されました <a href="https://azure.github.io/AppService/2025/04/29/Azure-App-Service-Notifications-Improvements.html">Ro]]>
     </summary>
     <title>Azure App Service の計画メンテナンス通知の改善</title>
-    <updated>2026-06-22T06:10:13.593Z</updated>
+    <updated>2026-06-25T05:43:19.971Z</updated>
   </entry>
   <entry>
     <author>
@@ -321,7 +339,7 @@
 <p>Azure Functions を使用してサーバーレスアプリケーションを開発・運用する際、]]>
     </summary>
     <title>Azure Functions .NET Isolated（分離ワーカー）モデルで Application Insights を利用する際の注意点</title>
-    <updated>2026-06-22T06:10:13.593Z</updated>
+    <updated>2026-06-25T05:43:19.972Z</updated>
   </entry>
   <entry>
     <author>
@@ -339,7 +357,7 @@
 <p>AI Search インデックスを作成する際に、選択したアナライザーでドキュメントがどのようにトークナイズされるのかを確認する方法、および正規表現を使用したクエリで検索を行う際の注意点について例を交え]]>
     </summary>
     <title>AI Search アナライザーのトークナイズと正規表現による検索の動作について</title>
-    <updated>2026-06-22T06:10:13.591Z</updated>
+    <updated>2026-06-25T05:43:19.970Z</updated>
   </entry>
   <entry>
     <author>
@@ -359,24 +377,6 @@
 <]]>
     </summary>
     <title>Azure サービスをバックアップする一般的な考え方</title>
-    <updated>2026-06-22T06:10:13.587Z</updated>
-  </entry>
-  <entry>
-    <author>
-      <name>Web Developer Platform WebApps Japan</name>
-    </author>
-    <category term="Storage" scheme="https://azure.github.io/jpazpaas/tags/Storage/"/>
-    <content>
-      <![CDATA[<p>特定の人に対して、BLOB ストレージアカウントの特定のコンテナーにだけ読み書きできるようにしたいのですが、どうすればいいですか。できれば、アクセス許可を与えたコンテナー以外にどのようなコンテナーがあるか、ということも見えないようにしたい。</p><h1 id="解説"><a href="#解説" class="headerlink" title="解説"></a>解説</h1><h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><p>例としてはシンプルにストレージアカウント内に二つの BLOB コンテナー (con1、con2) があり、con1 配下にある BLOB に対してだけ読み書きできる、という前提にします。</p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-5eb1a9f5-1ee3-4c1d-b382-9fa4b42e5dbb.png" alt="image-5eb1a9f5-1ee3-4c1d-b382-9fa4b42e5dbb.png"></p><h2 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h2><p>こちらは以下の資料が参考になります。</p><p><a href="https://learn.microsoft.com/ja-jp/azure/storage/blobs/assign-azure-role-data-access?tabs=portal">BLOB データにアクセスするための Azure ロールを割り当てる</a>  </p><p>この資料にあるように結論としては、以下を割り当てます。</p><ul><li>ストレージアカウントレベルでの <strong>閲覧者</strong>ロール</li><li>コンテナーレベルでの<strong>ストレージ BLOB データ共同作成者</strong>などのデータ アクセス ロール</li></ul><p>それぞれ、ロールの割り当てで探すと以下のように出てきます。</p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-37e4d55b-2146-4435-ba9c-171b2f6a776b.png" alt="image-37e4d55b-2146-4435-ba9c-171b2f6a776b.png"></p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-eb72b557-8d55-4d47-8535-d1335ffa0205.png" alt="image-eb72b557-8d55-4d47-8535-d1335ffa0205.png"></p><p>上記の二つのロールを割り当てたユーザーから、Azure ポータルで該当のストレージアカウントを参照した例を以下に示します。<br>まず、コンテナー自体は両方とも見えます。</p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-5eb1a9f5-1ee3-4c1d-b382-9fa4b42e5dbb.png" alt="image-5eb1a9f5-1ee3-4c1d-b382-9fa4b42e5dbb.png"></p><p>そして、con1 についてはストレージ BLOB データ共同作成者のロールがあるため、コンテナー内の BLOB が見えます。また、アップロードや削除等もできます。</p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-cd1d29be-14b9-4ecb-8c57-2c20357b5e62.png" alt="image-cd1d29be-14b9-4ecb-8c57-2c20357b5e62.png"></p><p>一方、con2 については con1 と異なり、コンテナーレベルでBLOB データ共同作成者のロールを割り当てていませんので、コンテナー内の BLOB は見えません。以下のようにエラーが表示されます。</p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-5f7b1c72-9ac4-4379-8e9a-96b3a608c8cc.png" alt="image-5f7b1c72-9ac4-4379-8e9a-96b3a608c8cc.png"></p><p>ここまでは、正直なところ先述の資料に書いてある通りなのですが、こちらの方法ですとコンテナーの一覧まではストレージアカウントレベルの閲覧者のロールがあることによって見ることはできます。ロールを割り当てていないコンテナーの中身は見えない状況ですが、コンテナーの一覧も該当のユーザーには見せたくない、という場合にできる方法を紹介します。</p><h2 id="他のコンテナーも見せたくない場合に実施できる方法"><a href="#他のコンテナーも見せたくない場合に実施できる方法" class="headerlink" title="他のコンテナーも見せたくない場合に実施できる方法"></a>他のコンテナーも見せたくない場合に実施できる方法</h2><p>Azure ポータルを利用すると、どうしてもストレージアカウントのリソースを表示してからコンテナーをたどる、という手順になり、リソースを表示するために必要な閲覧者ロールの割り当てを消すことはできません。そのため、今回は Storage Explorer を利用します。<br>Azure Storage Explorer は GUI のツールとなり、BLOB の操作などができます。後述の参考ドキュメントのリンクよりダウンロードすることができます。</p><p>そして、実際にやることですが、ストレージアカウントレベルの閲覧者の権限は削除をし、以下の権限だけを該当のユーザーに割り当てます。</p><ul><li>コンテナーレベルでの<strong>ストレージ BLOB データ共同作成者</strong>などのデータ アクセス ロール</li></ul><p>そして、該当のユーザーを利用して、Storage Explorer を用いて接続する手順を以下に示します。</p><p>(1) Storage Explorer から接続するときに、BLOB コンテナーまたはディレクトリ、を選択します。</p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-d694ca3a-534b-47bc-9842-3d616d2cea21.png" alt="image-d694ca3a-534b-47bc-9842-3d616d2cea21.png"></p><p>(2) OAuth  を使用してサインインする、を選択し、利用するユーザーとサインインするテナントを指定  </p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-86b1596f-fc7b-430e-81af-82cfbcdc4250.png" alt="image-86b1596f-fc7b-430e-81af-82cfbcdc4250.png"></p><p>(3) BLOB  コンテナーまたはディレクトリの URL の欄に、”<a href="https://mystorage0123.blob.core.windows.net/con1%E2%80%9D">https://mystorage0123.blob.core.windows.net/con1”</a> というような URL を指定します。<br>mystorage0123 の部分はストレージアカウント名、con1 の部分はコンテナー名で書き換えてください。</p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-246ee1ab-f538-4310-802f-d7528b6e092f.png" alt="image-246ee1ab-f538-4310-802f-d7528b6e092f.png"></p><p>上記の手順を実施しますと、以下のように対象のコンテナー(今回は con1) の中身だけを表示し、かつ、別のコンテナーの名前が表示される、ということもございません。</p><p><img src="/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage/image-2f07977d-5e97-4b50-bf84-4a6597925467.png" alt="image-2f07977d-5e97-4b50-bf84-4a6597925467.png"></p><p>閲覧者の権限がないため、接続するストレージアカウント名とコンテナー名は別途該当のユーザーに連携する、という必要がございますが、コンテナーの一覧も見せたくない、というような要件がある場合には、こちらの方法のご利用もご検討いただける内容かと思います。</p><h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><p>上記で利用している Azure Storage Explorer は以下からダウンロードができます。</p><p><a href="https://azure.microsoft.com/ja-jp/products/storage/storage-explorer/?msockid=3e7805faccf567970fad1128cdfa66e6">Azure Storage Explorer</a></p><br><br>   <hr><br><br>    <p>2025 年 4 月 15 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p><br><br>]]>
-    </content>
-    <id>https://azure.github.io/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage.html</id>
-    <link href="https://azure.github.io/jpazpaas/2025/04/16/Access-control-at-container-level-of-BLOB-storage.html"/>
-    <published>2025-04-15T15:00:00.000Z</published>
-    <summary>
-      <![CDATA[<p>特定の人に対して、BLOB ストレージアカウントの特定のコンテナーにだけ読み書きできるようにしたいのですが、どうすればいいですか。できれば、アクセス許可を与えたコンテナー以外にどのようなコンテナーがあるか、ということも見えないようにしたい。</p>
-<h1 id="解説">]]>
-    </summary>
-    <title>BLOB のコンテナーレベルでのアクセス制御</title>
-    <updated>2026-06-22T06:10:13.586Z</updated>
+    <updated>2026-06-25T05:43:19.966Z</updated>
   </entry>
 </feed>
