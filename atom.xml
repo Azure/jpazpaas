@@ -10,7 +10,25 @@
   <rights>All rights reserved 2026, Web Developer Platform WebApps Japan</rights>
   <subtitle>日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</subtitle>
   <title>Japan PaaS Support Team Blog</title>
-  <updated>2026-07-07T06:13:49.016Z</updated>
+  <updated>2026-09-07T06:22:45.481Z</updated>
+  <entry>
+    <author>
+      <name>Web Developer Platform WebApps Japan</name>
+    </author>
+    <category term="Function App" scheme="https://azure.github.io/jpazpaas/tags/Function-App/"/>
+    <category term="MCP" scheme="https://azure.github.io/jpazpaas/tags/MCP/"/>
+    <content>
+      <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp">Model Context Protocol (MCP) Binding Extension</a> を使用すると、Azure Functions をリモート MCP サーバーとして動作させることができます。この拡張機能には、MCP のツール、リソース、プロンプトを公開するための 3 種類のトリガーがあります。</p><h2 id="3-種類の-MCP-トリガー"><a href="#3-種類の-MCP-トリガー" class="headerlink" title="3 種類の MCP トリガー"></a>3 種類の MCP トリガー</h2><table><thead><tr><th>トリガー</th><th>役割</th><th>MCP クライアントからの利用方法</th><th>主な用途</th></tr></thead><tbody><tr><td><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-tool-trigger">MCP ツール トリガー</a></td><td>MCP クライアントからの要求に応じて関数を実行し、処理結果を返します</td><td><code>tools/list</code> で検出し、<code>tools/call</code> で呼び出します</td><td>データの保存や検索、外部 API の呼び出しなど、AI エージェントに実行させる処理</td></tr><tr><td><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-resource-trigger">MCP リソース トリガー</a></td><td>URI で識別される情報を MCP リソースとして公開します</td><td><code>resources/list</code> で検出し、<code>resources/read</code> で取得します</td><td>ファイルの内容、データベース スキーマ、API ドキュメント、MCP Apps のユーザー インターフェイスなど、モデルへ渡すコンテキスト</td></tr><tr><td><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-prompt-trigger">MCP プロンプト トリガー</a></td><td>再利用可能なメッセージや指示を MCP プロンプトとして公開します</td><td><code>prompts/list</code> で検出し、<code>prompts/get</code> で取得します</td><td>コード レビューや要約など、利用者が選択して使用する定型プロンプト</td></tr></tbody></table><p>ツールは AI エージェントがタスクを実行するために使用し、リソースはモデルへ渡すコンテキストを提供します。一方、プロンプトは利用者が明示的に選択する再利用可能な指示です。なお、MCP プロンプト トリガーは 2026 年 9 月時点でパブリック プレビューです。</p><h2 id="本記事で扱う範囲"><a href="#本記事で扱う範囲" class="headerlink" title="本記事で扱う範囲"></a>本記事で扱う範囲</h2><p>本記事では、3 種類のうち <strong>MCP ツール トリガー</strong>を扱います。MCP ツール トリガーは、MCP クライアントからツールが呼び出されたタイミングで関数を実行するトリガーです。TypeScript &#x2F; JavaScript &#x2F; C# &#x2F; Python &#x2F; Java で実装した処理を MCP ツールとして公開できます。</p><p>本記事では、Azure Functions のサンプル リポジトリ <a href="https://github.com/Azure-Samples/remote-mcp-functions-typescript">remote-mcp-functions-typescript</a> を使用し、TypeScript で MCP ツール トリガーを作成します。また、Azure へのデプロイ、VS Code と GitHub Copilot からツールを呼び出す手順を紹介します。</p><h2 id="動作の仕組み"><a href="#動作の仕組み" class="headerlink" title="動作の仕組み"></a>動作の仕組み</h2><p>ここでは、本記事で使用する VS Code と GitHub Copilot を例に、利用者の操作と MCP ツール トリガーの動作を説明します。後述の手順で MCP サーバーを VS Code に登録すると、利用者は HTTP 要求を直接作成する必要はありません。Copilot チャットへ自然言語で依頼すると、GitHub Copilot が必要な MCP ツールを選択して呼び出します。</p><p>具体例として、本記事ではコード スニペットを保存・取得する MCP ツールを使用します。コード スニペットとは、配列を並べ替える関数や日付を変換する処理など、後から再利用できるように保存しておく短いソース コードのまとまりです。</p><p>サンプルには、コード スニペットを名前付きで Azure Blob Storage に保存する <code>savesnippet</code> ツールと、保存したコードを取得する <code>getsnippets</code> ツールが用意されています。以下では、TypeScript の配列を昇順に並べ替える関数を GitHub Copilot に生成させ、<code>sortAscending</code> という名前で保存してから、同じコードを取得します。</p><h3 id="利用者の操作例"><a href="#利用者の操作例" class="headerlink" title="利用者の操作例"></a>利用者の操作例</h3><p>VS Code で、Windows の既定のキーボード ショートカット <code>Ctrl+Alt+I</code> を押して Chat view を開き、Agent Mode を選択します。タイトル バーのチャット アイコン、またはコマンド パレットの <code>Chat: Open Chat</code> から開くこともできます。</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TypeScript で配列を昇順ソートする関数を書いて、</span><br><span class="line">&quot;sortAscending&quot; という名前でスニペットに保存して</span><br></pre></td></tr></table></figure><p>GitHub Copilot は依頼内容からコードを生成し、MCP サーバーが公開している <code>savesnippet</code> ツールを選択します。ツールには、概ね次の引数が渡されます。</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">snippetname: sortAscending</span><br><span class="line">snippet: &lt;GitHub Copilot が生成した TypeScript コード&gt;</span><br></pre></td></tr></table></figure><p>MCP ツール トリガーによって Azure Functions の関数が実行され、サンプルではコードが Azure Blob Storage に保存されます。実行が完了すると、Copilot チャットにツールの実行結果と保存が完了した旨の回答が表示されます。</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">表示例:</span><br><span class="line">TypeScript の関数を生成し、&quot;sortAscending&quot; という名前で保存しました。</span><br></pre></td></tr></table></figure><p>続けて、同じ Copilot チャットに次のように入力できます。</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;sortAscending&quot; のスニペットを取得して</span><br></pre></td></tr></table></figure><p>今度は <code>getsnippets</code> ツールが呼び出されます。Azure Blob Storage に保存されている <code>sortAscending</code> のコードがツールの実行結果として返り、GitHub Copilot がその内容をチャットに表示します。</p><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 表示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">sortAscending</span>(<span class="params"><span class="attr">numbers</span>: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span>[] &#123;</span><br><span class="line">  <span class="keyword">return</span> [...numbers].<span class="title function_">sort</span>(<span class="function">(<span class="params">first, second</span>) =&gt;</span> first - second);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>実際のコードや回答の文言は、使用するモデルや会話の内容によって異なります。また、VS Code の設定によっては、ツールを実行する前に確認が表示されます。</p><h3 id="操作の裏側で行われる処理"><a href="#操作の裏側で行われる処理" class="headerlink" title="操作の裏側で行われる処理"></a>操作の裏側で行われる処理</h3><p>上記の操作では、概ね以下の処理が行われます。</p><ol><li><strong>MCP サーバーへの接続</strong>: VS Code が <code>.vscode/mcp.json</code> の設定を使用し、Function App の MCP エンドポイントへ接続します。</li><li><strong>利用可能なツールの取得</strong>: VS Code が <code>tools/list</code> を呼び出します。MCP Binding Extension は、<code>savesnippet</code> や <code>getsnippets</code> などのツール名、説明、入力スキーマを返します。</li><li><strong>チャットへの依頼</strong>: 利用者が Copilot チャットへ自然言語で依頼します。GitHub Copilot はツールの説明と会話の内容から、実行するツールと引数を決定します。</li><li><strong>ツールの呼び出し</strong>: VS Code が <code>tools/call</code> を使用して、選択されたツール名と引数を Function App へ送信します。</li><li><strong>関数の実行</strong>: MCP Binding Extension が要求を対応する関数へルーティングします。関数はデータの保存や取得など、ツール固有の処理を実行します。</li><li><strong>チャットへの結果表示</strong>: 関数の戻り値が MCP のレスポンスとして VS Code へ返ります。GitHub Copilot は結果を受け取り、処理結果や取得したデータをチャットに表示します。</li></ol><p>このように、利用者が操作する場所は Copilot チャットです。MCP Binding Extension が <code>tools/list</code> や <code>tools/call</code> などのプロトコル処理を担うため、関数コードではツール固有の処理に集中できます。</p><h2 id="この環境を構築することで何ができるか"><a href="#この環境を構築することで何ができるか" class="headerlink" title="この環境を構築することで何ができるか"></a>この環境を構築することで何ができるか</h2><h3 id="1-AI-エージェントに独自ツールを提供できる"><a href="#1-AI-エージェントに独自ツールを提供できる" class="headerlink" title="1. AI エージェントに独自ツールを提供できる"></a>1. AI エージェントに独自ツールを提供できる</h3><p>構築した MCP サーバーは、MCP に対応した AI クライアントから呼び出せるカスタムツール群として機能します。</p><table><thead><tr><th>クライアント</th><th>利用例</th></tr></thead><tbody><tr><td><strong>VS Code + GitHub Copilot(Agent Mode)</strong></td><td><code>.vscode/mcp.json</code> にサーバーを登録し、Copilot チャットから自然言語でツールを呼び出す</td></tr><tr><td><strong>その他の MCP 対応クライアント</strong></td><td>Streamable HTTP トランスポートをサポートする任意のクライアント(一般的に公開されているサービス、自作エージェント 等)から接続できる</td></tr></tbody></table><h3 id="2-既存の-Azure-サービスを-AI-から操作できる"><a href="#2-既存の-Azure-サービスを-AI-から操作できる" class="headerlink" title="2. 既存の Azure サービスを AI から操作できる"></a>2. 既存の Azure サービスを AI から操作できる</h3><p>MCP ツール トリガーで実行する関数から、Azure Functions の入力・出力バインディングや Azure SDK を使用して Azure サービスへ接続できます。<br>本記事のサンプルでは、Copilot チャットから依頼すると、生成されたコードを Blob Storage に保存し、保存済みのコードを取得してチャットに表示できます。</p><h3 id="3-サーバーレスの恩恵をそのまま受けられる"><a href="#3-サーバーレスの恩恵をそのまま受けられる" class="headerlink" title="3. サーバーレスの恩恵をそのまま受けられる"></a>3. サーバーレスの恩恵をそのまま受けられる</h3><p>MCP サーバーを常時稼働のサーバーで運用する必要がありません。Azure Functions により以下のメリットが得られます。</p><ul><li><strong>自動スケーリング</strong>: リクエスト量に応じて自動でスケールアウト</li><li><strong>従量課金</strong>: 実行時間分だけの課金(Flex Consumption プラン、Consumption プラン)</li><li><strong>メンテナンス不要</strong>: OS パッチ・ランタイム更新は Azure が管理</li></ul><h3 id="4-社内システムや独自-API-を-AI-から利用できる"><a href="#4-社内システムや独自-API-を-AI-から利用できる" class="headerlink" title="4. 社内システムや独自 API を AI から利用できる"></a>4. 社内システムや独自 API を AI から利用できる</h3><p>MCP ツールのハンドラー関数は通常の関数であるため、社内 API や外部 REST API への呼び出しを含む任意のロジックを実装できます。(本記事では、任意の API の実装例は割愛させていただきます)</p><h3 id="5-マルチモーダルなレスポンスを返せる"><a href="#5-マルチモーダルなレスポンスを返せる" class="headerlink" title="5. マルチモーダルなレスポンスを返せる"></a>5. マルチモーダルなレスポンスを返せる</h3><p>テキスト以外に、画像・QR コード・構造化データなど多様なコンテンツを AI クライアントに返すこともできます。以下に、今回使用するサンプルからの一例をご紹介します。</p><ul><li><code>generateQrCode</code> ツール ― テキストから QR コード PNG を生成して返す</li><li><code>getImageWithMetadata</code> ツール ― 画像と構造化メタデータを同時に返す</li><li><code>resourceLink</code> ツール ― リソースへの参照リンクを返す</li></ul><h2 id="MCP-と-Azure-Functions-の関係"><a href="#MCP-と-Azure-Functions-の関係" class="headerlink" title="MCP と Azure Functions の関係"></a>MCP と Azure Functions の関係</h2><p>Azure Functions の MCP サポートには 2 つの方式があります。</p><table><thead><tr><th>方式</th><th align="center">サポート状況</th><th>実装方法</th></tr></thead><tbody><tr><td><strong>MCP Binding Extension</strong>(app.mcpTool を使用)</td><td align="center">GA(一般提供)</td><td>Azure Functions のトリガー&#x2F;バインディング</td></tr><tr><td><strong>Self-hosted MCP servers</strong>(MCP SDK + Express)</td><td align="center">パブリック プレビュー (2026&#x2F;09 時点)</td><td>Custom Handlers + MCP SDK</td></tr></tbody></table><blockquote><p>両方式の詳細な比較(サポート言語・ステートフル実行の対応状況など)は <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-ai-enabled-apps?pivots=programming-language-typescript#remote-mcp-servers">Azure Functions で AI ツールとモデルを使用する - リモート MCP サーバー</a> を参照してください。</p></blockquote><p>本記事では GA 提供の <strong>MCP Binding Extension 方式</strong>を扱います。</p><h3 id="エンドポイント構成"><a href="#エンドポイント構成" class="headerlink" title="エンドポイント構成"></a>エンドポイント構成</h3><p>デプロイした Function App には以下の MCP エンドポイントが自動的に作成されます。認証には <code>mcp_extension</code> システムキーを <code>?code=&lt;key&gt;</code> クエリパラメータで渡します。</p><p><strong>Streamable HTTP (推奨)</strong><br><code>https://&lt;function-app-name&gt;.azurewebsites.net/runtime/webhooks/mcp</code></p><p><strong>SSE</strong><br><code>https://&lt;function-app-name&gt;.azurewebsites.net/runtime/webhooks/mcp/sse</code></p><hr><h1 id="作成手順"><a href="#作成手順" class="headerlink" title="作成手順"></a>作成手順</h1><h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><p>以下のツールをインストールしてください。</p><table><thead><tr><th>ツール</th><th>用途</th></tr></thead><tbody><tr><td><a href="https://nodejs.org/en/download/">Node.js</a></td><td>ランタイム (サンプルリポジトリの要件として v18 以上)</td></tr><tr><td><a href="https://learn.microsoft.com/azure/azure-functions/functions-run-local?pivots=programming-language-typescript#install-the-azure-functions-core-tools">Azure Functions Core Tools</a></td><td>ローカル実行・デプロイ (サンプルリポジトリの要件として v4.0.7030 以上)</td></tr><tr><td><a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd">Azure Developer CLI(azd)</a></td><td>インフラプロビジョニング</td></tr><tr><td><a href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure CLI(az)</a></td><td>リソース操作</td></tr><tr><td><a href="https://git-scm.com/">Git</a></td><td>リポジトリクローン</td></tr><tr><td><a href="https://code.visualstudio.com/">VS Code</a> + <a href="https://marketplace.visualstudio.com/items?itemName=GitHub.copilot">GitHub Copilot 拡張機能</a></td><td>MCP サーバーへの接続・ツール呼び出し(「VS Code + GitHub Copilot での接続」セクションのみ必須)</td></tr></tbody></table><p>また、アクティブな Azure サブスクリプションが必要です。</p><blockquote><p><strong>GitHub Copilot の料金について</strong>: GitHub Copilot は有料サービスです。ただし、GitHub 個人アカウントであれば無料枠 (Copilot Free) が利用可能で、MCP ツールの動作確認程度であれば無料枠で対応できます。詳細は <a href="https://github.com/features/copilot#pricing">GitHub Copilot の料金ページ</a> を参照してください。</p></blockquote><hr><h2 id="環境構築"><a href="#環境構築" class="headerlink" title="環境構築"></a>環境構築</h2><h3 id="Step-1-リポジトリのクローン"><a href="#Step-1-リポジトリのクローン" class="headerlink" title="Step 1: リポジトリのクローン"></a>Step 1: リポジトリのクローン</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/Azure-Samples/remote-mcp-functions-typescript.git</span><br><span class="line"><span class="built_in">cd</span> remote-mcp-functions-typescript/mcp-tools</span><br></pre></td></tr></table></figure><blockquote><p>注意: サンプルリポジトリのルートには複数のサンプルプロジェクトが含まれています。MCP Binding Extension を使う場合は <code>mcp-tools/</code> サブディレクトリを使用します。</p></blockquote><h3 id="Step-2-依存関係のインストールとビルド"><a href="#Step-2-依存関係のインストールとビルド" class="headerlink" title="Step 2: 依存関係のインストールとビルド"></a>Step 2: 依存関係のインストールとビルド</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure><p>ビルドが成功すると <code>dist/</code> ディレクトリに JavaScript ファイルが生成されます。</p><h3 id="Step-3-package-json-と-host-json-の確認"><a href="#Step-3-package-json-と-host-json-の確認" class="headerlink" title="Step 3: package.json と host.json の確認"></a>Step 3: package.json と host.json の確認</h3><p><strong>package.json</strong> の <code>main</code> フィールドを確認します。</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;main&quot;</span><span class="punctuation">:</span> <span class="string">&quot;dist/src/index.js&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>Azure Functions はこの <code>index.js</code> ファイルのみをエントリポイントとして読み込みます。独自の新しいツールを追加した場合は必ず <code>src/index.ts</code> に import を追記してください。</p><p><strong>host.json</strong> で Extension Bundle のバージョンを確認します。</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;extensionBundle&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Microsoft.Azure.Functions.ExtensionBundle.Preview&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;[4.40, 5.0.0)&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>MCP Binding Extension を使用するには <code>Microsoft.Azure.Functions.ExtensionBundle.Preview</code> v4.x が必要です (通常版 <code>Microsoft.Azure.Functions.ExtensionBundle</code> ではありません)。</p><h3 id="Step-4-Azure-へデプロイ"><a href="#Step-4-Azure-へデプロイ" class="headerlink" title="Step 4: Azure へデプロイ"></a>Step 4: Azure へデプロイ</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Azure にログイン</span></span><br><span class="line">az login</span><br><span class="line">azd auth login</span><br><span class="line"></span><br><span class="line"><span class="comment"># azd 環境を作成</span></span><br><span class="line">azd <span class="built_in">env</span> new &lt;任意の環境名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># プロビジョニング＆デプロイ</span></span><br><span class="line">azd up</span><br></pre></td></tr></table></figure><p>デプロイ後、作成された Function App 名を控えておきます。</p><h3 id="Step-5-mcp-extension-システムキーの取得"><a href="#Step-5-mcp-extension-システムキーの取得" class="headerlink" title="Step 5: mcp_extension システムキーの取得"></a>Step 5: mcp_extension システムキーの取得</h3><p>MCP エンドポイントへのアクセスには <code>mcp_extension</code> システムキーが必要です。Azure CLI または Azure Portal のいずれかで取得できます。</p><h4 id="方法-A-Azure-CLI"><a href="#方法-A-Azure-CLI" class="headerlink" title="方法 A: Azure CLI"></a>方法 A: Azure CLI</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">az functionapp keys list --name &lt;function-app-name&gt; --resource-group &lt;resource-group-name&gt; --query <span class="string">&quot;systemKeys.mcp_extension&quot;</span> -o tsv</span><br></pre></td></tr></table></figure><h4 id="方法-B-Azure-Portal"><a href="#方法-B-Azure-Portal" class="headerlink" title="方法 B: Azure Portal"></a>方法 B: Azure Portal</h4><ol><li><a href="https://portal.azure.com/">Azure Portal</a> を開く</li><li>対象の <strong>Function App</strong> を選択</li><li>左メニューの <strong>「関数」</strong> → <strong>「アプリ キー」</strong> を選択</li><li><strong>「システム キー」</strong> の <code>mcp_extension</code> にあるコピーボタンでキーをコピー<br><img src="/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension/system-key.png" alt="システムキー-mcp_extension"></li></ol><blockquote><p>注意: <strong>ホスト キー(<code>default</code>)では認証に失敗します</strong>。必ずシステム キーの <code>mcp_extension</code> を使用してください。</p></blockquote><p>このキーが MCP エンドポイントへのアクセスに必要な認証キーです。</p><hr><h1 id="実行状況を確認する"><a href="#実行状況を確認する" class="headerlink" title="実行状況を確認する"></a>実行状況を確認する</h1><p>デプロイが完了すると、MCP サーバーが稼働している状態になります。VS Code と GitHub Copilot から接続してツールを実行します。</p><blockquote><p><strong>前提</strong>: 「環境構築手順」の Step 5 で取得した <code>mcp_extension</code> システムキーが手元にあること。</p></blockquote><h2 id="VS-Code-GitHub-Copilot-での接続"><a href="#VS-Code-GitHub-Copilot-での接続" class="headerlink" title="VS Code + GitHub Copilot での接続"></a>VS Code + GitHub Copilot での接続</h2><p><strong>MCP サーバーを使いたいプロジェクト (ワークスペース) のルートフォルダ</strong>に <code>.vscode/mcp.json</code> を作成します。これは VS Code がそのワークスペース専用の MCP サーバー設定を読み込むためのファイルです。</p><blockquote><p><code>.vscode</code> フォルダが存在しない場合は新規作成してください。サンプルリポジトリ(<code>remote-mcp-functions-typescript/mcp-tools</code>)の中に作成しても、別の任意のプロジェクトフォルダに作成しても構いません。</p></blockquote><p><code>.vscode/mcp.json</code> に以下の内容を記述します。</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;servers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;my-mcp-server&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://&lt;function-app-name&gt;.azurewebsites.net/runtime/webhooks/mcp?code=&lt;key&gt;&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><blockquote><p><strong>注意: 認証キーをリポジトリにコミットしない</strong>: <code>.vscode/mcp.json</code> に記載した <code>mcp_extension</code> キーが Git リポジトリに混入しないよう、<code>.gitignore</code> に <code>.vscode/mcp.json</code> を追加してください。</p></blockquote><p>ファイルを保存すると VS Code が設定を読み込みます。接続後のツール実行方法については、冒頭の「<a href="#%E5%88%A9%E7%94%A8%E8%80%85%E3%81%AE%E6%93%8D%E4%BD%9C%E4%BE%8B">利用者の操作例</a>」を参照してください。</p><p>次の画像は、コード スニペットを保存した後、同じ Copilot チャットで「上記はどこに保存されましたか？」と続けて質問した例です。GitHub Copilot はそれまでの会話を踏まえ、Blob Storage の出力バインディングを確認し、保存先のコンテナー名とファイル名を回答しています。</p><p><img src="/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension/vscode.png" alt="コード スニペットの保存後に、同じ Copilot チャットで保存先を質問した例"></p><p>このように、ツールの実行結果が表示された後も、同じチャットの入力欄から続けて質問や依頼を入力できます。「上記」のような表現で直前の結果を参照したり、取得や別の処理を依頼したりできます。実際の回答内容は、使用するモデルや会話の内容によって異なります。</p><hr><h2 id="その他の-MCP-クライアントからの接続"><a href="#その他の-MCP-クライアントからの接続" class="headerlink" title="その他の MCP クライアントからの接続"></a>その他の MCP クライアントからの接続</h2><p>Azure Functions MCP サーバーは MCP プロトコルの Streamable HTTP トランスポートに準拠しています。そのため、VS Code + GitHub Copilot 以外にも、MCP プロトコルをサポートする任意のクライアントから接続できます。</p><p>接続に必要な情報は以下の 2 つです。</p><table><thead><tr><th>項目</th><th>設定値</th></tr></thead><tbody><tr><td>Transport Type</td><td><strong>Streamable HTTP</strong></td></tr><tr><td>URL</td><td><code>https://&lt;function-app-name&gt;.azurewebsites.net/runtime/webhooks/mcp?code=&lt;key&gt;</code></td></tr></tbody></table><hr><h1 id="よくお問い合わせいただく動作"><a href="#よくお問い合わせいただく動作" class="headerlink" title="よくお問い合わせいただく動作"></a>よくお問い合わせいただく動作</h1><h2 id="MCP-ツールの実行がタイムアウトする"><a href="#MCP-ツールの実行がタイムアウトする" class="headerlink" title="MCP ツールの実行がタイムアウトする"></a>MCP ツールの実行がタイムアウトする</h2><p>プロンプトを入力した後、AI モデルが質問を解釈する、使用するツールを選択する、回答を生成するといった <strong>AI 側の処理時間</strong>は、MCP ツール トリガーから別の Azure Functions トリガーへ移譲できません。MCP ツール トリガーが実行されるのは、AI エージェントなどの MCP クライアントがツールを呼び出した後です。詳細は <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-tool-trigger?pivots=programming-language-typescript">Azure Functions の MCP ツール トリガー</a> を参照してください。</p><p>一方、ツールが呼び出された後に <strong>MCP ツール トリガーの関数内で行う処理</strong>は、Queue Storage や Service Bus へメッセージを送信し、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-storage-queue-trigger?pivots=programming-language-typescript">Queue Storage トリガー</a>や <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-service-bus-trigger?pivots=programming-language-typescript">Service Bus トリガー</a>で継続できます。たとえば、MCP ツール トリガーの関数から別の AI モデルや AI API を呼び出しており、その処理に時間がかかる場合は、この方式で移譲できます。</p><p>この場合、MCP ツールからは処理を受け付けたこととジョブ ID を返し、別の MCP ツールで状態や結果を取得する構成にします。元のツール呼び出しが、移譲先の処理完了後に自動的に最終結果を返すわけではありません。また、結果取得用ツールを MCP クライアントが自動的に再実行するかどうかは、利用するクライアントやエージェントの動作に依存します。</p><p>この構成は <a href="https://learn.microsoft.com/ja-jp/azure/architecture/patterns/asynchronous-request-reply#solution">非同期要求-応答パターン</a> に相当します。Azure Functions で長時間実行される処理をキューへ渡して早く応答する考え方については、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/performance-reliability#avoid-long-running-functions">Azure Functions のパフォーマンスと信頼性の向上 - 実行時間の長い関数を回避する</a> を参照してください。Azure Functions 自体の実行タイムアウトはホスティング プランによって異なるため、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-scale#function-app-timeout-duration">Azure Functions のスケールとホスティング - 関数アプリのタイムアウト期間</a> も確認してください。</p><h2 id="追加したツールが-tools-list-に表示されない"><a href="#追加したツールが-tools-list-に表示されない" class="headerlink" title="追加したツールが tools/list に表示されない"></a>追加したツールが <code>tools/list</code> に表示されない</h2><p>TypeScript のサンプルでは、<code>package.json</code> の <code>main</code> で指定された <code>dist/src/index.js</code> がエントリ ポイントです。ツールを追加したファイルが <code>src/index.ts</code> から import されていることを確認し、再度ビルドしてからデプロイしてください。</p><h2 id="MCP-エンドポイントへの接続時に-401-が返る"><a href="#MCP-エンドポイントへの接続時に-401-が返る" class="headerlink" title="MCP エンドポイントへの接続時に 401 が返る"></a>MCP エンドポイントへの接続時に 401 が返る</h2><p>次の点を確認してください。</p><ul><li>ホスト キーではなく、<code>mcp_extension</code> システム キーを使用しているか</li><li>URL の <code>code</code> クエリ パラメーターにシステム キーを設定しているか</li><li>App Service Authentication &#x2F; Authorization (Easy Auth) が要求を拒否していないか</li></ul><h2 id="応用-独自ツールを追加する"><a href="#応用-独自ツールを追加する" class="headerlink" title="応用: 独自ツールを追加する"></a>応用: 独自ツールを追加する</h2><p><code>app.mcpTool()</code> を使って独自のビジネスロジックを持つツールを追加できます。本記事ではサンプルリポジトリと同様 TypeScript での手順を紹介させていただきましたが、他の言語でも実装いただけます。実装方法の詳細は以下の Microsoft 公式ドキュメントを参照してください。</p><ul><li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-tool-trigger?pivots=programming-language-typescript">Azure Functions の MCP ツール トリガー リファレンス(TypeScript)</a></li><li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/scenario-custom-remote-mcp-server?pivots=programming-language-typescript">クイックスタート: Azure Functions を使用してカスタム リモート MCP サーバーを構築する</a></li></ul><h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>本記事では、MCP ツール トリガーの基本動作、TypeScript サンプルの作成とデプロイ、MCP クライアントからの動作確認、運用時の留意点を紹介しました。MCP Binding Extension を利用することで、プロトコル処理を個別に実装せず、Azure Functions の関数を AI エージェントから呼び出せるツールとして公開できます。</p><h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><ul><li><p>Azure Functions MCP ツール トリガー リファレンス<br><a href="https://learn.microsoft.com/azure/azure-functions/functions-bindings-mcp-tool-trigger?pivots=programming-language-typescript">https://learn.microsoft.com/azure/azure-functions/functions-bindings-mcp-tool-trigger?pivots=programming-language-typescript</a></p></li><li><p>クイックスタート: Azure Functions を使用してカスタム リモート MCP サーバーを構築する<br><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/scenario-custom-remote-mcp-server">https://learn.microsoft.com/ja-jp/azure/azure-functions/scenario-custom-remote-mcp-server</a></p></li><li><p>サンプルリポジトリ(TypeScript)<br><a href="https://github.com/Azure-Samples/remote-mcp-functions-typescript">https://github.com/Azure-Samples/remote-mcp-functions-typescript</a></p></li><li><p>Azure Functions での AI ツールとモデルの使用(MCP Binding Extension と Self-hosted MCP servers の比較表を含む)<br><a href="https://learn.microsoft.com/azure/azure-functions/functions-create-ai-enabled-apps">https://learn.microsoft.com/azure/azure-functions/functions-create-ai-enabled-apps</a></p></li></ul><br><br><p>2026 年 9 月 7 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p><br><br>]]>
+    </content>
+    <id>https://azure.github.io/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension.html</id>
+    <link href="https://azure.github.io/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension.html"/>
+    <published>2026-09-07T06:25:19.141Z</published>
+    <summary>
+      <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp">Model Context Protocol (MCP) Binding Extension</]]>
+    </summary>
+    <title>Azure Functions の MCP ツール トリガー作成手順</title>
+    <updated>2026-09-07T06:22:45.481Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Web Developer Platform WebApps Japan</name>
@@ -22,12 +40,12 @@
     </content>
     <id>https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook.html</id>
     <link href="https://azure.github.io/jpazpaas/2026/06/23/Azure-functions-trigger-and-binding-http-webhook.html"/>
-    <published>2026-07-07T06:15:34.206Z</published>
+    <published>2026-09-07T06:25:19.140Z</published>
     <summary>
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-http-webhook-trigger">HTTP トリガー</a> は、HTTP 要求を受信したタイミ]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - HTTP / Webhook トリガー</title>
-    <updated>2026-07-07T06:13:49.016Z</updated>
+    <updated>2026-09-07T06:22:45.480Z</updated>
   </entry>
   <entry>
     <author>
@@ -40,12 +58,12 @@
     </content>
     <id>https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid.html</id>
     <link href="https://azure.github.io/jpazpaas/2026/05/22/Azure-functions-trigger-and-binding-eventgrid.html"/>
-    <published>2026-07-07T06:15:34.205Z</published>
+    <published>2026-09-07T06:25:19.139Z</published>
     <summary>
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-event-grid-trigger">Event Grid トリガー</a> は、<a href="ht]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー</title>
-    <updated>2026-07-07T06:13:49.015Z</updated>
+    <updated>2026-09-07T06:22:45.479Z</updated>
   </entry>
   <entry>
     <author>
@@ -57,13 +75,13 @@
     </content>
     <id>https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal.html</id>
     <link href="https://azure.github.io/jpazpaas/2026/04/21/App-Service-Certificate-Renewal.html"/>
-    <published>2026-07-07T06:15:34.204Z</published>
+    <published>2026-09-07T06:25:19.138Z</published>
     <summary>
       <![CDATA[<blockquote>
 <p><strong>本記事は <a href="https://azure.github.io/jpazpaas/2022/08/26/2022-08-25-App-Service-Certificate-Renewal.html">App Servi]]>
     </summary>
     <title>App Service 証明書の更新に伴うドメイン検証作業の必要について</title>
-    <updated>2026-07-07T06:13:48.986Z</updated>
+    <updated>2026-09-07T06:22:45.449Z</updated>
   </entry>
   <entry>
     <author>
@@ -81,7 +99,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-cosmosdb-v2?tabs=isolated-process,extensionv4&pivots=]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</title>
-    <updated>2026-07-07T06:13:48.984Z</updated>
+    <updated>2026-09-07T06:22:45.447Z</updated>
   </entry>
   <entry>
     <author>
@@ -98,7 +116,7 @@
       <![CDATA[<p>Azure Functions に<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-deployment-technologies?tabs=windows#trigger-]]>
     </summary>
     <title>Azure Functions のトリガーの同期とは</title>
-    <updated>2026-07-07T06:13:48.814Z</updated>
+    <updated>2026-09-07T06:22:45.238Z</updated>
   </entry>
   <entry>
     <author>
@@ -117,7 +135,7 @@
       <![CDATA[<p>お世話になっております。Azure App Service サポート担当の押田です。<br>本記事は、Azure App Service の <strong>Triggered WebJob</strong> において、デプロイ直後に WebJob が意図せず即実行されるケ]]>
     </summary>
     <title>Azure App Service Triggered WebJob がデプロイ直後に即実行される場合がある — 10 分間のグレース期間について</title>
-    <updated>2026-07-07T06:13:48.984Z</updated>
+    <updated>2026-09-07T06:22:45.447Z</updated>
   </entry>
   <entry>
     <author>
@@ -136,7 +154,7 @@
       <![CDATA[<p>お世話になっております。Azure App Service サポート担当の押田です。<br>本記事では、App Service &#x2F; Azure Functions の Windows 環境において、 <code>Node.js 24</code> を利用する際の注]]>
     </summary>
     <title>App Service / Azure Functions の Windows 環境において `Node.js 24` を利用する場合は 64 bit process の有効化を行ってください。</title>
-    <updated>2026-07-07T06:13:48.979Z</updated>
+    <updated>2026-09-07T06:22:45.443Z</updated>
   </entry>
   <entry>
     <author>
@@ -156,7 +174,7 @@
 <li>]]>
     </summary>
     <title>プライベートエンドポイント経由で Azure ポータルから Azure AI Search にアクセスした際に &quot;Failed to fetch&quot; が表示される場合の対処方法</title>
-    <updated>2026-07-07T06:13:48.977Z</updated>
+    <updated>2026-09-07T06:22:45.440Z</updated>
   </entry>
   <entry>
     <author>
@@ -176,7 +194,7 @@
 <p><a href=]]>
     </summary>
     <title>Azure Communication Services Email クォータ緩和について</title>
-    <updated>2026-07-07T06:13:48.975Z</updated>
+    <updated>2026-09-07T06:22:45.438Z</updated>
   </entry>
   <entry>
     <author>
@@ -193,7 +211,7 @@
       <![CDATA[<p>Azure 仮想マシン上でブラウザを起動して Azure ポータルを表示しています。また、該当の Azure 仮想マシンが属している仮想ネットワークのサブネットに、今回操作対象のストレージアカウントの blob のプライベート エンドポイントはすでに作成済みです。</p>]]>
     </summary>
     <title>Azure ポータルで BLOB のリストやダウンロードはできるけれど削除ができないときに考えられること</title>
-    <updated>2026-07-07T06:13:48.975Z</updated>
+    <updated>2026-09-07T06:22:45.438Z</updated>
   </entry>
   <entry>
     <author>
@@ -210,7 +228,7 @@
       <![CDATA[<p>Blob ストレージをデータソースとする AI Search を利用して、インデクサーを実行した際に 「<code>Document key cannot be longer than 1024 characters</code>」というエラーが発生し、インデクサーの実行が]]>
     </summary>
     <title>ドキュメントキー文字数制限エラーの解消法</title>
-    <updated>2026-07-07T06:13:48.974Z</updated>
+    <updated>2026-09-07T06:22:45.436Z</updated>
   </entry>
   <entry>
     <author>
@@ -230,7 +248,7 @@
 <p><a href="https://techcommunity.microsoft.com/blog/exchange/exchange-online]]>
     </summary>
     <title>Azure Communication Services メール機能でよく頂くご質問</title>
-    <updated>2026-07-07T06:13:48.966Z</updated>
+    <updated>2026-09-07T06:22:45.429Z</updated>
   </entry>
   <entry>
     <author>
@@ -248,7 +266,7 @@
       <![CDATA[<p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-service-bus?tabs=isolated-process,extensionv5,extensi]]>
     </summary>
     <title>Azure Functions トリガー・バインディング シリーズ - Service Bus トリガー</title>
-    <updated>2026-07-07T06:13:48.966Z</updated>
+    <updated>2026-09-07T06:22:45.429Z</updated>
   </entry>
   <entry>
     <author>
@@ -265,7 +283,7 @@
       <![CDATA[<p>お世話になっております。App Service サポート担当の仲野です。いつも Azure Functions（関数アプリ）をご利用いただき誠にありがとうございます。Azure Functions では拡張バンドルのコンテンツを Contents Delivery Netw]]>
     </summary>
     <title>Azure Functions で使用している CDN ドメインの移行について</title>
-    <updated>2026-07-07T06:13:48.966Z</updated>
+    <updated>2026-09-07T06:22:45.428Z</updated>
   </entry>
   <entry>
     <author>
@@ -282,7 +300,7 @@
       <![CDATA[<h2 id="はじめに"><a href="#はじめに" class="headerlink" title="はじめに"></a>はじめに</h2><p>お世話になっております。App Service サポート担当の仲野です。いつも Azure Functions（関数アプリ）]]>
     </summary>
     <title>Azure Functions の古いランタイム バージョンに対する潜在的な破壊的変更（2025年10月）</title>
-    <updated>2026-07-07T06:13:48.965Z</updated>
+    <updated>2026-09-07T06:22:45.426Z</updated>
   </entry>
   <entry>
     <author>
@@ -301,7 +319,7 @@
 <p>Azure Functions を使用してサーバーレスアプリケーションを開発・運用]]>
     </summary>
     <title>Azure Functions .NET Isolated（分離ワーカー）モデルで Dependency の一部のログをフィルタリングして Application Insights に送信する方法</title>
-    <updated>2026-07-07T06:13:48.962Z</updated>
+    <updated>2026-09-07T06:22:45.425Z</updated>
   </entry>
   <entry>
     <author>
@@ -321,7 +339,7 @@
       <![CDATA[<p>本記事は 2025 年 4 月 29 日に公開されました <a href="https://azure.github.io/AppService/2025/04/29/Azure-App-Service-Notifications-Improvements.html">Ro]]>
     </summary>
     <title>Azure App Service の計画メンテナンス通知の改善</title>
-    <updated>2026-07-07T06:13:48.960Z</updated>
+    <updated>2026-09-07T06:22:45.422Z</updated>
   </entry>
   <entry>
     <author>
@@ -339,7 +357,7 @@
 <p>Azure Functions を使用してサーバーレスアプリケーションを開発・運用する際、]]>
     </summary>
     <title>Azure Functions .NET Isolated（分離ワーカー）モデルで Application Insights を利用する際の注意点</title>
-    <updated>2026-07-07T06:13:48.960Z</updated>
+    <updated>2026-09-07T06:22:45.423Z</updated>
   </entry>
   <entry>
     <author>
@@ -357,26 +375,6 @@
 <p>AI Search インデックスを作成する際に、選択したアナライザーでドキュメントがどのようにトークナイズされるのかを確認する方法、および正規表現を使用したクエリで検索を行う際の注意点について例を交え]]>
     </summary>
     <title>AI Search アナライザーのトークナイズと正規表現による検索の動作について</title>
-    <updated>2026-07-07T06:13:48.958Z</updated>
-  </entry>
-  <entry>
-    <author>
-      <name>Web Developer Platform WebApps Japan</name>
-    </author>
-    <category term="Azure Resource Manager (ARM)" scheme="https://azure.github.io/jpazpaas/tags/Azure-Resource-Manager-ARM/"/>
-    <content>
-      <![CDATA[<p>こんにちは、PaaS Developer チームの陳です。</p><p>今回は、Azureサービスをバックアップする、IaC観点でサービスを管理する際のベストプライスを紹介します。</p><p>Azure リソースの設定のバックアップを取る方法がありますか？</p><p>障害等で Azure リソース自体のリストア方法があるか？</p><h1 id="回答"><a href="#回答" class="headerlink" title="回答"></a>回答</h1><p>Azure リソースのバックアップを考える際に、Azure リソースの設定自体をバックアップするのか、それとも Azure リソースに保存されているデータのバックアップをするのかを分けて考える必要があります。</p><p><strong>データのバックアップ</strong>の場合は、ローカルで保存するなどではなく、サービスのパックアップ機能を使用します。</p><h3 id="例："><a href="#例：" class="headerlink" title="例："></a>例：</h3><p>ストレージアカウントのデータバックアップには、冗長性を構成することで、保存機器レベル、またはデータセンターレベルの障害、災害からデータを保護できます。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/storage/common/storage-disaster-recovery-guidance?toc=/azure/storage/blobs/toc.json&bc=/azure/storage/blobs/breadcrumb/toc.json#plan-for-failover">Azure ストレージのディザスター リカバリー計画とフェールオーバー - Azure Storage | Microsoft Learn</a></p><p><strong>リソース設定情報のバックアップ</strong>の場合、ARM テンプレート、または Bicep テンプレート、Terrform テンプレートを活用するのが有効です。</p><p>こちらのテンプレートを管理し、使用してリソースの管理、あるいは更新をしていくことが IaC の考え方となります。</p><p>Azure のリソースの ARM テンプレート、 Bicep テンプレート、Terrform テンプレートのスキーマは以下の公式ドキュメントにあります。<br><br><a href="https://learn.microsoft.com/en-us/azure/templates/">Azure resource reference - Bicep, ARM template &amp; Terraform AzAPI reference | Microsoft Learn</a></p><p>既存リソースの設定情報をバックアップするには、先にリソースの 「テンプレートのエクスポート」 より ARM テンプレートを出力します。</p><p>※以前は ARM テンプレートの出力のみサポートされていましたが、最近 Bicep、Terrform テンプレートの出力もサポートされるようになりました</p><p>ただし、テンプレートのエクスポートはすべてのコンポーネントをエクスポートできなかったり、エクスポートされた情報に欠落がある場合があるため、テンプレートエクスポートする場合はチェックが必要となります。</p><p>上記のテンプレートスキーマを参照しながらチェックする必要があるため、リソースの機能などについて一定程度の理解が必要となります。</p><p><img src="/jpazpaas/2025/04/21/general-perspective-in-IaC/image-6575f3df-6052-4a68-8fc2-9e90323e7f3b.png" alt="image-6575f3df-6052-4a68-8fc2-9e90323e7f3b.png"></p><p>エクスポートされたテンプレートには、人によるチェックや修正が必要であることについて、公式ドキュメントにも以下のような注意書きがあります。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/templates/export-template-portal">Azure portal でテンプレートをエクスポートする - Azure Resource Manager | Microsoft Learn</a></p><p><img src="/jpazpaas/2025/04/21/general-perspective-in-IaC/image-95125f45-ee74-484f-b298-fbc09f8078b1.png" alt="image-95125f45-ee74-484f-b298-fbc09f8078b1.png"></p><p>ARM テンプレートとしてエクスポートした場合、以下の方法で手動で Bicep テンプレートに変換することも可能です。</p><p>ただし、Bicep への逆コンパイルはベストエフォートでのサポートとなり、逆コンパイルは情報が欠落したり、失敗したりする場合があるため、チェックが必要です。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/bicep/decompile?tabs=azure-cli#decompile-from-json-to-bicep">JSON Azure Resource Manager テンプレートを Bicep に逆コンパイルする - Azure Resource Manager | Microsoft Learn</a></p><p><img src="/jpazpaas/2025/04/21/general-perspective-in-IaC/image-579ece23-2379-4702-abcf-183550894e50.png" alt="image-579ece23-2379-4702-abcf-183550894e50.png"></p><p>単純なバックアップであれば、テンプレートのエクスポート、チェックを行えば、バックアップ完了となり、リソースのリストアは Azure PowerShell コマンドなどでテンプレートを使用してリソースをデプロイできます。<br><br><a href="https://learn.microsoft.com/ja-jp/powershell/module/az.resources/new-azresourcegroupdeployment?view=azps-0.10.0">New-AzResourceGroupDeployment (Az.Resources) | Microsoft Learn</a></p><p>IaC としてリソースのデプロイなどを管理したい場合は、リソーステンプレートを以下の処理を行います。</p><ol><li>テンプレートエクスポート</li><li>テンプレートチェック</li></ol><p>ここまでは上記内容で説明しました</p><ol start="3"><li>テンプレートのリファクタリング（モジュール化など）</li><li>テスト</li><li>デプロイ</li></ol><p><img src="/jpazpaas/2025/04/21/general-perspective-in-IaC/image-966141ff-85ce-4719-8422-e15e3c2daaf9.png" alt="image-966141ff-85ce-4719-8422-e15e3c2daaf9.png"><br><br><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/bicep/migrate">Bicep を使用するために Azure リソースと JSON ARM テンプレートを移行する - Azure Resource Manager | Microsoft Learn</a></p><h3 id="リファクタリング"><a href="#リファクタリング" class="headerlink" title="リファクタリング"></a>リファクタリング</h3><p>テンプレートのリファクタリングは、テンプレートの変数などを読みやすく変更したり、コメントを追加してテンプレートの可読性を向上したりすることができます。</p><p>また、複数のリソースといった複雑なシステム構成の場合、個々のリソースをモジュール化することで、主テンプレートに集約することが可能で、管理を簡略化できます。</p><p>Bicep テンプレートはモジュール、ARM テンプレートはリンクされたテンプレートを使用します。</p><h3 id="テスト"><a href="#テスト" class="headerlink" title="テスト"></a>テスト</h3><p>更新したテンプレートでリソースをアップデートする場合、動作の検証が必要となってくるため、いきなり本番環境へのデプロイではなく、</p><p>あらかじめ用意されたテスト環境へデプロイし、動作の検証をすることを推奨します。</p><p>また、実際のデプロイを行わず、デプロイによる変更をプレビューすることも可能ですので、実際にデプロイする前に今回のデプロイで変更された箇所を記録することもいざとなった時に参考となれます。<br><br><a href="https://learn.microsoft.com/ja-jp/azure/azure-resource-manager/templates/deploy-what-if?tabs=azure-powershell">テンプレート デプロイの what-if - Azure Resource Manager | Microsoft Learn</a></p><h3 id="デプロイ"><a href="#デプロイ" class="headerlink" title="デプロイ"></a>デプロイ</h3><p>テンプレートの検証が終わりましたら、実際にデプロイを行います。</p><p>デプロイは、コマンドで実行するか、ポータルで実行できますが、ポータルではファイルのアップロードなどが必要となるため、</p><p>複数のテンプレートでリソースのデプロイを行う場合は、ローカルでのコマンド実行の方が迅速で、便利となります。</p>]]>
-    </content>
-    <id>https://azure.github.io/jpazpaas/2025/04/21/general-perspective-in-IaC.html</id>
-    <link href="https://azure.github.io/jpazpaas/2025/04/21/general-perspective-in-IaC.html"/>
-    <published>2025-04-20T15:00:00.000Z</published>
-    <summary>
-      <![CDATA[<p>こんにちは、PaaS Developer チームの陳です。</p>
-<p>今回は、Azureサービスをバックアップする、IaC観点でサービスを管理する際のベストプライスを紹介します。</p>
-<p>Azure リソースの設定のバックアップを取る方法がありますか？</p>
-<]]>
-    </summary>
-    <title>Azure サービスをバックアップする一般的な考え方</title>
-    <updated>2026-07-07T06:13:48.954Z</updated>
+    <updated>2026-09-07T06:22:45.420Z</updated>
   </entry>
 </feed>

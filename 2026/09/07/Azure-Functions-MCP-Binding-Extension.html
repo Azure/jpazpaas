@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Azure Functions の MCP ツール トリガー作成手順 | Japan PaaS Support Team Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Model Context Protocol (MCP) Binding Extension を使用すると、Azure Functions をリモート MCP サーバーとして動作させることができます。この拡張機能には、MCP のツール、リソース、プロンプトを公開するための 3 種類のトリガーがあります。 3 種類の MCP トリガー   トリガー 役割 MCP クライアントからの利用方法 主な用途">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure Functions の MCP ツール トリガー作成手順">
+<meta property="og:url" content="https://azure.github.io/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension.html">
+<meta property="og:site_name" content="Japan PaaS Support Team Blog">
+<meta property="og:description" content="Model Context Protocol (MCP) Binding Extension を使用すると、Azure Functions をリモート MCP サーバーとして動作させることができます。この拡張機能には、MCP のツール、リソース、プロンプトを公開するための 3 種類のトリガーがあります。 3 種類の MCP トリガー   トリガー 役割 MCP クライアントからの利用方法 主な用途">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension/system-key.png">
+<meta property="og:image" content="https://azure.github.io/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension/vscode.png">
+<meta property="article:published_time" content="2026-09-07T06:25:19.141Z">
+<meta property="article:modified_time" content="2026-09-07T06:22:45.481Z">
+<meta property="article:author" content="Web Developer Platform WebApps Japan">
+<meta property="article:tag" content="Function App">
+<meta property="article:tag" content="MCP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://azure.github.io/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension/system-key.png">
+  
+    <link rel="alternate" href="../../../atom.xml" title="Japan PaaS Support Team Blog" type="application/atom+xml">
+  
+
+  <link rel="icon" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../../favicon-16x16.png">
+  <link rel="manifest" href="../../../site.webmanifest">
+  <link rel="mask-icon" href="../../../safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="../../../css/style.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="site-header-logo"></div>
+  <div id="site-header-blog-wrapper"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        <div id="ms-logo"></div>
+        
+          <a class="main-nav-link" href="/jpazpaas/">Home</a>
+        
+          <a class="main-nav-link" href="/jpazpaas/archives">Archives</a>
+        
+        <a class="main-nav-link" href="https://cssjpn.github.io/">サポート情報</a>
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="../../../atom.xml" title="RSSフィード"></a>
+        
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.bing.com/search" method="get" accept-charset="UTF-8" name="bing-search" onsubmit="var f=this;if(f['q'].value){var searchUrl =  'https://www.bing.com/search?q=' +  encodeURIComponent(f['q'].value + ' site:' + f['sitesearch'].value) ;window.open(searchUrl, 'blank') };return false;" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="検索"><button type="submit" id="nav-search-btn" class="search-form-submit"></button><input type="hidden" name="sitesearch" value="https://Azure.github.io/jpazpaas"></form>
+      </div>
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="../../../index.html" id="logo">Japan PaaS Support Team Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="../../../index.html" id="subtitle">日本マイクロソフトの App Service, Service Bus, Service Fabric, Communication Services に関するサポート情報のブログです。サポートエンジニアがもつ知見や経験事例をご紹介していきます。</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2026/09/07/Azure-Functions-MCP-Binding-Extension" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header-single">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Azure Functions の MCP ツール トリガー作成手順
+    </h1>
+  
+
+      </header>
+      <div class="article-share">
+        Published: 
+        <a href="" class="article-date-single">
+  <time datetime="2026-09-07T06:25:19.141Z" itemprop="datePublished">2026-09-07</time>
+</a>
+        
+        
+        
+        <a href="https://github.com/Azure/jpazpaas/issues/new?title=&body=%0A%0A---%0A%0A%23%23%23%23+Document+Details%0A%0A%E2%9A%A0+*Do+not+edit+this+section.%0A%0A*+ID%3A+849af5de-6816-55ff-a255-e31c76ed4cc7%0A*+%E5%AF%BE%E8%B1%A1%E8%A8%98%E4%BA%8B%3A+%5BAzure+Functions+%E3%81%AE+MCP+%E3%83%84%E3%83%BC%E3%83%AB+%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E4%BD%9C%E6%88%90%E6%89%8B%E9%A0%86%5D%28https%3A%2F%2Fazure.github.io%2Fjpazpaas%2F2026%2F09%2F07%2FAzure-Functions-MCP-Binding-Extension.html%29%0A*+Content+Source%3A+%5Barticles%2F2026%2F09%2F07%2FAzure-Functions-MCP-Binding-Extension.md%5D%28https%3A%2F%2Fgithub.com%2FAzure%2Fjpazpaas%2Fblob%2Fmain%2Farticles%2F2026%2F09%2F07%2FAzure-Functions-MCP-Binding-Extension.md%29%0A*+Author%3A+" class="article-github-issue-link" target="_blank" rel="noopener noreferrer">feedback</a>
+        
+        <a data-url="https://azure.github.io/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension.html" data-id="cuidVKv-a2x4Z3fcXXFSQWGVc" class="article-share-link">共有</a>
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp">Model Context Protocol (MCP) Binding Extension</a> を使用すると、Azure Functions をリモート MCP サーバーとして動作させることができます。この拡張機能には、MCP のツール、リソース、プロンプトを公開するための 3 種類のトリガーがあります。</p>
+<h2 id="3-種類の-MCP-トリガー"><a href="#3-種類の-MCP-トリガー" class="headerlink" title="3 種類の MCP トリガー"></a>3 種類の MCP トリガー</h2><table>
+<thead>
+<tr>
+<th>トリガー</th>
+<th>役割</th>
+<th>MCP クライアントからの利用方法</th>
+<th>主な用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-tool-trigger">MCP ツール トリガー</a></td>
+<td>MCP クライアントからの要求に応じて関数を実行し、処理結果を返します</td>
+<td><code>tools/list</code> で検出し、<code>tools/call</code> で呼び出します</td>
+<td>データの保存や検索、外部 API の呼び出しなど、AI エージェントに実行させる処理</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-resource-trigger">MCP リソース トリガー</a></td>
+<td>URI で識別される情報を MCP リソースとして公開します</td>
+<td><code>resources/list</code> で検出し、<code>resources/read</code> で取得します</td>
+<td>ファイルの内容、データベース スキーマ、API ドキュメント、MCP Apps のユーザー インターフェイスなど、モデルへ渡すコンテキスト</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-prompt-trigger">MCP プロンプト トリガー</a></td>
+<td>再利用可能なメッセージや指示を MCP プロンプトとして公開します</td>
+<td><code>prompts/list</code> で検出し、<code>prompts/get</code> で取得します</td>
+<td>コード レビューや要約など、利用者が選択して使用する定型プロンプト</td>
+</tr>
+</tbody></table>
+<p>ツールは AI エージェントがタスクを実行するために使用し、リソースはモデルへ渡すコンテキストを提供します。一方、プロンプトは利用者が明示的に選択する再利用可能な指示です。なお、MCP プロンプト トリガーは 2026 年 9 月時点でパブリック プレビューです。</p>
+<h2 id="本記事で扱う範囲"><a href="#本記事で扱う範囲" class="headerlink" title="本記事で扱う範囲"></a>本記事で扱う範囲</h2><p>本記事では、3 種類のうち <strong>MCP ツール トリガー</strong>を扱います。MCP ツール トリガーは、MCP クライアントからツールが呼び出されたタイミングで関数を実行するトリガーです。TypeScript &#x2F; JavaScript &#x2F; C# &#x2F; Python &#x2F; Java で実装した処理を MCP ツールとして公開できます。</p>
+<p>本記事では、Azure Functions のサンプル リポジトリ <a href="https://github.com/Azure-Samples/remote-mcp-functions-typescript">remote-mcp-functions-typescript</a> を使用し、TypeScript で MCP ツール トリガーを作成します。また、Azure へのデプロイ、VS Code と GitHub Copilot からツールを呼び出す手順を紹介します。</p>
+<h2 id="動作の仕組み"><a href="#動作の仕組み" class="headerlink" title="動作の仕組み"></a>動作の仕組み</h2><p>ここでは、本記事で使用する VS Code と GitHub Copilot を例に、利用者の操作と MCP ツール トリガーの動作を説明します。後述の手順で MCP サーバーを VS Code に登録すると、利用者は HTTP 要求を直接作成する必要はありません。Copilot チャットへ自然言語で依頼すると、GitHub Copilot が必要な MCP ツールを選択して呼び出します。</p>
+<p>具体例として、本記事ではコード スニペットを保存・取得する MCP ツールを使用します。コード スニペットとは、配列を並べ替える関数や日付を変換する処理など、後から再利用できるように保存しておく短いソース コードのまとまりです。</p>
+<p>サンプルには、コード スニペットを名前付きで Azure Blob Storage に保存する <code>savesnippet</code> ツールと、保存したコードを取得する <code>getsnippets</code> ツールが用意されています。以下では、TypeScript の配列を昇順に並べ替える関数を GitHub Copilot に生成させ、<code>sortAscending</code> という名前で保存してから、同じコードを取得します。</p>
+<h3 id="利用者の操作例"><a href="#利用者の操作例" class="headerlink" title="利用者の操作例"></a>利用者の操作例</h3><p>VS Code で、Windows の既定のキーボード ショートカット <code>Ctrl+Alt+I</code> を押して Chat view を開き、Agent Mode を選択します。タイトル バーのチャット アイコン、またはコマンド パレットの <code>Chat: Open Chat</code> から開くこともできます。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TypeScript で配列を昇順ソートする関数を書いて、</span><br><span class="line">&quot;sortAscending&quot; という名前でスニペットに保存して</span><br></pre></td></tr></table></figure>
+
+<p>GitHub Copilot は依頼内容からコードを生成し、MCP サーバーが公開している <code>savesnippet</code> ツールを選択します。ツールには、概ね次の引数が渡されます。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">snippetname: sortAscending</span><br><span class="line">snippet: &lt;GitHub Copilot が生成した TypeScript コード&gt;</span><br></pre></td></tr></table></figure>
+
+<p>MCP ツール トリガーによって Azure Functions の関数が実行され、サンプルではコードが Azure Blob Storage に保存されます。実行が完了すると、Copilot チャットにツールの実行結果と保存が完了した旨の回答が表示されます。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">表示例:</span><br><span class="line">TypeScript の関数を生成し、&quot;sortAscending&quot; という名前で保存しました。</span><br></pre></td></tr></table></figure>
+
+<p>続けて、同じ Copilot チャットに次のように入力できます。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;sortAscending&quot; のスニペットを取得して</span><br></pre></td></tr></table></figure>
+
+<p>今度は <code>getsnippets</code> ツールが呼び出されます。Azure Blob Storage に保存されている <code>sortAscending</code> のコードがツールの実行結果として返り、GitHub Copilot がその内容をチャットに表示します。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 表示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">sortAscending</span>(<span class="params"><span class="attr">numbers</span>: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span>[] &#123;</span><br><span class="line">  <span class="keyword">return</span> [...numbers].<span class="title function_">sort</span>(<span class="function">(<span class="params">first, second</span>) =&gt;</span> first - second);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>実際のコードや回答の文言は、使用するモデルや会話の内容によって異なります。また、VS Code の設定によっては、ツールを実行する前に確認が表示されます。</p>
+<h3 id="操作の裏側で行われる処理"><a href="#操作の裏側で行われる処理" class="headerlink" title="操作の裏側で行われる処理"></a>操作の裏側で行われる処理</h3><p>上記の操作では、概ね以下の処理が行われます。</p>
+<ol>
+<li><strong>MCP サーバーへの接続</strong>: VS Code が <code>.vscode/mcp.json</code> の設定を使用し、Function App の MCP エンドポイントへ接続します。</li>
+<li><strong>利用可能なツールの取得</strong>: VS Code が <code>tools/list</code> を呼び出します。MCP Binding Extension は、<code>savesnippet</code> や <code>getsnippets</code> などのツール名、説明、入力スキーマを返します。</li>
+<li><strong>チャットへの依頼</strong>: 利用者が Copilot チャットへ自然言語で依頼します。GitHub Copilot はツールの説明と会話の内容から、実行するツールと引数を決定します。</li>
+<li><strong>ツールの呼び出し</strong>: VS Code が <code>tools/call</code> を使用して、選択されたツール名と引数を Function App へ送信します。</li>
+<li><strong>関数の実行</strong>: MCP Binding Extension が要求を対応する関数へルーティングします。関数はデータの保存や取得など、ツール固有の処理を実行します。</li>
+<li><strong>チャットへの結果表示</strong>: 関数の戻り値が MCP のレスポンスとして VS Code へ返ります。GitHub Copilot は結果を受け取り、処理結果や取得したデータをチャットに表示します。</li>
+</ol>
+<p>このように、利用者が操作する場所は Copilot チャットです。MCP Binding Extension が <code>tools/list</code> や <code>tools/call</code> などのプロトコル処理を担うため、関数コードではツール固有の処理に集中できます。</p>
+<h2 id="この環境を構築することで何ができるか"><a href="#この環境を構築することで何ができるか" class="headerlink" title="この環境を構築することで何ができるか"></a>この環境を構築することで何ができるか</h2><h3 id="1-AI-エージェントに独自ツールを提供できる"><a href="#1-AI-エージェントに独自ツールを提供できる" class="headerlink" title="1. AI エージェントに独自ツールを提供できる"></a>1. AI エージェントに独自ツールを提供できる</h3><p>構築した MCP サーバーは、MCP に対応した AI クライアントから呼び出せるカスタムツール群として機能します。</p>
+<table>
+<thead>
+<tr>
+<th>クライアント</th>
+<th>利用例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>VS Code + GitHub Copilot(Agent Mode)</strong></td>
+<td><code>.vscode/mcp.json</code> にサーバーを登録し、Copilot チャットから自然言語でツールを呼び出す</td>
+</tr>
+<tr>
+<td><strong>その他の MCP 対応クライアント</strong></td>
+<td>Streamable HTTP トランスポートをサポートする任意のクライアント(一般的に公開されているサービス、自作エージェント 等)から接続できる</td>
+</tr>
+</tbody></table>
+<h3 id="2-既存の-Azure-サービスを-AI-から操作できる"><a href="#2-既存の-Azure-サービスを-AI-から操作できる" class="headerlink" title="2. 既存の Azure サービスを AI から操作できる"></a>2. 既存の Azure サービスを AI から操作できる</h3><p>MCP ツール トリガーで実行する関数から、Azure Functions の入力・出力バインディングや Azure SDK を使用して Azure サービスへ接続できます。<br>本記事のサンプルでは、Copilot チャットから依頼すると、生成されたコードを Blob Storage に保存し、保存済みのコードを取得してチャットに表示できます。</p>
+<h3 id="3-サーバーレスの恩恵をそのまま受けられる"><a href="#3-サーバーレスの恩恵をそのまま受けられる" class="headerlink" title="3. サーバーレスの恩恵をそのまま受けられる"></a>3. サーバーレスの恩恵をそのまま受けられる</h3><p>MCP サーバーを常時稼働のサーバーで運用する必要がありません。Azure Functions により以下のメリットが得られます。</p>
+<ul>
+<li><strong>自動スケーリング</strong>: リクエスト量に応じて自動でスケールアウト</li>
+<li><strong>従量課金</strong>: 実行時間分だけの課金(Flex Consumption プラン、Consumption プラン)</li>
+<li><strong>メンテナンス不要</strong>: OS パッチ・ランタイム更新は Azure が管理</li>
+</ul>
+<h3 id="4-社内システムや独自-API-を-AI-から利用できる"><a href="#4-社内システムや独自-API-を-AI-から利用できる" class="headerlink" title="4. 社内システムや独自 API を AI から利用できる"></a>4. 社内システムや独自 API を AI から利用できる</h3><p>MCP ツールのハンドラー関数は通常の関数であるため、社内 API や外部 REST API への呼び出しを含む任意のロジックを実装できます。(本記事では、任意の API の実装例は割愛させていただきます)</p>
+<h3 id="5-マルチモーダルなレスポンスを返せる"><a href="#5-マルチモーダルなレスポンスを返せる" class="headerlink" title="5. マルチモーダルなレスポンスを返せる"></a>5. マルチモーダルなレスポンスを返せる</h3><p>テキスト以外に、画像・QR コード・構造化データなど多様なコンテンツを AI クライアントに返すこともできます。以下に、今回使用するサンプルからの一例をご紹介します。</p>
+<ul>
+<li><code>generateQrCode</code> ツール ― テキストから QR コード PNG を生成して返す</li>
+<li><code>getImageWithMetadata</code> ツール ― 画像と構造化メタデータを同時に返す</li>
+<li><code>resourceLink</code> ツール ― リソースへの参照リンクを返す</li>
+</ul>
+<h2 id="MCP-と-Azure-Functions-の関係"><a href="#MCP-と-Azure-Functions-の関係" class="headerlink" title="MCP と Azure Functions の関係"></a>MCP と Azure Functions の関係</h2><p>Azure Functions の MCP サポートには 2 つの方式があります。</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th align="center">サポート状況</th>
+<th>実装方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MCP Binding Extension</strong>(app.mcpTool を使用)</td>
+<td align="center">GA(一般提供)</td>
+<td>Azure Functions のトリガー&#x2F;バインディング</td>
+</tr>
+<tr>
+<td><strong>Self-hosted MCP servers</strong>(MCP SDK + Express)</td>
+<td align="center">パブリック プレビュー (2026&#x2F;09 時点)</td>
+<td>Custom Handlers + MCP SDK</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>両方式の詳細な比較(サポート言語・ステートフル実行の対応状況など)は <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-create-ai-enabled-apps?pivots=programming-language-typescript#remote-mcp-servers">Azure Functions で AI ツールとモデルを使用する - リモート MCP サーバー</a> を参照してください。</p>
+</blockquote>
+<p>本記事では GA 提供の <strong>MCP Binding Extension 方式</strong>を扱います。</p>
+<h3 id="エンドポイント構成"><a href="#エンドポイント構成" class="headerlink" title="エンドポイント構成"></a>エンドポイント構成</h3><p>デプロイした Function App には以下の MCP エンドポイントが自動的に作成されます。認証には <code>mcp_extension</code> システムキーを <code>?code=&lt;key&gt;</code> クエリパラメータで渡します。</p>
+<p><strong>Streamable HTTP (推奨)</strong><br><code>https://&lt;function-app-name&gt;.azurewebsites.net/runtime/webhooks/mcp</code></p>
+<p><strong>SSE</strong><br><code>https://&lt;function-app-name&gt;.azurewebsites.net/runtime/webhooks/mcp/sse</code></p>
+<hr>
+<h1 id="作成手順"><a href="#作成手順" class="headerlink" title="作成手順"></a>作成手順</h1><h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><p>以下のツールをインストールしてください。</p>
+<table>
+<thead>
+<tr>
+<th>ツール</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://nodejs.org/en/download/">Node.js</a></td>
+<td>ランタイム (サンプルリポジトリの要件として v18 以上)</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/azure-functions/functions-run-local?pivots=programming-language-typescript#install-the-azure-functions-core-tools">Azure Functions Core Tools</a></td>
+<td>ローカル実行・デプロイ (サンプルリポジトリの要件として v4.0.7030 以上)</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd">Azure Developer CLI(azd)</a></td>
+<td>インフラプロビジョニング</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure CLI(az)</a></td>
+<td>リソース操作</td>
+</tr>
+<tr>
+<td><a href="https://git-scm.com/">Git</a></td>
+<td>リポジトリクローン</td>
+</tr>
+<tr>
+<td><a href="https://code.visualstudio.com/">VS Code</a> + <a href="https://marketplace.visualstudio.com/items?itemName=GitHub.copilot">GitHub Copilot 拡張機能</a></td>
+<td>MCP サーバーへの接続・ツール呼び出し(「VS Code + GitHub Copilot での接続」セクションのみ必須)</td>
+</tr>
+</tbody></table>
+<p>また、アクティブな Azure サブスクリプションが必要です。</p>
+<blockquote>
+<p><strong>GitHub Copilot の料金について</strong>: GitHub Copilot は有料サービスです。ただし、GitHub 個人アカウントであれば無料枠 (Copilot Free) が利用可能で、MCP ツールの動作確認程度であれば無料枠で対応できます。詳細は <a href="https://github.com/features/copilot#pricing">GitHub Copilot の料金ページ</a> を参照してください。</p>
+</blockquote>
+<hr>
+<h2 id="環境構築"><a href="#環境構築" class="headerlink" title="環境構築"></a>環境構築</h2><h3 id="Step-1-リポジトリのクローン"><a href="#Step-1-リポジトリのクローン" class="headerlink" title="Step 1: リポジトリのクローン"></a>Step 1: リポジトリのクローン</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/Azure-Samples/remote-mcp-functions-typescript.git</span><br><span class="line"><span class="built_in">cd</span> remote-mcp-functions-typescript/mcp-tools</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意: サンプルリポジトリのルートには複数のサンプルプロジェクトが含まれています。MCP Binding Extension を使う場合は <code>mcp-tools/</code> サブディレクトリを使用します。</p>
+</blockquote>
+<h3 id="Step-2-依存関係のインストールとビルド"><a href="#Step-2-依存関係のインストールとビルド" class="headerlink" title="Step 2: 依存関係のインストールとビルド"></a>Step 2: 依存関係のインストールとビルド</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+
+<p>ビルドが成功すると <code>dist/</code> ディレクトリに JavaScript ファイルが生成されます。</p>
+<h3 id="Step-3-package-json-と-host-json-の確認"><a href="#Step-3-package-json-と-host-json-の確認" class="headerlink" title="Step 3: package.json と host.json の確認"></a>Step 3: package.json と host.json の確認</h3><p><strong>package.json</strong> の <code>main</code> フィールドを確認します。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;main&quot;</span><span class="punctuation">:</span> <span class="string">&quot;dist/src/index.js&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>Azure Functions はこの <code>index.js</code> ファイルのみをエントリポイントとして読み込みます。独自の新しいツールを追加した場合は必ず <code>src/index.ts</code> に import を追記してください。</p>
+<p><strong>host.json</strong> で Extension Bundle のバージョンを確認します。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;extensionBundle&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Microsoft.Azure.Functions.ExtensionBundle.Preview&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;[4.40, 5.0.0)&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>MCP Binding Extension を使用するには <code>Microsoft.Azure.Functions.ExtensionBundle.Preview</code> v4.x が必要です (通常版 <code>Microsoft.Azure.Functions.ExtensionBundle</code> ではありません)。</p>
+<h3 id="Step-4-Azure-へデプロイ"><a href="#Step-4-Azure-へデプロイ" class="headerlink" title="Step 4: Azure へデプロイ"></a>Step 4: Azure へデプロイ</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Azure にログイン</span></span><br><span class="line">az login</span><br><span class="line">azd auth login</span><br><span class="line"></span><br><span class="line"><span class="comment"># azd 環境を作成</span></span><br><span class="line">azd <span class="built_in">env</span> new &lt;任意の環境名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># プロビジョニング＆デプロイ</span></span><br><span class="line">azd up</span><br></pre></td></tr></table></figure>
+
+<p>デプロイ後、作成された Function App 名を控えておきます。</p>
+<h3 id="Step-5-mcp-extension-システムキーの取得"><a href="#Step-5-mcp-extension-システムキーの取得" class="headerlink" title="Step 5: mcp_extension システムキーの取得"></a>Step 5: mcp_extension システムキーの取得</h3><p>MCP エンドポイントへのアクセスには <code>mcp_extension</code> システムキーが必要です。Azure CLI または Azure Portal のいずれかで取得できます。</p>
+<h4 id="方法-A-Azure-CLI"><a href="#方法-A-Azure-CLI" class="headerlink" title="方法 A: Azure CLI"></a>方法 A: Azure CLI</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">az functionapp keys list --name &lt;function-app-name&gt; --resource-group &lt;resource-group-name&gt; --query <span class="string">&quot;systemKeys.mcp_extension&quot;</span> -o tsv</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法-B-Azure-Portal"><a href="#方法-B-Azure-Portal" class="headerlink" title="方法 B: Azure Portal"></a>方法 B: Azure Portal</h4><ol>
+<li><a href="https://portal.azure.com/">Azure Portal</a> を開く</li>
+<li>対象の <strong>Function App</strong> を選択</li>
+<li>左メニューの <strong>「関数」</strong> → <strong>「アプリ キー」</strong> を選択</li>
+<li><strong>「システム キー」</strong> の <code>mcp_extension</code> にあるコピーボタンでキーをコピー<br><img src="/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension/system-key.png" alt="システムキー-mcp_extension"></li>
+</ol>
+<blockquote>
+<p>注意: <strong>ホスト キー(<code>default</code>)では認証に失敗します</strong>。必ずシステム キーの <code>mcp_extension</code> を使用してください。</p>
+</blockquote>
+<p>このキーが MCP エンドポイントへのアクセスに必要な認証キーです。</p>
+<hr>
+<h1 id="実行状況を確認する"><a href="#実行状況を確認する" class="headerlink" title="実行状況を確認する"></a>実行状況を確認する</h1><p>デプロイが完了すると、MCP サーバーが稼働している状態になります。VS Code と GitHub Copilot から接続してツールを実行します。</p>
+<blockquote>
+<p><strong>前提</strong>: 「環境構築手順」の Step 5 で取得した <code>mcp_extension</code> システムキーが手元にあること。</p>
+</blockquote>
+<h2 id="VS-Code-GitHub-Copilot-での接続"><a href="#VS-Code-GitHub-Copilot-での接続" class="headerlink" title="VS Code + GitHub Copilot での接続"></a>VS Code + GitHub Copilot での接続</h2><p><strong>MCP サーバーを使いたいプロジェクト (ワークスペース) のルートフォルダ</strong>に <code>.vscode/mcp.json</code> を作成します。これは VS Code がそのワークスペース専用の MCP サーバー設定を読み込むためのファイルです。</p>
+<blockquote>
+<p><code>.vscode</code> フォルダが存在しない場合は新規作成してください。サンプルリポジトリ(<code>remote-mcp-functions-typescript/mcp-tools</code>)の中に作成しても、別の任意のプロジェクトフォルダに作成しても構いません。</p>
+</blockquote>
+<p><code>.vscode/mcp.json</code> に以下の内容を記述します。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;servers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;my-mcp-server&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://&lt;function-app-name&gt;.azurewebsites.net/runtime/webhooks/mcp?code=&lt;key&gt;&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意: 認証キーをリポジトリにコミットしない</strong>: <code>.vscode/mcp.json</code> に記載した <code>mcp_extension</code> キーが Git リポジトリに混入しないよう、<code>.gitignore</code> に <code>.vscode/mcp.json</code> を追加してください。</p>
+</blockquote>
+<p>ファイルを保存すると VS Code が設定を読み込みます。接続後のツール実行方法については、冒頭の「<a href="#%E5%88%A9%E7%94%A8%E8%80%85%E3%81%AE%E6%93%8D%E4%BD%9C%E4%BE%8B">利用者の操作例</a>」を参照してください。</p>
+<p>次の画像は、コード スニペットを保存した後、同じ Copilot チャットで「上記はどこに保存されましたか？」と続けて質問した例です。GitHub Copilot はそれまでの会話を踏まえ、Blob Storage の出力バインディングを確認し、保存先のコンテナー名とファイル名を回答しています。</p>
+<p><img src="/jpazpaas/2026/09/07/Azure-Functions-MCP-Binding-Extension/vscode.png" alt="コード スニペットの保存後に、同じ Copilot チャットで保存先を質問した例"></p>
+<p>このように、ツールの実行結果が表示された後も、同じチャットの入力欄から続けて質問や依頼を入力できます。「上記」のような表現で直前の結果を参照したり、取得や別の処理を依頼したりできます。実際の回答内容は、使用するモデルや会話の内容によって異なります。</p>
+<hr>
+<h2 id="その他の-MCP-クライアントからの接続"><a href="#その他の-MCP-クライアントからの接続" class="headerlink" title="その他の MCP クライアントからの接続"></a>その他の MCP クライアントからの接続</h2><p>Azure Functions MCP サーバーは MCP プロトコルの Streamable HTTP トランスポートに準拠しています。そのため、VS Code + GitHub Copilot 以外にも、MCP プロトコルをサポートする任意のクライアントから接続できます。</p>
+<p>接続に必要な情報は以下の 2 つです。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Transport Type</td>
+<td><strong>Streamable HTTP</strong></td>
+</tr>
+<tr>
+<td>URL</td>
+<td><code>https://&lt;function-app-name&gt;.azurewebsites.net/runtime/webhooks/mcp?code=&lt;key&gt;</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="よくお問い合わせいただく動作"><a href="#よくお問い合わせいただく動作" class="headerlink" title="よくお問い合わせいただく動作"></a>よくお問い合わせいただく動作</h1><h2 id="MCP-ツールの実行がタイムアウトする"><a href="#MCP-ツールの実行がタイムアウトする" class="headerlink" title="MCP ツールの実行がタイムアウトする"></a>MCP ツールの実行がタイムアウトする</h2><p>プロンプトを入力した後、AI モデルが質問を解釈する、使用するツールを選択する、回答を生成するといった <strong>AI 側の処理時間</strong>は、MCP ツール トリガーから別の Azure Functions トリガーへ移譲できません。MCP ツール トリガーが実行されるのは、AI エージェントなどの MCP クライアントがツールを呼び出した後です。詳細は <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-tool-trigger?pivots=programming-language-typescript">Azure Functions の MCP ツール トリガー</a> を参照してください。</p>
+<p>一方、ツールが呼び出された後に <strong>MCP ツール トリガーの関数内で行う処理</strong>は、Queue Storage や Service Bus へメッセージを送信し、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-storage-queue-trigger?pivots=programming-language-typescript">Queue Storage トリガー</a>や <a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-service-bus-trigger?pivots=programming-language-typescript">Service Bus トリガー</a>で継続できます。たとえば、MCP ツール トリガーの関数から別の AI モデルや AI API を呼び出しており、その処理に時間がかかる場合は、この方式で移譲できます。</p>
+<p>この場合、MCP ツールからは処理を受け付けたこととジョブ ID を返し、別の MCP ツールで状態や結果を取得する構成にします。元のツール呼び出しが、移譲先の処理完了後に自動的に最終結果を返すわけではありません。また、結果取得用ツールを MCP クライアントが自動的に再実行するかどうかは、利用するクライアントやエージェントの動作に依存します。</p>
+<p>この構成は <a href="https://learn.microsoft.com/ja-jp/azure/architecture/patterns/asynchronous-request-reply#solution">非同期要求-応答パターン</a> に相当します。Azure Functions で長時間実行される処理をキューへ渡して早く応答する考え方については、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/performance-reliability#avoid-long-running-functions">Azure Functions のパフォーマンスと信頼性の向上 - 実行時間の長い関数を回避する</a> を参照してください。Azure Functions 自体の実行タイムアウトはホスティング プランによって異なるため、<a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-scale#function-app-timeout-duration">Azure Functions のスケールとホスティング - 関数アプリのタイムアウト期間</a> も確認してください。</p>
+<h2 id="追加したツールが-tools-list-に表示されない"><a href="#追加したツールが-tools-list-に表示されない" class="headerlink" title="追加したツールが tools/list に表示されない"></a>追加したツールが <code>tools/list</code> に表示されない</h2><p>TypeScript のサンプルでは、<code>package.json</code> の <code>main</code> で指定された <code>dist/src/index.js</code> がエントリ ポイントです。ツールを追加したファイルが <code>src/index.ts</code> から import されていることを確認し、再度ビルドしてからデプロイしてください。</p>
+<h2 id="MCP-エンドポイントへの接続時に-401-が返る"><a href="#MCP-エンドポイントへの接続時に-401-が返る" class="headerlink" title="MCP エンドポイントへの接続時に 401 が返る"></a>MCP エンドポイントへの接続時に 401 が返る</h2><p>次の点を確認してください。</p>
+<ul>
+<li>ホスト キーではなく、<code>mcp_extension</code> システム キーを使用しているか</li>
+<li>URL の <code>code</code> クエリ パラメーターにシステム キーを設定しているか</li>
+<li>App Service Authentication &#x2F; Authorization (Easy Auth) が要求を拒否していないか</li>
+</ul>
+<h2 id="応用-独自ツールを追加する"><a href="#応用-独自ツールを追加する" class="headerlink" title="応用: 独自ツールを追加する"></a>応用: 独自ツールを追加する</h2><p><code>app.mcpTool()</code> を使って独自のビジネスロジックを持つツールを追加できます。本記事ではサンプルリポジトリと同様 TypeScript での手順を紹介させていただきましたが、他の言語でも実装いただけます。実装方法の詳細は以下の Microsoft 公式ドキュメントを参照してください。</p>
+<ul>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-mcp-tool-trigger?pivots=programming-language-typescript">Azure Functions の MCP ツール トリガー リファレンス(TypeScript)</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/scenario-custom-remote-mcp-server?pivots=programming-language-typescript">クイックスタート: Azure Functions を使用してカスタム リモート MCP サーバーを構築する</a></li>
+</ul>
+<h1 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h1><p>本記事では、MCP ツール トリガーの基本動作、TypeScript サンプルの作成とデプロイ、MCP クライアントからの動作確認、運用時の留意点を紹介しました。MCP Binding Extension を利用することで、プロトコル処理を個別に実装せず、Azure Functions の関数を AI エージェントから呼び出せるツールとして公開できます。</p>
+<h1 id="参考ドキュメント"><a href="#参考ドキュメント" class="headerlink" title="参考ドキュメント"></a>参考ドキュメント</h1><ul>
+<li><p>Azure Functions MCP ツール トリガー リファレンス<br><a href="https://learn.microsoft.com/azure/azure-functions/functions-bindings-mcp-tool-trigger?pivots=programming-language-typescript">https://learn.microsoft.com/azure/azure-functions/functions-bindings-mcp-tool-trigger?pivots=programming-language-typescript</a></p>
+</li>
+<li><p>クイックスタート: Azure Functions を使用してカスタム リモート MCP サーバーを構築する<br><a href="https://learn.microsoft.com/ja-jp/azure/azure-functions/scenario-custom-remote-mcp-server">https://learn.microsoft.com/ja-jp/azure/azure-functions/scenario-custom-remote-mcp-server</a></p>
+</li>
+<li><p>サンプルリポジトリ(TypeScript)<br><a href="https://github.com/Azure-Samples/remote-mcp-functions-typescript">https://github.com/Azure-Samples/remote-mcp-functions-typescript</a></p>
+</li>
+<li><p>Azure Functions での AI ツールとモデルの使用(MCP Binding Extension と Self-hosted MCP servers の比較表を含む)<br><a href="https://learn.microsoft.com/azure/azure-functions/functions-create-ai-enabled-apps">https://learn.microsoft.com/azure/azure-functions/functions-create-ai-enabled-apps</a></p>
+</li>
+</ul>
+<br>
+<br>
+
+<p>2026 年 9 月 7 日時点の内容となります。<br><br>本記事の内容は予告なく変更される場合がございますので予めご了承ください。</p>
+<br>
+<br>
+
+      
+      
+        <div class="article-disclaimer">
+        
+          <p>※本情報の内容（添付文書、リンク先などを含む）は、作成日時点でのものであり、予告なく変更される場合があります。</p>
+        
+        </div>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../../tags/MCP/" rel="tag">MCP</a></li></ul>
+
+        
+        <a href="https://github.com/Azure/jpazpaas/edit/main/articles/2026/09/07/Azure-Functions-MCP-Binding-Extension.md" class="article-github-edit-link" target="_blank" rel="noopener noreferrer">GitHub で編集</a>
+        
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="../../06/23/Azure-functions-trigger-and-binding-http-webhook.html" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前の記事</strong>
+      <div class="article-nav-title">Azure Functions トリガー・バインディング シリーズ - HTTP / Webhook トリガー</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最近の投稿</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="">Azure Functions の MCP ツール トリガー作成手順</a>
+          </li>
+        
+          <li>
+            <a href="../../06/23/Azure-functions-trigger-and-binding-http-webhook.html">Azure Functions トリガー・バインディング シリーズ - HTTP / Webhook トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../05/22/Azure-functions-trigger-and-binding-eventgrid.html">Azure Functions トリガー・バインディング シリーズ - Event Grid トリガー</a>
+          </li>
+        
+          <li>
+            <a href="../../04/21/App-Service-Certificate-Renewal.html">App Service 証明書の更新に伴うドメイン検証作業の必要について</a>
+          </li>
+        
+          <li>
+            <a href="../../04/16/Azure-functions-trigger-and-binding-series-azurecosmosdb.html">Azure Functions トリガー・バインディング シリーズ - Azure Cosmos DB トリガー</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグ</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ACS/" rel="tag">ACS</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/AI-Search/" rel="tag">AI Search</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/API-Management/" rel="tag">API Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/ARM-Template/" rel="tag">ARM Template</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service/" rel="tag">App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Environment/" rel="tag">App Service Environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-on-Linux/" rel="tag">App Service on Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" rel="tag">App Service 証明書</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/App-Service-Web-Apps-Java/" rel="tag">App Service, Web Apps, Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Gateway/" rel="tag">Application Gateway</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Application-Insights/" rel="tag">Application Insights</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure/" rel="tag">Azure</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" rel="tag">Azure AD認証</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-App-Service/" rel="tag">Azure App Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Cache-for-Redis/" rel="tag">Azure Cache for Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Communication-Services/" rel="tag">Azure Communication Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Front-Door/" rel="tag">Azure Front Door</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Functions/" rel="tag">Azure Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Service/" rel="tag">Azure Media Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Media-Services/" rel="tag">Azure Media Services</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Graph/" rel="tag">Azure Resource Graph</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Resource-Manager-ARM/" rel="tag">Azure Resource Manager (ARM)</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Support/" rel="tag">Azure Support</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Azure-Video-Indexer/" rel="tag">Azure Video Indexer</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Cloud-Service/" rel="tag">Cloud Service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Container-Apps/" rel="tag">Container Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Durable-Functions/" rel="tag">Durable Functions</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Email/" rel="tag">Email</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Grid/" rel="tag">Event Grid</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Event-Hubs/" rel="tag">Event Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-App/" rel="tag">Function App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Function-Apps/" rel="tag">Function Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Kudu/" rel="tag">Kudu</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Lighthouse/" rel="tag">Lighthouse</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Metric/" rel="tag">Metric</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Notification-Hubs/" rel="tag">Notification Hubs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Policy/" rel="tag">Policy</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/PowerShell/" rel="tag">PowerShell</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/SMTP/" rel="tag">SMTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Service-Bus/" rel="tag">Service Bus</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Static-Web-Apps/" rel="tag">Static Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Storage/" rel="tag">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Subscription/" rel="tag">Subscription</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-App/" rel="tag">Web App</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/Web-Apps/" rel="tag">Web Apps</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/WebJobs/" rel="tag">WebJobs</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/app-service/" rel="tag">app service</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/etc/" rel="tag">etc</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" rel="tag">デプロイ履歴</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" rel="tag">トリガー・バインディング シリーズ</a></li></ul>
+      <!-- <ul class="tag-list"></ul> -->
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">アーカイブ</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/09/">2026 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/04/">2026 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/03/">2026 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/02/">2026 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2026/01/">2026 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/12/">2025 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/09/">2025 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/07/">2025 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/05/">2025 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/04/">2025 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2025/02/">2025 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/12/">2024 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/09/">2024 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/08/">2024 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/07/">2024 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/05/">2024 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/04/">2024 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/03/">2024 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/02/">2024 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2024/01/">2024 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/12/">2023 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/11/">2023 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/10/">2023 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/08/">2023 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/07/">2023 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/06/">2023 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/05/">2023 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/04/">2023 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/03/">2023 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/02/">2023 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2023/01/">2023 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/12/">2022 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/11/">2022 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/10/">2022 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/09/">2022 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/08/">2022 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/07/">2022 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/06/">2022 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/05/">2022 / 05</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/04/">2022 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/03/">2022 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2022/02/">2022 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/12/">2021 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/11/">2021 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/10/">2021 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/09/">2021 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/08/">2021 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/07/">2021 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/06/">2021 / 06</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/04/">2021 / 04</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/03/">2021 / 03</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/02/">2021 / 02</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2021/01/">2021 / 01</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/12/">2020 / 12</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/11/">2020 / 11</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/10/">2020 / 10</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/09/">2020 / 09</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/08/">2020 / 08</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/07/">2020 / 07</a></li><li class="archive-list-item"><a class="archive-list-link" href="../../../archives/2020/06/">2020 / 06</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">タグクラウド</h3>
+    <div class="widget tagcloud">
+      <a href="../../../tags/ACS/" style="font-size: 10px;">ACS</a> <a href="../../../tags/AI-Search/" style="font-size: 15.83px;">AI Search</a> <a href="../../../tags/API-Management/" style="font-size: 17.5px;">API Management</a> <a href="../../../tags/ARM/" style="font-size: 11.67px;">ARM</a> <a href="../../../tags/ARM-Template/" style="font-size: 10px;">ARM Template</a> <a href="../../../tags/App-Service/" style="font-size: 19.17px;">App Service</a> <a href="../../../tags/App-Service-Environment/" style="font-size: 12.5px;">App Service Environment</a> <a href="../../../tags/App-Service-on-Linux/" style="font-size: 10px;">App Service on Linux</a> <a href="../../../tags/App-Service-%E8%A8%BC%E6%98%8E%E6%9B%B8/" style="font-size: 14.17px;">App Service 証明書</a> <a href="../../../tags/App-Service-Web-Apps-Java/" style="font-size: 10px;">App Service, Web Apps, Java</a> <a href="../../../tags/Application-Gateway/" style="font-size: 10.83px;">Application Gateway</a> <a href="../../../tags/Application-Insights/" style="font-size: 10px;">Application Insights</a> <a href="../../../tags/Azure/" style="font-size: 10.83px;">Azure</a> <a href="../../../tags/Azure-AD%E8%AA%8D%E8%A8%BC/" style="font-size: 10px;">Azure AD認証</a> <a href="../../../tags/Azure-App-Service/" style="font-size: 10px;">Azure App Service</a> <a href="../../../tags/Azure-Cache-for-Redis/" style="font-size: 10.83px;">Azure Cache for Redis</a> <a href="../../../tags/Azure-Communication-Services/" style="font-size: 13.33px;">Azure Communication Services</a> <a href="../../../tags/Azure-Front-Door/" style="font-size: 10px;">Azure Front Door</a> <a href="../../../tags/Azure-Functions/" style="font-size: 10px;">Azure Functions</a> <a href="../../../tags/Azure-Media-Service/" style="font-size: 10px;">Azure Media Service</a> <a href="../../../tags/Azure-Media-Services/" style="font-size: 10px;">Azure Media Services</a> <a href="../../../tags/Azure-Resource-Graph/" style="font-size: 10.83px;">Azure Resource Graph</a> <a href="../../../tags/Azure-Resource-Manager-ARM/" style="font-size: 10px;">Azure Resource Manager (ARM)</a> <a href="../../../tags/Azure-Support/" style="font-size: 10.83px;">Azure Support</a> <a href="../../../tags/Azure-Video-Indexer/" style="font-size: 10px;">Azure Video Indexer</a> <a href="../../../tags/Cloud-Service/" style="font-size: 10px;">Cloud Service</a> <a href="../../../tags/Container-Apps/" style="font-size: 14.17px;">Container Apps</a> <a href="../../../tags/Durable-Functions/" style="font-size: 10.83px;">Durable Functions</a> <a href="../../../tags/Email/" style="font-size: 10.83px;">Email</a> <a href="../../../tags/Event-Grid/" style="font-size: 10px;">Event Grid</a> <a href="../../../tags/Event-Hubs/" style="font-size: 11.67px;">Event Hubs</a> <a href="../../../tags/Function-App/" style="font-size: 20px;">Function App</a> <a href="../../../tags/Function-Apps/" style="font-size: 10.83px;">Function Apps</a> <a href="../../../tags/Kudu/" style="font-size: 10.83px;">Kudu</a> <a href="../../../tags/Lighthouse/" style="font-size: 10.83px;">Lighthouse</a> <a href="../../../tags/MCP/" style="font-size: 10px;">MCP</a> <a href="../../../tags/Metric/" style="font-size: 10px;">Metric</a> <a href="../../../tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="../../../tags/Notification-Hubs/" style="font-size: 10.83px;">Notification Hubs</a> <a href="../../../tags/Policy/" style="font-size: 12.5px;">Policy</a> <a href="../../../tags/PowerShell/" style="font-size: 10px;">PowerShell</a> <a href="../../../tags/SMTP/" style="font-size: 10px;">SMTP</a> <a href="../../../tags/Service-Bus/" style="font-size: 10.83px;">Service Bus</a> <a href="../../../tags/Static-Web-Apps/" style="font-size: 10px;">Static Web Apps</a> <a href="../../../tags/Storage/" style="font-size: 18.33px;">Storage</a> <a href="../../../tags/Subscription/" style="font-size: 10px;">Subscription</a> <a href="../../../tags/Web-App/" style="font-size: 10px;">Web App</a> <a href="../../../tags/Web-Apps/" style="font-size: 16.67px;">Web Apps</a> <a href="../../../tags/WebJobs/" style="font-size: 11.67px;">WebJobs</a> <a href="../../../tags/app-service/" style="font-size: 10px;">app service</a> <a href="../../../tags/etc/" style="font-size: 10px;">etc</a> <a href="../../../tags/%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E5%B1%A5%E6%AD%B4/" style="font-size: 10.83px;">デプロイ履歴</a> <a href="../../../tags/%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E3%83%BB%E3%83%90%E3%82%A4%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0-%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA/" style="font-size: 15px;">トリガー・バインディング シリーズ</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <a href="https://privacy.microsoft.com/ja-jp/privacystatement" target="_blank" rel=”noopener”>Privacy & Cookies</a> |  
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/copyright" target="_blank" rel=”noopener”>Terms of use</a> |
+      <a href="https://www.microsoft.com/ja-jp/legal/intellectualproperty/trademarks" target="_blank" rel=”noopener”>Trademarks</a> |
+      &copy; 2026 Web Developer Platform WebApps Japan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="../../../index.html" class="mobile-nav-link">Home</a>
+  
+    <a href="../../../archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="../../../js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
